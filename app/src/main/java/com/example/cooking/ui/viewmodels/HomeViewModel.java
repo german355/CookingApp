@@ -20,12 +20,10 @@ import com.example.cooking.data.repositories.LikedRecipesRepository;
 import com.example.cooking.utils.MySharedPreferences;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
-import com.example.cooking.network.api.SearchApi;
-import com.example.cooking.network.services.RetrofitClient;
+import com.example.cooking.network.services.NetworkService;
 import com.example.cooking.network.responses.SearchResponse;
+import com.example.cooking.network.utils.ApiCallHandler;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import com.example.cooking.utils.RecipeSearchService;
 
 import java.util.List;
@@ -295,46 +293,26 @@ public class HomeViewModel extends AndroidViewModel {
      * @param query строка поиска
      */
     public void searchRecipes(String query) {
+        Log.d(TAG, "Searching recipes with query: " + query);
         isRefreshing.setValue(true);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplication());
-        boolean smartEnabled = prefs.getBoolean("smart_search_enabled", true);
-        String userId = prefs.getString("userId", "0");
-        if (smartEnabled) {
-            // Умный поиск через GET /search/
-            SearchApi api = RetrofitClient.getClient().create(SearchApi.class);
-            Call<SearchResponse> call = api.searchRecipes(query.trim(), userId, 1, 20);
-            call.enqueue(new Callback<SearchResponse>() {
-                @Override
-                public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
-                    if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
-                        searchResults.postValue(response.body().getData().getResults());
-                    } else {
-                        errorMessage.postValue("Ошибка HTTP: " + response.code());
-                    }
-                    isRefreshing.postValue(false);
-                }
-
-                @Override
-                public void onFailure(Call<SearchResponse> call, Throwable t) {
-                    errorMessage.postValue(t.getMessage() != null ? t.getMessage() : "Ошибка сети при поиске");
-                    isRefreshing.postValue(false);
-                }
-            });
-        } else {
-            // Простой поиск через /recipes/search-simple
-            new RecipeSearchService(getApplication()).searchRecipes(query.trim(), new RecipeSearchService.SearchCallback() {
-                @Override
-                public void onSearchResults(List<Recipe> recipes) {
-                    searchResults.postValue(recipes != null ? recipes : Collections.emptyList());
-                    isRefreshing.postValue(false);
-                }
-
-                @Override
-                public void onSearchError(String error) {
-                    errorMessage.postValue(error);
-                    isRefreshing.postValue(false);
-                }
-            });
-        }
+        
+        // Используем RecipeSearchService для поиска
+        RecipeSearchService searchService = new RecipeSearchService(getApplication());
+        searchService.searchRecipes(query, new RecipeSearchService.SearchCallback() {
+            @Override
+            public void onSearchResults(List<Recipe> recipes) {
+                searchResults.postValue(recipes);
+                isRefreshing.postValue(false);
+                Log.d(TAG, "Search complete, found " + (recipes != null ? recipes.size() : 0) + " results");
+            }
+            
+            @Override
+            public void onSearchError(String error) {
+                Log.e(TAG, "Search error: " + error);
+                errorMessage.postValue("Ошибка поиска: " + error);
+                searchResults.postValue(Collections.emptyList());
+                isRefreshing.postValue(false);
+            }
+        });
     }
 } 

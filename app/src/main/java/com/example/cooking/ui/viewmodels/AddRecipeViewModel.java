@@ -16,7 +16,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.cooking.Recipe.Ingredient;
 import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.Recipe.Step;
-import com.example.cooking.network.services.RecipeManager;
+import com.example.cooking.network.services.RecipeService;
 import com.example.cooking.utils.MySharedPreferences;
 
 import java.io.ByteArrayOutputStream;
@@ -50,14 +50,14 @@ public class AddRecipeViewModel extends AndroidViewModel {
     private byte[] imageBytes = null;
     
     // Сервисы
-    private final RecipeManager recipeManager;
+    private final RecipeService recipeService;
     private final MySharedPreferences preferences;
     private final com.example.cooking.data.repositories.RecipeLocalRepository localRepository;
     
     public AddRecipeViewModel(@NonNull Application application) {
         super(application);
         preferences = new MySharedPreferences(application);
-        recipeManager = new RecipeManager(application);
+        recipeService = new RecipeService(application);
         localRepository = new com.example.cooking.data.repositories.RecipeLocalRepository(application);
         
         // Инициализируем списки с одним пустым элементом
@@ -107,51 +107,56 @@ public class AddRecipeViewModel extends AndroidViewModel {
 
         List<Ingredient> CurrentIngredients = currentIngredients;
         List<Step> finalCurrentSteps = currentSteps;
-        recipeManager.saveRecipe(
+        recipeService.saveRecipe(
             currentTitle,
             currentIngredients, // Передаем список напрямую
             currentSteps, // Передаем список напрямую
             userId,
             imageBytes,
-            new RecipeManager.RecipeSaveCallback() {
+            new RecipeService.RecipeSaveCallback() {
                 @Override
-                public void onSuccess(String message) {
+                public void onSuccess(com.example.cooking.network.models.GeneralServerResponse response, Recipe recipeFromServer) {
                     isLoading.postValue(false);
                     saveSuccess.postValue(true);
-                    Log.d(TAG, "Рецепт успешно сохранен: " + message);
-                    // --- Новый код: парсим ответ сервера и сохраняем рецепт в локальную БД ---
-                    try {
-                        org.json.JSONObject json = new org.json.JSONObject(message);
-                        if (json.optBoolean("success", false)) {
-                            int recipeId = json.optInt("recipeId", -1);
-                            String photoUrl = json.optString("photo_url", null);
-                            // Собираем объект Recipe для локальной базы
-                            Recipe recipe = new Recipe();
-                            recipe.setId(recipeId);
-                            recipe.setTitle(currentTitle);
-                            recipe.setIngredients(new ArrayList<>(CurrentIngredients));
-                            recipe.setSteps(new ArrayList<>(finalCurrentSteps));
-                            recipe.setPhoto_url(photoUrl);
-                            recipe.setUserId(userId);
-                            // created_at и другие поля можно заполнить при необходимости
-                            localRepository.insertAll(java.util.Collections.singletonList(recipe));
-                            Log.d(TAG, "Рецепт сохранён в локальную БД с id=" + recipeId + ", photo_url=" + photoUrl);
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "Ошибка парсинга ответа сервера или сохранения в БД", e);
+                    Log.d(TAG, "Рецепт успешно сохранен, сервер ответил: " + response.getMessage());
+
+                    if (response.isSuccess() && response.getId() != null) {
+                        int newRecipeId = response.getId();
+                        // Собираем объект Recipe для локальной базы
+                        // recipeFromServer в случае успешного создания может быть null или не содержать всех данных,
+                        // поэтому формируем его из того, что отправляли, и ID от сервера.
+                        Recipe recipeToSaveLocally = new Recipe();
+                        recipeToSaveLocally.setId(newRecipeId);
+                        recipeToSaveLocally.setTitle(currentTitle); // currentTitle используется из замыкания
+                        recipeToSaveLocally.setIngredients(new ArrayList<>(CurrentIngredients)); // CurrentIngredients из замыкания
+                        recipeToSaveLocally.setSteps(new ArrayList<>(finalCurrentSteps)); // finalCurrentSteps из замыкания
+                        // Предполагаем, что photoUrl, если есть, будет в GeneralServerResponse или нужно будет его как-то получить/установить.
+                        // GeneralServerResponse пока не содержит photo_url. Если сервер его возвращает, нужно добавить поле.
+                        // recipeToSaveLocally.setPhoto_url(response.getPhotoUrl()); // Пример, если бы было
+                        recipeToSaveLocally.setUserId(userId); // userId из замыкания
+
+                        localRepository.insertAll(java.util.Collections.singletonList(recipeToSaveLocally));
+                        Log.d(TAG, "Рецепт сохранён в локальную БД с id=" + newRecipeId);
+                    } else {
+                        Log.w(TAG, "Ответ сервера success=false или ID не предоставлен при создании: " + response.getMessage());
                     }
                 }
 
                 @Override
-                public void onFailure(String error) {
+                public void onFailure(String error, com.example.cooking.network.models.GeneralServerResponse errorResponse) {
                     isLoading.postValue(false);
+                    String detailedError = error;
+                    if (errorResponse != null && errorResponse.getMessage() != null) {
+                        detailedError += " (Сервер: " + errorResponse.getMessage() + ")";
+                    }
+
                     // Если ошибка связана с дублированием рецепта, считаем это успешным сохранением
-                    if (error != null && (error.toLowerCase().contains("дубли") || error.toLowerCase().contains("уже существует") || error.toLowerCase().contains("повторно") || error.toLowerCase().contains("duplicate") || error.toLowerCase().contains("already exists") || error.toLowerCase().contains("already added"))) {
+                    if (detailedError != null && (detailedError.toLowerCase().contains("дубли") || detailedError.toLowerCase().contains("уже существует") || detailedError.toLowerCase().contains("повторно") || detailedError.toLowerCase().contains("duplicate") || detailedError.toLowerCase().contains("already exists") || detailedError.toLowerCase().contains("already added"))) {
                         saveSuccess.postValue(true);
-                        Log.d(TAG, "Рецепт уже существует или был отправлен повторно, считаем как успешное сохранение: " + error);
+                        Log.d(TAG, "Рецепт уже существует или был отправлен повторно, считаем как успешное сохранение: " + detailedError);
                     } else {
-                        errorMessage.postValue(error);
-                        Log.e(TAG, "Ошибка при сохранении рецепта: " + error);
+                        errorMessage.postValue(detailedError);
+                        Log.e(TAG, "Ошибка при сохранении рецепта: " + detailedError);
                     }
                 }
             }

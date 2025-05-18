@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardElevation="2dp"
-    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="8dp"
+    app:cardBackgroundColor="?attr/colorSurfaceContainer"
     android:layout_marginBottom="16dp">
 
     <LinearLayout
@@ -45,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:textColor="#212121"
+            android:textColor="?android:attr/textColorPrimary"
             android:layout_marginBottom="8dp"
             tools:text="Инструкция по приготовлению для данного шага" />
 

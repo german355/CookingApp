@@ -7,6 +7,34 @@
                                                    android:background="@color/md_theme_background"
                                                    tools:context=".ui.activities.MainActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:title=" " >  <!-- Начальный пустой заголовок -->
+
+            <!-- SearchView справа от заголовка -->
+            <androidx.appcompat.widget.SearchView
+                    android:id="@+id/search_view_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginStart="64dp"
+                    android:layout_marginEnd="16dp"
+                    style="@style/Widget.App.SearchView"
+                    android:queryHint="Поиск по рецептам"
+                    app:iconifiedByDefault="false" />
+
+        </com.google.android.material.appbar.MaterialToolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <!-- Контейнер для фрагментов - NavHostFragment -->
     <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_fragment"
@@ -15,9 +43,8 @@
             android:layout_height="0dp"
             app:defaultNavHost="true"
             app:navGraph="@navigation/nav_graph"
-            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
-            app:layout_constraintTop_toTopOf="parent"
-    />
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+            app:layout_constraintBottom_toTopOf="@id/bottom_navigation" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add"

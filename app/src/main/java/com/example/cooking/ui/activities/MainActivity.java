@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,11 +12,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.NavOptions;
+import androidx.appcompat.widget.SearchView;
 
 import com.example.cooking.R;
 import com.example.cooking.ui.viewmodels.MainViewModel;
+import com.example.cooking.ui.viewmodels.SharedRecipeViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.appbar.MaterialToolbar;
 
 /**
  * Главная активность приложения.
@@ -28,12 +32,15 @@ public class MainActivity extends AppCompatActivity {
     // UI компоненты
     public BottomNavigationView bottomNavigationView;
     private FloatingActionButton addButton;
+    private MaterialToolbar toolbar;
+    private SearchView searchView;
 
     // Навигация
     private NavController navController;
 
     // Данные и состояние
     private MainViewModel viewModel;
+    private SharedRecipeViewModel sharedRecipeViewModel;
 
     /**
      * Вызывается при создании активности.
@@ -45,13 +52,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        // Инициализация SharedRecipeViewModel
+        sharedRecipeViewModel = new ViewModelProvider(this).get(SharedRecipeViewModel.class);
 
         initViews();
+        setSupportActionBar(toolbar);
         setupNavigation(savedInstanceState);
         setupEventHandlers();
         setupObservers();
 
         viewModel.initGoogleSignIn(getString(R.string.default_web_client_id));
+        
+        // Загрузка данных о рецептах при старте приложения
+        sharedRecipeViewModel.loadInitialRecipes();
 
         // Устанавливаем цвет статус-бара программно
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -65,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
     private void initViews() {
         // Инициализируем кнопку добавления рецепта
         addButton = findViewById(R.id.fab_add);
+        toolbar = findViewById(R.id.toolbar);
+        
+        // Инициализируем SearchView в toolbar
+        searchView = findViewById(R.id.search_view_toolbar);
 
         // Инициализируем нижнюю навигацию
         bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -81,9 +98,9 @@ public class MainActivity extends AppCompatActivity {
 
             // Убираем стандартную привязку
             // NavigationUI.setupWithNavController(bottomNavigationView, navController);
+            // NavigationUI.setupActionBarWithNavController(this, navController);
 
-            // Следим за изменениями пункта назначения для обновления UI (оставляем для
-            // кнопки)
+            // Следим за изменениями пункта назначения для обновления UI
             navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
                 int id = destination.getId();
                 boolean showAddButton = id != R.id.nav_profile &&
@@ -91,6 +108,27 @@ public class MainActivity extends AppCompatActivity {
                         id != R.id.destination_auth &&
                         id != R.id.destination_settings;
                 viewModel.setShowAddButton(showAddButton);
+                
+                // Показываем поиск только на главном экране и в каталоге
+                boolean showSearch = id == R.id.nav_home || id == R.id.nav_catalog;
+                if (searchView != null) {
+                    searchView.setVisibility(showSearch ? View.VISIBLE : View.GONE);
+                }
+
+                // Установка заголовка Toolbar
+                if (id == R.id.nav_catalog) {
+                    if (getSupportActionBar() != null) {
+                        getSupportActionBar().setTitle("Каталог");
+                    }
+                } else if (destination.getLabel() != null) {
+                     if (getSupportActionBar() != null) {
+                        getSupportActionBar().setTitle(destination.getLabel());
+                    }
+                } else {
+                    if (getSupportActionBar() != null) {
+                        getSupportActionBar().setTitle(" "); // Пустой заголовок по умолчанию
+                    }
+                }
             });
 
             // Добавляем умный ручной обработчик
@@ -133,6 +171,74 @@ public class MainActivity extends AppCompatActivity {
         addButton.setOnClickListener(view -> {
             handleAddButtonClick();
         });
+        
+        // Настраиваем SearchView
+        setupSearchView();
+    }
+
+    /**
+     * Настраивает SearchView для поиска рецептов
+     */
+    private void setupSearchView() {
+        // Настройка внешнего вида
+        searchView.setIconifiedByDefault(false);
+        searchView.setQueryHint("Поиск по рецептам");
+        
+        // Программно стилизуем SearchView
+        int searchPlateId = searchView.getContext().getResources().getIdentifier(
+                "android:id/search_plate", null, null);
+        View searchPlate = searchView.findViewById(searchPlateId);
+        if (searchPlate != null) {
+            searchPlate.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+            
+            // Находим EditText внутри SearchView и настраиваем его стиль
+            int searchSrcTextId = getResources().getIdentifier(
+                    "android:id/search_src_text", null, null);
+            android.widget.EditText searchEditText = searchView.findViewById(searchSrcTextId);
+            if (searchEditText != null) {
+                searchEditText.setBackground(null);
+                searchEditText.setHintTextColor(getResources().getColor(
+                        R.color.md_theme_onSurfaceVariant, null));
+                searchEditText.setTextColor(getResources().getColor(
+                        R.color.md_theme_onSurface, null));
+            }
+        }
+        
+        // Настройка поведения поиска
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                performSearch(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // Реагируем только на отправку поиска, а не на изменение текста
+                return false;
+            }
+        });
+    }
+    
+    /**
+     * Выполняет поиск по введенному запросу
+     */
+    private void performSearch(String query) {
+        // Очищаем фокус с SearchView после отправки
+        searchView.clearFocus();
+        
+        // Убедимся, что мы на главном экране или каталоге
+        int currentDestId = navController.getCurrentDestination().getId();
+        if (currentDestId != R.id.nav_home && currentDestId != R.id.nav_catalog) {
+            // Если мы не на главном экране или в каталоге, переходим на главный экран
+            bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        }
+        
+        // Выполняем поиск через SharedViewModel
+        sharedRecipeViewModel.searchRecipes(query);
+        
+        // Логируем поисковый запрос
+        Log.d(TAG, "Выполнен поиск по запросу: " + query);
     }
 
     /**
@@ -231,15 +337,8 @@ public class MainActivity extends AppCompatActivity {
      * Обновляет домашний фрагмент при возврате из AddRecipeActivity
      */
     private void refreshHomeFragment() {
-        // Проверяем, находимся ли мы на домашнем фрагменте
-        if (bottomNavigationView.getSelectedItemId() == R.id.nav_home) {
-            // Если да, обновляем через Navigation Component
-            int currentId = navController.getCurrentDestination().getId();
-            if (currentId == R.id.nav_home) {
-                // Перезагружаем текущий фрагмент
-                navController.navigate(R.id.nav_home);
-            }
-        }
+        // Обновляем рецепты через SharedRecipeViewModel при возврате из AddRecipeActivity
+        sharedRecipeViewModel.refreshRecipes();
     }
 
     @Override
@@ -247,4 +346,6 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
+
+
 }

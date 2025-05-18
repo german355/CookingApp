@@ -12,56 +12,65 @@ import com.example.cooking.data.database.converters.DataConverters;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * Entity класс для хранения рецептов в Room Database
+ * Представляет сущность рецепта для хранения в базе данных Room.
+ * Использует {@link TypeConverters} для сохранения списков ингредиентов и шагов.
  */
 @Entity(tableName = "recipes")
 @TypeConverters(DataConverters.class)
 public class RecipeEntity {
-    @PrimaryKey
+    @PrimaryKey // Первичный ключ для таблицы recipes
     private int id;
-    private String title;
-    private List<Ingredient> ingredients;
-    private List<Step> instructions;
-    private String created_at;
-    private String userId;
-    private String mealType;
-    private String foodType;
-    private String photo_url;
-    private boolean isLiked;
+    private String title;        // Название рецепта
+    private List<Ingredient> ingredients; // Список ингредиентов
+    private List<Step> instructions;   // Список шагов приготовления
+    private String created_at;   // Дата создания (или последнего обновления) рецепта
+    private String userId;       // Идентификатор пользователя, создавшего рецепт (если применимо)
+    private String mealType;     // Тип приема пищи (напр., Завтрак, Обед)
+    private String foodType;     // Тип блюда (напр., Суп, Салат)
+    private String photo_url;    // URL основного изображения рецепта
+    private boolean isLiked;     // Статус "лайк" от пользователя для данного рецепта
 
-    // Конструкторы
+    /**
+     * Конструктор по умолчанию.
+     * Необходим для Room и процессов десериализации.
+     */
     public RecipeEntity() {
     }
 
-    // Конвертирует модель Recipe в RecipeEntity
+    /**
+     * Создает {@link RecipeEntity} на основе доменной модели {@link Recipe}.
+     * @param recipe Доменный объект рецепта.
+     */
     public RecipeEntity(Recipe recipe) {
         this.id = recipe.getId();
         this.title = recipe.getTitle();
-        this.ingredients = recipe.getIngredients();
-        this.instructions = recipe.getSteps();
-
+        // Копируем списки, чтобы избежать модификации оригинальных списков в объекте Recipe
+        this.ingredients = recipe.getIngredients() == null ? new ArrayList<>() : new ArrayList<>(recipe.getIngredients());
+        this.instructions = recipe.getSteps() == null ? new ArrayList<>() : new ArrayList<>(recipe.getSteps());
         this.mealType = recipe.getMealType();
         this.foodType = recipe.getFoodType();
-
         this.created_at = recipe.getCreated_at();
         this.userId = recipe.getUserId();
         this.photo_url = recipe.getPhoto_url();
         this.isLiked = recipe.isLiked();
     }
 
-    // Конвертирует RecipeEntity в Recipe
+    /**
+     * Преобразует текущий {@link RecipeEntity} обратно в доменную модель {@link Recipe}.
+     * @return Объект {@link Recipe}.
+     */
     public Recipe toRecipe() {
         Recipe recipe = new Recipe();
         recipe.setId(id);
         recipe.setTitle(title);
+        // Создаем новые копии списков для объекта Recipe
         recipe.setIngredients(ingredients == null ? new ArrayList<>() : new ArrayList<>(ingredients));
         recipe.setSteps(instructions == null ? new ArrayList<>() : new ArrayList<>(instructions));
-        
         recipe.setMealType(mealType);
         recipe.setFoodType(foodType);
-        
         recipe.setCreated_at(created_at);
         recipe.setUserId(userId);
         recipe.setPhoto_url(photo_url);
@@ -148,18 +157,38 @@ public class RecipeEntity {
         isLiked = liked;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RecipeEntity that = (RecipeEntity) o;
+        return id == that.id &&
+               isLiked == that.isLiked &&
+               Objects.equals(title, that.title) &&
+               Objects.equals(ingredients, that.ingredients) &&
+               Objects.equals(instructions, that.instructions) &&
+               Objects.equals(created_at, that.created_at) &&
+               Objects.equals(userId, that.userId) &&
+               Objects.equals(mealType, that.mealType) &&
+               Objects.equals(foodType, that.foodType) &&
+               Objects.equals(photo_url, that.photo_url);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, ingredients, instructions, created_at, userId, mealType, foodType, photo_url, isLiked);
+    }
+
     @NonNull
     @Override
     public String toString() {
+        // Более краткий toString для лучшей читаемости логов, можно добавить больше полей при необходимости
         return "RecipeEntity{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", ingredients='" + ingredients + '\'' +
-                ", instructions='" + instructions + '\'' +
-                ", created_at='" + created_at + '\'' +
-                ", userId='" + userId + '\'' +
-                ", photo_url='" + photo_url + '\'' +
                 ", isLiked=" + isLiked +
+                ", mealType='" + mealType + '\'' +
+                ", foodType='" + foodType + '\'' +
                 '}';
     }
 } 

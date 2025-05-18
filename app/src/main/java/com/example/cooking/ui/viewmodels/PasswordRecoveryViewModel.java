@@ -1,23 +1,24 @@
 package com.example.cooking.ui.viewmodels;
 
+import android.app.Application;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 import android.util.Patterns;
 
+import com.example.cooking.data.models.ApiResponse;
 import com.example.cooking.data.models.PasswordResetRequest;
 import com.example.cooking.data.models.PasswordResetResponse;
 import com.example.cooking.network.api.ApiService;
-import com.example.cooking.network.services.RetrofitClient; // Предполагаем, что RetrofitClient здесь
+import com.example.cooking.network.services.NetworkService;
+import com.example.cooking.network.utils.ApiCallHandler;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 // import com.example.cooking.data.repository.UserRepository; // Пример
 // import com.example.cooking.domain.usecase.PasswordRecoveryUseCase; // Пример
 
-public class PasswordRecoveryViewModel extends ViewModel {
+public class PasswordRecoveryViewModel extends AndroidViewModel {
 
     private final MutableLiveData<String> _email = new MutableLiveData<>();
     public LiveData<String> email = _email;
@@ -31,9 +32,10 @@ public class PasswordRecoveryViewModel extends ViewModel {
     private ApiService apiService;
 
     // Конструктор
-    public PasswordRecoveryViewModel() {
+    public PasswordRecoveryViewModel(Application application) {
+        super(application);
         // Получаем экземпляр сервиса.
-        apiService = RetrofitClient.getClient().create(ApiService.class);
+        apiService = NetworkService.getApiService(application.getApplicationContext());
     }
 
     // public PasswordRecoveryViewModel(AuthApiService apiService) { // Вариант с DI
@@ -56,32 +58,19 @@ public class PasswordRecoveryViewModel extends ViewModel {
 
         // Сетевой запрос
         PasswordResetRequest request = new PasswordResetRequest(currentEmail);
-        apiService.requestPasswordReset(request).enqueue(new Callback<PasswordResetResponse>() {
+        Call<ApiResponse> call = apiService.requestPasswordReset(request);
+        
+        ApiCallHandler.execute(call, new ApiCallHandler.ApiCallback<ApiResponse>() {
             @Override
-            public void onResponse(Call<PasswordResetResponse> call, Response<PasswordResetResponse> response) {
+            public void onSuccess(ApiResponse response) {
                 _isLoading.postValue(false);
-                if (response.isSuccessful() && response.body() != null) {
-                    _recoveryStatus.postValue(new RecoveryStatus.Success(response.body().getMessage()));
-                } else {
-                    // Обработка ошибок сервера (например, код 4xx, 5xx)
-                    // Можно получить более детальное сообщение из response.errorBody()
-                    String errorMessage = "Ошибка сервера. Попробуйте позже.";
-                    if (response.errorBody() != null) {
-                        try {
-                            // Попытка извлечь сообщение об ошибке, если сервер его отправляет в известном формате
-                            // errorMessage = response.errorBody().string(); // Это нужно делать осторожно
-                        } catch (Exception e) {
-                            // Log.e("ViewModel", "Error parsing error body", e);
-                        }
-                    }
-                    _recoveryStatus.postValue(new RecoveryStatus.Error(errorMessage));
-                }
+                _recoveryStatus.postValue(new RecoveryStatus.Success(response.getMessage()));
             }
-
+            
             @Override
-            public void onFailure(Call<PasswordResetResponse> call, Throwable t) {
+            public void onError(String errorMessage) {
                 _isLoading.postValue(false);
-                _recoveryStatus.postValue(new RecoveryStatus.Error("Ошибка сети: " + t.getMessage()));
+                _recoveryStatus.postValue(new RecoveryStatus.Error(errorMessage));
             }
         });
     }

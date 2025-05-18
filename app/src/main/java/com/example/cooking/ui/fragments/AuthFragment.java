@@ -13,7 +13,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -25,6 +27,7 @@ import com.example.cooking.ui.activities.Regist;
 import com.example.cooking.ui.activities.PasswordRecoveryActivity;
 import com.example.cooking.ui.viewmodels.AuthViewModel;
 import com.example.cooking.ui.viewmodels.MainViewModel;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseUser;
@@ -86,10 +89,26 @@ public class AuthFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Получаем NavController
         navController = Navigation.findNavController(view);
+
+        // Инициализация Toolbar
+        MaterialToolbar toolbar = view.findViewById(R.id.toolbar_auth);
+        
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Используем NavController для возврата назад, если он доступен
+                if (navController != null) {
+                    navController.navigateUp();
+                } else if (getActivity() != null) {
+                    // Как запасной вариант, если NavController почему-то не инициализирован
+                    getActivity().getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        });
     }
 
     private void setupObservers() {

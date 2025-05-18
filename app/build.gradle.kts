@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
+    id("androidx.navigation.safeargs")
 }
 
 android {
@@ -68,6 +69,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel:2.6.2")
     implementation("androidx.lifecycle:lifecycle-livedata:2.6.2")
     implementation("androidx.security:security-crypto:1.0.0")
+    implementation("com.squareup.picasso:picasso:2.8")
 
     // WorkManager для фоновой синхронизации в LTR-клиенте
     implementation("androidx.work:work-runtime:2.9.0")

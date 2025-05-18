@@ -1,6 +1,7 @@
 package com.example.cooking.ui.viewmodels;
 
 import android.app.Application;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -16,8 +17,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.cooking.Recipe.Ingredient;
 import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.Recipe.Step;
+import com.example.cooking.network.services.RecipeService;
 import com.example.cooking.utils.MySharedPreferences;
-import com.example.cooking.network.services.RecipeManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * ViewModel для экрана редактирования рецепта.
@@ -32,7 +34,7 @@ import java.util.concurrent.Executors;
 public class EditRecipeViewModel extends AndroidViewModel {
     private static final String TAG = "EditRecipeViewModel";
 
-    private final RecipeManager recipeManager;
+    private final RecipeService recipeService;
     private final MySharedPreferences preferences;
     private final ExecutorService executor;
 
@@ -53,7 +55,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
 
     public EditRecipeViewModel(@NonNull Application application) {
         super(application);
-        recipeManager = new RecipeManager(application);
+        recipeService = new RecipeService(application);
         preferences = new MySharedPreferences(application);
         executor = Executors.newSingleThreadExecutor();
     }
@@ -307,8 +309,8 @@ public class EditRecipeViewModel extends AndroidViewModel {
         Log.d(TAG, "saveRecipe: ID рецепта = " + currentRecipeId);
         Log.d(TAG, String.valueOf(permission));
         Log.d(TAG, userId);
-        Log.d(TAG, "saveRecipe: Вызов recipeManager.updateRecipe...");
-        recipeManager.updateRecipe(
+        Log.d(TAG, "saveRecipe: Вызов recipeService.updateRecipe...");
+        recipeService.updateRecipe(
             currentTitle,
             currentIngredients,
             currentSteps,
@@ -316,21 +318,36 @@ public class EditRecipeViewModel extends AndroidViewModel {
             currentRecipeId,
             imageChanged ? currentImageBytes : null,
             permission,
-            new RecipeManager.RecipeSaveCallback() {
+            new RecipeService.RecipeSaveCallback() {
                 @Override
-                public void onSuccess(String message) {
+                public void onSuccess(com.example.cooking.network.models.GeneralServerResponse response, Recipe updatedRecipe) {
                     isSaving.postValue(false);
-                    saveResult.postValue(true);
-                    Log.d(TAG, "Рецепт успешно обновлен: " + message);
-                    // Очистка кэша? Возможно, не здесь, а при возврате в список
+                    if (response.isSuccess()) {
+                        saveResult.postValue(true);
+                        Log.d(TAG, "Рецепт успешно обновлен: " + response.getMessage());
+                        // updatedRecipe содержит данные, которые были отправлены на сервер и успешно обновлены там.
+                        // Эти же данные были использованы для обновления локальной БД в RecipeService.
+                        // Здесь можно дополнительно что-то сделать с updatedRecipe, если нужно.
+                        if (updatedRecipe != null) {
+                            Log.d(TAG, "Обновленный рецепт (из колбэка): ID " + updatedRecipe.getId() + ", Title: " + updatedRecipe.getTitle());
+                        }
+                    } else {
+                        saveResult.postValue(false);
+                        errorMessage.postValue("Ошибка обновления: " + response.getMessage());
+                        Log.w(TAG, "Ошибка при обновлении рецепта (сервер ответил success=false): " + response.getMessage());
+                    }
                 }
 
                 @Override
-                public void onFailure(String error) {
+                public void onFailure(String error, com.example.cooking.network.models.GeneralServerResponse errorResponse) {
                     isSaving.postValue(false);
-                    errorMessage.postValue(error);
                     saveResult.postValue(false);
-                    Log.e(TAG, "Ошибка обновления рецепта: " + error);
+                    String detailedError = error;
+                    if (errorResponse != null && errorResponse.getMessage() != null) {
+                        detailedError += " (Сервер: " + errorResponse.getMessage() + ")";
+                    }
+                    errorMessage.postValue(detailedError);
+                    Log.e(TAG, "Ошибка при обновлении рецепта: " + detailedError);
                 }
             }
         );

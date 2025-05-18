@@ -23,7 +23,7 @@ import com.example.cooking.ui.activities.MainActivity;
 import com.example.cooking.utils.MySharedPreferences;
 import com.example.cooking.R;
 import com.example.cooking.Recipe.Recipe;
-import com.example.cooking.ui.adapters.RecipeAdapter;
+// import com.example.cooking.ui.adapters.RecipeAdapter; // Временно закомментировано
 import com.example.cooking.ui.viewmodels.FavoritesViewModel;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
@@ -34,11 +34,12 @@ import java.util.Objects;
 /**
  * Фрагмент для отображения избранных (лайкнутых) рецептов пользователя.
  */
-public class FavoritesFragment extends Fragment implements RecipeAdapter.OnRecipeLikeListener {
+// public class FavoritesFragment extends Fragment implements RecipeAdapter.OnRecipeLikeListener { // Временно закомментировано
+public class FavoritesFragment extends Fragment { // Временно изменено
     private static final String TAG = "FavoritesFragment";
     
     private RecyclerView recyclerView;
-    private RecipeAdapter adapter;
+    // private RecipeAdapter adapter; // Временно закомментировано
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView emptyView;
     private CircularProgressIndicator progressIndicator;
@@ -93,8 +94,8 @@ public class FavoritesFragment extends Fragment implements RecipeAdapter.OnRecip
     }
     
     private void setupRecyclerView() {
-        adapter = new RecipeAdapter(new ArrayList<>(), this);
-        recyclerView.setAdapter(adapter);
+        // adapter = new RecipeAdapter(new ArrayList<>(), this); // Временно закомментировано
+        // recyclerView.setAdapter(adapter); // Временно закомментировано
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
     }
     
@@ -160,7 +161,8 @@ public class FavoritesFragment extends Fragment implements RecipeAdapter.OnRecip
         
         viewModel.getIsRefreshing().observe(getViewLifecycleOwner(), isRefreshing -> {
              Log.d(TAG, "Observer received isRefreshing update: " + isRefreshing);
-             if (isRefreshing && adapter.getItemCount() == 0) {
+             // if (isRefreshing && adapter.getItemCount() == 0) { // Временно закомментировано
+             if (isRefreshing && (recyclerView.getAdapter() == null || recyclerView.getAdapter().getItemCount() == 0)) { // Изменено для проверки recyclerView.getAdapter()
                  showLoading();
              }
              swipeRefreshLayout.setRefreshing(isRefreshing);
@@ -171,7 +173,8 @@ public class FavoritesFragment extends Fragment implements RecipeAdapter.OnRecip
              swipeRefreshLayout.setRefreshing(false);
              hideLoading();
              if (error != null && !error.isEmpty()) {
-                 if (adapter.getItemCount() == 0) {
+                 // if (adapter.getItemCount() == 0) { // Временно закомментировано
+                 if (recyclerView.getAdapter() == null || recyclerView.getAdapter().getItemCount() == 0) { // Изменено для проверки recyclerView.getAdapter()
                     showErrorState(error);
                  } else {
                     hideErrorState();
@@ -186,7 +189,7 @@ public class FavoritesFragment extends Fragment implements RecipeAdapter.OnRecip
      * Обновляет список рецептов в UI и управляет видимостью заглушки.
      */
     private void updateRecipesList(List<Recipe> recipes) {
-        adapter.updateRecipes(recipes);
+        // adapter.updateRecipes(recipes); // Временно закомментировано
         if (recipes.isEmpty()) {
             String currentQuery = searchView.getQuery().toString();
             if (currentQuery == null || currentQuery.trim().isEmpty()) {
@@ -267,7 +270,7 @@ public class FavoritesFragment extends Fragment implements RecipeAdapter.OnRecip
      */
     private void showLoading() {
         Log.d(TAG, "Showing loading indicator.");
-        if (progressIndicator != null && adapter.getItemCount() == 0) {
+        if (progressIndicator != null && (recyclerView.getAdapter() == null || recyclerView.getAdapter().getItemCount() == 0)) {
              recyclerView.setVisibility(View.GONE);
              if (emptyContainer != null) emptyContainer.setVisibility(View.GONE);
              emptyView.setVisibility(View.GONE);
@@ -297,32 +300,19 @@ public class FavoritesFragment extends Fragment implements RecipeAdapter.OnRecip
         }
     }
     
-    /**
-     * Обработчик нажатия лайка/дизлайка в адаптере.
-     */
-    @Override
-    public void onRecipeLike(Recipe recipe, boolean isLiked) {
-        // Проверяем, авторизован ли пользователь
-        if (userId.equals("0")) {
-            // Показываем Toast-сообщение
-            Toast.makeText(requireContext(), 
-                "Войдите в систему, чтобы добавлять рецепты в избранное", 
-                Toast.LENGTH_SHORT).show();
-            
-            // Для неавторизованного пользователя восстанавливаем исходное состояние чекбокса
-            // Эта часть не нужна, так как мы изменили логику в адаптере
-            return;
-        }
-        
-        // Только для авторизованных пользователей показываем сообщение об успехе
-        String message = isLiked ? 
-            "Рецепт добавлен в избранное" : 
-            "Рецепт удален из избранного";
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-        
-        // Обновляем состояние в ViewModel (это обновит и локальную базу, и сервер)
-        viewModel.updateLikeStatus(recipe, isLiked);
-    }
+    // @Override // Временно закомментировано
+    // public void onRecipeLike(Recipe recipe, boolean isLiked) { // Временно закомментировано
+    //     Log.d(TAG, "Recipe like status changed: " + recipe.getTitle() + ", isLiked: " + isLiked);
+    //     if (!viewModel.isUserLoggedIn()) {
+    //         Toast.makeText(getContext(), "Войдите, чтобы изменить статус лайка", Toast.LENGTH_SHORT).show();
+    //         // Обновляем UI, чтобы отразить старое состояние
+    //         if (adapter != null) {
+    //             adapter.notifyItemChanged(viewModel.getFilteredLikedRecipes().getValue().indexOf(recipe));
+    //         }
+    //         return;
+    //     }
+    //     viewModel.toggleLikeStatus(recipe, isLiked);
+    // }
     
     /**
      * Метод для возможного обновления данных извне (например, после логина).

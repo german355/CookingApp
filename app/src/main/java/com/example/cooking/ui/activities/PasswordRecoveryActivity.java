@@ -8,10 +8,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.cooking.R;
 import com.example.cooking.ui.viewmodels.PasswordRecoveryViewModel;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class PasswordRecoveryActivity extends AppCompatActivity {
@@ -26,6 +28,15 @@ public class PasswordRecoveryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_password_recovery);
+
+        // Инициализация Toolbar
+        MaterialToolbar toolbar = findViewById(R.id.toolbar_password_recovery);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
 
         // Инициализация ViewModel
         // Для более сложного создания ViewModel (с фабрикой) используйте ViewModelProvider.Factory
@@ -75,20 +86,11 @@ public class PasswordRecoveryActivity extends AppCompatActivity {
         sendRecoveryEmailButton.setOnClickListener(v -> {
             viewModel.requestPasswordRecovery();
         });
-
-        // Добавление кнопки "Назад" в ActionBar (опционально)
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            // Можете также установить заголовок, если он не задан в XML или манифесте
-            // getSupportActionBar().setTitle("Восстановление пароля");
-        }
     }
 
-    // Обработка нажатия кнопки "Назад" в ActionBar (опционально)
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        getOnBackPressedDispatcher().onBackPressed();
         return true;
     }
 } 

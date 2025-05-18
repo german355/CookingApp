@@ -9,6 +9,7 @@
     app:entries="@array/theme_entries"
     app:entryValues="@array/theme_value"
     app:summary="%s"
+    app:widgetLayout="@layout/preference_widget_chevron"
     />
     </PreferenceCategory>
 

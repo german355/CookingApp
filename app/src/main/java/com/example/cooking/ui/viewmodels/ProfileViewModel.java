@@ -8,11 +8,11 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.cooking.auth.FirebaseAuthManager;
 import com.example.cooking.data.database.AppDatabase;
 import com.example.cooking.data.database.LikedRecipeDao;
 import com.example.cooking.data.models.ApiResponse;
 import com.example.cooking.network.services.UserService;
+import com.example.cooking.auth.FirebaseAuthManager;
 import com.example.cooking.utils.MySharedPreferences;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -44,7 +44,7 @@ public class ProfileViewModel extends AndroidViewModel {
         super(application);
         authManager = new FirebaseAuthManager(application);
         preferences = new MySharedPreferences(application);
-        userService = new UserService();
+        userService = new UserService(application);
         likedRecipeDao = AppDatabase.getInstance(application).likedRecipeDao();
         databaseExecutor = Executors.newSingleThreadExecutor();
 
@@ -113,7 +113,7 @@ public class ProfileViewModel extends AndroidViewModel {
                 operationSuccess.postValue(true);
 
                 // Обновляем имя пользователя на сервере
-                userService.updateUserName(user.getUid(), newName, new UserService.UserServiceCallback() {
+                userService.updateUserName(user.getUid(), newName, new UserService.UserCallback() {
                     @Override
                     public void onSuccess(ApiResponse response) {
                         Log.d(TAG, "Имя пользователя успешно обновлено на сервере");
@@ -234,7 +234,7 @@ public class ProfileViewModel extends AndroidViewModel {
                                 operationSuccess.postValue(true);
 
                                 // Удаляем данные пользователя с сервера
-                                userService.deleteUser(user.getUid(), new UserService.UserServiceCallback() {
+                                userService.deleteUser(user.getUid(), new UserService.UserCallback() {
                                     @Override
                                     public void onSuccess(ApiResponse response) {
                                         Log.d(TAG, "Данные пользователя успешно удалены с сервера");

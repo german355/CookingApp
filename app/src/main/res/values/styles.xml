@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Стиль для SearchView -->
-    <style name="Widget.App.SearchView" parent="Widget.Material3.SearchView">
+    <style name="Widget.App.SearchView" parent="Widget.AppCompat.SearchView">
         <item name="android:background">@drawable/search_view_background</item>
         <item name="queryBackground">@android:color/transparent</item>
+        <item name="submitBackground">@android:color/transparent</item>
         <item name="iconifiedByDefault">false</item>
         <item name="queryHint">@string/search</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
         <item name="android:focusableInTouchMode">true</item>
-        <item name="submitBackground">@android:color/transparent</item>
         <item name="android:editTextColor">?attr/colorOnSurface</item>
         <item name="android:textColorHint">?attr/colorOnSurfaceVariant</item>
         <item name="android:textAppearance">@style/TextAppearance.App.SearchView</item>
-        <item name="android:backgroundTint">?attr/colorSurface</item>
+        <item name="android:backgroundTint">@null</item>
         <item name="android:elevation">4dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="closeIcon">@drawable/ic_close</item>
+        <item name="searchIcon">@drawable/ic_search</item>
+        <item name="searchHintIcon">@drawable/ic_search</item>
     </style>
     
     <!-- Стиль текста для SearchView, который скрывает подчеркивание -->
-    <style name="TextAppearance.App.SearchView" parent="TextAppearance.Material3.BodyLarge">
+    <style name="TextAppearance.App.SearchView" parent="TextAppearance.AppCompat.Body1">
         <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="android:textColorHint">?attr/colorOnSurfaceVariant</item>
+        <item name="android:textColorHint">?attr/colorPrimary</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
     
     <!-- Стиль для карточек рецептов -->

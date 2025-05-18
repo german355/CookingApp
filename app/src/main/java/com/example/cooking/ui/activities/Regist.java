@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -25,6 +26,7 @@ import com.example.cooking.R;
 import com.example.cooking.data.models.ApiResponse;
 import com.example.cooking.network.services.UserService;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseUser;
@@ -64,6 +66,15 @@ public class Regist extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        
+        // Инициализация Toolbar
+        MaterialToolbar toolbar = findViewById(R.id.toolbar_register);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
         
         // Инициализируем ViewModel
         viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
@@ -346,5 +357,11 @@ public class Regist extends AppCompatActivity {
         if (requestCode == RC_SIGN_IN) {
             viewModel.handleGoogleSignInResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        getOnBackPressedDispatcher().onBackPressed();
+        return true;
     }
 }

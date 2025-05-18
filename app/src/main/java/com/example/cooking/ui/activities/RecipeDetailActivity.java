@@ -1,6 +1,7 @@
 package com.example.cooking.ui.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -9,10 +10,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +26,8 @@ import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.ui.adapters.StepAdapter;
 import com.example.cooking.ui.adapters.IngredientViewAdapter;
 import com.example.cooking.ui.viewmodels.RecipeDetailViewModel;
+import com.example.cooking.utils.ThemeUtils;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 
@@ -78,17 +82,29 @@ public class RecipeDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Применяем сохраненную тему перед setContentView
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String themeValue = sharedPreferences.getString("theme", "system"); // Используем тот же ключ и значение по умолчанию
+        ThemeUtils.applyTheme(themeValue);
+
         setContentView(R.layout.activity_recipe_detail);
 
         // Настраиваем toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
         
         // Настраиваем обработчик нажатия на кнопку "назад"
         toolbar.setNavigationOnClickListener(v -> finish());
 
         // Получаем данные о рецепте из Intent
         currentRecipe = getIntent().getParcelableExtra(EXTRA_SELECTED_RECIPE); // Используем константу
+
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
 
         // Проверяем, что данные получены
         if (currentRecipe == null) {
@@ -133,9 +149,13 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         // Инициализируем и настраиваем ViewModel
         viewModel = new ViewModelProvider(this).get(RecipeDetailViewModel.class);
-        // Вместо передачи всех полей, передаем только ID
-        // ViewModel должен сам загрузить Recipe из репозитория по ID
-        viewModel.loadRecipe(recipeId); 
+        
+        // Получаем уровень доступа пользователя
+        com.example.cooking.utils.MySharedPreferences preferences = new com.example.cooking.utils.MySharedPreferences(this);
+        int permissionLevel = preferences.getInt("permission", 1);
+        
+        // Вместо loadRecipe используем init 
+        viewModel.init(recipeId, permissionLevel);
         
         // Настраиваем наблюдателей LiveData
         setupObservers();
@@ -145,11 +165,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         // Первичное отображение данных из Intent (пока ViewModel загружает)
         Log.d(TAG, "onCreate: Установка начального UI...");
-        if (titleTextView != null && currentRecipe != null) {
+        if (titleTextView != null && currentRecipe != null && currentRecipe.getTitle() != null) {
             Log.d(TAG, "onCreate: Установка заголовка: " + currentRecipe.getTitle());
             titleTextView.setText(currentRecipe.getTitle());
         } else {
-            Log.e(TAG, "onCreate: titleTextView is null или currentRecipe is null перед установкой заголовка");
+            Log.e(TAG, "onCreate: titleTextView is null или currentRecipe/title is null перед установкой заголовка");
+            if (titleTextView != null) titleTextView.setText("Название не найдено");
         }
         createdAtTextView.setText(String.format(Locale.getDefault(), "Создано: %s", currentRecipe.getCreated_at()));
         updateLikeButton(currentRecipe.isLiked());
@@ -231,43 +252,37 @@ public class RecipeDetailActivity extends AppCompatActivity {
         // Наблюдаем за данными рецепта из ViewModel
         viewModel.getRecipe().observe(this, recipeFromVm -> {
             if (recipeFromVm != null) {
-                Log.d(TAG, "Получен обновленный рецепт из ViewModel. Шагов: " + (recipeFromVm.getSteps() != null ? recipeFromVm.getSteps().size() : "null"));
-                currentRecipe = recipeFromVm; // Обновляем текущий рецепт
-                updateUI(currentRecipe); // Обновляем весь UI свежими данными
-            } else {
-                Log.w(TAG, "ViewModel вернул null Recipe объект.");
-                // Можно показать сообщение об ошибке или использовать данные из Intent
-                // если они были успешно получены ранее
-                if (currentRecipe != null) { 
-                    updateUI(currentRecipe); // Показываем то, что пришло в Intent
-                } else {
-                     Toast.makeText(this, "Не удалось загрузить детали рецепта.", Toast.LENGTH_SHORT).show();
-                }
+                currentRecipe = recipeFromVm;
+                updateUI(recipeFromVm);
             }
         });
         
-        // Наблюдаем за состоянием лайка
-        viewModel.isLiked().observe(this, this::updateLikeButton);
+        // Наблюдаем за статусом "лайк"
+        viewModel.getIsLiked().observe(this, this::updateLikeButton);
         
-        // Наблюдаем за сообщениями об ошибках
+        // Наблюдаем за статусом индикатора загрузки
+        viewModel.getIsLoading().observe(this, isLoading -> {
+            // Здесь можно показать/скрыть индикатор загрузки
+            if (isLoading) {
+                // Показать прогрессбар или другой индикатор
+            } else {
+                // Скрыть индикатор
+            }
+        });
+        
+        // Наблюдаем за ошибками
         viewModel.getErrorMessage().observe(this, error -> {
             if (error != null && !error.isEmpty()) {
                 Toast.makeText(this, error, Toast.LENGTH_LONG).show();
             }
         });
         
-        // Наблюдаем за статусом удаления
-        viewModel.isDeleteSuccess().observe(this, isSuccess -> {
-            if (isSuccess) {
+        // Наблюдаем за результатом удаления
+        viewModel.getDeleteSuccess().observe(this, success -> {
+            if (success != null && success) {
                 Toast.makeText(this, "Рецепт успешно удален", Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK);
                 finish();
             }
-        });
-        
-        // Наблюдаем за разрешением на редактирование
-        viewModel.hasEditPermission().observe(this, hasPermission -> {
-            invalidateOptionsMenu(); // Обновляем меню
         });
     }
     
@@ -281,11 +296,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
         }
         Log.d(TAG, "updateUI: Обновление UI для рецепта: " + recipe.getTitle());
         
-        if (titleTextView != null) {
+        if (titleTextView != null && recipe.getTitle() != null) {
              Log.d(TAG, "updateUI: Установка заголовка: " + recipe.getTitle());
             titleTextView.setText(recipe.getTitle());
         } else {
-             Log.e(TAG, "updateUI: titleTextView is null");
+             Log.e(TAG, "updateUI: titleTextView is null или recipe.getTitle() is null");
+             if (titleTextView != null) titleTextView.setText("Название не найдено");
         }
         createdAtTextView.setText(String.format(Locale.getDefault(), "Создано: %s", recipe.getCreated_at()));
         updateLikeButton(recipe.isLiked());
@@ -334,34 +350,75 @@ public class RecipeDetailActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_recipe_detail, menu);
-        MenuItem editItem = menu.findItem(R.id.action_edit);
-        MenuItem deleteItem = menu.findItem(R.id.action_delete);
-
-        // Показываем или скрываем кнопки в зависимости от разрешений
-        Boolean hasPermission = viewModel.hasEditPermission().getValue();
-        if (editItem != null) editItem.setVisible(hasPermission != null && hasPermission);
-        if (deleteItem != null) deleteItem.setVisible(hasPermission != null && hasPermission);
-
+        
+        // Получаем текущий рецепт и проверяем права доступа
+        Recipe recipe = currentRecipe;
+        if (recipe == null) {
+            return true;
+        }
+        
+        // Получаем ID текущего пользователя и его права доступа
+        com.example.cooking.utils.MySharedPreferences prefs = new com.example.cooking.utils.MySharedPreferences(this);
+        String currentUserId = prefs.getString("userId", "0");
+        int permissionLevel = prefs.getInt("permission", 1);
+        
+        // Имеет право редактировать, если пользователь - автор рецепта или админ (permissionLevel = 2)
+        boolean hasEditPermission = (recipe.getUserId() != null && recipe.getUserId().equals(currentUserId)) 
+                                   || permissionLevel == 2;
+                                   
+        // Показываем/скрываем пункты меню в зависимости от прав
+        MenuItem moreItem = menu.findItem(R.id.action_more);
+        if (moreItem != null && moreItem.hasSubMenu()) {
+            Menu subMenu = moreItem.getSubMenu();
+            
+            MenuItem editItem = subMenu.findItem(R.id.action_edit);
+            if (editItem != null) {
+                editItem.setVisible(hasEditPermission);
+            }
+            
+            MenuItem deleteItem = subMenu.findItem(R.id.action_delete);
+            if (deleteItem != null) {
+                deleteItem.setVisible(hasEditPermission);
+            }
+        }
+        
         return true;
     }
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Recipe recipe = viewModel.getRecipe().getValue();
+        Recipe recipe = currentRecipe;
         if (recipe == null) {
             return super.onOptionsItemSelected(item);
         }
         
-        int itemId = item.getItemId();
+        int id = item.getItemId();
         
-        if (itemId == R.id.action_share) {
+        // Получаем ID текущего пользователя и его права доступа
+        com.example.cooking.utils.MySharedPreferences prefs = new com.example.cooking.utils.MySharedPreferences(this);
+        String currentUserId = prefs.getString("userId", "0");
+        int permissionLevel = prefs.getInt("permission", 1);
+        
+        // Имеет право редактировать, если пользователь - автор рецепта или админ
+        boolean hasEditPermission = (recipe.getUserId() != null && recipe.getUserId().equals(currentUserId)) 
+                                   || permissionLevel == 2;
+                                   
+        if (id == R.id.action_share) {
             shareRecipe(recipe);
             return true;
-        } else if (itemId == R.id.action_edit) {
-            editRecipe(recipe);
+        } else if (id == R.id.action_edit) {
+            if (hasEditPermission) {
+                editRecipe(recipe);
+            } else {
+                Toast.makeText(this, "У вас нет прав на редактирование этого рецепта", Toast.LENGTH_SHORT).show();
+            }
             return true;
-        } else if (itemId == R.id.action_delete) {
-            showDeleteConfirmationDialog();
+        } else if (id == R.id.action_delete) {
+            if (hasEditPermission) {
+                showDeleteConfirmationDialog();
+            } else {
+                Toast.makeText(this, "У вас нет прав на удаление этого рецепта", Toast.LENGTH_SHORT).show();
+            }
             return true;
         }
         
@@ -372,16 +429,15 @@ public class RecipeDetailActivity extends AppCompatActivity {
      * Показывает диалог подтверждения удаления рецепта
      */
     private void showDeleteConfirmationDialog() {
+        Recipe recipe = currentRecipe;
+        if (recipe == null) return;
+        
         new AlertDialog.Builder(this)
-                .setTitle("Удалить рецепт?")
-                .setMessage("Вы уверены, что хотите удалить этот рецепт? Это действие необратимо.")
+                .setTitle("Удаление рецепта")
+                .setMessage("Вы уверены, что хотите удалить рецепт? Это действие нельзя отменить.")
                 .setPositiveButton("Удалить", (dialog, which) -> {
-                    Recipe recipe = viewModel.getRecipe().getValue();
-                    if (recipe != null) {
-                        viewModel.deleteRecipe(recipe.getId());
-                    } else {
-                        Toast.makeText(this, "Ошибка: Не удалось получить ID рецепта для удаления.", Toast.LENGTH_SHORT).show();
-                    }
+                    // Вызываем метод удаления в ViewModel
+                    viewModel.deleteRecipe();
                 })
                 .setNegativeButton("Отмена", null)
                 .show();
@@ -417,11 +473,23 @@ public class RecipeDetailActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         
         if (requestCode == EDIT_RECIPE_REQUEST && resultCode == RESULT_OK) {
-            // Рецепт был изменен, нужно перезагрузить данные
-            Toast.makeText(this, "Рецепт обновлен", Toast.LENGTH_SHORT).show();
-            if (viewModel != null) {
-                viewModel.loadRecipe(recipeId); // Заставляем ViewModel перезагрузить данные
-            }
+            // Получаем свежий рецепт после редактирования
+            // Используем RecipeDetailViewModel для перезагрузки
+            Toast.makeText(this, "Рецепт успешно обновлен", Toast.LENGTH_SHORT).show();
+            
+            // Получаем уровень доступа пользователя
+            com.example.cooking.utils.MySharedPreferences preferences = new com.example.cooking.utils.MySharedPreferences(this);
+            int permissionLevel = preferences.getInt("permission", 1);
+            
+            // Перезагружаем рецепт
+            viewModel.init(recipeId, permissionLevel);
         }
+    }
+
+    // Обработка нажатия кнопки "Назад" в ActionBar
+    @Override
+    public boolean onSupportNavigateUp() {
+        getOnBackPressedDispatcher().onBackPressed();
+        return true;
     }
 }

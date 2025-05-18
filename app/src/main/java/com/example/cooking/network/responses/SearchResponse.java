@@ -1,31 +1,63 @@
 package com.example.cooking.network.responses;
 
 import com.example.cooking.Recipe.Recipe;
+import com.example.cooking.network.models.BaseApiResponse;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
-public class SearchResponse {
-    @SerializedName("status")
-    private String status;
-
+/**
+ * Класс для представления ответа от поискового API
+ */
+public class SearchResponse extends BaseApiResponse {
+    
     @SerializedName("data")
     private Data data;
 
-    public String getStatus() {
-        return status;
-    }
-
+    /**
+     * Получает объект данных из ответа
+     * @return объект данных
+     */
     public Data getData() {
         return data;
     }
 
-    /** Вложенный класс для объекта data */
+    /**
+     * Устанавливает объект данных
+     * @param data объект данных
+     */
+    public void setData(Data data) {
+        this.data = data;
+    }
+    
+    /**
+     * Получает список результатов поиска
+     * @return список рецептов
+     */
+    public List<Recipe> getResults() {
+        return data != null ? data.getResults() : null;
+    }
+
+    /**
+     * Внутренний класс для представления данных ответа
+     */
     public static class Data {
         @SerializedName("results")
         private List<Recipe> results;
         
+        /**
+         * Получает результаты поиска
+         * @return список найденных рецептов
+         */
         public List<Recipe> getResults() {
             return results;
+        }
+        
+        /**
+         * Устанавливает результаты поиска
+         * @param results список найденных рецептов
+         */
+        public void setResults(List<Recipe> results) {
+            this.results = results;
         }
     }
 }

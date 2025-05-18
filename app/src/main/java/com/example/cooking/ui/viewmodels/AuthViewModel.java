@@ -54,7 +54,7 @@ public class AuthViewModel extends AndroidViewModel {
         super(application);
         authManager = new FirebaseAuthManager(application);
         preferences = new MySharedPreferences(application);
-        userService = new UserService();
+        userService = new UserService(application);
         likedRecipesRepository = new LikedRecipesRepository(application);
 
         checkAuthenticationState();
@@ -163,7 +163,7 @@ public class AuthViewModel extends AndroidViewModel {
                     public void onSuccess() {
                         // Сохраняем данные пользователя на сервере
                         userService.saveUser(user.getUid(), username, pendingEmail, pendingPermissionLevel,
-                                new UserService.UserServiceCallback() {
+                                new UserService.UserCallback() {
                                     @Override
                                     public void onSuccess(ApiResponse response) {
                                         String internalUserId = response.getUserId();
@@ -515,6 +515,21 @@ public class AuthViewModel extends AndroidViewModel {
             });
         } else {
             isLoading.setValue(false);
+        }
+    }
+
+    /**
+     * Алиас для совместимости со старым кодом
+     */
+    public static class UserServiceCallback implements UserService.UserCallback {
+        @Override
+        public void onSuccess(ApiResponse response) {
+            // Метод должен быть переопределен
+        }
+
+        @Override
+        public void onFailure(String errorMessage) {
+            // Метод должен быть переопределен
         }
     }
 }

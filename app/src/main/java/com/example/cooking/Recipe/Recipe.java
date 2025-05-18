@@ -16,18 +16,20 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Класс, представляющий рецепт.
- * Содержит всю информацию о рецепте, необходимую для отображения
- *
+ * Содержит всю информацию о рецепте, необходимую для отображения и взаимодействия.
+ * Реализует Parcelable для передачи между компонентами Android.
  */
 public class Recipe implements Parcelable {
+    // Основные поля рецепта
     private int id;
     private String title;
     private String created_at;
     private String userId;
-    private boolean isLiked;
+    private boolean isLiked; // Статус "лайк" от пользователя
 
     @SerializedName("ingredients")
     @JsonAdapter(IngredientsAdapter.class)
@@ -36,17 +38,23 @@ public class Recipe implements Parcelable {
     @SerializedName("instructions")
     @JsonAdapter(StepsAdapter.class)
     private ArrayList<Step> steps = new ArrayList<>();
-    @SerializedName("food_type")
-    private String mealType;
+    
     @SerializedName("meal_type")
-    private String foodType;
+    private String mealType; // Тип приема пищи (напр., Завтрак, Обед)
+    
+    @SerializedName("food_type")
+    private String foodType; // Тип блюда (напр., Суп, Салат)
+    
+    @SerializedName("photo")
+    private String photo_url; // URL основного изображения рецепта
 
     /**
-     * Адаптер для десериализации поля ingredients, которое может прийти как строка JSON или как массив
+     * Адаптер для десериализации поля ingredients.
+     * Позволяет корректно обрабатывать случаи, когда ingredients приходят как строка JSON или как массив.
      */
     public static class IngredientsAdapter extends TypeAdapter<ArrayList<Ingredient>> {
-        private final Gson gson = new Gson();
-        private final Type ingredientListType = new TypeToken<ArrayList<Ingredient>>() {}.getType();
+        private static final Gson GSON_INSTANCE = new Gson();
+        private static final Type INGREDIENT_LIST_TYPE = new TypeToken<ArrayList<Ingredient>>() {}.getType();
 
         @Override
         public void write(JsonWriter out, ArrayList<Ingredient> value) throws IOException {
@@ -54,7 +62,7 @@ public class Recipe implements Parcelable {
                 out.nullValue();
                 return;
             }
-            gson.toJson(value, ingredientListType, out);
+            GSON_INSTANCE.toJson(value, INGREDIENT_LIST_TYPE, out);
         }
 
         @Override
@@ -70,22 +78,24 @@ public class Recipe implements Parcelable {
                     return new ArrayList<>();
                 }
                 try {
-                    ArrayList<Ingredient> parsedIngredients = gson.fromJson(jsonString, ingredientListType);
+                    // Попытка десериализовать из строки
+                    ArrayList<Ingredient> parsedIngredients = GSON_INSTANCE.fromJson(jsonString, INGREDIENT_LIST_TYPE);
                     return parsedIngredients != null ? parsedIngredients : new ArrayList<>();
                 } catch (Exception e) {
                     android.util.Log.e("Recipe", "Ошибка преобразования JSON-строки ингредиентов: " + jsonString, e);
-                    return new ArrayList<>();
+                    return new ArrayList<>(); // Возврат пустого списка при ошибке
                 }
             } else if (in.peek() == JsonToken.BEGIN_ARRAY) {
                 try {
-                    ArrayList<Ingredient> parsedIngredients = gson.fromJson(in, ingredientListType);
+                    // Попытка десериализовать из массива
+                    ArrayList<Ingredient> parsedIngredients = GSON_INSTANCE.fromJson(in, INGREDIENT_LIST_TYPE);
                     return parsedIngredients != null ? parsedIngredients : new ArrayList<>();
                 } catch (Exception e) {
                     android.util.Log.e("Recipe", "Ошибка парсинга массива ингредиентов", e);
-                    return new ArrayList<>();
+                    return new ArrayList<>(); // Возврат пустого списка при ошибке
                 }
             } else {
-                android.util.Log.w("Recipe", "Неожиданный JSON токен для ingredients: " + in.peek());
+                android.util.Log.w("Recipe", "Неожиданный JSON токен для ingredients: " + in.peek() + ". Пропуск значения.");
                 in.skipValue();
                 return new ArrayList<>();
             }
@@ -93,11 +103,12 @@ public class Recipe implements Parcelable {
     }
 
     /**
-     * Адаптер для десериализации поля steps, которое может прийти как строка JSON или как массив
+     * Адаптер для десериализации поля steps (инструкции).
+     * Позволяет корректно обрабатывать случаи, когда steps приходят как строка JSON или как массив.
      */
     public static class StepsAdapter extends TypeAdapter<ArrayList<Step>> {
-        private final Gson gson = new Gson();
-        private final Type stepListType = new TypeToken<ArrayList<Step>>() {}.getType();
+        private static final Gson GSON_INSTANCE = new Gson();
+        private static final Type STEP_LIST_TYPE = new TypeToken<ArrayList<Step>>() {}.getType();
 
         @Override
         public void write(JsonWriter out, ArrayList<Step> value) throws IOException {
@@ -105,51 +116,61 @@ public class Recipe implements Parcelable {
                 out.nullValue();
                 return;
             }
-            gson.toJson(value, stepListType, out);
+            GSON_INSTANCE.toJson(value, STEP_LIST_TYPE, out);
         }
 
         @Override
         public ArrayList<Step> read(JsonReader in) throws IOException {
             if (in.peek() == JsonToken.NULL) {
                 in.nextNull();
-                android.util.Log.d("StepsAdapter", "Read null, returning empty list.");
+                android.util.Log.d("StepsAdapter", "Steps: JSON был null, возвращен пустой список.");
                 return new ArrayList<>();
             }
 
             if (in.peek() == JsonToken.STRING) {
                 String jsonString = in.nextString();
-                android.util.Log.d("StepsAdapter", "Read string: " + jsonString);
+                android.util.Log.d("StepsAdapter", "Steps: читается как JSON-строка: " + jsonString);
                 if (jsonString.isEmpty()) {
-                    android.util.Log.d("StepsAdapter", "String is empty, returning empty list.");
+                    android.util.Log.d("StepsAdapter", "Steps: JSON-строка пуста, возвращен пустой список.");
                     return new ArrayList<>();
                 }
                 try {
-                    ArrayList<Step> parsedSteps = gson.fromJson(jsonString, stepListType);
-                    int size = (parsedSteps != null) ? parsedSteps.size() : 0;
-                    android.util.Log.d("StepsAdapter", "Parsed string to list, size: " + size);
+                    ArrayList<Step> parsedSteps = GSON_INSTANCE.fromJson(jsonString, STEP_LIST_TYPE);
+                    android.util.Log.d("StepsAdapter", "Steps: JSON-строка успешно распарсена, количество шагов: " + (parsedSteps != null ? parsedSteps.size() : 0));
                     return parsedSteps != null ? parsedSteps : new ArrayList<>();
                 } catch (Exception e) {
-                    android.util.Log.e("StepsAdapter", "Error parsing string: " + jsonString, e);
+                    android.util.Log.e("StepsAdapter", "Steps: ошибка парсинга JSON-строки: " + jsonString, e);
                     return new ArrayList<>();
                 }
             } else if (in.peek() == JsonToken.BEGIN_ARRAY) {
-                android.util.Log.d("StepsAdapter", "Reading as array.");
+                android.util.Log.d("StepsAdapter", "Steps: читается как JSON-массив.");
                 try {
-                    ArrayList<Step> parsedSteps = gson.fromJson(in, stepListType);
-                    int size = (parsedSteps != null) ? parsedSteps.size() : 0;
-                    android.util.Log.d("StepsAdapter", "Parsed array to list, size: " + size);
+                    ArrayList<Step> parsedSteps = GSON_INSTANCE.fromJson(in, STEP_LIST_TYPE);
+                    android.util.Log.d("StepsAdapter", "Steps: JSON-массив успешно распарсен, количество шагов: " + (parsedSteps != null ? parsedSteps.size() : 0));
                     return parsedSteps != null ? parsedSteps : new ArrayList<>();
                 } catch (Exception e) {
-                    android.util.Log.e("StepsAdapter", "Error parsing array", e);
+                    android.util.Log.e("StepsAdapter", "Steps: ошибка парсинга JSON-массива.", e);
                     return new ArrayList<>();
                 }
             } else {
                 JsonToken token = in.peek();
-                android.util.Log.w("StepsAdapter", "Unexpected JSON token: " + token);
+                android.util.Log.w("StepsAdapter", "Steps: неожиданный JSON токен: " + token + ". Пропуск значения.");
                 in.skipValue();
                 return new ArrayList<>();
             }
         }
+    }
+    
+    /**
+     * Конструктор по умолчанию. 
+     * Необходим для некоторых процессов, например, Firebase десериализации или создания объекта с последующей установкой полей через сеттеры.
+     */
+    public Recipe() {
+        // Пустой конструктор
+    }
+
+    public ArrayList<Ingredient> getIngredients() {
+        return ingredients;
     }
 
     public void setIngredients(ArrayList<Ingredient> ingredients) {
@@ -163,9 +184,6 @@ public class Recipe implements Parcelable {
     public void setSteps(ArrayList<Step> steps) {
         this.steps = steps;
     }
-
-    @SerializedName("photo")
-    private String photo_url;
 
     public String getPhoto_url() {
         return photo_url;
@@ -190,14 +208,7 @@ public class Recipe implements Parcelable {
     public void setLiked(boolean liked) {
         isLiked = liked;
     }
-
-    // Конструктор по умолчанию
-    public Recipe() {
-        // Пустой конструктор для создания объекта через сеттеры
-    }
-
-    // Конструктор для тестовых данных
-
+    
     public String getMealType() {
         return mealType;
     }
@@ -214,7 +225,6 @@ public class Recipe implements Parcelable {
         this.foodType = foodType;
     }
 
-    // Геттеры и сеттеры
     public int getId() {
         return id;
     }
@@ -231,7 +241,9 @@ public class Recipe implements Parcelable {
         this.title = title;
     }
 
-    public String getCreated_at() {return created_at;}
+    public String getCreated_at() {
+        return created_at;
+    }
 
     public void setCreated_at(String created_at) {
         this.created_at = created_at;
@@ -241,113 +253,59 @@ public class Recipe implements Parcelable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Recipe{id=").append(id);
-        sb.append(", title='").append(title).append(' ');
-        sb.append(", userId='").append(userId).append(' ');
+        sb.append(", title='").append(title).append('\'');
+        sb.append(", created_at='").append(created_at).append('\'');
+        sb.append(", userId='").append(userId).append('\'');
         sb.append(", isLiked=").append(isLiked);
-        sb.append(", mealType=").append(mealType);
-        sb.append(", foodType=").append(foodType);
-        sb.append(", createdAt='").append(created_at).append(' ');
-        sb.append(", photo_url='").append(photo_url).append(' ');
-
-        sb.append(", ingredients=");
-        sb.append(new Gson().toJson(ingredients));
-
-        sb.append(", steps=");
-        sb.append(new Gson().toJson(steps));
-
+        sb.append(", ingredients=").append(ingredients != null ? ingredients.size() : 0);
+        sb.append(", steps=").append(steps != null ? steps.size() : 0);
+        sb.append(", mealType='").append(mealType).append('\'');
+        sb.append(", foodType='").append(foodType).append('\'');
+        sb.append(", photo_url='").append(photo_url).append('\'');
         sb.append('}');
         return sb.toString();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Recipe recipe = (Recipe) o;
-        return id == recipe.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
-    }
-
-    public ArrayList<Ingredient> getIngredients() {
-        return ingredients;
-    }
-
     /**
-     * Возвращает список ингредиентов для совместимости с новым адаптером
-     * @return список ингредиентов
+     * Возвращает список ингредиентов как {@link List}.
+     * @return Неизменяемый список ингредиентов или пустой список, если ингредиентов нет.
      */
     public List<Ingredient> getIngredientsAsList() {
-        return ingredients == null ? new ArrayList<>() : new ArrayList<>(ingredients);
+        return ingredients == null ? Collections.emptyList() : Collections.unmodifiableList(ingredients);
     }
 
     /**
-     * Возвращает список шагов для совместимости с новым адаптером
-     * @return список шагов
+     * Возвращает список шагов приготовления как {@link List}.
+     * @return Неизменяемый список шагов или пустой список, если шагов нет.
      */
     public List<Step> getStepsAsList() {
-        return steps == null ? new ArrayList<>() : new ArrayList<>(steps);
+        return steps == null ? Collections.emptyList() : Collections.unmodifiableList(steps);
     }
 
     /**
-     * Возвращает JSON-строку списка ингредиентов для отправки на сервер
-     * @return JSON-строка списка ингредиентов
+     * Сериализует список ингредиентов в JSON-строку.
+     * @return JSON-строка или null, если список ингредиентов пуст или null.
      */
     public String getIngredientsJson() {
-        Gson gson = new Gson();
-        return gson.toJson(ingredients);
+        if (ingredients == null || ingredients.isEmpty()) {
+            return null;
+        }
+        return IngredientsAdapter.GSON_INSTANCE.toJson(ingredients);
     }
 
     /**
-     * Возвращает JSON-строку списка шагов для отправки на сервер
-     * @return JSON-строка списка шагов
+     * Сериализует список шагов приготовления в JSON-строку.
+     * @return JSON-строка или null, если список шагов пуст или null.
      */
     public String getStepsJson() {
-        Gson gson = new Gson();
-        return gson.toJson(steps);
+        if (steps == null || steps.isEmpty()) {
+            return null;
+        }
+        return StepsAdapter.GSON_INSTANCE.toJson(steps);
     }
 
-    // --- Parcelable Implementation --- 
-
-    protected Recipe(Parcel in) {
-        id = in.readInt();
-        title = in.readString();
-        created_at = in.readString();
-        userId = in.readString();
-        mealType = in.readString();
-        foodType = in.readString();
-        isLiked = in.readByte() != 0; // isLiked == true if byte != 0
-        photo_url = in.readString();
-        // Читаем списки
-        ingredients = in.createTypedArrayList(Ingredient.CREATOR);
-        steps = in.createTypedArrayList(Step.CREATOR);
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(title);
-        dest.writeString(created_at);
-        dest.writeString(userId);
-        dest.writeString(mealType);
-        dest.writeString(foodType);
-        dest.writeByte((byte) (isLiked ? 1 : 0)); // if isLiked == true, byte == 1
-        dest.writeString(photo_url);
-        // Записываем списки
-        dest.writeTypedList(ingredients);
-        dest.writeTypedList(steps);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
+    // Parcelable implementation (CREATOR, writeToParcel, describeContents)
+    public static final Parcelable.Creator<Recipe> CREATOR = new Parcelable.Creator<Recipe>() {
         @Override
         public Recipe createFromParcel(Parcel in) {
             return new Recipe(in);
@@ -359,5 +317,59 @@ public class Recipe implements Parcelable {
         }
     };
 
-    // --- End Parcelable Implementation ---
+    protected Recipe(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        created_at = in.readString();
+        userId = in.readString();
+        isLiked = in.readByte() != 0;
+        ingredients = new ArrayList<>();
+        in.readList(ingredients, Ingredient.class.getClassLoader());
+        steps = new ArrayList<>();
+        in.readList(steps, Step.class.getClassLoader());
+        mealType = in.readString();
+        foodType = in.readString();
+        photo_url = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(title);
+        dest.writeString(created_at);
+        dest.writeString(userId);
+        dest.writeByte((byte) (isLiked ? 1 : 0));
+        dest.writeList(ingredients);
+        dest.writeList(steps);
+        dest.writeString(mealType);
+        dest.writeString(foodType);
+        dest.writeString(photo_url);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Recipe recipe = (Recipe) o;
+        return id == recipe.id &&
+               isLiked == recipe.isLiked &&
+               Objects.equals(title, recipe.title) &&
+               Objects.equals(created_at, recipe.created_at) &&
+               Objects.equals(userId, recipe.userId) &&
+               Objects.equals(ingredients, recipe.ingredients) &&
+               Objects.equals(steps, recipe.steps) &&
+               Objects.equals(mealType, recipe.mealType) &&
+               Objects.equals(foodType, recipe.foodType) &&
+               Objects.equals(photo_url, recipe.photo_url);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, created_at, userId, isLiked, ingredients, steps, mealType, foodType, photo_url);
+    }
 }

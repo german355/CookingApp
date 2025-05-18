@@ -1,16 +1,14 @@
 package com.example.cooking.network.responses;
 
 import com.example.cooking.Recipe.Recipe;
+import com.example.cooking.network.models.BaseApiResponse;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
  * Класс для представления ответа от сервера с рецептами
  */
-public class RecipesResponse {
-    
-    @SerializedName("success")
-    private boolean success;
+public class RecipesResponse extends BaseApiResponse {
     
     @SerializedName("recipes")
     private List<Recipe> recipes;
@@ -18,22 +16,35 @@ public class RecipesResponse {
     @SerializedName("count")
     private int count;
     
-    @SerializedName("message")
-    private String message;
-    
-    public boolean isSuccess() {
-        return success;
-    }
-    
+    /**
+     * Получает список рецептов из ответа
+     * @return список рецептов
+     */
     public List<Recipe> getRecipes() {
         return recipes;
     }
     
+    /**
+     * Получает количество рецептов
+     * @return количество рецептов
+     */
     public int getCount() {
         return count;
     }
     
-    public String getMessage() {
-        return message;
+    /**
+     * Устанавливает список рецептов
+     * @param recipes список рецептов
+     */
+    public void setRecipes(List<Recipe> recipes) {
+        this.recipes = recipes;
+    }
+    
+    /**
+     * Устанавливает количество рецептов
+     * @param count количество рецептов
+     */
+    public void setCount(int count) {
+        this.count = count;
     }
 } 

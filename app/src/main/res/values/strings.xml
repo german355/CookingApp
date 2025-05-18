@@ -28,4 +28,16 @@
     <string name="no_favorites_yet">У вас пока нет избранных рецептов. Самое время добавить!</string>
     <string name="error_loading_recipes">Ошибка при загрузке рецептов.</string>
 
+    <string name="recipe_image_description">Изображение рецепта</string>
+    <string name="empty_list_description">Пустой список</string>
+    <string name="no_recipes_found">Рецептов не найдено</string>
+    <string name="no_recipes_description">Попробуйте изменить параметры поиска или обновить список</string>
+    <string name="error_description">Ошибка</string>
+    <string name="error_loading_recipes_title">Ошибка загрузки рецептов</string>
+    
+    <!-- Step Adapter Strings -->
+    <string name="step_label_format">Шаг %d</string>
+    <string name="step_description_error">Ошибка загрузки описания шага</string>
+    <string name="step_no_description">Нет описания для этого шага</string>
+
 </resources>

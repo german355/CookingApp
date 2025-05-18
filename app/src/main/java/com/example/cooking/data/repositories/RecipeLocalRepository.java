@@ -56,6 +56,23 @@ public class RecipeLocalRepository {
     }
     
     /**
+     * Синхронно получить все рецепты из базы данных
+     * @return список рецептов
+     */
+    public List<Recipe> getAllRecipesSync() {
+        List<RecipeEntity> entities = recipeDao.getAllRecipesList();
+        Log.d(TAG, "Fetching all recipes synchronously. Count: " + (entities != null ? entities.size() : 0));
+        List<Recipe> recipes = new ArrayList<>();
+        if (entities != null) {
+            for (RecipeEntity entity : entities) {
+                recipes.add(entity.toRecipe());
+            }
+        }
+        Log.d(TAG, "Synchronous fetch complete. Returning Recipes count: " + recipes.size());
+        return recipes;
+    }
+    
+    /**
      * Вставить список рецептов в базу данных
      * @param recipes список рецептов
      */
@@ -107,13 +124,30 @@ public class RecipeLocalRepository {
     }
     
     /**
+     * Получить рецепт по идентификатору
+     * @param recipeId идентификатор рецепта
+     * @return LiveData рецепта
+     */
+    public LiveData<Recipe> getRecipeById(int recipeId) {
+        return Transformations.map(recipeDao.getRecipeEntityByIdLiveData(recipeId), entity -> {
+            if (entity != null) {
+                return entity.toRecipe();
+            }
+            return null;
+        });
+    }
+    
+    /**
      * Синхронно получить рецепт по идентификатору
-     * @param id идентификатор рецепта
+     * @param recipeId идентификатор рецепта
      * @return рецепт или null, если не найден
      */
-    public Recipe getRecipeById(int id) {
-        RecipeEntity entity = recipeDao.getRecipeById(id);
-        return entity != null ? entity.toRecipe() : null;
+    public Recipe getRecipeByIdSync(int recipeId) {
+        RecipeEntity entity = recipeDao.getRecipeByIdSync(recipeId);
+        if (entity != null) {
+            return entity.toRecipe();
+        }
+        return null;
     }
     
     /**

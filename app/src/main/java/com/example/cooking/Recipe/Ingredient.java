@@ -4,12 +4,20 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import java.util.Objects;
 
+/**
+ * Представляет ингредиент в рецепте.
+ * Содержит название, количество и единицу измерения.
+ * Реализует Parcelable для передачи между компонентами Android.
+ */
 public class Ingredient implements Parcelable {
-    private String name;
-    private int count;
-    private String type;
+    private String name; // Название ингредиента
+    private int count;   // Количество ингредиента (целочисленное)
+    private String type; // Единица измерения (например, "г", "мл", "шт")
 
-    // Пустой конструктор (может понадобиться для некоторых библиотек)
+    /**
+     * Конструктор по умолчанию.
+     * Может быть необходим для некоторых библиотек или процессов десериализации.
+     */
     public Ingredient() {}
 
     protected Ingredient(Parcel in) {
@@ -55,16 +63,18 @@ public class Ingredient implements Parcelable {
     }
     
     /**
-     * Получает количество ингредиента (для совместимости с новым адаптером)
-     * @return количество ингредиента
+     * Возвращает количество ингредиента в виде float.
+     * Используется для совместимости или в случаях, где требуется float.
+     * @return количество ингредиента.
      */
     public float getAmount() {
         return count;
     }
     
     /**
-     * Получает единицу измерения (для совместимости с новым адаптером)
-     * @return единица измерения
+     * Возвращает единицу измерения ингредиента.
+     * Если тип не указан, возвращает пустую строку.
+     * @return единица измерения или пустая строка.
      */
     public String getUnit() {
         return type != null ? type : "";
@@ -82,13 +92,13 @@ public class Ingredient implements Parcelable {
         dest.writeString(type);
     }
 
-    // Добавленные методы equals() и hashCode()
+    // Методы equals() и hashCode() для корректного сравнения и использования в коллекциях.
+    // Учитывают поля, важные для идентификации объекта (например, для DiffUtil).
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ingredient that = (Ingredient) o;
-        // Сравниваем поля, relevantные для DiffUtil
         return count == that.count &&
                Objects.equals(name, that.name) &&
                Objects.equals(type, that.type);
@@ -96,11 +106,10 @@ public class Ingredient implements Parcelable {
 
     @Override
     public int hashCode() {
-        // Используем те же поля, что и в equals()
         return Objects.hash(name, count, type);
     }
 
-    // toString() для отладки
+    // Метод toString() для удобства логирования и отладки.
     @Override
     public String toString() {
         return "Ingredient{" +

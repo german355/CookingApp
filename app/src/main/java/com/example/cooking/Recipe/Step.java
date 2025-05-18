@@ -4,19 +4,30 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import java.util.Objects;
 
+/**
+ * Представляет один шаг в инструкции по приготовлению рецепта.
+ * Содержит номер шага, текстовое описание инструкции и опциональный URL изображения/видео для шага.
+ * Реализует Parcelable для передачи между компонентами Android.
+ */
 public class Step implements Parcelable {
-    private int number;
-    private String instruction;
-    private String url;
+    private int number;         // Порядковый номер шага
+    private String instruction; // Текстовое описание инструкции для шага
+    private String url;           // URL-адрес изображения или видео, иллюстрирующего шаг (может быть null)
 
+    /**
+     * Конструктор по умолчанию.
+     * Может быть необходим для некоторых библиотек или процессов десериализации.
+     */
     public Step() {}
 
+    // Конструктор для Parcelable
     protected Step(Parcel in) {
         number = in.readInt();
         instruction = in.readString();
         url = in.readString();
     }
 
+    // CREATOR для Parcelable
     public static final Creator<Step> CREATOR = new Creator<Step>() {
         @Override
         public Step createFromParcel(Parcel in) {
@@ -29,6 +40,7 @@ public class Step implements Parcelable {
         }
     };
 
+    // Геттеры и сеттеры
     public int getNumber() {
         return number;
     }
@@ -53,6 +65,7 @@ public class Step implements Parcelable {
         this.instruction = instruction;
     }
 
+    // Реализация Parcelable
     @Override
     public int describeContents() {
         return 0;
@@ -65,6 +78,7 @@ public class Step implements Parcelable {
         dest.writeString(url);
     }
 
+    // Методы equals() и hashCode() для корректного сравнения и использования в коллекциях.
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -80,6 +94,7 @@ public class Step implements Parcelable {
         return Objects.hash(number, instruction, url);
     }
 
+    // Метод toString() для удобства логирования и отладки.
     @Override
     public String toString() {
         return "Step{" +

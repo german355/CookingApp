@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.config.ServerConfig;
@@ -18,7 +19,7 @@ import com.example.cooking.data.database.RecipeDao;
 import com.example.cooking.data.database.RecipeEntity;
 import com.example.cooking.network.api.ApiService;
 import com.example.cooking.network.responses.RecipesResponse;
-import com.example.cooking.network.services.RetrofitClient;
+import com.example.cooking.network.services.NetworkService;
 
 // Импортируем RecipeLocalRepository
 import com.example.cooking.data.repositories.RecipeLocalRepository;
@@ -53,8 +54,8 @@ public class LikedRecipesRepository {
         // Создаем экземпляр RecipeLocalRepository
         recipeLocalRepository = new RecipeLocalRepository(this.context);
 
-        // Получаем ApiService из общего RetrofitClient
-        apiService = RetrofitClient.getApiService();
+        // Получаем ApiService из NetworkService
+        apiService = NetworkService.getApiService(this.context);
     }
 
     /**
@@ -333,5 +334,79 @@ public class LikedRecipesRepository {
             Log.e(TAG, "Error getting liked recipe IDs sync for userId=" + userId, e);
             return new ArrayList<>(); // Возвращаем пустой список в случае ошибки
         }
+    }
+
+    /**
+     * Добавить рецепт в избранное и синхронизировать с сервером
+     */
+    public void addLikedRecipe(String userId, int recipeId) {
+        if (userId == null || userId.equals("0") || userId.isEmpty()) {
+            Log.w(TAG, "addLikedRecipe: Invalid userId=" + userId + ", operation skipped.");
+            return;
+        }
+        
+        // Добавляем в локальную базу
+        insertLikedRecipeLocal(recipeId, userId);
+        
+        // Синхронизируем с сервером если есть сеть
+        if (isNetworkAvailable()) {
+            executor.execute(() -> {
+                try {
+                    // Здесь должен быть вызов API для синхронизации лайка с сервером
+                    // Например: apiService.addLikedRecipe(userId, recipeId);
+                    Log.d(TAG, "Рецепт " + recipeId + " добавлен в избранное для пользователя " + userId);
+                } catch (Exception e) {
+                    Log.e(TAG, "Ошибка при синхронизации добавления в избранное с сервером", e);
+                }
+            });
+        }
+    }
+
+    /**
+     * Удалить рецепт из избранного и синхронизировать с сервером
+     */
+    public void removeLikedRecipe(String userId, int recipeId) {
+        if (userId == null || userId.equals("0") || userId.isEmpty()) {
+            Log.w(TAG, "removeLikedRecipe: Invalid userId=" + userId + ", operation skipped.");
+            return;
+        }
+        
+        // Удаляем из локальной базы
+        deleteLikedRecipeLocal(recipeId, userId);
+        
+        // Синхронизируем с сервером если есть сеть
+        if (isNetworkAvailable()) {
+            executor.execute(() -> {
+                try {
+                    // Здесь должен быть вызов API для синхронизации удаления лайка с сервером
+                    // Например: apiService.removeLikedRecipe(userId, recipeId);
+                    Log.d(TAG, "Рецепт " + recipeId + " удален из избранного для пользователя " + userId);
+                } catch (Exception e) {
+                    Log.e(TAG, "Ошибка при синхронизации удаления из избранного с сервером", e);
+                }
+            });
+        }
+    }
+
+    /**
+     * Проверяет, лайкнут ли рецепт пользователем (возвращает LiveData)
+     */
+    public LiveData<Boolean> isRecipeLiked(int recipeId, String userId) {
+        Log.d(TAG, "isRecipeLiked запрос LiveData: recipeId=" + recipeId + ", userId=" + userId);
+        MutableLiveData<Boolean> result = new MutableLiveData<>();
+        
+        if (userId.equals("0") || userId.isEmpty()) {
+            result.setValue(false);
+            return result;
+        }
+        
+        // Выполняем запрос асинхронно
+        executor.execute(() -> {
+            boolean isLiked = isRecipeLikedLocalSync(recipeId, userId);
+            Log.d(TAG, "isRecipeLiked результат: " + isLiked + " для recipeId=" + recipeId + ", userId=" + userId);
+            result.postValue(isLiked);
+        });
+        
+        return result;
     }
 }

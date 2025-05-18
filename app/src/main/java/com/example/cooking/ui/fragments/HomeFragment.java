@@ -30,6 +30,8 @@ import com.example.cooking.ui.adapters.RecipeListAdapter;
 import com.example.cooking.ui.activities.AddRecipeActivity;
 import com.example.cooking.utils.RecipeSearchService;
 import com.example.cooking.ui.viewmodels.HomeViewModel;
+import com.example.cooking.ui.viewmodels.SharedRecipeViewModel;
+import com.example.cooking.network.utils.Resource;
 
 import android.widget.SearchView;
 
@@ -47,13 +49,19 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
     private TextView emptyView;
     private MySharedPreferences preferences;
     private String userId;
-    private HomeViewModel viewModel;
+    
+    // Заменяем HomeViewModel на SharedRecipeViewModel
+    private SharedRecipeViewModel sharedViewModel;
     
     // Добавляем поля для автоматического обновления
     private Handler autoRefreshHandler;
     private Runnable autoRefreshRunnable;
     private static final long AUTO_REFRESH_INTERVAL = 30000; // 30 секунд
     private boolean autoRefreshEnabled = true;
+    
+    // Сохранение состояния RecyclerView
+    private static final String KEY_RECYCLER_STATE = "recycler_state";
+    private RecyclerView.LayoutManager layoutManager;
     
     /**
      * Создает и настраивает представление фрагмента.
@@ -67,8 +75,8 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         preferences = new MySharedPreferences(requireContext());
         userId = preferences.getString("userId", "0");
         
-        // Инициализация ViewModel
-        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        // Инициализация SharedViewModel из Activity
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
         
         // Инициализация views
         recyclerView = view.findViewById(R.id.recycler_view);
@@ -76,81 +84,40 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         progressBar = view.findViewById(R.id.progress_bar);
         emptyView = view.findViewById(R.id.empty_view);
         
-        // Инициализация и настройка SearchView
-        SearchView searchView = view.findViewById(R.id.search_view_main);
-        
-        // Дополнительная настройка SearchView для обеспечения кликабельности
-        searchView.setIconifiedByDefault(false);  // Поле всегда открыто
-        searchView.setSubmitButtonEnabled(false); // Убираем кнопку подтверждения для чистоты интерфейса
-        
-        // Программно удаляем нижнюю линию из SearchView
-        int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
-        View searchPlate = searchView.findViewById(searchPlateId);
-        if (searchPlate != null) {
-            searchPlate.setBackgroundColor(android.graphics.Color.TRANSPARENT);
-            // Находим EditText внутри SearchView и убираем у него подчеркивание
-            int searchSrcTextId = getResources().getIdentifier("android:id/search_src_text", null, null);
-            android.widget.EditText searchEditText = searchView.findViewById(searchSrcTextId);
-            if (searchEditText != null) {
-                searchEditText.setBackground(null);
-                searchEditText.setHintTextColor(getResources().getColor(R.color.md_theme_onSurfaceVariant, null));
-                searchEditText.setTextColor(getResources().getColor(R.color.md_theme_onSurface, null));
-            }
-        }
-        
-        // Обеспечиваем кликабельность по всему полю
-        searchView.setOnClickListener(v -> {
-            searchView.setIconified(false);
-            searchView.requestFocusFromTouch();
-        });
-        
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                performSearch(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                // Поиск только по нажатию Enter, не реагируем на изменение текста
-                return false;
-            }
-        });
-        
         // Настройка RecyclerView
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        layoutManager = new GridLayoutManager(getContext(), 2);
+        recyclerView.setLayoutManager(layoutManager);
         
         // Инициализируем адаптер
         adapter = new RecipeListAdapter(this);
         recyclerView.setAdapter(adapter);
         
-        // Настраиваем swipe-to-refresh
-        swipeRefreshLayout.setOnRefreshListener(() -> viewModel.refreshRecipes());
+        // Восстановление состояния RecyclerView
+        if (savedInstanceState != null) {
+            RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+            if (layoutManager != null) {
+                layoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(KEY_RECYCLER_STATE));
+            }
+        }
         
-        // Наблюдаем за данными из ViewModel
+        // Настраиваем swipe-to-refresh
+        swipeRefreshLayout.setOnRefreshListener(() -> sharedViewModel.refreshRecipes());
+        
+        // Наблюдаем за данными из SharedViewModel
         observeViewModel();
         
         // Наблюдаем за результатами поиска
-        viewModel.getSearchResults().observe(getViewLifecycleOwner(), recipes -> {
+        sharedViewModel.getSearchResults().observe(getViewLifecycleOwner(), recipes -> {
             adapter.submitList(recipes);
             showEmptyView(recipes == null || recipes.isEmpty());
         });
-        
-        // Инициализируем наблюдение за Shared ViewModel
-        if (getActivity() != null) {
-            viewModel.observeLikeChanges(getViewLifecycleOwner(), getActivity());
-        }
-        
-        // Загружаем данные при первом запуске, если это необходимо
-        viewModel.loadInitialRecipesIfNeeded();
         
         // Инициализируем обработчик для автоматического обновления
         autoRefreshHandler = new Handler(Looper.getMainLooper());
         autoRefreshRunnable = () -> {
             if (autoRefreshEnabled) {
                 Log.d(TAG, "Выполняется автоматическое обновление рецептов");
-                viewModel.refreshRecipes();
+                sharedViewModel.refreshRecipes();
                 // Запланировать следующее обновление
                 autoRefreshHandler.postDelayed(autoRefreshRunnable, AUTO_REFRESH_INTERVAL);
             }
@@ -163,21 +130,38 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
     }
     
     /**
+     * Сохраняем состояние RecyclerView при уничтожении фрагмента
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (recyclerView != null && recyclerView.getLayoutManager() != null) {
+            outState.putParcelable(KEY_RECYCLER_STATE, recyclerView.getLayoutManager().onSaveInstanceState());
+        }
+    }
+    
+    /**
      * Настраиваем наблюдение за LiveData из ViewModel
      */
     private void observeViewModel() {
         // Наблюдаем за списком рецептов
-        viewModel.getRecipes().observe(getViewLifecycleOwner(), recipes -> {
-            if (recipes != null && !recipes.isEmpty()) {
-                adapter.submitList(recipes);
-                showEmptyView(false);
-            } else {
+        sharedViewModel.getRecipes().observe(getViewLifecycleOwner(), resource -> {
+            if (resource.isSuccess()) {
+                List<Recipe> recipes = resource.getData();
+                if (recipes != null && !recipes.isEmpty()) {
+                    adapter.submitList(recipes);
+                    showEmptyView(false);
+                } else {
+                    showEmptyView(true);
+                }
+            } else if (resource.isError()) {
+                showErrorMessage(resource.getMessage());
                 showEmptyView(true);
             }
         });
         
         // Наблюдаем за состоянием загрузки
-        viewModel.getIsRefreshing().observe(getViewLifecycleOwner(), isRefreshing -> {
+        sharedViewModel.getIsRefreshing().observe(getViewLifecycleOwner(), isRefreshing -> {
             swipeRefreshLayout.setRefreshing(isRefreshing);
             
             // Показываем прогресс бар только при первой загрузке, когда список пустой
@@ -189,7 +173,7 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         });
         
         // Наблюдаем за сообщениями об ошибках
-        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+        sharedViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
                 showErrorMessage(error);
             }
@@ -201,218 +185,71 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
      */
     @Override
     public void onRecipeLike(Recipe recipe, boolean isLiked) {
-        // Проверяем, авторизован ли пользователь
-        if (userId.equals("0")) {
-            // Показываем Toast-сообщение
-            Toast.makeText(requireContext(), 
-                "Войдите в систему, чтобы добавлять рецепты в избранное", 
-                Toast.LENGTH_SHORT).show();
-            
-            // Для неавторизованного пользователя восстанавливаем исходное состояние чекбокса
-            // Эта часть не нужна, так как мы изменили логику в адаптере
-            return;
+        if (recipe != null) {
+            // Используем общую модель
+            sharedViewModel.updateLikeStatus(recipe, isLiked);
         }
-        
-        // Только для авторизованных пользователей показываем сообщение об успехе
-        String message = isLiked ? 
-            "Рецепт добавлен в избранное" : 
-            "Рецепт удален из избранного";
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
-        
-        // Обновляем состояние в ViewModel (это обновит и локальную базу, и сервер)
-        viewModel.updateLikeStatus(recipe, isLiked);
-
-        // TODO: Реализовать обновление статуса лайка в FavoritesFragment через Shared ViewModel
-        // Удаляем прямые вызовы статических методов FavoritesFragment
-        /*
-        if (isLiked) {
-            Log.d(TAG, "Добавляем рецепт в FavoritesFragment: " + recipe.getId() + " - " + recipe.getTitle());
-            FavoritesFragment.addLikedRecipe(recipe);
-        } else {
-            Log.d(TAG, "Удаляем рецепт из FavoritesFragment: " + recipe.getId());
-            FavoritesFragment.removeLikedRecipe(recipe.getId());
-        }
-        */
     }
     
     /**
-     * Показывает/скрывает сообщение о пустом списке
+     * Показывает или скрывает сообщение об отсутствии рецептов
      */
     private void showEmptyView(boolean show) {
-        emptyView.setVisibility(show ? View.VISIBLE : View.GONE);
-        recyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
-    }
-    
-    /**
-     * Настройка меню в Action Bar
-     */
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-    
-    /**
-     * Обработка нажатий на пункты меню
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_add) {
-            // Проверяем, авторизован ли пользователь
-            if (userId.equals("0")) {
-                Toast.makeText(requireContext(), "Вы должны войти в систему, чтобы добавлять рецепты", Toast.LENGTH_SHORT).show();
-                // Перенаправляем на экран авторизации
-                if (getActivity() instanceof MainActivity) {
-                    ((MainActivity) getActivity()).bottomNavigationView.setSelectedItemId(R.id.nav_profile);
-                }
-                return true;
-            }
-            
-            // Запускаем активность для добавления рецепта
-            Intent intent = new Intent(getActivity(), AddRecipeActivity.class);
-            startActivityForResult(intent, 100);
-            return true;
+        if (show) {
+            recyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
         }
-        return super.onOptionsItemSelected(item);
     }
     
     /**
-     * Включаем меню в Action Bar
-     */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-    
-    /**
-     * Обновляем данные при возвращении к фрагменту
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-        // При возвращении к фрагменту запускаем автоматическое обновление
-        startAutoRefresh();
-        
-        // НЕ ЗАГРУЖАЕМ заново при возвращении
-        /* Убираем этот блок
-        // При возвращении проверяем актуальность данных
-        if (adapter.getItemCount() == 0) {
-            viewModel.refreshRecipes();
-        }
-        */
-    }
-    
-    /**
-     * Останавливает автоматическое обновление рецептов при уходе с фрагмента
-     */
-    @Override
-    public void onPause() {
-        super.onPause();
-        // При уходе с фрагмента останавливаем автоматическое обновление
-        stopAutoRefresh();
-    }
-    
-    /**
-     * Выполняет поиск рецептов
+     * Выполняет поиск по заданному запросу через SharedViewModel
      */
     public void performSearch(String query) {
-        if (query == null || query.trim().isEmpty()) {
-            // Очищаем результаты поиска и возвращаемся к основному списку
-            viewModel.getSearchResults().removeObservers(getViewLifecycleOwner());
-        } else {
-            // Запускаем поиск через ViewModel
-            viewModel.searchRecipes(query.trim());
-        }
+        // Метод вызывается из MainActivity
+        sharedViewModel.searchRecipes(query);
     }
     
     /**
      * Показывает сообщение об ошибке
      */
     private void showErrorMessage(String message) {
-        if (getContext() != null) {
-            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-        }
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
-    
+
     /**
-     * Обрабатывает результат запуска активности
-     */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        
-        // Обработка результата от AddRecipeActivity
-        if (requestCode == 100 && resultCode == getActivity().RESULT_OK) {
-            // Рецепт был добавлен, обновляем список
-            viewModel.refreshRecipes();
-        }
-        // Обработка результата от RecipeDetailActivity
-        else if (requestCode == 200 && resultCode == getActivity().RESULT_OK) {
-            // Проверяем, был ли рецепт удален
-            if (data != null && data.getBooleanExtra("recipe_deleted", false)) {
-                int deletedRecipeId = data.getIntExtra("recipe_id", -1);
-                Log.d(TAG, "Получен результат от RecipeDetailActivity, рецепт был удален: " + deletedRecipeId);
-                
-                // Если ID рецепта указан, обновляем UI немедленно
-                if (deletedRecipeId != -1) {
-                    // Получаем текущий список и удаляем рецепт
-                    List<Recipe> currentList = adapter.getCurrentList();
-                    List<Recipe> updatedList = new ArrayList<>(currentList);
-                    
-                    // Удаляем рецепт с указанным ID
-                    updatedList.removeIf(recipe -> recipe.getId() == deletedRecipeId);
-                    
-                    // Обновляем UI
-                    if (isAdded()) {
-                        requireActivity().runOnUiThread(() -> {
-                            adapter.submitList(updatedList);
-                            Log.d(TAG, "Список рецептов обновлен после удаления: " + deletedRecipeId);
-                            showEmptyView(updatedList.isEmpty());
-                        });
-                    }
-                }
-            } else {
-                // Рецепт был отредактирован, обновляем список
-                Log.d(TAG, "Получен результат от RecipeDetailActivity, обновляем список рецептов");
-                viewModel.refreshRecipes();
-            }
-        }
-    }
-    
-    /**
-     * Обновляет список рецептов.
-     * Метод добавлен для совместимости с обновленным MainActivity.
-     */
-    public void refreshRecipes() {
-        refreshData();
-    }
-    
-    /**
-     * Обновляет данные во фрагменте, запрашивая свежий список рецептов.
-     */
-    public void refreshData() {
-        // Запускаем обновление данных через ViewModel
-        if (viewModel != null) {
-            viewModel.refreshRecipes();
-        }
-    }
-    
-    /**
-     * Запускает автоматическое обновление рецептов
+     * Запустить автоматическое обновление списка рецептов
      */
     private void startAutoRefresh() {
+        // Отменяем предыдущий callback, если он был
+        stopAutoRefresh();
+        
         if (autoRefreshEnabled) {
-            Log.d(TAG, "Запущено автоматическое обновление рецептов");
+            // Запускаем новый callback
             autoRefreshHandler.postDelayed(autoRefreshRunnable, AUTO_REFRESH_INTERVAL);
+            Log.d(TAG, "Запущено автоматическое обновление рецептов");
         }
     }
     
     /**
-     * Останавливает автоматическое обновление рецептов
+     * Остановить автоматическое обновление списка рецептов
      */
     private void stopAutoRefresh() {
-        Log.d(TAG, "Остановлено автоматическое обновление рецептов");
         autoRefreshHandler.removeCallbacks(autoRefreshRunnable);
+        Log.d(TAG, "Остановлено автоматическое обновление рецептов");
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        startAutoRefresh();
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopAutoRefresh();
     }
 }

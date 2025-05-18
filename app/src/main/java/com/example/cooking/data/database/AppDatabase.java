@@ -7,7 +7,9 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 /**
- * Класс базы данных приложения
+ * Основной класс базы данных приложения, построенный на Room Persistence Library.
+ * Определяет сущности базы данных, версию схемы и предоставляет доступ к Data Access Objects (DAO).
+ * Реализован как Singleton для обеспечения единственного экземпляра на все приложение.
  */
 @Database(entities = {RecipeEntity.class, LikedRecipeEntity.class}, version = 4, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
@@ -16,31 +18,34 @@ public abstract class AppDatabase extends RoomDatabase {
     private static volatile AppDatabase INSTANCE;
     
     /**
-     * Получить DAO для работы с рецептами
-     * @return RecipeDao
+     * Предоставляет Data Access Object (DAO) для работы с сущностями рецептов ({@link RecipeEntity}).
+     * @return {@link RecipeDao} для операций с рецептами.
      */
     public abstract RecipeDao recipeDao();
     
     /**
-     * Получить DAO для работы с рецептами
-     * @return RecipeDao
+     * Предоставляет Data Access Object (DAO) для работы с сущностями лайкнутых рецептов ({@link LikedRecipeEntity}).
+     * @return {@link LikedRecipeDao} для операций с лайкнутыми рецептами.
      */
     public abstract LikedRecipeDao likedRecipeDao();
     
     /**
-     * Получить инстанс базы данных (Singleton pattern)
-     * @param context контекст приложения
-     * @return инстанс базы данных
+     * Возвращает единственный экземпляр {@link AppDatabase}.
+     * Если экземпляр еще не создан, инициализирует его потокобезопасным способом.
+     * @param context Контекст приложения (используется для получения ApplicationContext).
+     * @return Синглтон-экземпляр {@link AppDatabase}.
      */
     public static AppDatabase getInstance(Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(
-                            context.getApplicationContext(),
+                            context.getApplicationContext(), // Важно использовать ApplicationContext
                             AppDatabase.class,
                             DATABASE_NAME)
-                            .fallbackToDestructiveMigration() // Если схема базы изменилась, пересоздать её
+                            // ВНИМАНИЕ: При изменении схемы удаляет и пересоздает БД, все данные будут потеряны.
+                            // Для производственных приложений следует использовать миграции.
+                            .fallbackToDestructiveMigration() 
                             .build();
                 }
             }

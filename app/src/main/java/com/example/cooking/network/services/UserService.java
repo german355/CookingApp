@@ -1,13 +1,16 @@
 package com.example.cooking.network.services;
 
+import android.content.Context;
 import android.util.Log;
+
 import com.example.cooking.auth.UserLoginRequest;
 import com.example.cooking.auth.UserRegisterRequest;
 import com.example.cooking.data.models.ApiResponse;
+import com.example.cooking.data.models.PasswordResetRequest;
 import com.example.cooking.network.api.ApiService;
+import com.example.cooking.network.utils.ApiCallHandler;
+
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Сервис для работы с пользователем
@@ -15,19 +18,23 @@ import retrofit2.Response;
 public class UserService {
     private static final String TAG = "UserService";
     private final ApiService apiService;
+    private final Context context;
     
+    /**
+     * Интерфейс для обратного вызова операций с пользователем
+     */
     public interface UserCallback {
         void onSuccess(ApiResponse response);
         void onFailure(String errorMessage);
     }
     
-    public interface UserServiceCallback {
-        void onSuccess(ApiResponse response);
-        void onFailure(String errorMessage);
-    }
-    
-    public UserService() {
-        this.apiService = RetrofitClient.getApiService();
+    /**
+     * Конструктор с контекстом
+     * @param context контекст приложения
+     */
+    public UserService(Context context) {
+        this.context = context.getApplicationContext();
+        this.apiService = NetworkService.getApiService(this.context);
     }
     
     /**
@@ -38,21 +45,11 @@ public class UserService {
      * @param permission уровень прав доступа
      * @param callback колбэк для обработки результата
      */
-    public void saveUser(String userId, String username, String email, int permission, UserServiceCallback callback) {
+    public void saveUser(String userId, String username, String email, int permission, UserCallback callback) {
         Log.d(TAG, "Saving user data: userId=" + userId + ", username=" + username + ", email=" + email);
         
         // Вызываем метод registerFirebaseUser для сохранения данных
-        registerFirebaseUser(email, username, userId, new UserCallback() {
-            @Override
-            public void onSuccess(ApiResponse response) {
-                callback.onSuccess(response);
-            }
-            
-            @Override
-            public void onFailure(String errorMessage) {
-                callback.onFailure(errorMessage);
-            }
-        });
+        registerFirebaseUser(email, username, userId, callback);
     }
     
     /**
@@ -61,7 +58,7 @@ public class UserService {
      * @param newName новое имя пользователя
      * @param callback колбэк для обработки результата
      */
-    public void updateUserName(String userId, String newName, UserServiceCallback callback) {
+    public void updateUserName(String userId, String newName, UserCallback callback) {
         Log.d(TAG, "Updating user name: userId=" + userId + ", newName=" + newName);
         
         // Заглушка для обновления имени пользователя
@@ -77,7 +74,7 @@ public class UserService {
      * @param userId идентификатор пользователя
      * @param callback колбэк для обработки результата
      */
-    public void deleteUser(String userId, UserServiceCallback callback) {
+    public void deleteUser(String userId, UserCallback callback) {
         Log.d(TAG, "Deleting user: userId=" + userId);
         
         // Заглушка для удаления пользователя
@@ -101,28 +98,17 @@ public class UserService {
         UserRegisterRequest request = new UserRegisterRequest(email, name, firebaseId);
         Call<ApiResponse> call = apiService.registerUser(request);
         
-        call.enqueue(new Callback<ApiResponse>() {
+        ApiCallHandler.execute(call, new ApiCallHandler.ApiCallback<ApiResponse>() {
             @Override
-            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse apiResponse = response.body();
-                    Log.d(TAG, "Register success: " + apiResponse.isSuccess());
-                    
-                    if (apiResponse.isSuccess()) {
-                        callback.onSuccess(apiResponse);
-                    } else {
-                        callback.onFailure(apiResponse.getMessage());
-                    }
-                } else {
-                    Log.e(TAG, "Register error code: " + response.code());
-                    callback.onFailure("Ошибка сервера: " + response.code());
-                }
+            public void onSuccess(ApiResponse response) {
+                Log.d(TAG, "Register success: " + response.isSuccess());
+                callback.onSuccess(response);
             }
             
             @Override
-            public void onFailure(Call<ApiResponse> call, Throwable t) {
-                Log.e(TAG, "Register network error", t);
-                callback.onFailure("Ошибка сети: " + t.getMessage());
+            public void onError(String errorMessage) {
+                Log.e(TAG, "Register error: " + errorMessage);
+                callback.onFailure(errorMessage);
             }
         });
     }
@@ -139,66 +125,44 @@ public class UserService {
         UserLoginRequest request = new UserLoginRequest(email, firebaseId);
         Call<ApiResponse> call = apiService.loginUser(request);
         
-        // Добавляем механизм повторных попыток на случай ошибки "unexpected end of stream"
-        final int[] retryCount = {0};
-        final int maxRetries = 3;
-        
-        Callback<ApiResponse> loginCallback = new Callback<ApiResponse>() {
+        ApiCallHandler.execute(call, new ApiCallHandler.ApiCallback<ApiResponse>() {
             @Override
-            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse apiResponse = response.body();
-                    Log.d(TAG, "Login success: " + apiResponse.isSuccess());
-                    
-                    if (apiResponse.isSuccess()) {
-                        callback.onSuccess(apiResponse);
-                    } else {
-                        callback.onFailure(apiResponse.getMessage());
-                    }
-                } else {
-                    Log.e(TAG, "Login error code: " + response.code());
-                    
-                    // Если мы получили ошибку 401, возможно нужно сбросить клиент и повторить попытку
-                    if (response.code() == 401 && retryCount[0] < maxRetries) {
-                        retryCount[0]++;
-                        Log.d(TAG, "Повторная попытка входа после ошибки авторизации: " + retryCount[0]);
-                        RetrofitClient.resetClient();
-                        apiService.loginUser(request).enqueue(this);
-                    } else {
-                        callback.onFailure("Ошибка сервера: " + response.code());
-                    }
-                }
+            public void onSuccess(ApiResponse response) {
+                Log.d(TAG, "Login success: " + response.isSuccess());
+                callback.onSuccess(response);
             }
             
             @Override
-            public void onFailure(Call<ApiResponse> call, Throwable t) {
-                Log.e(TAG, "Login network error", t);
-                
-                // Проверяем, является ли ошибка "unexpected end of stream" и повторяем попытку
-                if (t.getMessage() != null && 
-                    (t.getMessage().contains("unexpected end of stream") ||
-                     t.getMessage().contains("timeout") ||
-                     t.getMessage().contains("Connection reset")) && 
-                    retryCount[0] < maxRetries) {
-                    
-                    retryCount[0]++;
-                    Log.d(TAG, "Повторная попытка входа после ошибки сети: " + retryCount[0]);
-                    
-                    // Небольшая задержка перед повторной попыткой
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        Log.e(TAG, "Прервано ожидание перед повторной попыткой", e);
-                    }
-                    
-                    RetrofitClient.resetClient();
-                    apiService.loginUser(request).enqueue(this);
-                } else {
-                    callback.onFailure("Ошибка сети: " + t.getMessage());
-                }
+            public void onError(String errorMessage) {
+                Log.e(TAG, "Login error: " + errorMessage);
+                callback.onFailure(errorMessage);
             }
-        };
+        });
+    }
+    
+    /**
+     * Запрос на сброс пароля
+     * @param email Email пользователя
+     * @param callback Callback для обработки результата
+     */
+    public void requestPasswordReset(String email, UserCallback callback) {
+        Log.d(TAG, "Request password reset for email: " + email);
         
-        call.enqueue(loginCallback);
+        PasswordResetRequest request = new PasswordResetRequest(email);
+        Call<ApiResponse> call = apiService.requestPasswordReset(request);
+        
+        ApiCallHandler.execute(call, new ApiCallHandler.ApiCallback<ApiResponse>() {
+            @Override
+            public void onSuccess(ApiResponse response) {
+                Log.d(TAG, "Password reset request success: " + response.isSuccess());
+                callback.onSuccess(response);
+            }
+            
+            @Override
+            public void onError(String errorMessage) {
+                Log.e(TAG, "Password reset request error: " + errorMessage);
+                callback.onFailure(errorMessage);
+            }
+        });
     }
 } 

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
     tools:context=".ui.activities.RecipeDetailActivity">
 
     <LinearLayout
@@ -12,15 +11,14 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="58dp"
             android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:navigationIcon="@android:drawable/ic_menu_revert"
-            app:title="" />
+            app:titleCentered="true"
+            app:title="  " />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -32,6 +30,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 
+                <!-- Этот TextView можно будет удалить, если заголовок будет в Toolbar -->
                 <TextView
                 android:id="@+id/recipe_title"
                 android:layout_width="match_parent"
@@ -40,7 +39,7 @@
                 android:layout_marginBottom="16dp"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="#212121"
+                android:textColor="?android:attr/textColorPrimary"
                 tools:text="Название рецепта" />
 
                 <!-- Изображение рецепта -->
@@ -60,7 +59,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="#F5F5F5"
+                    android:background="@drawable/background_ingredients_section" 
                     android:padding="16dp">
                     
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -82,7 +81,7 @@
                             android:text="Продукты"
                             android:textSize="18sp"
                             android:textStyle="bold"
-                            android:textColor="#212121"
+                            android:textColor="?android:attr/textColorPrimary"
                             android:layout_marginStart="8dp"
                             app:layout_constraintStart_toEndOf="@id/basket_icon"
                             app:layout_constraintTop_toTopOf="@id/basket_icon"
@@ -90,52 +89,71 @@
                             
                     </androidx.constraintlayout.widget.ConstraintLayout>
                     
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Порция"
-                        android:textColor="#757575"
-                        android:layout_marginTop="16dp" />
-                        
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="8dp">
-                        
-                        <Button
-                            android:id="@+id/decrease_portion"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:text="-"
-                            android:textSize="16sp"
-                            android:backgroundTint="#E0E0E0"
-                            android:textColor="#212121" />
-                            
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical">
+
                         <TextView
-                            android:id="@+id/portion_count"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:text="1"
-                            android:textColor="#212121"
-                            android:gravity="center"
-                            android:textSize="16sp" />
-                            
-                        <Button
-                            android:id="@+id/increase_portion"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:text="+"
-                            android:textSize="16sp"
-                            android:backgroundTint="#E0E0E0"
-                            android:textColor="#212121" />
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Порция"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="16sp"/>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/decrease_portion"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:text="-"
+                                android:textSize="16sp"
+                                app:backgroundTint="?attr/colorPrimaryContainer" 
+                                android:textColor="?attr/colorOnPrimaryContainer"
+                                android:insetLeft="0dp"
+                                android:insetTop="0dp"
+                                android:insetRight="0dp"
+                                android:insetBottom="0dp" />
+                                
+                            <TextView
+                                android:id="@+id/portion_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1"
+                                android:textColor="?android:attr/textColorPrimary"
+                                android:gravity="center"
+                                android:textSize="16sp"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp" />
+                                
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/increase_portion"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:text="+"
+                                android:textSize="16sp"
+                                app:backgroundTint="?attr/colorPrimaryContainer" 
+                                android:textColor="?attr/colorOnPrimaryContainer"
+                                android:insetLeft="0dp"
+                                android:insetTop="0dp"
+                                android:insetRight="0dp"
+                                android:insetBottom="0dp" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Ингредиенты"
-                        android:textColor="#757575"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="16sp"
                         android:layout_marginTop="16dp" />
 
@@ -162,7 +180,7 @@
                     android:text="Начать готовить"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="#212121"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:layout_marginTop="16dp"
                     android:layout_marginHorizontal="16dp" />
                     
@@ -183,7 +201,7 @@
                     android:gravity="end"
                     android:textSize="14sp"
                     android:textStyle="italic"
-                    android:textColor="#757575"
+                    android:textColor="?android:attr/textColorSecondary"
                     tools:text="Добавлено: 01.03.2023" />
             </LinearLayout>
         </ScrollView>
@@ -197,7 +215,7 @@
         android:layout_margin="16dp"
         android:contentDescription="лайкнуть рецепт"
         android:src="@drawable/ic_favorite"
-        app:backgroundTint="#F44336"
-        app:tint="@android:color/white" />
+        app:backgroundTint="?attr/colorError"
+        app:tint="?attr/colorOnError" />
     
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
