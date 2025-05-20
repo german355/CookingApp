@@ -110,10 +110,8 @@ public class AuthViewModel extends AndroidViewModel {
                             isAuthenticated.postValue(true);
                             Log.d(TAG, "signInWithEmailPassword: Успешный вход, ID: " + internalUserId + ", Права: " + permissionLevel);
 
-                            // <--- ВЫЗОВ СИНХРОНИЗАЦИИ ЧЕРЕЗ РЕПОЗИТОРИЙ --->
-                            Log.i(TAG, "Запуск синхронизации лайков через LikedRecipesRepository для userId: " + internalUserId);
-                            likedRecipesRepository.syncLikedRecipesFromServerIfNeeded(internalUserId);
-                            // <------------------------------------------------>
+                            // Синхронизируем лайкнутые рецепты
+                            likedRecipesRepository.syncLikedRecipesFromServerIfNeeded();
                         }
 
                         @Override

@@ -51,23 +51,21 @@ public class CatalogFragment extends Fragment implements CategoryAdapter.OnCateg
         // Данные из вашего запроса
         // meal_type
         categoryList.add(new CategoryItem("Завтрак", "завтрак", "meal_type", "Утренний прием пищи", "https://i.ibb.co/MkbgBf6z/image.png"));
-        categoryList.add(new CategoryItem("Обед", "обед", "meal_type", "Дневной прием пищи", "https://ibb.co/pjsLcnSL"));
-        categoryList.add(new CategoryItem("Ужин", "ужин", "meal_type", "Вечерний прием пищи", "https://ibb.co/sdJtvVJC"));
-        categoryList.add(new CategoryItem("Закуска", "закуска", "meal_type", "Небольшое блюдо перед основной едой или к напиткам", "https://ibb.co/gMnD94pZ"));
+        categoryList.add(new CategoryItem("Обед", "обед", "meal_type", "Дневной прием пищи", "https://i.ibb.co/8gR7qXH7/image.png"));
+        categoryList.add(new CategoryItem("Ужин", "ужин", "meal_type", "Вечерний прием пищи", "https://i.ibb.co/wFrYNzr7/image.png"));
+        categoryList.add(new CategoryItem("Закуска", "закуска", "meal_type", "Небольшое блюдо перед основной едой или к напиткам", "https://i.ibb.co/mCxHTNw5/image.png"));
 
 
         // food_type
-        categoryList.add(new CategoryItem("Основное блюдо", "основное блюдо", "food_type", "Главное, самое сытное блюдо трапезы", "https://ibb.co/sdLD6nRL"));
-        categoryList.add(new CategoryItem("Гарнир", "гарнир", "food_type", "Дополнение к основному блюду", "https://ibb.co/4b4ZX22"));
-        categoryList.add(new CategoryItem("Салат", "салат", "food_type", "Блюдо из нарезанных ингредиентов с заправкой", "https://ibb.co/B2xyYPWL"));
-        categoryList.add(new CategoryItem("Суп", "суп", "food_type", "Жидкое первое блюдо", "https://ibb.co/FLZS3DYY"));
-        categoryList.add(new CategoryItem("Соус", "соус", "food_type", "Жидкая приправа к блюду", "https://ibb.co/8Dk3BqNS"));
-        categoryList.add(new CategoryItem("Десерт", "десерт", "food_type", "Сладкое блюдо в конце трапезы", "https://ibb.co/6RYnbDLQ"));
-        categoryList.add(new CategoryItem("Выпечка", "выпечка", "food_type", "Общее понятие для изделий из теста", "https://ibb.co/PvxWXysB"));
-        categoryList.add(new CategoryItem("Напиток", "напиток", "food_type", "Жидкость для питья", "https://ibb.co/PZT0CBc0"));
-        categoryList.add(new CategoryItem("Джем/Варенье", "джем/варенье", "food_type", "Сладкая заготовка из фруктов/ягод", "https://ibb.co/gCChq6M"));
-        categoryList.add(new CategoryItem("Food Type Не указано", "не указано", "food_type", "Использовать, если тип блюда определить невозможно", null));
-        categoryList.add(new CategoryItem("Meal Type Не указано", "не указано", "meal_type", "Использовать, если тип приема пищи определить невозможно", null));
+        categoryList.add(new CategoryItem("Основное блюдо", "основное блюдо", "food_type", "Главное, самое сытное блюдо трапезы", "https://i.ibb.co/G4g1typg/image.png"));
+        categoryList.add(new CategoryItem("Гарнир", "гарнир", "food_type", "Дополнение к основному блюду", "https://i.ibb.co/SkVXMcc/image.png"));
+        categoryList.add(new CategoryItem("Салат", "салат", "food_type", "Блюдо из нарезанных ингредиентов с заправкой", "https://i.ibb.co/23Qvp6Vq/image.png"));
+        categoryList.add(new CategoryItem("Суп", "суп", "food_type", "Жидкое первое блюдо", "https://i.ibb.co/5gpN4Rjj/image.png"));
+        categoryList.add(new CategoryItem("Соус", "соус", "food_type", "Жидкая приправа к блюду", "https://i.ibb.co/5WZD9mGf/image.png"));
+        categoryList.add(new CategoryItem("Десерт", "десерт", "food_type", "Сладкое блюдо в конце трапезы", "https://i.ibb.co/Kj607VSn/image.png"));
+        categoryList.add(new CategoryItem("Выпечка", "выпечка", "food_type", "Общее понятие для изделий из теста", "https://i.ibb.co/zTs29gWK/image.png"));
+        categoryList.add(new CategoryItem("Напиток", "напиток", "food_type", "Жидкость для питья", "https://i.ibb.co/4Zs3NB83/image.png"));
+        categoryList.add(new CategoryItem("Джем/Варенье", "джем/варенье", "food_type", "Сладкая заготовка из фруктов/ягод", "https://i.ibb.co/kFFvbMg/image.png"));
     }
 
     @Override

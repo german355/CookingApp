@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.data.repositories.LikedRecipesRepository;
@@ -23,19 +24,20 @@ import com.example.cooking.utils.MySharedPreferences;
 public class RecipeDetailViewModel extends AndroidViewModel {
     private static final String TAG = "RecipeDetailViewModel";
     
-    private final RecipeLocalRepository recipeRepository;
+    private final RecipeLocalRepository localRepository;
     private final LikedRecipesRepository likedRecipesRepository;
     private final RecipeService recipeService;
     private final SharedRecipeViewModel sharedRecipeViewModel;
     
     private final MutableLiveData<Recipe> recipe = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isLiked = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isLikedLiveData = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> deleteSuccess = new MutableLiveData<>(false);
     
     private int recipeId;
     private int userPermission;
+    private String userId;
     
     private final java.util.concurrent.ExecutorService executor = 
             java.util.concurrent.Executors.newSingleThreadExecutor();
@@ -45,10 +47,13 @@ public class RecipeDetailViewModel extends AndroidViewModel {
      */
     public RecipeDetailViewModel(@NonNull Application application) {
         super(application);
-        recipeRepository = new RecipeLocalRepository(application);
+        localRepository = new RecipeLocalRepository(application);
         likedRecipesRepository = new LikedRecipesRepository(application);
         recipeService = new RecipeService(application);
         sharedRecipeViewModel = new SharedRecipeViewModel(application);
+        // Получаем userId текущего пользователя
+        MySharedPreferences preferences = new MySharedPreferences(application);
+        userId = preferences.getString("userId", "0");
     }
     
     /**
@@ -58,7 +63,7 @@ public class RecipeDetailViewModel extends AndroidViewModel {
         this.recipeId = recipeId;
         this.userPermission = permission;
         loadRecipe();
-        checkIfLiked();
+        // Инициализируем статус лайка через observeLikeStatus при первой загрузке
     }
     
     /**
@@ -69,7 +74,7 @@ public class RecipeDetailViewModel extends AndroidViewModel {
         
         // Запрашиваем рецепт и устанавливаем его в recipe LiveData после получения
         executor.execute(() -> {
-            Recipe loadedRecipe = recipeRepository.getRecipeByIdSync(recipeId);
+            Recipe loadedRecipe = localRepository.getRecipeByIdSync(recipeId);
             isLoading.postValue(false);
             if (loadedRecipe != null) {
                 recipe.postValue(loadedRecipe);
@@ -80,47 +85,29 @@ public class RecipeDetailViewModel extends AndroidViewModel {
     }
     
     /**
-     * Проверяет, добавлен ли рецепт в избранное
-     */
-    private void checkIfLiked() {
-        // Получаем userId текущего пользователя
-        MySharedPreferences preferences = new MySharedPreferences(getApplication());
-        String userId = preferences.getString("userId", "0");
-        
-        if (userId.equals("0")) {
-            isLiked.postValue(false);
-            return;
-        }
-        
-        likedRecipesRepository.isRecipeLiked(recipeId, userId).observeForever(liked -> {
-            isLiked.postValue(liked != null && liked);
-        });
-    }
-    
-    /**
-     * Переключает состояние "избранное" для рецепта
+     * Обновляет лайк для текущего рецепта
      */
     public void toggleLike() {
-        // Получаем userId текущего пользователя
-        MySharedPreferences preferences = new MySharedPreferences(getApplication());
-        String userId = preferences.getString("userId", "0");
-        
         if (userId.equals("0")) {
-            errorMessage.setValue("Необходимо войти в систему");
+            errorMessage.setValue("Чтобы поставить лайк, необходимо войти в аккаунт");
             return;
         }
         
         // Получаем текущее состояние
-        Boolean currentLiked = isLiked.getValue();
+        Boolean currentLiked = isLikedLiveData.getValue();
         if (currentLiked == null) {
             return;
         }
         
-        // Обновляем в SharedRecipeViewModel для синхронизации между фрагментами
-        sharedRecipeViewModel.toggleLike(userId, recipeId);
-        
         // Обновляем локальное состояние
-        isLiked.setValue(!currentLiked);
+        isLikedLiveData.setValue(!currentLiked);
+        
+        // Обновляем в репозитории
+        if (!currentLiked) {
+            likedRecipesRepository.insertLikedRecipeLocal(recipeId);
+        } else {
+            likedRecipesRepository.deleteLikedRecipeLocal(recipeId);
+        }
     }
     
     /**
@@ -131,10 +118,6 @@ public class RecipeDetailViewModel extends AndroidViewModel {
             errorMessage.setValue("Отсутствует подключение к интернету");
             return;
         }
-        
-        // Получаем userId текущего пользователя
-        MySharedPreferences preferences = new MySharedPreferences(getApplication());
-        String userId = preferences.getString("userId", "0");
         
         isLoading.setValue(true);
         
@@ -170,13 +153,33 @@ public class RecipeDetailViewModel extends AndroidViewModel {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
     
+    /**
+     * Наблюдает за статусом лайка для текущего рецепта
+     *
+     * @param lifecycleOwner владелец жизненного цикла для наблюдения
+     */
+    public void observeLikeStatus(LifecycleOwner lifecycleOwner) {
+        // Получаем текущий статус лайка
+        boolean isCurrentlyLiked = likedRecipesRepository.isRecipeLikedLocalSync(recipeId);
+        isLikedLiveData.setValue(isCurrentlyLiked);
+        
+        // Меняем механизм: просто наблюдаем за изменениями в базе данных через LiveData
+        localRepository.getRecipeById(recipeId).observe(lifecycleOwner, recipe -> {
+            if (recipe != null) {
+                boolean isLiked = recipe.isLiked();
+                isLikedLiveData.setValue(isLiked);
+                Log.d(TAG, "RecipeDetailViewModel: Обновляем статус лайка. recipeId=" + recipeId + " isLiked=" + isLiked);
+            }
+        });
+    }
+    
     // Геттеры для LiveData
     public LiveData<Recipe> getRecipe() {
         return recipe;
     }
     
     public LiveData<Boolean> getIsLiked() {
-        return isLiked;
+        return isLikedLiveData;
     }
     
     public LiveData<Boolean> getIsLoading() {

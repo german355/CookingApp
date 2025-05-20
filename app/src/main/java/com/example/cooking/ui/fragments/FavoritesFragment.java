@@ -23,9 +23,10 @@ import com.example.cooking.ui.activities.MainActivity;
 import com.example.cooking.utils.MySharedPreferences;
 import com.example.cooking.R;
 import com.example.cooking.Recipe.Recipe;
-// import com.example.cooking.ui.adapters.RecipeAdapter; // Временно закомментировано
+import com.example.cooking.ui.adapters.RecipeListAdapter;
 import com.example.cooking.ui.viewmodels.FavoritesViewModel;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,17 +35,15 @@ import java.util.Objects;
 /**
  * Фрагмент для отображения избранных (лайкнутых) рецептов пользователя.
  */
-// public class FavoritesFragment extends Fragment implements RecipeAdapter.OnRecipeLikeListener { // Временно закомментировано
-public class FavoritesFragment extends Fragment { // Временно изменено
+public class FavoritesFragment extends Fragment implements RecipeListAdapter.OnRecipeLikeListener {
     private static final String TAG = "FavoritesFragment";
     
     private RecyclerView recyclerView;
-    // private RecipeAdapter adapter; // Временно закомментировано
+    private RecipeListAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView emptyView;
     private CircularProgressIndicator progressIndicator;
     private View emptyContainer; // Контейнер для EmptyFavoritesFragment
-    private SearchView searchView;
     
     private String userId;
     
@@ -77,15 +76,12 @@ public class FavoritesFragment extends Fragment { // Временно измен
         emptyView = view.findViewById(R.id.empty_view_favorites);
         progressIndicator = view.findViewById(R.id.loading_view_favorites);
         emptyContainer = view.findViewById(R.id.empty_container_favorites);
-        searchView = view.findViewById(R.id.search_view_favorite);
 
         setupRecyclerView();
-        setupSearchView();
         setupSwipeRefresh();
         
         observeViewModel();
         
-        // Инициализируем наблюдение за Shared ViewModel
         if (getActivity() != null && viewModel.isUserLoggedIn()) {
             viewModel.observeLikeChanges(getViewLifecycleOwner(), getActivity());
         }
@@ -94,8 +90,8 @@ public class FavoritesFragment extends Fragment { // Временно измен
     }
     
     private void setupRecyclerView() {
-        // adapter = new RecipeAdapter(new ArrayList<>(), this); // Временно закомментировано
-        // recyclerView.setAdapter(adapter); // Временно закомментировано
+        adapter = new RecipeListAdapter(this);
+        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
     }
     
@@ -103,43 +99,6 @@ public class FavoritesFragment extends Fragment { // Временно измен
         swipeRefreshLayout.setOnRefreshListener(() -> {
             Log.d(TAG, "Swipe to refresh triggered.");
             viewModel.refreshLikedRecipes();
-        });
-    }
-    
-    private void setupSearchView() {
-        searchView.setIconifiedByDefault(false);
-        searchView.setSubmitButtonEnabled(false);
-        
-        int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
-        View searchPlate = searchView.findViewById(searchPlateId);
-        if (searchPlate != null) {
-            searchPlate.setBackgroundColor(android.graphics.Color.TRANSPARENT);
-            int searchSrcTextId = getResources().getIdentifier("android:id/search_src_text", null, null);
-            android.widget.EditText searchEditText = searchView.findViewById(searchSrcTextId);
-            if (searchEditText != null) {
-                searchEditText.setBackground(null);
-                searchEditText.setHintTextColor(getResources().getColor(R.color.md_theme_onSurfaceVariant, null));
-                searchEditText.setTextColor(getResources().getColor(R.color.md_theme_onSurface, null));
-            }
-        }
-        
-        searchView.setOnClickListener(v -> {
-            searchView.setIconified(false);
-            searchView.requestFocusFromTouch();
-        });
-        
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                viewModel.performSearch(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                viewModel.performSearch(newText);
-                return true;
-            }
         });
     }
     
@@ -161,8 +120,7 @@ public class FavoritesFragment extends Fragment { // Временно измен
         
         viewModel.getIsRefreshing().observe(getViewLifecycleOwner(), isRefreshing -> {
              Log.d(TAG, "Observer received isRefreshing update: " + isRefreshing);
-             // if (isRefreshing && adapter.getItemCount() == 0) { // Временно закомментировано
-             if (isRefreshing && (recyclerView.getAdapter() == null || recyclerView.getAdapter().getItemCount() == 0)) { // Изменено для проверки recyclerView.getAdapter()
+             if (isRefreshing && (adapter == null || adapter.getItemCount() == 0)) {
                  showLoading();
              }
              swipeRefreshLayout.setRefreshing(isRefreshing);
@@ -173,8 +131,7 @@ public class FavoritesFragment extends Fragment { // Временно измен
              swipeRefreshLayout.setRefreshing(false);
              hideLoading();
              if (error != null && !error.isEmpty()) {
-                 // if (adapter.getItemCount() == 0) { // Временно закомментировано
-                 if (recyclerView.getAdapter() == null || recyclerView.getAdapter().getItemCount() == 0) { // Изменено для проверки recyclerView.getAdapter()
+                 if (adapter == null || adapter.getItemCount() == 0) {
                     showErrorState(error);
                  } else {
                     hideErrorState();
@@ -189,15 +146,9 @@ public class FavoritesFragment extends Fragment { // Временно измен
      * Обновляет список рецептов в UI и управляет видимостью заглушки.
      */
     private void updateRecipesList(List<Recipe> recipes) {
-        // adapter.updateRecipes(recipes); // Временно закомментировано
+        adapter.submitList(recipes);
         if (recipes.isEmpty()) {
-            String currentQuery = searchView.getQuery().toString();
-            if (currentQuery == null || currentQuery.trim().isEmpty()) {
-                showEmptyFavoritesFragment();
-            } else {
-                hideEmptyFavoritesFragment();
-                recyclerView.setVisibility(View.VISIBLE);
-            }
+            showEmptyFavoritesFragment();
         } else {
             hideEmptyFavoritesFragment();
             recyclerView.setVisibility(View.VISIBLE);
@@ -270,7 +221,7 @@ public class FavoritesFragment extends Fragment { // Временно измен
      */
     private void showLoading() {
         Log.d(TAG, "Showing loading indicator.");
-        if (progressIndicator != null && (recyclerView.getAdapter() == null || recyclerView.getAdapter().getItemCount() == 0)) {
+        if (progressIndicator != null && (adapter == null || adapter.getItemCount() == 0)) {
              recyclerView.setVisibility(View.GONE);
              if (emptyContainer != null) emptyContainer.setVisibility(View.GONE);
              emptyView.setVisibility(View.GONE);
@@ -300,19 +251,17 @@ public class FavoritesFragment extends Fragment { // Временно измен
         }
     }
     
-    // @Override // Временно закомментировано
-    // public void onRecipeLike(Recipe recipe, boolean isLiked) { // Временно закомментировано
-    //     Log.d(TAG, "Recipe like status changed: " + recipe.getTitle() + ", isLiked: " + isLiked);
-    //     if (!viewModel.isUserLoggedIn()) {
-    //         Toast.makeText(getContext(), "Войдите, чтобы изменить статус лайка", Toast.LENGTH_SHORT).show();
-    //         // Обновляем UI, чтобы отразить старое состояние
-    //         if (adapter != null) {
-    //             adapter.notifyItemChanged(viewModel.getFilteredLikedRecipes().getValue().indexOf(recipe));
-    //         }
-    //         return;
-    //     }
-    //     viewModel.toggleLikeStatus(recipe, isLiked);
-    // }
+    @Override
+    public void onRecipeLike(Recipe recipe, boolean isLiked) {
+        Log.d(TAG, "Recipe like status changed: " + recipe.getTitle() + ", isLiked: " + isLiked);
+        if (!viewModel.isUserLoggedIn()) {
+            Toast.makeText(getContext(), "Войдите, чтобы изменить статус лайка", Toast.LENGTH_SHORT).show();
+            // Обновляем UI, чтобы отразить старое состояние
+            adapter.notifyDataSetChanged();
+            return;
+        }
+        viewModel.toggleLikeStatus(recipe, isLiked);
+    }
     
     /**
      * Метод для возможного обновления данных извне (например, после логина).

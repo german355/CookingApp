@@ -136,7 +136,7 @@ public class SharedRecipeViewModel extends AndroidViewModel {
                             // Получаем набор ID лайкнутых рецептов из LikedRecipesRepository
                             Set<Integer> likedRecipeIds = new HashSet<>();
                             if (!currentUserId.equals("0")) {
-                                List<Integer> likedIdsList = likedRecipesRepository.getLikedRecipeIdsSync(currentUserId);
+                                List<Integer> likedIdsList = likedRecipesRepository.getLikedRecipeIdsSync();
                                 if (likedIdsList != null) {
                                     likedRecipeIds.addAll(likedIdsList);
                                 }
@@ -288,6 +288,18 @@ public class SharedRecipeViewModel extends AndroidViewModel {
     }
 
     /**
+     * Получаем набор ID лайкнутых рецептов из LikedRecipesRepository
+     */
+    private Set<Integer> getLikedRecipeIds() {
+        Set<Integer> likedRecipeIds = new HashSet<>();
+        List<Integer> likedIdsList = likedRecipesRepository.getLikedRecipeIdsSync();
+        if (likedIdsList != null) {
+            likedRecipeIds.addAll(likedIdsList);
+        }
+        return likedRecipeIds;
+    }
+
+    /**
      * Переключает статус лайка для рецепта по его ID
      * @param userId ID пользователя
      * @param recipeId ID рецепта
@@ -300,7 +312,7 @@ public class SharedRecipeViewModel extends AndroidViewModel {
         }
         
         // Получаем текущий статус лайка из локального репозитория
-        boolean isCurrentlyLiked = likedRecipesRepository.isRecipeLikedLocalSync(recipeId, userId);
+        boolean isCurrentlyLiked = likedRecipesRepository.isRecipeLikedLocalSync(recipeId);
         Log.d(TAG, "toggleLike: recipeId=" + recipeId + ", userId=" + userId + ", текущий статус=" + isCurrentlyLiked);
         
         // Переключаем статус лайка

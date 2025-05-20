@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -33,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     public BottomNavigationView bottomNavigationView;
     private FloatingActionButton addButton;
     private MaterialToolbar toolbar;
-    private SearchView searchView;
 
     // Навигация
     private NavController navController;
@@ -80,9 +80,6 @@ public class MainActivity extends AppCompatActivity {
         addButton = findViewById(R.id.fab_add);
         toolbar = findViewById(R.id.toolbar);
         
-        // Инициализируем SearchView в toolbar
-        searchView = findViewById(R.id.search_view_toolbar);
-
         // Инициализируем нижнюю навигацию
         bottomNavigationView = findViewById(R.id.bottom_navigation);
     }
@@ -109,24 +106,17 @@ public class MainActivity extends AppCompatActivity {
                         id != R.id.destination_settings;
                 viewModel.setShowAddButton(showAddButton);
                 
-                // Показываем поиск только на главном экране и в каталоге
-                boolean showSearch = id == R.id.nav_home || id == R.id.nav_catalog;
-                if (searchView != null) {
-                    searchView.setVisibility(showSearch ? View.VISIBLE : View.GONE);
-                }
-
-                // Установка заголовка Toolbar
-                if (id == R.id.nav_catalog) {
+                // Показываем поиск только на главном экране, в каталоге и в избранном
+                boolean showSearch = id == R.id.nav_home || id == R.id.nav_catalog || id == R.id.nav_favorites;
+                if (showSearch) {
                     if (getSupportActionBar() != null) {
-                        getSupportActionBar().setTitle("Каталог");
-                    }
-                } else if (destination.getLabel() != null) {
-                     if (getSupportActionBar() != null) {
-                        getSupportActionBar().setTitle(destination.getLabel());
+                        CharSequence label = destination.getLabel();
+                        getSupportActionBar().setTitle(label != null ? label : "");
                     }
                 } else {
                     if (getSupportActionBar() != null) {
-                        getSupportActionBar().setTitle(" "); // Пустой заголовок по умолчанию
+                        CharSequence label = destination.getLabel();
+                        getSupportActionBar().setTitle(label != null ? label : "");
                     }
                 }
             });
@@ -171,74 +161,6 @@ public class MainActivity extends AppCompatActivity {
         addButton.setOnClickListener(view -> {
             handleAddButtonClick();
         });
-        
-        // Настраиваем SearchView
-        setupSearchView();
-    }
-
-    /**
-     * Настраивает SearchView для поиска рецептов
-     */
-    private void setupSearchView() {
-        // Настройка внешнего вида
-        searchView.setIconifiedByDefault(false);
-        searchView.setQueryHint("Поиск по рецептам");
-        
-        // Программно стилизуем SearchView
-        int searchPlateId = searchView.getContext().getResources().getIdentifier(
-                "android:id/search_plate", null, null);
-        View searchPlate = searchView.findViewById(searchPlateId);
-        if (searchPlate != null) {
-            searchPlate.setBackgroundColor(android.graphics.Color.TRANSPARENT);
-            
-            // Находим EditText внутри SearchView и настраиваем его стиль
-            int searchSrcTextId = getResources().getIdentifier(
-                    "android:id/search_src_text", null, null);
-            android.widget.EditText searchEditText = searchView.findViewById(searchSrcTextId);
-            if (searchEditText != null) {
-                searchEditText.setBackground(null);
-                searchEditText.setHintTextColor(getResources().getColor(
-                        R.color.md_theme_onSurfaceVariant, null));
-                searchEditText.setTextColor(getResources().getColor(
-                        R.color.md_theme_onSurface, null));
-            }
-        }
-        
-        // Настройка поведения поиска
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                performSearch(query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                // Реагируем только на отправку поиска, а не на изменение текста
-                return false;
-            }
-        });
-    }
-    
-    /**
-     * Выполняет поиск по введенному запросу
-     */
-    private void performSearch(String query) {
-        // Очищаем фокус с SearchView после отправки
-        searchView.clearFocus();
-        
-        // Убедимся, что мы на главном экране или каталоге
-        int currentDestId = navController.getCurrentDestination().getId();
-        if (currentDestId != R.id.nav_home && currentDestId != R.id.nav_catalog) {
-            // Если мы не на главном экране или в каталоге, переходим на главный экран
-            bottomNavigationView.setSelectedItemId(R.id.nav_home);
-        }
-        
-        // Выполняем поиск через SharedViewModel
-        sharedRecipeViewModel.searchRecipes(query);
-        
-        // Логируем поисковый запрос
-        Log.d(TAG, "Выполнен поиск по запросу: " + query);
     }
 
     /**
@@ -344,8 +266,84 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setQueryHint("Поиск по рецептам");
+        // Стилизация SearchView (по желанию)
+        int searchPlateId = searchView.getContext().getResources().getIdentifier(
+                "android:id/search_plate", null, null);
+        View searchPlate = searchView.findViewById(searchPlateId);
+        if (searchPlate != null) {
+            searchPlate.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+            int searchSrcTextId = getResources().getIdentifier(
+                    "android:id/search_src_text", null, null);
+            android.widget.EditText searchEditText = searchView.findViewById(searchSrcTextId);
+            if (searchEditText != null) {
+                searchEditText.setBackground(null);
+                searchEditText.setHintTextColor(getResources().getColor(
+                        R.color.md_theme_onSurfaceVariant, null));
+                searchEditText.setTextColor(getResources().getColor(
+                        R.color.md_theme_onSurface, null));
+            }
+        }
+        // Логика поиска
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                performSearch(query);
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // Можно реализовать live-поиск
+                return false;
+            }
+        });
+        // Показывать/скрывать заголовок Toolbar в зависимости от состояния поиска
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                // Скрыть заголовок при открытии поиска
+                if (getSupportActionBar() != null) getSupportActionBar().setTitle("");
+                return true;
+            }
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                // Восстановить заголовок при закрытии поиска
+                if (getSupportActionBar() != null) {
+                    int id = navController.getCurrentDestination().getId();
+                    if (id == R.id.nav_catalog) {
+                        getSupportActionBar().setTitle("Каталог");
+                    } else if (navController.getCurrentDestination().getLabel() != null) {
+                        getSupportActionBar().setTitle(navController.getCurrentDestination().getLabel());
+                    } else {
+                        getSupportActionBar().setTitle(" ");
+                    }
+                }
+                return true;
+            }
+        });
         return true;
     }
 
+    /**
+     * Выполняет поиск по введенному запросу
+     */
+    private void performSearch(String query) {
+        // Очищаем фокус с SearchView после отправки
 
+        
+        // Убедимся, что мы на главном экране или каталоге
+        int currentDestId = navController.getCurrentDestination().getId();
+        if (currentDestId != R.id.nav_home && currentDestId != R.id.nav_catalog) {
+            // Если мы не на главном экране или в каталоге, переходим на главный экран
+            bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        }
+        
+        // Выполняем поиск через SharedViewModel
+        sharedRecipeViewModel.searchRecipes(query);
+        
+        // Логируем поисковый запрос
+        Log.d(TAG, "Выполнен поиск по запросу: " + query);
+    }
 }

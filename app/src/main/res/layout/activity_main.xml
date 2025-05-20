@@ -17,21 +17,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:title=" " >  <!-- Начальный пустой заголовок -->
-
-            <!-- SearchView справа от заголовка -->
-            <androidx.appcompat.widget.SearchView
-                    android:id="@+id/search_view_toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_marginStart="64dp"
-                    android:layout_marginEnd="16dp"
-                    style="@style/Widget.App.SearchView"
-                    android:queryHint="Поиск по рецептам"
-                    app:iconifiedByDefault="false" />
-
-        </com.google.android.material.appbar.MaterialToolbar>
+                 />  <!-- Только заголовок, без SearchView -->
 
     </com.google.android.material.appbar.AppBarLayout>
 

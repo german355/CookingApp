@@ -260,4 +260,31 @@ public class FavoritesViewModel extends AndroidViewModel {
             Log.d(TAG, "observeLikeChanges: SharedRecipeViewModel обновился");
         });
     }
+    
+    /**
+     * Изменяет статус лайка рецепта
+     * @param recipe Рецепт, для которого нужно изменить статус лайка
+     * @param isLiked Новый статус лайка
+     */
+    public void toggleLikeStatus(Recipe recipe, boolean isLiked) {
+        if (!isUserLoggedIn) {
+            Log.w(TAG, "Попытка изменить статус лайка без авторизации");
+            errorMessage.setValue("Необходимо войти в систему для изменения статуса лайка");
+            return;
+        }
+        
+        if (recipe == null) {
+            Log.e(TAG, "toggleLikeStatus: рецепт равен null");
+            return;
+        }
+        
+        // Обновляем статус лайка в SharedViewModel
+        if (sharedRecipeViewModel != null) {
+            sharedRecipeViewModel.updateLikeStatus(recipe, isLiked);
+        } else {
+            Log.e(TAG, "toggleLikeStatus: SharedRecipeViewModel равен null");
+            // Если SharedViewModel не инициализирован, обновляем напрямую через репозиторий
+            repository.updateLikeStatusLocal(recipe.getId(), isLiked);
+        }
+    }
 }

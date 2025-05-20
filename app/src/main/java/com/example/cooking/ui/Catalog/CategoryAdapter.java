@@ -64,7 +64,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         public CategoryViewHolder(@NonNull View itemView) {
             super(itemView);
             categoryImage = itemView.findViewById(R.id.category_image);
-            categoryName = itemView.findViewById(R.id.category_name);
+
         }
 
         /**
@@ -73,7 +73,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
          * @param listener Слушатель для обработки клика.
          */
         public void bind(final CategoryItem categoryItem, final OnCategoryClickListener listener) {
-            categoryName.setText(categoryItem.getName());
+
             // Log.d("CategoryAdapter", "Binding category: " + categoryItem.getName()); // Отладочный лог
 
             String imageUrl = categoryItem.getImageUrl();

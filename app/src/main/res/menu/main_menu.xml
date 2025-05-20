@@ -4,4 +4,11 @@
 
     <!-- Все элементы <item> удалены, чтобы очистить Toolbar от кнопок -->
 
+    <item
+        android:id="@+id/action_search"
+        android:title="Найти"
+        android:icon="@drawable/ic_search"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView" />
+
 </menu> 

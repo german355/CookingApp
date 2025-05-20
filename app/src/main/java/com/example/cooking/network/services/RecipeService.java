@@ -227,7 +227,7 @@ public class RecipeService {
 
                         if (!currentUserId.equals("0")) {
                             LikedRecipesRepository likedRepo = new LikedRecipesRepository(context);
-                            likedRepo.deleteLikedRecipeLocal(recipeId, currentUserId);
+                            likedRepo.deleteLikedRecipeLocal(recipeId);
                             Log.d(TAG, "Запись о лайке для удаленного рецепта (ID: " + recipeId + ") удалена из локальной базы лайков.");
                         } else {
                             Log.w(TAG, "Не удалось получить currentUserId, удаление лайка пропущено.");

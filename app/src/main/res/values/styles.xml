@@ -13,23 +13,15 @@
         <item name="android:editTextColor">?attr/colorOnSurface</item>
         <item name="android:textColorHint">?attr/colorOnSurfaceVariant</item>
         <item name="android:textAppearance">@style/TextAppearance.App.SearchView</item>
-        <item name="android:backgroundTint">@null</item>
+        <item name="android:backgroundTint">?attr/colorSurface</item>
         <item name="android:elevation">4dp</item>
-        <item name="android:layout_marginStart">16dp</item>
-        <item name="android:layout_marginEnd">16dp</item>
-        <item name="android:minHeight">48dp</item>
-        <item name="closeIcon">@drawable/ic_close</item>
-        <item name="searchIcon">@drawable/ic_search</item>
-        <item name="searchHintIcon">@drawable/ic_search</item>
     </style>
     
     <!-- Стиль текста для SearchView, который скрывает подчеркивание -->
     <style name="TextAppearance.App.SearchView" parent="TextAppearance.AppCompat.Body1">
         <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="android:textColorHint">?attr/colorPrimary</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textColorHint">?attr/colorOnSurfaceVariant</item>
         <item name="android:backgroundTint">@android:color/transparent</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
     
     <!-- Стиль для карточек рецептов -->

@@ -155,13 +155,13 @@ public class HomeViewModel extends AndroidViewModel {
                              // Получаем набор ID лайкнутых рецептов из LikedRecipesRepository
                              Set<Integer> likedRecipeIds = new HashSet<>();
                              if (!currentUserId.equals("0")) {
-                                 List<Integer> likedIdsList = likedRecipesRepository.getLikedRecipeIdsSync(currentUserId);
+                                 List<Integer> likedIdsList = likedRecipesRepository.getLikedRecipeIdsSync();
                                  if (likedIdsList != null) {
                                      likedRecipeIds.addAll(likedIdsList);
                                  }
-                                 Log.d(TAG, "Loaded liked recipe IDs for user " + currentUserId + ": " + likedRecipeIds.size());
+                                 Log.d(TAG, "Загружены ID лайкнутых рецептов для пользователя " + currentUserId + ": " + likedRecipeIds.size());
                              } else {
-                                 Log.w(TAG, "User not logged in (userId=0), cannot load liked IDs.");
+                                 Log.w(TAG, "Пользователь не авторизован (userId=0), невозможно загрузить лайкнутые рецепты.");
                              }
 
                              // Обновляем isLiked в полученных с сервера рецептах
@@ -241,7 +241,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     private void updateLikedRepositoryStatus(int recipeId, boolean isLiked) {
-         String currentUserId = new MySharedPreferences(getApplication()).getString("userId", "0");
+        String currentUserId = new MySharedPreferences(getApplication()).getString("userId", "0");
         if (currentUserId.equals("0")) {
             Log.w(TAG, "Cannot update liked repository status: User ID is 0.");
             return;
@@ -250,9 +250,9 @@ public class HomeViewModel extends AndroidViewModel {
             try {
                 Log.d(TAG, "Updating like status in LIKED REPOSITORY for recipe " + recipeId + " to " + isLiked);
                 if (isLiked) {
-                    likedRecipesRepository.insertLikedRecipeLocal(recipeId, currentUserId);
+                    likedRecipesRepository.insertLikedRecipeLocal(recipeId);
                 } else {
-                    likedRecipesRepository.deleteLikedRecipeLocal(recipeId, currentUserId);
+                    likedRecipesRepository.deleteLikedRecipeLocal(recipeId);
                 }
             } catch (Exception e) {
                  Log.e(TAG, "Error updating status in liked repository: " + e.getMessage(), e);

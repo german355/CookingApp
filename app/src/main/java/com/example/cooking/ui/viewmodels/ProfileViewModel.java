@@ -276,8 +276,9 @@ public class ProfileViewModel extends AndroidViewModel {
                 try {
                     Log.d(TAG, "Удаление лайков пользователя из БД в фоновом потоке userId: " + userId);
                     if (userId != null && !userId.equals("0")) {
-                         likedRecipeDao.deleteAllForUser(userId);
-                         Log.d(TAG, "Лайки пользователя успешно удалены из БД");
+                        // Очищаем лайки пользователя в локальной базе данных
+                        likedRecipeDao.deleteAll();
+                        Log.d(TAG, "Лайки успешно удалены для пользователя " + userId);
                     } else {
                          Log.w(TAG, "userId недействителен (" + userId + "), удаление лайков пропущено");
                     }

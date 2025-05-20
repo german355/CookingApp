@@ -12,9 +12,6 @@ import java.util.List;
 /**
  * Data Access Object (DAO) для работы с сущностями {@link LikedRecipeEntity}.
  * Предоставляет методы для добавления, удаления и получения информации о лайкнутых рецептах.
- * ВНИМАНИЕ: Корректность работы некоторых методов (например, использующих userId в WHERE-условии
- * для идентификации уникальной записи) зависит от структуры первичного ключа в {@link LikedRecipeEntity}.
- * Рекомендуется использовать составной первичный ключ (userId, recipeId) в {@link LikedRecipeEntity}.
  */
 @Dao
 public interface LikedRecipeDao {
@@ -35,45 +32,40 @@ public interface LikedRecipeDao {
     void delete(LikedRecipeEntity likedRecipe);
 
     /**
-     * Удаляет запись о лайке по идентификатору рецепта и идентификатору пользователя.
+     * Удаляет запись о лайке по идентификатору рецепта.
      * @param recipeId Идентификатор рецепта.
-     * @param userId Идентификатор пользователя.
      */
-    @Query("DELETE FROM liked_recipes WHERE recipeId = :recipeId AND userId = :userId")
-    void deleteById(int recipeId, String userId);
+    @Query("DELETE FROM liked_recipes WHERE recipeId = :recipeId")
+    void deleteById(int recipeId);
 
     /**
-     * Удаляет все записи о лайках для указанного пользователя.
-     * @param userId Идентификатор пользователя.
+     * Удаляет все записи о лайках из таблицы.
      */
-    @Query("DELETE FROM liked_recipes WHERE userId = :userId")
-    void deleteAllForUser(String userId);
+    @Query("DELETE FROM liked_recipes")
+    void deleteAll();
 
     /**
-     * Получает список всех лайкнутых рецептов для указанного пользователя.
+     * Получает список всех лайкнутых рецептов.
      * Возвращает результат как {@link LiveData}.
-     * @param userId Идентификатор пользователя.
      * @return {@link LiveData} со списком {@link LikedRecipeEntity}.
      */
-    @Query("SELECT * FROM liked_recipes WHERE userId = :userId")
-    LiveData<List<LikedRecipeEntity>> getLikedRecipesForUser(String userId);
+    @Query("SELECT * FROM liked_recipes")
+    LiveData<List<LikedRecipeEntity>> getLikedRecipes();
 
     /**
-     * Проверяет, лайкнул ли указанный пользователь указанный рецепт.
+     * Проверяет, лайкнут ли указанный рецепт.
      * @param recipeId Идентификатор рецепта.
-     * @param userId Идентификатор пользователя.
-     * @return true, если рецепт лайкнут пользователем, иначе false.
+     * @return true, если рецепт лайкнут, иначе false.
      */
-    @Query("SELECT EXISTS(SELECT 1 FROM liked_recipes WHERE recipeId = :recipeId AND userId = :userId LIMIT 1)")
-    boolean isRecipeLiked(int recipeId, String userId);
+    @Query("SELECT EXISTS(SELECT 1 FROM liked_recipes WHERE recipeId = :recipeId LIMIT 1)")
+    boolean isRecipeLiked(int recipeId);
 
     /**
-     * Получает синхронно список ID всех рецептов, лайкнутых указанным пользователем.
-     * @param userId Идентификатор пользователя.
+     * Получает синхронно список ID всех лайкнутых рецептов.
      * @return Список ID лайкнутых рецептов.
      */
-    @Query("SELECT recipeId FROM liked_recipes WHERE userId = :userId")
-    List<Integer> getLikedRecipeIdsSync(String userId);
+    @Query("SELECT recipeId FROM liked_recipes")
+    List<Integer> getLikedRecipeIdsSync();
 
     /**
      * Вставляет список записей о лайкнутых рецептах.
