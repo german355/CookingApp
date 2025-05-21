@@ -59,6 +59,9 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
     private static final long AUTO_REFRESH_INTERVAL = 30000; // 30 секунд
     private boolean autoRefreshEnabled = true;
     
+    // Добавляем флаг для отслеживания инициированного пользователем обновления
+    private boolean userInitiatedRefresh = false;
+    
     // Сохранение состояния RecyclerView
     private static final String KEY_RECYCLER_STATE = "recycler_state";
     private RecyclerView.LayoutManager layoutManager;
@@ -101,15 +104,20 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         }
         
         // Настраиваем swipe-to-refresh
-        swipeRefreshLayout.setOnRefreshListener(() -> sharedViewModel.refreshRecipes());
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            userInitiatedRefresh = true;
+            sharedViewModel.refreshRecipes();
+        });
         
         // Наблюдаем за данными из SharedViewModel
         observeViewModel();
         
         // Наблюдаем за результатами поиска
         sharedViewModel.getSearchResults().observe(getViewLifecycleOwner(), recipes -> {
-            adapter.submitList(recipes);
-            showEmptyView(recipes == null || recipes.isEmpty());
+            if (recipes != null) {
+                adapter.submitList(recipes);
+                showEmptyView(recipes.isEmpty());
+            }
         });
         
         // Инициализируем обработчик для автоматического обновления
@@ -117,6 +125,7 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         autoRefreshRunnable = () -> {
             if (autoRefreshEnabled) {
                 Log.d(TAG, "Выполняется автоматическое обновление рецептов");
+                userInitiatedRefresh = false; // Это не пользовательское обновление
                 sharedViewModel.refreshRecipes();
                 // Запланировать следующее обновление
                 autoRefreshHandler.postDelayed(autoRefreshRunnable, AUTO_REFRESH_INTERVAL);
@@ -162,12 +171,26 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         
         // Наблюдаем за состоянием загрузки
         sharedViewModel.getIsRefreshing().observe(getViewLifecycleOwner(), isRefreshing -> {
-            swipeRefreshLayout.setRefreshing(isRefreshing);
-            
-            // Показываем прогресс бар только при первой загрузке, когда список пустой
-            if (adapter.getItemCount() == 0) {
-                progressBar.setVisibility(isRefreshing ? View.VISIBLE : View.GONE);
+            if (isRefreshing) {
+                // Если обновление в процессе
+                if (userInitiatedRefresh) {
+                    // Если обновление было инициировано пользователем через swipe, 
+                    // оставляем SwipeRefreshLayout видимым, скрываем progressBar
+                    swipeRefreshLayout.setRefreshing(true);
+                    progressBar.setVisibility(View.GONE);
+                } else {
+                    // Если обновление НЕ было инициировано пользователем, 
+                    // показываем progressBar, не показываем SwipeRefreshLayout
+                    swipeRefreshLayout.setRefreshing(false);
+                    // Показываем прогресс бар только при первой загрузке, когда список пустой
+                    if (adapter.getItemCount() == 0) {
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
+                }
             } else {
+                // Обновление закончилось, сбрасываем флаг и убираем оба индикатора
+                userInitiatedRefresh = false;
+                swipeRefreshLayout.setRefreshing(false);
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -209,6 +232,7 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
      */
     public void performSearch(String query) {
         // Метод вызывается из MainActivity
+        userInitiatedRefresh = false; // Поиск не считаем инициированным через swipe refresh
         sharedViewModel.searchRecipes(query);
     }
     
@@ -244,6 +268,11 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
     @Override
     public void onResume() {
         super.onResume();
+        // Обновляем данные оптимальным способом - с сервера или локально
+        // Обеспечиваем, что userInitiatedRefresh = false, чтобы автоматическое обновление
+        // использовало правильный индикатор загрузки
+        userInitiatedRefresh = false;
+        sharedViewModel.refreshIfNeeded();
         startAutoRefresh();
     }
     
@@ -251,5 +280,21 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
     public void onPause() {
         super.onPause();
         stopAutoRefresh();
+    }
+
+    /**
+     * Загружает начальные данные при первом открытии фрагмента
+     */
+    private void loadInitialData() {
+        // Устанавливаем флаг в false, чтобы показать правильный индикатор загрузки
+        userInitiatedRefresh = false;
+        sharedViewModel.loadInitialRecipes();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // Загружаем начальные данные
+        loadInitialData();
     }
 }

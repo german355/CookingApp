@@ -8,6 +8,8 @@ import androidx.room.Query;
 import androidx.room.Update;
 import androidx.room.Delete;
 
+import com.example.cooking.Recipe.Recipe;
+
 import java.util.List;
 
 /**
@@ -143,4 +145,12 @@ public interface RecipeDao {
      */
     @Query("SELECT * FROM recipes WHERE foodType = :foodType ORDER BY title ASC")
     List<RecipeEntity> getRecipesByFoodType(String foodType);
+
+    /**
+     * Получает все рецепты из базы данных.
+     * Синхронный вызов для непосредственного использования.
+     * @return Список {@link RecipeEntity}.
+     */
+    @Query("SELECT * FROM recipes ORDER BY title ASC")
+    List<RecipeEntity> getAllRecipesSync();
 } 

@@ -320,6 +320,8 @@ public class MainActivity extends AppCompatActivity {
                         getSupportActionBar().setTitle(" ");
                     }
                 }
+                // Сброс поиска — показать все рецепты
+                performSearch("");
                 return true;
             }
         });

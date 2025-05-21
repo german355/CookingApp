@@ -167,6 +167,10 @@ public class FavoritesViewModel extends AndroidViewModel {
      * Выполняет поиск среди избранных рецептов
      */
     public void performSearch(String query) {
+        if (query == null || query.isEmpty()) {
+            refreshLikedRecipes();
+            return;
+        }
         searchQuery.setValue(query);
     }
     

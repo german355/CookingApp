@@ -11,6 +11,7 @@ import com.example.cooking.network.responses.RecipesResponse;
 import com.example.cooking.network.responses.SearchResponse;
 
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -157,5 +158,19 @@ public interface ApiService {
             @Path("id") int recipeId,
             @Header("X-User-ID") String userIdHeader,
             @Header("X-User-Permission") String permissionHeader
+    );
+
+    // =============== Лайки рецептов ===============
+
+    /**
+     * Поставить/снять лайк рецепту
+     * @param recipeId ID рецепта
+     * @param userData тело запроса с userId
+     * @return ответ сервера
+     */
+    @POST("recipes/{recipeId}/like")
+    Call<GeneralServerResponse> toggleLikeRecipe(
+        @Path("recipeId") int recipeId, 
+        @Body Map<String, String> userData
     );
 } 

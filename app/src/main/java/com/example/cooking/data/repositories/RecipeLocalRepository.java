@@ -56,20 +56,26 @@ public class RecipeLocalRepository {
     }
     
     /**
-     * Синхронно получить все рецепты из базы данных
+     * Получить список всех рецептов синхронно
      * @return список рецептов
      */
     public List<Recipe> getAllRecipesSync() {
-        List<RecipeEntity> entities = recipeDao.getAllRecipesList();
-        Log.d(TAG, "Fetching all recipes synchronously. Count: " + (entities != null ? entities.size() : 0));
-        List<Recipe> recipes = new ArrayList<>();
-        if (entities != null) {
-            for (RecipeEntity entity : entities) {
-                recipes.add(entity.toRecipe());
+        try {
+            List<RecipeEntity> entities = recipeDao.getAllRecipesSync();
+            List<Recipe> recipes = new ArrayList<>();
+            
+            if (entities != null) {
+                for (RecipeEntity entity : entities) {
+                    recipes.add(entity.toRecipe());
+                }
+                Log.d(TAG, "Получено " + recipes.size() + " рецептов из локальной БД");
             }
+            
+            return recipes;
+        } catch (Exception e) {
+            Log.e(TAG, "Ошибка при получении рецептов из БД: " + e.getMessage());
+            return new ArrayList<>();
         }
-        Log.d(TAG, "Synchronous fetch complete. Returning Recipes count: " + recipes.size());
-        return recipes;
     }
     
     /**

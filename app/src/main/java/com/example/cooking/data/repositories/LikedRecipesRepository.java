@@ -18,6 +18,7 @@ import com.example.cooking.data.database.LikedRecipeEntity;
 import com.example.cooking.data.database.RecipeDao;
 import com.example.cooking.data.database.RecipeEntity;
 import com.example.cooking.network.api.ApiService;
+import com.example.cooking.network.models.GeneralServerResponse;
 import com.example.cooking.network.responses.RecipesResponse;
 import com.example.cooking.network.services.NetworkService;
 
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LikedRecipesRepository {
     private static final String TAG = "LikedRecipesRepository";
@@ -237,13 +240,6 @@ public class LikedRecipesRepository {
             Log.d(TAG, "Добавление лайка в локальную базу: recipeId=" + recipeId);
             likedRecipeDao.insert(new LikedRecipeEntity(recipeId));
         });
-        
-        // Отправка лайка на сервер
-        com.example.cooking.utils.MySharedPreferences prefs = new com.example.cooking.utils.MySharedPreferences(context);
-        String userId = prefs.getString("userId", "0");
-        if (!userId.equals("0")) {
-            addLikedRecipe(userId, recipeId);
-        }
     }
 
     /**
@@ -255,13 +251,6 @@ public class LikedRecipesRepository {
             Log.d(TAG, "Удаление лайка из локальной базы: recipeId=" + recipeId);
             likedRecipeDao.deleteById(recipeId);
         });
-        
-        // Отправка удаления лайка на сервер
-        com.example.cooking.utils.MySharedPreferences prefs = new com.example.cooking.utils.MySharedPreferences(context);
-        String userId = prefs.getString("userId", "0");
-        if (!userId.equals("0")) {
-            removeLikedRecipe(userId, recipeId);
-        }
     }
 
     /**
@@ -310,17 +299,82 @@ public class LikedRecipesRepository {
     }
     
     /**
-     * Отправляет запрос на сервер для добавления лайка
+     * Отправляет запрос на сервер для добавления лайка и добавляет запись в локальную БД
      */
     public void addLikedRecipe(String userId, int recipeId) {
+        executor.execute(() -> {
+            // Добавляем запись в локальную БД напрямую
+            Log.d(TAG, "Добавление лайка напрямую в БД: recipeId=" + recipeId);
+            likedRecipeDao.insert(new LikedRecipeEntity(recipeId));
+        });
+        
         // Код для отправки запроса на сервер
+        if (isNetworkAvailable()) {
+            executor.execute(() -> {
+                try {
+                    Log.d(TAG, "Отправка запроса на лайк рецепта: userId=" + userId + ", recipeId=" + recipeId);
+                    
+                    // Создаем тело запроса с userId
+                    Map<String, String> userData = new HashMap<>();
+                    userData.put("userId", userId);
+                    
+                    // Отправляем запрос на сервер
+                    retrofit2.Call<GeneralServerResponse> call = apiService.toggleLikeRecipe(recipeId, userData);
+                    retrofit2.Response<GeneralServerResponse> response = call.execute();
+                    
+                    // Логируем результат
+                    if (response.isSuccessful()) {
+                        Log.d(TAG, "Запрос на лайк успешно отправлен на сервер. Ответ: " + response.body());
+                    } else {
+                        Log.e(TAG, "Ошибка при отправке лайка на сервер. Код: " + response.code() + ", Сообщение: " + response.message());
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Ошибка при отправке лайка на сервер", e);
+                }
+            });
+        } else {
+            Log.w(TAG, "Нет подключения к сети, лайк сохранен только локально");
+        }
     }
     
     /**
-     * Отправляет запрос на сервер для удаления лайка
+     * Отправляет запрос на сервер для удаления лайка и удаляет запись из локальной БД
      */
     public void removeLikedRecipe(String userId, int recipeId) {
+        executor.execute(() -> {
+            // Удаляем запись из локальной БД напрямую
+            Log.d(TAG, "Удаление лайка напрямую из БД: recipeId=" + recipeId);
+            likedRecipeDao.deleteById(recipeId);
+        });
+        
         // Код для отправки запроса на сервер
+        if (isNetworkAvailable()) {
+            executor.execute(() -> {
+                try {
+                    Log.d(TAG, "Отправка запроса на снятие лайка: userId=" + userId + ", recipeId=" + recipeId);
+                    
+                    // API использует тот же эндпоинт для лайка и снятия лайка
+                    // поэтому отправляем тот же запрос - сервер должен определить действие по наличию/отсутствию записи
+                    Map<String, String> userData = new HashMap<>();
+                    userData.put("userId", userId);
+                    
+                    // Отправляем запрос на сервер 
+                    retrofit2.Call<GeneralServerResponse> call = apiService.toggleLikeRecipe(recipeId, userData);
+                    retrofit2.Response<GeneralServerResponse> response = call.execute();
+                    
+                    // Логируем результат
+                    if (response.isSuccessful()) {
+                        Log.d(TAG, "Запрос на снятие лайка успешно отправлен на сервер. Ответ: " + response.body());
+                    } else {
+                        Log.e(TAG, "Ошибка при отправке запроса на снятие лайка. Код: " + response.code() + ", Сообщение: " + response.message());
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Ошибка при отправке запроса на снятие лайка", e);
+                }
+            });
+        } else {
+            Log.w(TAG, "Нет подключения к сети, лайк удален только локально");
+        }
     }
     
     /**
