@@ -116,7 +116,7 @@ public class RecipeRepository extends NetworkRepository {
                                     MediatorLiveData<Resource<List<Recipe>>> result,
                                     boolean shouldCache) {
         LiveData<Resource<RecipesResponse>> apiResponse = 
-                ApiCallHandler.asLiveData(apiService.getRecipes(userId));
+                ApiCallHandler.asLiveData(apiService.getRecipes());
                 
         result.addSource(apiResponse, resource -> {
             result.removeSource(apiResponse);

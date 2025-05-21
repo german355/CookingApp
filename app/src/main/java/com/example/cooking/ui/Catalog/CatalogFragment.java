@@ -54,10 +54,10 @@ public class CatalogFragment extends Fragment implements CategoryAdapter.OnCateg
         categoryList.add(new CategoryItem("Обед", "обед", "meal_type", "Дневной прием пищи", "https://i.ibb.co/8gR7qXH7/image.png"));
         categoryList.add(new CategoryItem("Ужин", "ужин", "meal_type", "Вечерний прием пищи", "https://i.ibb.co/wFrYNzr7/image.png"));
         categoryList.add(new CategoryItem("Закуска", "закуска", "meal_type", "Небольшое блюдо перед основной едой или к напиткам", "https://i.ibb.co/mCxHTNw5/image.png"));
-
+        categoryList.add(new CategoryItem("Основное блюдо", "основное блюдо", "meal_type", "Главное, самое сытное блюдо трапезы", "https://i.ibb.co/G4g1typg/image.png"));
 
         // food_type
-        categoryList.add(new CategoryItem("Основное блюдо", "основное блюдо", "food_type", "Главное, самое сытное блюдо трапезы", "https://i.ibb.co/G4g1typg/image.png"));
+        categoryList.add(new CategoryItem("Паста", "паста", "food_type", "Итальянская паста", "https://pplx-res.cloudinary.com/image/upload/v1747844845/gpt4o_images/rgeympr8dnlx3xkpbuoj.png"));
         categoryList.add(new CategoryItem("Гарнир", "гарнир", "food_type", "Дополнение к основному блюду", "https://i.ibb.co/SkVXMcc/image.png"));
         categoryList.add(new CategoryItem("Салат", "салат", "food_type", "Блюдо из нарезанных ингредиентов с заправкой", "https://i.ibb.co/23Qvp6Vq/image.png"));
         categoryList.add(new CategoryItem("Суп", "суп", "food_type", "Жидкое первое блюдо", "https://i.ibb.co/5gpN4Rjj/image.png"));

@@ -33,7 +33,7 @@
                 <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:src="@drawable/_7f63c25c6dca70001c9a915_tovector_result"
+                        android:src="@drawable/empty"
                         android:scaleType="fitCenter"/>
 
                 <!-- Иконка лупы (дополнительная) -->

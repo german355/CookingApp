@@ -36,6 +36,14 @@ public class SearchResponse extends BaseApiResponse {
     public List<Recipe> getResults() {
         return data != null ? data.getResults() : null;
     }
+    
+    /**
+     * Получает общее количество результатов поиска
+     * @return общее количество найденных рецептов
+     */
+    public int getTotalResults() {
+        return data != null ? data.getTotalResults() : 0;
+    }
 
     /**
      * Внутренний класс для представления данных ответа
@@ -43,6 +51,9 @@ public class SearchResponse extends BaseApiResponse {
     public static class Data {
         @SerializedName("results")
         private List<Recipe> results;
+        
+        @SerializedName("total_results")
+        private int totalResults;
         
         /**
          * Получает результаты поиска
@@ -58,6 +69,22 @@ public class SearchResponse extends BaseApiResponse {
          */
         public void setResults(List<Recipe> results) {
             this.results = results;
+        }
+        
+        /**
+         * Получает общее количество результатов
+         * @return общее количество найденных рецептов
+         */
+        public int getTotalResults() {
+            return totalResults;
+        }
+        
+        /**
+         * Устанавливает общее количество результатов
+         * @param totalResults общее количество найденных рецептов
+         */
+        public void setTotalResults(int totalResults) {
+            this.totalResults = totalResults;
         }
     }
 }

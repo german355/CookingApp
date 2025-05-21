@@ -14,6 +14,7 @@ import okhttp3.Cache;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -59,29 +60,88 @@ public class NetworkService {
         if (httpClient == null) {
             synchronized (NetworkService.class) {
                 if (httpClient == null) {
+                    // Создаем логгер для HTTP-запросов
                     HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> 
-                            Log.d(TAG, message));
+                        Log.d(TAG, "OkHttp: " + message));
                     
-                    // Включаем логирование только в debug сборках
-                    if (android.os.Build.TYPE.equals("debug") || android.os.Build.TYPE.equals("eng")) {
-                        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-                    } else {
-                        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.NONE);
-                    }
+                    // Устанавливаем максимальный уровень логирования
+                    loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
                     
-                    // Создаем и настраиваем OkHttpClient
-                    httpClient = new OkHttpClient.Builder()
+                    // Создаем кэш для запросов
+                    Cache cache = new Cache(context.getCacheDir(), CACHE_SIZE);
+                    
+                    // Создаем и настраиваем клиент
+                    OkHttpClient.Builder builder = new OkHttpClient.Builder()
                             .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
                             .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
                             .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
-                            .retryOnConnectionFailure(false) // отключаем, т.к. используем свой RetryInterceptor
-                            .addInterceptor(new RetryInterceptor(MAX_RETRY_ATTEMPTS, RETRY_DELAY_MILLIS))
-                            .addInterceptor(new AuthInterceptor())
+                            .cache(cache)
+                            .retryOnConnectionFailure(true)
                             .addInterceptor(loggingInterceptor)
-                            .cache(new Cache(context.getCacheDir(), CACHE_SIZE))
-                            .connectionPool(new ConnectionPool(0, 1, TimeUnit.NANOSECONDS)) // отключаем keep-alive
-                            .protocols(Collections.singletonList(Protocol.HTTP_1_1)) // только HTTP/1.1
-                            .build();
+                            .addInterceptor(new AuthInterceptor(context))
+                            .addInterceptor(new RetryInterceptor(MAX_RETRY_ATTEMPTS, RETRY_DELAY_MILLIS));
+                    
+                    // Добавляем кастомный интерцептор для модификации URL запросов
+                    builder.addInterceptor(chain -> {
+                        Request original = chain.request();
+                        String url = original.url().toString();
+                        
+                        Log.d(TAG, "Интерцептор: проверяю URL: " + url);
+                        
+                        // Проверяем, является ли это запросом к endpoint search
+                        if (url.contains("/search") && url.contains("q=")) {
+                            Log.d(TAG, "Обнаружен запрос к /search. Исходный URL: " + url);
+                            
+                            // Пробуем быстрое решение: заменяем весь URL на нужный формат
+                            // Используем хардкод для умного поиска для быстрого исправления
+                            String query = "";
+                            
+                            // Получаем значение параметра q
+                            String[] parts = url.split("q=");
+                            if (parts.length >= 2) {
+                                query = parts[1];
+                                // Отрезаем все, что идет после параметра q, если есть другие параметры
+                                if (query.contains("&")) {
+                                    query = query.substring(0, query.indexOf("&"));
+                                }
+                                
+                                Log.d(TAG, "Оригинальный запрос: " + query);
+                                
+                                try {
+                                    // Кодируем запрос, если нужно
+                                    query = java.net.URLDecoder.decode(query, "UTF-8");
+                                    Log.d(TAG, "Декодированный запрос: " + query);
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Ошибка при декодировании запроса", e);
+                                }
+                                
+                                // Формируем новый URL с правильным форматированием
+                                String baseUrl = "http://89.35.130.107/search?q=\"" + query.replace("\"", "").trim() + "\"";
+                                
+                                // Добавляем остальные параметры
+                                if (url.contains("&")) {
+                                    baseUrl += url.substring(url.indexOf("&"));
+                                }
+                                
+                                Log.d(TAG, "Новый прямой URL: " + baseUrl);
+                                
+                                // Создаем новый запрос
+                                Request newRequest = original.newBuilder()
+                                        .url(baseUrl)
+                                        .build();
+                                
+                                // Логируем заголовки для отладки
+                                Log.d(TAG, "Заголовки запроса: " + newRequest.headers());
+                                
+                                return chain.proceed(newRequest);
+                            }
+                        }
+                        
+                        // Для остальных запросов не меняем URL
+                        return chain.proceed(original);
+                    });
+                    
+                    httpClient = builder.build();
                     
                     Log.d(TAG, "OkHttpClient создан с настроенными интерцепторами и таймаутами");
                 }
@@ -101,6 +161,11 @@ public class NetworkService {
         if (retrofit == null) {
             synchronized (NetworkService.class) {
                 if (retrofit == null) {
+                    Log.d(TAG, "Создаю Retrofit с базовым URL: " + BASE_API_URL);
+                    
+                    // Удаляем все кэшированные данные
+                    reset();
+                    
                     retrofit = new Retrofit.Builder()
                             .baseUrl(BASE_API_URL)
                             .client(getHttpClient(context))
@@ -147,7 +212,9 @@ public class NetworkService {
         if (apiService == null) {
             synchronized (NetworkService.class) {
                 if (apiService == null) {
+                    Log.d(TAG, "Создаю ApiService");
                     apiService = getRetrofit(context).create(ApiService.class);
+                    Log.d(TAG, "ApiService создан");
                 }
             }
         }

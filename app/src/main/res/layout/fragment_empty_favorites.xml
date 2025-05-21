@@ -27,7 +27,7 @@
                 android:layout_height="match_parent"
                 android:padding="16dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/_7f63c25c6dca70001c9a915_tovector_result"
+                android:src="@drawable/empty"
                 android:contentDescription="Нет избранных рецептов" />
         </androidx.cardview.widget.CardView>
     </FrameLayout>

@@ -51,17 +51,11 @@ public class RecipeRemoteRepository {
             return;
         }
 
-        // Получаем наш внутренний userId из SharedPreferences
-        String userId = preferences.getString("userId", null);
-        if (userId == null || userId.isEmpty() || userId.equals("0")) {
-            Log.e(TAG, "Внутренний userId не найден в SharedPreferences. Пользователь не авторизован?");
-            callback.onDataNotAvailable("Ошибка: Пользователь не авторизован (внутренний ID не найден).");
-            return;
-        }
-        Log.d(TAG, "Отправляем запрос getRecipes с внутренним userId: " + userId);
+        // Больше не нужно получать userId для этого запроса
+        Log.d(TAG, "Отправляем запрос getRecipes");
 
         // Вызываем API с использованием ApiCallHandler
-        Call<RecipesResponse> call = apiService.getRecipes(userId);
+        Call<RecipesResponse> call = apiService.getRecipes();
         ApiCallHandler.execute(call, new ApiCallHandler.ApiCallback<RecipesResponse>() {
             @Override
             public void onSuccess(RecipesResponse response) {

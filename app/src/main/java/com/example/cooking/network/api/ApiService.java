@@ -66,7 +66,7 @@ public interface ApiService {
      * @return Call объект с ответом типа RecipesResponse
      */
     @GET("recipes")
-    Call<RecipesResponse> getRecipes(@Query("userId") String userId);
+    Call<RecipesResponse> getRecipes();
     
     /**
      * Альтернативный метод для получения рецептов в виде строки
@@ -100,7 +100,7 @@ public interface ApiService {
      * @param perPage количество рецептов на странице
      * @return Call объект с ответом типа SearchResponse
      */
-    @GET("search/")
+    @GET("search")
     Call<SearchResponse> searchRecipes(
         @Query("q")        String query,
         @Query("user_id")  String userId,

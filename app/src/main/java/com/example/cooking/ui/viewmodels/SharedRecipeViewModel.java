@@ -1,24 +1,22 @@
 package com.example.cooking.ui.viewmodels;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
-import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.cooking.Recipe.Recipe;
-import com.example.cooking.data.repositories.RecipeLocalRepository;
-import com.example.cooking.data.repositories.RecipeRemoteRepository;
-import com.example.cooking.data.repositories.LikedRecipesRepository;
+import com.example.cooking.data.repositories.UnifiedRecipeRepository;
+import com.example.cooking.domain.usecases.RecipeUseCases;
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.utils.MySharedPreferences;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -34,10 +32,9 @@ public class SharedRecipeViewModel extends AndroidViewModel {
     // Минимальный интервал между обновлениями данных с сервера (5 минут)
     private static final long MIN_REFRESH_INTERVAL = 2 * 60 * 1000;
 
-    // Репозитории
-    private final RecipeLocalRepository localRepository;
-    private final RecipeRemoteRepository remoteRepository;
-    private final LikedRecipesRepository likedRecipesRepository;
+    // Use Cases и репозиторий
+    private final RecipeUseCases recipeUseCases;
+    private final UnifiedRecipeRepository repository;
     private final ExecutorService executor;
 
     // LiveData для рецептов с обернутым статусом
@@ -58,10 +55,9 @@ public class SharedRecipeViewModel extends AndroidViewModel {
 
     public SharedRecipeViewModel(@NonNull Application application) {
         super(application);
-        localRepository = new RecipeLocalRepository(application);
-        remoteRepository = new RecipeRemoteRepository(application);
-        likedRecipesRepository = new LikedRecipesRepository(application);
-        executor = Executors.newFixedThreadPool(2);
+        this.executor = Executors.newFixedThreadPool(2);
+        this.recipeUseCases = new RecipeUseCases(application, executor);
+        this.repository = new UnifiedRecipeRepository(application, executor);
 
         // Инициализация наблюдения за данными из локального репозитория
         initLocalDataObserver();
@@ -71,7 +67,7 @@ public class SharedRecipeViewModel extends AndroidViewModel {
      * Настройка наблюдения за локальными данными
      */
     private void initLocalDataObserver() {
-        localRepository.getAllRecipes().observeForever(recipesList -> {
+        repository.getAllRecipesLocal().observeForever(recipesList -> {
             if (isRefreshing.getValue() != Boolean.TRUE) {
                 recipes.setValue(Resource.success(recipesList));
             }
@@ -82,7 +78,6 @@ public class SharedRecipeViewModel extends AndroidViewModel {
      * Получить LiveData со списком рецептов
      */
     public LiveData<Resource<List<Recipe>>> getRecipes() {
-        // Если первичная загрузка еще не выполнена, запускаем ее
         if (!isInitialLoadDone) {
             loadInitialRecipes();
         }
@@ -119,30 +114,7 @@ public class SharedRecipeViewModel extends AndroidViewModel {
             refreshRecipes();
             isInitialLoadDone = true;
         } else {
-            // Если данные уже загружались, используем оптимальный способ обновления
             refreshIfNeeded();
-        }
-    }
-
-    /**
-     * Загрузка рецептов из локального хранилища без обращения к серверу
-     */
-    public void loadLocalRecipes() {
-        List<Recipe> localRecipes = localRepository.getAllRecipesSync();
-        if (localRecipes != null && !localRecipes.isEmpty()) {
-            Log.d(TAG, "Загружено " + localRecipes.size() + " рецептов из локального хранилища");
-            
-            // Применяем статус лайков
-            Set<Integer> likedRecipeIds = getLikedRecipeIds();
-            for (Recipe recipe : localRecipes) {
-                recipe.setLiked(likedRecipeIds.contains(recipe.getId()));
-            }
-            
-            recipes.setValue(Resource.success(localRecipes));
-        } else {
-            // Если локальных данных нет или они пусты, принудительно обновляем с сервера
-            Log.d(TAG, "Локальные данные отсутствуют, загружаем с сервера");
-            refreshRecipes();
         }
     }
 
@@ -175,36 +147,8 @@ public class SharedRecipeViewModel extends AndroidViewModel {
         // Устанавливаем время последнего обновления
         lastRefreshTime = System.currentTimeMillis();
         
-        remoteRepository.getRecipes(new RecipeRemoteRepository.RecipesCallback() {
-            @Override
-            public void onRecipesLoaded(List<Recipe> remoteRecipes) {
-                Log.d(TAG, "Рецептов загружено с сервера: " + (remoteRecipes != null ? remoteRecipes.size() : 0));
-                
-                executeIfActive(() -> {
-                    try {
-                        if (remoteRecipes != null) {
-                            // Используем общий метод синхронизации
-                            syncWithRemoteData(remoteRecipes);
-                        } else {
-                            Log.w(TAG, "Получен null список рецептов с сервера.");
-                            errorMessage.postValue("Не удалось получить рецепты с сервера");
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "Ошибка при сохранении рецептов в локальное хранилище", e);
-                        errorMessage.postValue("Ошибка сохранения данных локально: " + e.getMessage());
-                    } finally {
-                        isRefreshing.postValue(false);
-                    }
-                });
-            }
-            
-            @Override
-            public void onDataNotAvailable(String error) {
-                Log.e(TAG, "Ошибка загрузки рецептов с сервера: " + error);
-                errorMessage.postValue(error);
-                isRefreshing.postValue(false);
-            }
-        });
+        // Используем Use Case для обновления рецептов
+        recipeUseCases.refreshRecipes(isRefreshing, errorMessage, recipes, null);
     }
 
     /**
@@ -219,26 +163,11 @@ public class SharedRecipeViewModel extends AndroidViewModel {
         int recipeId = recipe.getId();
         String userId = new MySharedPreferences(getApplication()).getString("userId", "0");
         
-        if (userId.equals("0")) {
-            Log.w(TAG, "Нельзя обновить статус лайка: пользователь не авторизован.");
-            errorMessage.setValue("Войдите, чтобы добавить рецепт в избранное");
-            return;
-        }
-
-        // Обновляем статус в локальной БД recipes
-        executor.execute(() -> {
-            localRepository.updateLikeStatus(recipeId, isLiked);
-        });
+        // Используем UseCase для установки статуса лайка
+        recipeUseCases.setLikeStatus(userId, recipeId, isLiked, errorMessage);
         
-        // Вместо вызова updateLocalLikeStatus, который может вызвать дополнительные обращения,
-        // напрямую работаем с репозиторием лайков для обновления таблицы liked_recipes
-        if (isLiked) {
-            likedRecipesRepository.addLikedRecipe(userId, recipeId);
-        } else {
-            likedRecipesRepository.removeLikedRecipe(userId, recipeId);
-        }
-        
-        Log.d(TAG, "Обновлен статус лайка рецепта " + recipeId + " на " + isLiked);
+        // Логирование можно оставить здесь или перенести в UseCase/Repository, если нужно
+        Log.d(TAG, "Запрошено обновление статуса лайка рецепта " + recipeId + " на " + isLiked);
     }
 
     /**
@@ -256,197 +185,72 @@ public class SharedRecipeViewModel extends AndroidViewModel {
      * Выполнить поиск среди рецептов
      */
     public void searchRecipes(String query) {
-        // Если запрос пустой, обновляем основной список рецептов
         if (query == null || query.trim().isEmpty()) {
-            refreshRecipes();
+            // Если запрос пустой, можно показать текущие рецепты или очистить результаты
+            // Вместо refreshRecipes(), который загружает с сервера, 
+            // возможно, лучше загрузить локальные или очистить searchResults
+            // loadLocalRecipes(); // Например, или:
+            searchResults.setValue(new ArrayList<>());
+            isRefreshing.setValue(false); // Убедимся, что индикатор загрузки скрыт
             return;
         }
-
-        // Получаем текущее время для проверки актуальности данных
-        long currentTime = System.currentTimeMillis();
-        boolean needsRefresh = (currentTime - lastRefreshTime) > MIN_REFRESH_INTERVAL;
         
-        // Если данные неактуальны, сначала обновляем их с сервера
-        if (needsRefresh) {
-            Log.d(TAG, "Данные устарели, выполняется обновление перед поиском");
-            isRefreshing.setValue(true);
-            
-            remoteRepository.getRecipes(new RecipeRemoteRepository.RecipesCallback() {
-                @Override
-                public void onRecipesLoaded(List<Recipe> remoteRecipes) {
-                    executeIfActive(() -> {
-                        try {
-                            if (remoteRecipes != null) {
-                                // Аналогичная логика синхронизации как в refreshRecipes
-                                syncWithRemoteData(remoteRecipes);
-                                
-                                // После синхронизации выполняем поиск
-                                performSearchInLocalData(query);
-                            } else {
-                                // Если не удалось получить данные с сервера, используем локальные данные
-                                Log.w(TAG, "Не удалось получить актуальные данные с сервера, выполняем поиск в локальных данных");
-                                performSearchInLocalData(query);
-                            }
-                        } catch (Exception e) {
-                            Log.e(TAG, "Ошибка при обновлении данных перед поиском: " + e.getMessage(), e);
-                            // В случае ошибки все равно пытаемся выполнить поиск в локальных данных
-                            performSearchInLocalData(query);
-                        } finally {
-                            isRefreshing.postValue(false);
-                        }
-                    });
-                }
-                
-                @Override
-                public void onDataNotAvailable(String error) {
-                    Log.e(TAG, "Ошибка загрузки рецептов с сервера перед поиском: " + error);
-                    errorMessage.postValue(error);
-                    isRefreshing.postValue(false);
-                    // В случае ошибки все равно пытаемся выполнить поиск в локальных данных
-                    performSearchInLocalData(query);
-                }
-            });
-        } else {
-            // Если данные актуальны, сразу выполняем поиск
-            performSearchInLocalData(query);
-        }
+        MySharedPreferences preferences = new MySharedPreferences(getApplication());
+        boolean smartSearchEnabled = preferences.getBoolean("smart_search_enabled", true);
+        
+        // isRefreshing управляется внутри searchRecipes в RecipeUseCases
+        // Поэтому нет необходимости устанавливать его здесь вручную перед вызовом
+        // isRefreshing.setValue(true); 
+        
+        recipeUseCases.searchRecipes(query, smartSearchEnabled, searchResults, errorMessage, isRefreshing);
+        // isRefreshing будет обновлен внутри коллбэков searchRecipes, поэтому убираем отсюда:
+        // isRefreshing.setValue(false); 
     }
-    
+
     /**
-     * Выполняет поиск в локальных данных
+     * Загрузка рецептов из локального хранилища без обращения к серверу
      */
-    private void performSearchInLocalData(String query) {
-        // Берем текущие данные из LiveData
-        Resource<List<Recipe>> resource = recipes.getValue();
-        if (resource != null && resource.isSuccess() && resource.getData() != null) {
-            List<Recipe> allRecipes = resource.getData();
-            
-            // Фильтруем рецепты по запросу (поиск в названии, ингредиентах и инструкциях)
-            List<Recipe> filtered = allRecipes.stream()
-                .filter(recipe -> matchesSearchQuery(recipe, query.toLowerCase()))
-                .collect(java.util.stream.Collectors.toList());
-                
-            Log.d(TAG, "Search results for \"" + query + "\": found " + filtered.size() + " matches");
-            searchResults.setValue(filtered);
-        } else {
-            Log.d(TAG, "Search failed: no recipes data available");
-            errorMessage.setValue("Не удалось выполнить поиск: данные недоступны");
-            searchResults.setValue(new ArrayList<>());
-        }
-    }
-    
-    /**
-     * Синхронизирует локальные данные с данными с сервера
-     * 
-     * Этот метод выполняет полную синхронизацию:
-     * 1. Обновляет статусы лайков для рецептов на основе локальных предпочтений
-     * 2. Удаляет из локальной БД рецепты, которых больше нет на сервере (удаленные другими пользователями)
-     * 3. Добавляет/обновляет локальные рецепты на основе данных с сервера
-     * 4. Обновляет LiveData для отображения в UI
-     * 
-     * @param remoteRecipes список рецептов, полученный с сервера
-     */
-    private void syncWithRemoteData(List<Recipe> remoteRecipes) {
-        try {
-            if (remoteRecipes != null) {
-                // Получаем ID текущего пользователя
-                String currentUserId = new MySharedPreferences(getApplication()).getString("userId", "0");
+    public void loadLocalRecipes() {
+        isRefreshing.setValue(true); // Показываем индикатор загрузки
+        // Запускаем в фоновом потоке через executor, хотя сам getAllRecipesSync уже синхронный
+        // Но для единообразия и если внутри getAllRecipesSync будет работа с БД, лучше так.
+        // Однако, UnifiedRecipeRepository.getAllRecipesSync() уже должен вызываться из фонового потока.
+        // А getAllRecipesLocal() возвращает LiveData и не требует явного потока здесь.
+        // Правильнее будет вызывать метод, который сам управляет потоками или возвращает LiveData.
+        
+        // Вариант 1: Если хотим обновить recipes LiveData из локальных данных
+        // Этот вариант предполагает, что recipes LiveData должно показывать локальный кэш
+        // без обращения к сети. RecipeUseCases.refreshRecipes обращается к сети.
+        // Создадим для этого специальный метод в RecipeUseCases или используем существующий,
+        // который не делает сетевой запрос.
 
-                // Получаем набор ID лайкнутых рецептов из LikedRecipesRepository
-                Set<Integer> likedRecipeIds = new HashSet<>();
-                if (!currentUserId.equals("0")) {
-                    List<Integer> likedIdsList = likedRecipesRepository.getLikedRecipeIdsSync();
-                    if (likedIdsList != null) {
-                        likedRecipeIds.addAll(likedIdsList);
-                    }
-                    Log.d(TAG, "Загружены ID лайкнутых рецептов для пользователя " + currentUserId + ": " + likedRecipeIds.size());
-                } else {
-                    Log.w(TAG, "Пользователь не авторизован (userId=0), невозможно загрузить лайкнутые рецепты.");
-                }
+        // Давайте упростим: если loadLocalRecipes нужен для отображения кэша, 
+        // то он может просто обновить recipes.setValue() напрямую, если данные есть.
+        // Но это нарушает идею, что ViewModel работает только через UseCases.
 
-                // Получаем текущие рецепты из локальной БД для сравнения
-                List<Recipe> localRecipes = localRepository.getAllRecipesSync();
-                // Создаем множество ID рецептов с сервера
-                Set<Integer> remoteRecipeIds = new HashSet<>();
-                
-                // Обновляем isLiked в полученных с сервера рецептах и собираем их ID
-                for (Recipe remoteRecipe : remoteRecipes) {
-                    boolean isLiked = likedRecipeIds.contains(remoteRecipe.getId());
-                    remoteRecipe.setLiked(isLiked);
-                    remoteRecipeIds.add(remoteRecipe.getId());
+        // Правильный подход: UseCase должен предоставлять метод для загрузки локальных данных.
+        // Пока что, если цель - просто отобразить данные из recipes LiveData (которое уже слушает локальную БД),
+        // то этот метод может быть не нужен или его логика должна быть другой.
+        // Оставим пока простой вариант с обновлением recipes из локального хранилища через repository, но в фоне.
+        executor.execute(() -> {
+            List<Recipe> localRecipesList = repository.getAllRecipesSync(); 
+            if (localRecipesList != null && !localRecipesList.isEmpty()) {
+                Log.d(TAG, "(BG) Загружено " + localRecipesList.size() + " рецептов из локального хранилища");
+                // Применяем статус лайков (этот блок тоже должен быть в фоновом потоке, если getLikedRecipeIds делает запрос к БД)
+                Set<Integer> likedRecipeIds = repository.getLikedRecipeIds(); // getLikedRecipeIds уже должен быть потокобезопасным или вызываться в фоне
+                for (Recipe recipe : localRecipesList) {
+                    recipe.setLiked(likedRecipeIds.contains(recipe.getId()));
                 }
-
-                // Находим ID рецептов, которые есть локально, но отсутствуют на сервере (удалены другими пользователями)
-                Set<Integer> deletedRecipeIds = new HashSet<>();
-                for (Recipe localRecipe : localRecipes) {
-                    if (!remoteRecipeIds.contains(localRecipe.getId())) {
-                        deletedRecipeIds.add(localRecipe.getId());
-                    }
-                }
-                
-                // Удаляем локально рецепты, которых нет на сервере
-                if (!deletedRecipeIds.isEmpty()) {
-                    for (Integer deletedId : deletedRecipeIds) {
-                        localRepository.deleteRecipe(deletedId);
-                    }
-                    Log.d(TAG, "Удалено " + deletedRecipeIds.size() + " рецептов, которые отсутствуют на сервере");
-                }
-
-                // Вставляем/заменяем рецепты с обновленным статусом isLiked
-                localRepository.insertAll(remoteRecipes);
-                Log.d(TAG, "Рецепты сохранены в локальное хранилище: " + remoteRecipes.size());
-                
-                // Обновляем время последнего обновления
-                lastRefreshTime = System.currentTimeMillis();
-                
-                // Обновляем LiveData с данными статусом SUCCESS
-                recipes.postValue(Resource.success(remoteRecipes));
+                recipes.postValue(Resource.success(localRecipesList));
+            } else {
+                Log.d(TAG, "(BG) Локальные данные отсутствуют, возможно, стоит загрузить с сервера");
+                // Если локальных нет, можно инициировать refreshRecipes(), который уже есть
+                // recipes.postValue(Resource.error("Локальные данные отсутствуют", null));
+                 // Вызываем refreshRecipes в основном потоке, т.к. он сам управляет своим фоновым потоком
+                new Handler(Looper.getMainLooper()).post(this::refreshRecipes); 
             }
-        } catch (Exception e) {
-            Log.e(TAG, "Ошибка при синхронизации данных: " + e.getMessage(), e);
-            errorMessage.postValue("Ошибка синхронизации данных: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Проверяет, соответствует ли рецепт поисковому запросу
-     */
-    private boolean matchesSearchQuery(Recipe recipe, String query) {
-        if (recipe.getTitle() != null && recipe.getTitle().toLowerCase().contains(query)) {
-            return true;
-        }
-
-        // Поиск в ингредиентах
-        if (recipe.getIngredients() != null) {
-            for (com.example.cooking.Recipe.Ingredient ingredient : recipe.getIngredients()) {
-                if (ingredient.getName() != null && ingredient.getName().toLowerCase().contains(query)) {
-                    return true;
-                }
-            }
-        }
-
-        // Поиск в шагах приготовления
-        if (recipe.getSteps() != null) {
-            for (com.example.cooking.Recipe.Step step : recipe.getSteps()) {
-                if (step.getInstruction() != null && step.getInstruction().toLowerCase().contains(query)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Получаем набор ID лайкнутых рецептов из LikedRecipesRepository
-     */
-    private Set<Integer> getLikedRecipeIds() {
-        Set<Integer> likedRecipeIds = new HashSet<>();
-        List<Integer> likedIdsList = likedRecipesRepository.getLikedRecipeIdsSync();
-        if (likedIdsList != null) {
-            likedRecipeIds.addAll(likedIdsList);
-        }
-        return likedRecipeIds;
+            isRefreshing.postValue(false); // Скрываем индикатор загрузки
+        });
     }
 
     /**
@@ -461,26 +265,8 @@ public class SharedRecipeViewModel extends AndroidViewModel {
             return;
         }
         
-        // Получаем текущий статус лайка из локального репозитория
-        boolean isCurrentlyLiked = likedRecipesRepository.isRecipeLikedLocalSync(recipeId);
-        Log.d(TAG, "toggleLike: recipeId=" + recipeId + ", userId=" + userId + ", текущий статус=" + isCurrentlyLiked);
-        
-        // Переключаем статус лайка
-        boolean newLikeStatus = !isCurrentlyLiked;
-        
-        // Обновляем статус в локальной БД recipes
-        executor.execute(() -> {
-            localRepository.updateLikeStatus(recipeId, newLikeStatus);
-        });
-        
-        // Обновляем в репозитории лайкнутых рецептов
-        if (newLikeStatus) {
-            likedRecipesRepository.addLikedRecipe(userId, recipeId);
-        } else {
-            likedRecipesRepository.removeLikedRecipe(userId, recipeId);
-        }
-        
-        Log.d(TAG, "Обновлен статус лайка рецепта " + recipeId + " на " + newLikeStatus);
+        // Используем UseCase
+        recipeUseCases.toggleLike(userId, recipeId, errorMessage);
     }
 
     /**
