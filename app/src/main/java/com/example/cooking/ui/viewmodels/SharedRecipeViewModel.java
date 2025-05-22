@@ -68,8 +68,9 @@ public class SharedRecipeViewModel extends AndroidViewModel {
      */
     private void initLocalDataObserver() {
         repository.getAllRecipesLocal().observeForever(recipesList -> {
-            if (isRefreshing.getValue() != Boolean.TRUE) {
+            if (recipesList != null && !recipesList.isEmpty()) {
                 recipes.setValue(Resource.success(recipesList));
+                Log.d(TAG, "Локальные данные обновлены: " + recipesList.size() + " рецептов");
             }
         });
     }
@@ -111,11 +112,96 @@ public class SharedRecipeViewModel extends AndroidViewModel {
     public void loadInitialRecipes() {
         if (!isInitialLoadDone) {
             Log.d(TAG, "Выполняется первичная загрузка рецептов");
-            refreshRecipes();
+            
+            // ИЗМЕНЕНО: Сначала загружаем локальные данные
+            loadLocalRecipesAndThenRefresh();
             isInitialLoadDone = true;
         } else {
             refreshIfNeeded();
         }
+    }
+
+    /**
+     * Загружает локальные данные, а затем запускает обновление с сервера
+     */
+    private void loadLocalRecipesAndThenRefresh() {
+        // Показываем, что данные загружаются (краткосрочно)
+        isRefreshing.setValue(true);
+        
+        // Запускаем загрузку локальных данных в фоновом потоке
+        executor.execute(() -> {
+            List<Recipe> localRecipesList = repository.getAllRecipesSync();
+            
+            if (localRecipesList != null && !localRecipesList.isEmpty()) {
+                Log.d(TAG, "Локально доступно " + localRecipesList.size() + " рецептов. Показываем их перед обновлением с сервера.");
+                
+                // Применяем статус лайков
+                Set<Integer> likedRecipeIds = repository.getLikedRecipeIds();
+                for (Recipe recipe : localRecipesList) {
+                    recipe.setLiked(likedRecipeIds.contains(recipe.getId()));
+                }
+                
+                // Обновляем UI с локальными данными
+                recipes.postValue(Resource.success(localRecipesList));
+                
+                // Скрываем индикатор загрузки, так как локальные данные уже доступны
+                isRefreshing.postValue(false);
+                
+                // Запускаем фоновое обновление с сервера асинхронно
+                updateFromServerInBackground();
+            } else {
+                Log.d(TAG, "Локальные данные отсутствуют. Загружаем с сервера.");
+                // Если локальных данных нет, загружаем данные с сервера обычным образом
+                // и оставляем индикатор загрузки активным
+                new Handler(Looper.getMainLooper()).post(this::refreshRecipes);
+            }
+        });
+    }
+    
+    /**
+     * Запускает фоновое обновление данных с сервера без блокирования UI
+     */
+    private void updateFromServerInBackground() {
+        Log.d(TAG, "Запущено фоновое обновление данных с сервера");
+        
+        // Обновляем время последнего обновления
+        lastRefreshTime = System.currentTimeMillis();
+        
+        // Создаем отдельную LiveData для отслеживания ошибок и результата обновления
+        final MutableLiveData<Boolean> bgRefreshingStatus = new MutableLiveData<>();
+        final MutableLiveData<String> bgErrorMessage = new MutableLiveData<>();
+        
+        // Настраиваем наблюдение за ошибками в главном потоке (это безопасно, так как
+        // выполняется перед запуском фонового процесса)
+        new Handler(Looper.getMainLooper()).post(() -> {
+            // Устанавливаем начальное значение в главном потоке
+            bgRefreshingStatus.setValue(true);
+            
+            // Настраиваем наблюдателя за ошибками
+            androidx.lifecycle.Observer<String> errorObserver = new androidx.lifecycle.Observer<String>() {
+                @Override
+                public void onChanged(String error) {
+                    if (error != null && !error.isEmpty()) {
+                        Log.e(TAG, "Ошибка фонового обновления: " + error);
+                    }
+                    // После получения ошибки удаляем наблюдателя, чтобы избежать утечек памяти
+                    bgErrorMessage.removeObserver(this);
+                }
+            };
+            
+            // Безопасно добавляем наблюдателя в главном потоке
+            bgErrorMessage.observeForever(errorObserver);
+        });
+        
+        // Используем Use Case для обновления рецептов с колбэком по завершении
+        recipeUseCases.refreshRecipes(bgRefreshingStatus, bgErrorMessage, null, () -> {
+            Log.d(TAG, "Фоновое обновление с сервера завершено");
+            // Очищаем статус в главном потоке
+            new Handler(Looper.getMainLooper()).post(() -> {
+                bgRefreshingStatus.setValue(false);
+                Log.d(TAG, "Фоновое обновление завершено, индикаторы сброшены");
+            });
+        });
     }
 
     /**
@@ -186,12 +272,34 @@ public class SharedRecipeViewModel extends AndroidViewModel {
      */
     public void searchRecipes(String query) {
         if (query == null || query.trim().isEmpty()) {
-            // Если запрос пустой, можно показать текущие рецепты или очистить результаты
-            // Вместо refreshRecipes(), который загружает с сервера, 
-            // возможно, лучше загрузить локальные или очистить searchResults
-            // loadLocalRecipes(); // Например, или:
-            searchResults.setValue(new ArrayList<>());
-            isRefreshing.setValue(false); // Убедимся, что индикатор загрузки скрыт
+            // Если запрос пустой, загружаем и показываем все локальные рецепты
+            Log.d(TAG, "Поисковый запрос пуст, показываем все рецепты");
+            // Останавливаем индикатор загрузки
+            isRefreshing.setValue(false);
+            
+            // Загружаем все рецепты из локальной БД в фоновом потоке
+            executor.execute(() -> {
+                try {
+                    List<Recipe> allRecipes = repository.getAllRecipesSync();
+                    if (allRecipes != null && !allRecipes.isEmpty()) {
+                        Log.d(TAG, "Загружено " + allRecipes.size() + " рецептов для отображения вместо пустого поиска");
+                        // Применяем статус лайков
+                        Set<Integer> likedRecipeIds = repository.getLikedRecipeIds();
+                        for (Recipe recipe : allRecipes) {
+                            recipe.setLiked(likedRecipeIds.contains(recipe.getId()));
+                        }
+                        // Загружаем все рецепты в результаты поиска
+                        searchResults.postValue(allRecipes);
+                    } else {
+                        Log.d(TAG, "Нет локальных рецептов для отображения");
+                        // Если локальных рецептов нет, устанавливаем пустой список
+                        searchResults.postValue(new ArrayList<>());
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Ошибка при загрузке рецептов для пустого поиска: " + e.getMessage(), e);
+                    searchResults.postValue(new ArrayList<>());
+                }
+            });
             return;
         }
         

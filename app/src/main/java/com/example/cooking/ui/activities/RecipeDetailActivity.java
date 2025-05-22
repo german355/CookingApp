@@ -192,7 +192,17 @@ public class RecipeDetailActivity extends AppCompatActivity {
      * Настраивает RecyclerView для шагов рецепта
      */
     private void setupStepsRecyclerView() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        // Отключаем вложенную прокрутку для корректной работы внутри NestedScrollView
+        stepsRecyclerView.setNestedScrollingEnabled(false);
+        stepsRecyclerView.setHasFixedSize(true);
+        
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this) {
+            @Override
+            public boolean canScrollVertically() {
+                return false; // Отключаем вложенную прокрутку
+            }
+        };
+        
         stepsRecyclerView.setLayoutManager(layoutManager);
         // Создаем адаптер
         stepAdapter = new StepAdapter(this); 
@@ -206,7 +216,17 @@ public class RecipeDetailActivity extends AppCompatActivity {
      * Настраивает RecyclerView для ингредиентов
      */
     private void setupIngredientsRecyclerView() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        // Отключаем вложенную прокрутку для корректной работы внутри NestedScrollView
+        ingredientsRecyclerView.setNestedScrollingEnabled(false);
+        ingredientsRecyclerView.setHasFixedSize(true);
+        
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this) {
+            @Override
+            public boolean canScrollVertically() {
+                return false; // Отключаем вложенную прокрутку
+            }
+        };
+        
         ingredientsRecyclerView.setLayoutManager(layoutManager);
         // Инициализируем адаптер списком, полученным из Parcelable
         ingredientAdapter = new IngredientViewAdapter(this, this.ingredients);
@@ -350,38 +370,53 @@ public class RecipeDetailActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_recipe_detail, menu);
-        
-        // Получаем текущий рецепт и проверяем права доступа
-        Recipe recipe = currentRecipe;
-        if (recipe == null) {
-            return true;
-        }
-        
-        // Получаем ID текущего пользователя и его права доступа
-        com.example.cooking.utils.MySharedPreferences prefs = new com.example.cooking.utils.MySharedPreferences(this);
-        String currentUserId = prefs.getString("userId", "0");
-        int permissionLevel = prefs.getInt("permission", 1);
-        
-        // Имеет право редактировать, если пользователь - автор рецепта или админ (permissionLevel = 2)
-        boolean hasEditPermission = (recipe.getUserId() != null && recipe.getUserId().equals(currentUserId)) 
-                                   || permissionLevel == 2;
-                                   
-        // Показываем/скрываем пункты меню в зависимости от прав
+        // Получаем SharedPreferences для доступа к данным пользователя
+        com.example.cooking.utils.MySharedPreferences sharedPreferences = new com.example.cooking.utils.MySharedPreferences(this);
+        String currentUserId = sharedPreferences.getString("user_id", null);
+        int permission = sharedPreferences.getInt("permission", 1); // 1 - обычный пользователь, 2 - админ
+
+        // Получаем ID создателя рецепта
+        String recipeCreatorId = currentRecipe != null ? currentRecipe.getUserId() : null;
+
+        // Логирование для отладки
+        Log.d(TAG, "onCreateOptionsMenu: currentUserId = " + currentUserId);
+        Log.d(TAG, "onCreateOptionsMenu: permission = " + permission);
+        Log.d(TAG, "onCreateOptionsMenu: recipeCreatorId = " + recipeCreatorId);
+
+        // Проверяем, является ли текущий пользователь автором рецепта или администратором
+        boolean isAuthor = currentUserId != null && recipeCreatorId != null && currentUserId.equals(recipeCreatorId);
+        boolean isAdmin = permission == 2;
+
+        // Логирование для отладки
+        Log.d(TAG, "onCreateOptionsMenu: isAuthor = " + isAuthor);
+        Log.d(TAG, "onCreateOptionsMenu: isAdmin = " + isAdmin);
+
+        // Находим пункты меню
         MenuItem moreItem = menu.findItem(R.id.action_more);
         if (moreItem != null && moreItem.hasSubMenu()) {
             Menu subMenu = moreItem.getSubMenu();
-            
             MenuItem editItem = subMenu.findItem(R.id.action_edit);
-            if (editItem != null) {
-                editItem.setVisible(hasEditPermission);
-            }
-            
             MenuItem deleteItem = subMenu.findItem(R.id.action_delete);
-            if (deleteItem != null) {
-                deleteItem.setVisible(hasEditPermission);
+
+            // Управляем видимостью пунктов меню
+            if (editItem != null) {
+                editItem.setVisible(isAuthor || isAdmin);
+                Log.d(TAG, "onCreateOptionsMenu: editItem.isVisible() = " + editItem.isVisible());
+            } else {
+                Log.d(TAG, "onCreateOptionsMenu: editItem is null");
             }
+            if (deleteItem != null) {
+                deleteItem.setVisible(isAuthor || isAdmin);
+                Log.d(TAG, "onCreateOptionsMenu: deleteItem.isVisible() = " + deleteItem.isVisible());
+            } else {
+                Log.d(TAG, "onCreateOptionsMenu: deleteItem is null");
+            }
+        } else {
+            Log.d(TAG, "onCreateOptionsMenu: moreItem is null or has no SubMenu");
+            // Если moreItem нет, то и edit/delete точно не будет. 
+            // Убираем попытку найти старые ID, так как их больше нет и это вызывает ошибку компиляции.
         }
-        
+
         return true;
     }
     

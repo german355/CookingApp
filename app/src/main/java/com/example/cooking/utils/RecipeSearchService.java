@@ -54,7 +54,7 @@ public class RecipeSearchService {
             int page = 1;
             int perPage = 20;
             
-            android.util.Log.d("RecipeSearchService", "Выполняю умный поиск с параметрами: query=" + query + ", userId=" + userId);
+            android.util.Log.d("RecipeSearchService", "Выполняю умный поиск (асинхронно) с параметрами: query=" + query + ", userId=" + userId);
             showToast("Выполняю умный поиск");
             
             try {
@@ -68,62 +68,19 @@ public class RecipeSearchService {
                 String formattedQuery = query.trim();
                 
                 // Используем правильный вызов API для умного поиска
-                Call<SearchResponse> smartCall = freshApiService.searchRecipes(formattedQuery, userId, page, perPage);
+                final Call<SearchResponse> smartCall = freshApiService.searchRecipes(formattedQuery, userId, page, perPage);
                 
                 String fullUrl = smartCall.request().url().toString();
                 android.util.Log.d("RecipeSearchService", "URL умного поиска: " + fullUrl);
-                android.util.Log.d("RecipeSearchService", "Заголовки запроса: " + smartCall.request().headers().toString());
-                showToast("URL поиска: " + fullUrl);
+                android.util.Log.d("RecipeSearchService", "Заголовка запроса: " + smartCall.request().headers().toString());
+                // showToast("URL поиска: " + fullUrl); // Можно закомментировать, чтобы не перегружать пользователя тостами
+
+                // Сразу используем асинхронный вызов
+                useAsyncCall(smartCall, query, callback);
                 
-                // Запускаем выполнение запроса в отдельном потоке
-                new Thread(() -> {
-                    try {
-                        // Прямой вызов выполнения запроса
-                        retrofit2.Response<SearchResponse> response = smartCall.execute();
-                        android.util.Log.d("RecipeSearchService", "Умный поиск выполнен напрямую, код: " + response.code());
-                        
-                        // Обновляем UI в главном потоке
-                        new Handler(Looper.getMainLooper()).post(() -> {
-                            showToast("Код ответа: " + response.code());
-                            
-                            if (response.isSuccessful() && response.body() != null) {
-                                SearchResponse searchResponse = response.body();
-                                android.util.Log.d("RecipeSearchService", "Успешный ответ от умного поиска (прямой вызов)");
-                                showToast("Поиск успешен, найдено: " + 
-                                         (searchResponse.getData() != null && searchResponse.getData().getResults() != null ? 
-                                          searchResponse.getData().getResults().size() : 0));
-                                
-                                if (searchResponse.getData() != null && searchResponse.getData().getResults() != null) {
-                                    callback.onSearchResults(searchResponse.getData().getResults());
-                                } else {
-                                    callback.onSearchResults(Collections.emptyList());
-                                }
-                            } else {
-                                try {
-                                    String errorBody = response.errorBody() != null ? response.errorBody().string() : "";
-                                    android.util.Log.e("RecipeSearchService", "Ошибка умного поиска (прямой вызов): " + errorBody);
-                                    showToast("Ошибка поиска: " + response.code() + " " + errorBody);
-                                } catch (Exception e) {
-                                    android.util.Log.e("RecipeSearchService", "Ошибка при чтении тела ошибки", e);
-                                }
-                                fallbackToSimpleSearch(query, callback);
-                            }
-                        });
-                    } catch (Exception e) {
-                        android.util.Log.e("RecipeSearchService", "Ошибка прямого вызова: " + e.getMessage(), e);
-                        
-                        // Обновляем UI в главном потоке
-                        new Handler(Looper.getMainLooper()).post(() -> {
-                            showToast("Исключение при прямом вызове: " + e.getMessage());
-                            
-                            // Используем асинхронный вызов как запасной вариант
-                            useAsyncCall(smartCall, query, callback);
-                        });
-                    }
-                }).start();
-            } catch (Exception e) {
-                android.util.Log.e("RecipeSearchService", "Исключение при вызове умного поиска: " + e.getMessage(), e);
-                showToast("Ошибка: " + e.getMessage());
+            } catch (Exception e) { // Этот блок catch теперь будет ловить ошибки, возникшие при подготовке вызова (например, в getApiService или searchRecipes)
+                android.util.Log.e("RecipeSearchService", "Исключение при подготовке или запуске умного поиска: " + e.getMessage(), e);
+                showToast("Ошибка умного поиска: " + e.getMessage());
                 fallbackToSimpleSearch(query, callback);
             }
         } else {
@@ -164,8 +121,8 @@ public class RecipeSearchService {
     /**
      * Использует асинхронный вызов API
      */
-    private void useAsyncCall(Call<SearchResponse> smartCall, String query, SearchCallback callback) {
-        ApiCallHandler.execute(smartCall, new ApiCallHandler.ApiCallback<SearchResponse>() {
+    private void useAsyncCall(Call<SearchResponse> callToExecute, String query, SearchCallback callback) {
+        ApiCallHandler.execute(callToExecute, new ApiCallHandler.ApiCallback<SearchResponse>() {
             @Override
             public void onSuccess(SearchResponse response) {
                 android.util.Log.d("RecipeSearchService", "Успешный ответ от умного поиска");

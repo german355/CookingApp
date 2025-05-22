@@ -141,11 +141,20 @@ public class AddRecipeActivity extends AppCompatActivity implements
         ingredientsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         ingredientsRecyclerView.setAdapter(ingredientAdapter);
         ingredientsRecyclerView.setNestedScrollingEnabled(false);
+        ingredientsRecyclerView.setHasFixedSize(false);
 
         // Настраиваем RecyclerView для шагов
-        stepsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this) {
+            @Override
+            public boolean canScrollVertically() {
+                return false; // Отключаем вложенную прокрутку
+            }
+        };
+        stepsRecyclerView.setLayoutManager(layoutManager);
         stepsRecyclerView.setAdapter(stepAdapter);
         stepsRecyclerView.setNestedScrollingEnabled(false);
+        stepsRecyclerView.setHasFixedSize(false);
+        stepsRecyclerView.setItemViewCacheSize(20); // Кэшируем больше элементов для плавной прокрутки
 
         Log.d(TAG, "setupRecyclerViews: RecyclerView настроены");
     }

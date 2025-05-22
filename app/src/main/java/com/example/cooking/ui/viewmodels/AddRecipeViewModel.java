@@ -217,10 +217,18 @@ public class AddRecipeViewModel extends AndroidViewModel {
         if (currentList == null) {
             currentList = new ArrayList<>();
         }
+        
+        // Создаем новый список, чтобы гарантировать обновление LiveData
+        List<Step> newList = new ArrayList<>(currentList);
         Step newStep = new Step();
-        newStep.setNumber(currentList.size() + 1);
-        currentList.add(newStep);
-        steps.setValue(currentList);
+        // Устанавливаем номер на 1 больше текущего количества шагов
+        newStep.setNumber(newList.size() + 1);
+        newList.add(newStep);
+        
+        // Обновляем LiveData с новым списком
+        steps.setValue(newList);
+        Log.d(TAG, "Добавлен новый шаг. Всего шагов: " + newList.size());
+        
         // Убираем валидацию при добавлении нового пустого шага
         // validateStepsList();
     }

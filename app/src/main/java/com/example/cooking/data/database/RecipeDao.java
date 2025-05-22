@@ -24,7 +24,7 @@ public interface RecipeDao {
      * Возвращает результат как {@link LiveData}, что позволяет UI автоматически обновляться при изменениях данных.
      * @return {@link LiveData} со списком всех {@link RecipeEntity}.
      */
-    @Query("SELECT * FROM recipes ORDER BY title ASC")
+    @Query("SELECT * FROM recipes ")
     LiveData<List<RecipeEntity>> getAllRecipes();
     
     /**
@@ -32,7 +32,7 @@ public interface RecipeDao {
      * Синхронный вызов, возвращающий простой список.
      * @return Список всех {@link RecipeEntity}.
      */
-    @Query("SELECT * FROM recipes ORDER BY title ASC")
+    @Query("SELECT * FROM recipes ")
     List<RecipeEntity> getAllRecipesList();
     
     /**
@@ -94,7 +94,7 @@ public interface RecipeDao {
      * Возвращает результат как {@link LiveData}.
      * @return {@link LiveData} со списком лайкнутых {@link RecipeEntity}.
      */
-    @Query("SELECT * FROM recipes WHERE isLiked = 1 ORDER BY title ASC")
+    @Query("SELECT * FROM recipes WHERE isLiked = 1 ")
     LiveData<List<RecipeEntity>> getLikedRecipes();
     
     /**
@@ -102,7 +102,7 @@ public interface RecipeDao {
      * @param query Строка для поиска в названиях рецептов.
      * @return Список {@link RecipeEntity}, удовлетворяющих условию поиска.
      */
-    @Query("SELECT * FROM recipes WHERE title LIKE '%' || :query || '%' ORDER BY title ASC")
+    @Query("SELECT * FROM recipes WHERE title LIKE '%' || :query || '%' ")
     List<RecipeEntity> searchRecipesByTitle(String query);
     
     /**
@@ -135,7 +135,7 @@ public interface RecipeDao {
      * @param mealType Тип приема пищи (например, "завтрак", "обед").
      * @return Список {@link RecipeEntity}, соответствующих указанному типу приема пищи.
      */
-    @Query("SELECT * FROM recipes WHERE mealType = :mealType ORDER BY title ASC")
+    @Query("SELECT * FROM recipes WHERE mealType = :mealType ")
     List<RecipeEntity> getRecipesByMealType(String mealType);
 
     /**
@@ -143,7 +143,7 @@ public interface RecipeDao {
      * @param foodType Тип блюда (например, "суп", "салат").
      * @return Список {@link RecipeEntity}, соответствующих указанному типу блюда.
      */
-    @Query("SELECT * FROM recipes WHERE foodType = :foodType ORDER BY title ASC")
+    @Query("SELECT * FROM recipes WHERE foodType = :foodType ")
     List<RecipeEntity> getRecipesByFoodType(String foodType);
 
     /**
@@ -151,6 +151,6 @@ public interface RecipeDao {
      * Синхронный вызов для непосредственного использования.
      * @return Список {@link RecipeEntity}.
      */
-    @Query("SELECT * FROM recipes ORDER BY title ASC")
+    @Query("SELECT * FROM recipes ")
     List<RecipeEntity> getAllRecipesSync();
 } 
