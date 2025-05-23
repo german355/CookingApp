@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_home">
+
+    <!-- Главный экран -->
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.cooking.ui.fragments.HomeFragment"
+        android:label="Главная"
+        tools:layout="@layout/fragment_home" />
+
+    <!-- Избранное -->
+    <fragment
+        android:id="@+id/nav_favorites"
+        android:name="com.example.cooking.ui.fragments.FavoritesFragment"
+        android:label="Избранное"
+        tools:layout="@layout/fragment_favorites" />
+
+    <!-- Общий профиль (контейнер) -->
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.example.cooking.ui.fragments.SharedProfileFragment"
+        android:label="Профиль"
+        tools:layout="@layout/fragment_shared_profile">
+        <!-- Переходы с экрана профиля -->
+        <action
+            android:id="@+id/action_sharedProfile_to_profile"
+            app:destination="@id/destination_profile"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_sharedProfile_to_auth"
+            app:destination="@id/destination_auth"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_sharedProfile_to_settings"
+            app:destination="@id/destination_settings"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <!-- Профиль пользователя -->
+    <fragment
+        android:id="@+id/destination_profile"
+        android:name="com.example.cooking.ui.fragments.ProfileFragment"
+        android:label="Мой профиль"
+        tools:layout="@layout/fragment_profile">
+        <action
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            android:id="@+id/action_profile_to_settings" 
+            app:destination="@id/destination_settings" />
+    </fragment>
+
+    <!-- Экран авторизации -->
+    <fragment
+        android:id="@+id/destination_auth"
+        android:name="com.example.cooking.ui.fragments.AuthFragment"
+        android:label="Авторизация"
+        tools:layout="@layout/fragment_auth" />
+
+    <!-- Настройки -->
+    <fragment
+        android:id="@+id/destination_settings"
+        android:name="com.example.cooking.ui.fragments.SettingsFragment"
+        android:label="Настройки"
+        tools:layout="@layout/fragment_settings" />
+
+    <!-- Каталог -->
+    <fragment
+        android:id="@+id/nav_catalog"
+        android:name="com.example.cooking.ui.Catalog.CatalogFragment"
+        android:label="Каталог"
+        tools:layout="@layout/fragment_catalog" >
+        <action
+            android:id="@+id/action_catalog_to_filteredRecipes"
+            app:destination="@id/nav_filtered_recipes"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <!-- Отфильтрованные рецепты -->
+    <fragment
+        android:id="@+id/nav_filtered_recipes"
+        android:name="com.example.cooking.ui.Catalog.FilteredRecipesFragment"
+        android:label="Filtered Recipes"
+        tools:layout="@layout/fragment_filtered_recipes">
+
+        <argument
+            android:name="categoryName"
+            app:argType="string" />
+
+        <argument
+            android:name="filterKey"
+            app:argType="string" />
+
+        <argument
+            android:name="filterType"
+            app:argType="string" />
+
+    </fragment>
+
+</navigation> 

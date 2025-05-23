@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Стиль для SearchView -->
+    <style name="Widget.App.SearchView" parent="Widget.AppCompat.SearchView">
+        <item name="android:background">@drawable/search_view_background</item>
+        <item name="queryBackground">@android:color/transparent</item>
+        <item name="submitBackground">@android:color/transparent</item>
+        <item name="iconifiedByDefault">false</item>
+        <item name="queryHint">@string/search</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:editTextColor">?attr/colorOnSurface</item>
+        <item name="android:textColorHint">?attr/colorOnSurfaceVariant</item>
+        <item name="android:textAppearance">@style/TextAppearance.App.SearchView</item>
+        <item name="android:backgroundTint">?attr/colorSurface</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+    
+    <!-- Стиль текста для SearchView, который скрывает подчеркивание -->
+    <style name="TextAppearance.App.SearchView" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textColorHint">?attr/colorOnSurfaceVariant</item>
+        <item name="android:backgroundTint">@android:color/transparent</item>
+    </style>
+    
+    <!-- Стиль для карточек рецептов -->
+    <style name="Widget.App.CardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">3dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainer</item>
+        <item name="rippleColor">?attr/colorOnSurfaceVariant</item>
+        <item name="strokeColor">?attr/colorOutlineVariant</item>
+        <item name="strokeWidth">0.5dp</item>
+    </style>
+    
+    <!-- Стиль для закругления верхних углов изображения -->
+    <style name="ShapeAppearance.App.CornerTop" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+    
+    <!-- Стиль для кнопок -->
+    <style name="Widget.App.Button" parent="Widget.Material3.Button">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="cornerRadius">24dp</item>
+        <item name="elevation">2dp</item>
+    </style>
+    
+    <!-- Стиль для FloatingActionButton -->
+    <style name="Widget.App.FloatingActionButton" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="tint">?attr/colorOnPrimary</item>
+        <item name="elevation">6dp</item>
+        <item name="rippleColor">?attr/colorTertiaryContainer</item>
+    </style>
+    
+    <!-- Стиль для Bottom Navigation -->
+    <style name="Widget.App.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="backgroundTint">?attr/colorSurfaceContainerLow</item>
+        <item name="itemIconTint">@color/bottom_nav_item_color</item>
+        <item name="itemTextColor">@color/bottom_nav_item_color</item>
+        <item name="itemRippleColor">@android:color/transparent</item>
+        <item name="elevation">8dp</item>
+        <item name="itemActiveIndicatorStyle">@null</item>
+    </style>
+    
+    <!-- Стиль для круглых изображений в деталях рецепта -->
+    <style name="RoundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+    
+    <!-- Специальный стиль для кнопки избранного (сердечко) -->
+    <style name="FavoriteButtonStyle">
+        <item name="colorControlNormal">?attr/colorOnSurfaceVariant</item>
+        <item name="colorControlActivated">?attr/colorPrimary</item>
+        <item name="android:colorControlActivated">?attr/colorPrimary</item>
+        <item name="android:colorControlNormal">?attr/colorOnSurfaceVariant</item>
+        <item name="android:background">?attr/colorSurfaceContainerHighest</item>
+        <item name="android:padding">8dp</item>
+    </style>
+</resources> 
