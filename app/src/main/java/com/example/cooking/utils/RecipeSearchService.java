@@ -44,7 +44,7 @@ public class RecipeSearchService {
         showToast("Начинаю поиск: " + query);
         
         MySharedPreferences preferences = new MySharedPreferences(context);
-        boolean smartSearchEnabled = preferences.getBoolean("smart_search_enabled", false);
+        boolean smartSearchEnabled = preferences.getBoolean("smart_search_enabled", true);
         
         android.util.Log.d("RecipeSearchService", "Smart search enabled from prefs: " + smartSearchEnabled);
         showToast("Умный поиск включен: " + smartSearchEnabled);
@@ -93,28 +93,29 @@ public class RecipeSearchService {
      */
     private void fallbackToSimpleSearch(String query, SearchCallback callback) {
         android.util.Log.d("RecipeSearchService", "Использую простой поиск для запроса: " + query);
-        showToast("Использую простой поиск");
+        // Уберем тост о переключении, так как он уже отображается в умном поиске
         Call<RecipesResponse> call = apiService.searchRecipesSimple(query.trim());
+        android.util.Log.d("RecipeSearchService", "URL простого поиска: " + call.request().url().toString());
         
         ApiCallHandler.execute(call, new ApiCallHandler.ApiCallback<RecipesResponse>() {
             @Override
             public void onSuccess(RecipesResponse response) {
-                callback.onSearchResults(response.getRecipes());
+                android.util.Log.d("RecipeSearchService", "Простой поиск успешен, найдено рецептов: " + 
+                    (response != null && response.getRecipes() != null ? response.getRecipes().size() : 0));
+                
+                if (response != null && response.getRecipes() != null && !response.getRecipes().isEmpty()) {
+                    callback.onSearchResults(response.getRecipes());
+                } else {
+                    android.util.Log.d("RecipeSearchService", "Простой поиск не вернул результатов");
+                    callback.onSearchResults(Collections.emptyList());
+                }
             }
             
             @Override
             public void onError(String errorMessage) {
-                callback.onSearchError(errorMessage);
+                android.util.Log.e("RecipeSearchService", "Ошибка простого поиска: " + errorMessage);
+                callback.onSearchError("Ошибка поиска: " + errorMessage);
             }
-        });
-    }
-    
-    /**
-     * Показывает тост для отладки
-     */
-    private void showToast(String message) {
-        new Handler(Looper.getMainLooper()).post(() -> {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         });
     }
     
@@ -126,42 +127,74 @@ public class RecipeSearchService {
             @Override
             public void onSuccess(SearchResponse response) {
                 android.util.Log.d("RecipeSearchService", "Успешный ответ от умного поиска");
-                showToast("Успешный ответ от умного поиска");
+                // Подробный лог содержимого ответа для отладки
+                if (response != null) {
+                    android.util.Log.d("RecipeSearchService", "Детали ответа: status=" + response.getStatus() 
+                        + ", message=" + response.getMessage() 
+                        + ", isSuccess=" + response.isSuccess());
+                    
+                    if (response.getData() != null) {
+                        android.util.Log.d("RecipeSearchService", "Данные: data!=null, results=" 
+                            + (response.getData().getResults() != null ? response.getData().getResults().size() : "null") 
+                            + ", totalResults=" + response.getData().getTotalResults());
+                    } else {
+                        android.util.Log.d("RecipeSearchService", "Данные: data=null");
+                    }
+                }
                 
+                // Проверка на null и валидность ответа
                 if (response != null) {
                     android.util.Log.d("RecipeSearchService", "Статус ответа: " + response.getStatus());
                     
-                    if (!response.isSuccess()) {
+                    // Даже если isSuccess() возвращает false, попробуем проверить, есть ли данные
+                    if (!response.isSuccess() && (response.getData() == null || response.getData().getResults() == null)) {
                         android.util.Log.e("RecipeSearchService", "Ответ от сервера имеет статус ошибки: " + response.getMessage());
-                        showToast("Ошибка: " + response.getMessage());
+                        showToast("Переключаюсь на обычный поиск: " + response.getMessage());
                         fallbackToSimpleSearch(query, callback);
                         return;
                     }
                     
                     if (response.getData() != null && response.getData().getResults() != null) {
                         List<Recipe> recipes = response.getData().getResults();
-                        android.util.Log.d("RecipeSearchService", "Получено " + recipes.size() + " рецептов из " + response.getTotalResults() + " всего");
-                        showToast("Найдено " + recipes.size() + " рецептов");
-                        callback.onSearchResults(recipes);
+                        if (!recipes.isEmpty()) {
+                            android.util.Log.d("RecipeSearchService", "Получено " + recipes.size() + " рецептов из " + response.getTotalResults() + " всего");
+                            showToast("Найдено " + recipes.size() + " рецептов");
+                            callback.onSearchResults(recipes);
+                            return;
+                        } else {
+                            android.util.Log.d("RecipeSearchService", "Список рецептов пуст");
+                        }
                     } else {
                         android.util.Log.e("RecipeSearchService", "Ответ от сервера был успешным, но не содержал данных или результатов");
-                        showToast("Нет результатов");
-                        callback.onSearchResults(Collections.emptyList());
+                        android.util.Log.d("RecipeSearchService", "response.getData()=" + response.getData());
                     }
+                    
+                    // Если мы дошли до этой точки, значит результатов нет или они пустые
+                    showToast("Переключаюсь на обычный поиск: нет результатов");
+                    fallbackToSimpleSearch(query, callback);
                 } else {
                     android.util.Log.e("RecipeSearchService", "Ответ от сервера был null");
-                    showToast("Пустой ответ");
-                    callback.onSearchResults(Collections.emptyList());
+                    showToast("Переключаюсь на обычный поиск: пустой ответ");
+                    fallbackToSimpleSearch(query, callback);
                 }
             }
             
             @Override
             public void onError(String errorMessage) {
                 android.util.Log.e("RecipeSearchService", "Ошибка умного поиска: " + errorMessage);
-                showToast("Ошибка: " + errorMessage);
+                showToast("Переключаюсь на обычный поиск: " + (errorMessage.length() > 30 ? errorMessage.substring(0, 30) + "..." : errorMessage));
                 // Если умный поиск не сработал, пробуем откатиться к простому поиску
                 fallbackToSimpleSearch(query, callback);
             }
+        });
+    }
+    
+    /**
+     * Показывает тост для отладки
+     */
+    private void showToast(String message) {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         });
     }
 }

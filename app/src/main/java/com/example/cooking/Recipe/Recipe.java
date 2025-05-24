@@ -87,11 +87,53 @@ public class Recipe implements Parcelable {
                 }
             } else if (in.peek() == JsonToken.BEGIN_ARRAY) {
                 try {
-                    // Попытка десериализовать из массива
-                    ArrayList<Ingredient> parsedIngredients = GSON_INSTANCE.fromJson(in, INGREDIENT_LIST_TYPE);
-                    return parsedIngredients != null ? parsedIngredients : new ArrayList<>();
+                    // Начинаем чтение массива
+                    in.beginArray();
+                    ArrayList<Ingredient> ingredientsList = new ArrayList<>();
+                    
+                    // Проверяем, что это массив не пуст и смотрим первый элемент
+                    if (in.hasNext()) {
+                        JsonToken nextToken = in.peek();
+                        
+                        // Если это строка - обрабатываем как массив строк
+                        if (nextToken == JsonToken.STRING) {
+                            while (in.hasNext()) {
+                                String ingredientName = in.nextString();
+                                if (ingredientName != null && !ingredientName.isEmpty()) {
+                                    Ingredient ingredient = new Ingredient();
+                                    ingredient.setName(ingredientName);
+                                    ingredient.setCount(1); // Значение по умолчанию
+                                    ingredient.setType(""); // Пустой тип по умолчанию
+                                    ingredientsList.add(ingredient);
+                                }
+                            }
+                            in.endArray();
+                            android.util.Log.d("Recipe", "Успешно обработан массив строк ингредиентов, количество: " + ingredientsList.size());
+                            return ingredientsList;
+                        } 
+                        // Если не строка, возвращаемся в начало массива и продолжаем стандартную обработку
+                        else {
+                            // Закрываем массив, который начали
+                            in.endArray();
+                            
+                            // Повторно начинаем чтение через стандартный парсинг
+                            JsonReader newReader = new JsonReader(new java.io.StringReader(in.getPath()));
+                            ArrayList<Ingredient> parsedIngredients = GSON_INSTANCE.fromJson(newReader, INGREDIENT_LIST_TYPE);
+                            return parsedIngredients != null ? parsedIngredients : new ArrayList<>();
+                        }
+                    } else {
+                        // Массив пуст
+                        in.endArray();
+                        return new ArrayList<>();
+                    }
                 } catch (Exception e) {
                     android.util.Log.e("Recipe", "Ошибка парсинга массива ингредиентов", e);
+                    try { 
+                        // Пробуем закрыть массив, если он был открыт
+                        if (in.peek() == JsonToken.END_ARRAY) {
+                            in.endArray();
+                        }
+                    } catch (Exception ignored) { }
                     return new ArrayList<>(); // Возврат пустого списка при ошибке
                 }
             } else {
