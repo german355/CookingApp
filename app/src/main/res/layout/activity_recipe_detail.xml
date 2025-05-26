@@ -28,16 +28,16 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingHorizontal="8dp">
                 <Space
                     android:layout_width="wrap_content"
-                    android:layout_height="20dp">
+                    android:layout_height="20dp"/>
                 
                 <TextView
                 android:id="@+id/recipe_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
                 android:layout_marginBottom="16dp"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -62,7 +62,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:background="@drawable/background_ingredients_section" 
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:layout_marginTop="8dp">
                     
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
