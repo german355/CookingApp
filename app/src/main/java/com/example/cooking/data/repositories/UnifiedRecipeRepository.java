@@ -431,13 +431,22 @@ public class UnifiedRecipeRepository {
             return;
         }
 
+        // Получаем ID и права текущего пользователя из SharedPreferences
+        MySharedPreferences preferences = new MySharedPreferences(context);
+        String currentUserId = preferences.getUserId();
+        int userPermission = preferences.getUserPermission();
+        
+        if (currentUserId == null || currentUserId.isEmpty()) {
+            if (callback != null) {
+                callback.onFailure("Пользователь не авторизован", null);
+            }
+            return;
+        }
+
         // Создаем RequestBody для каждого поля
         RequestBody title = RequestBody.create(MediaType.parse("text/plain"), recipe.getTitle());
         RequestBody ingredients = RequestBody.create(MediaType.parse("text/plain"), new Gson().toJson(recipe.getIngredients()));
         RequestBody instructions = RequestBody.create(MediaType.parse("text/plain"), new Gson().toJson(recipe.getSteps()));
-
-        // Получаем ID текущего пользователя (заглушка, нужно заменить на реальный ID)
-        String currentUserId = "current_user_id";
 
         // Создаем часть для загрузки изображения, если оно есть
         MultipartBody.Part imagePart = null;
@@ -449,8 +458,8 @@ public class UnifiedRecipeRepository {
         // Вызываем метод API для обновления рецепта
         Call<GeneralServerResponse> call = apiService.updateRecipe(
                 recipe.getId(),
-                currentUserId, // X-User-ID заголовок
-                "edit",        // X-User-Permission заголовок (заглушка)
+                currentUserId,           // X-User-ID заголовок
+                String.valueOf(userPermission), // X-User-Permission заголовок
                 title,
                 ingredients,
                 instructions,
@@ -461,22 +470,27 @@ public class UnifiedRecipeRepository {
             @Override
             public void onResponse(Call<GeneralServerResponse> call, Response<GeneralServerResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // Создаем обновленный рецепт на основе переданных данных
-                    Recipe updatedRecipe = new Recipe();
-                    updatedRecipe.setId(recipe.getId());
-                    updatedRecipe.setTitle(recipe.getTitle());
-                    updatedRecipe.setIngredients(recipe.getIngredients());
-                    updatedRecipe.setSteps(recipe.getSteps());
-                    updatedRecipe.setUserId(recipe.getUserId());
+                    // Обновляем URL фотографии, если она была загружена
+                    if (imageBytes != null && response.body().getPhotoUrl() != null) {
+                        recipe.setPhoto_url(response.body().getPhotoUrl());
+                    }
 
                     // Обновляем рецепт локально
-                    Completable.fromAction(() -> localRepository.update(updatedRecipe))
+                    Completable.fromAction(() -> localRepository.update(recipe))
                             .subscribeOn(Schedulers.io())
-                            .subscribe();
-
-                    if (callback != null) {
-                        callback.onSuccess(response.body(), updatedRecipe);
-                    }
+                            .subscribe(
+                                    () -> {
+                                        if (callback != null) {
+                                            callback.onSuccess(response.body(), recipe);
+                                        }
+                                    },
+                                    throwable -> {
+                                        Log.e(TAG, "Ошибка при обновлении локального рецепта", throwable);
+                                        if (callback != null) {
+                                            callback.onFailure("Ошибка при обновлении локального рецепта: " + throwable.getMessage(), response.body());
+                                        }
+                                    }
+                            );
                 } else {
                     String error = "Ошибка при обновлении рецепта";
                     if (response.errorBody() != null) {
@@ -539,48 +553,6 @@ public class UnifiedRecipeRepository {
                 );
     }
 
-    /**
-     * Обновляет рецепт в локальном хранилище
-     *
-     * @param recipe   обновленный рецепт
-     * @param callback колбек для обработки результата
-     */
-    public void update(Recipe recipe, RecipeSaveCallback callback) {
-        if (recipe == null) {
-            if (callback != null) {
-                callback.onFailure("Рецепт не может быть null", null);
-            }
-            return;
-        }
-
-        // Обновляем рецепт в локальном хранилище
-        Completable.fromAction(() -> localRepository.update(recipe))
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                        () -> {
-                            if (callback != null) {
-                                GeneralServerResponse response = new GeneralServerResponse();
-                                response.setSuccess(true);
-                                
-                                // Добавляем информацию о режиме работы в сообщение
-                                if (!isNetworkAvailable()) {
-                                    response.setMessage("Рецепт успешно обновлен локально (офлайн режим)");
-                                    Log.d(TAG, "Рецепт с ID " + recipe.getId() + " обновлен только локально в офлайн режиме");
-                                } else {
-                                    response.setMessage("Рецепт успешно обновлен");
-                                }
-                                
-                                response.setId(recipe.getId());
-                                callback.onSuccess(response, recipe);
-                            }
-                        },
-                        throwable -> {
-                            if (callback != null) {
-                                callback.onFailure("Ошибка при обновлении рецепта: " + throwable.getMessage(), null);
-                            }
-                        }
-                );
-    }
 
     public void deleteRecipe(int recipeId, DeleteRecipeCallback callback) {
         // Проверяем доступность сети

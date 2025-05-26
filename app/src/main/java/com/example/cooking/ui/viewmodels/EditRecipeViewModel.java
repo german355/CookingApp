@@ -708,26 +708,8 @@ public class EditRecipeViewModel extends AndroidViewModel {
                 }
             });
         } else {
-            // Обновляем существующий рецепт
-            unifiedRecipeRepository.update(recipe, new UnifiedRecipeRepository.RecipeSaveCallback() {
-                @Override
-                public void onSuccess(GeneralServerResponse response, Recipe updatedRecipe) {
-                    isSaving.postValue(false);
-                    if (response != null && response.isSuccess()) {
-                        saveResult.postValue(true);
-                    } else {
-                        errorMessage.postValue("Ошибка при обновлении рецепта");
-                        saveResult.postValue(false);
-                    }
-                }
-
-                @Override
-                public void onFailure(String error, GeneralServerResponse errorResponse) {
-                    isSaving.postValue(false);
-                    errorMessage.postValue("Ошибка при обновлении рецепта: " + error);
-                    saveResult.postValue(false);
-                }
-            });
+            // Обновляем существующий рецепт на сервере
+            updateRecipe();
         }
     }
     

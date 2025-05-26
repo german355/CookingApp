@@ -9,6 +9,9 @@ import com.google.gson.annotations.SerializedName;
 public class GeneralServerResponse extends BaseApiResponse {
     @SerializedName("id") // Для ответа при создании, может содержать ID нового ресурса
     private Integer id;
+    
+    @SerializedName("photoUrl") // URL загруженного изображения
+    private String photoUrl;
 
     /**
      * Получает ID созданного или обновленного ресурса
@@ -25,4 +28,20 @@ public class GeneralServerResponse extends BaseApiResponse {
     public void setId(Integer id) {
         this.id = id;
     }
-} 
+    
+    /**
+     * Получает URL загруженного изображения
+     * @return URL изображения или null, если изображение не было загружено
+     */
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+    
+    /**
+     * Устанавливает URL загруженного изображения
+     * @param photoUrl URL изображения
+     */
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+}

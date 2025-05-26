@@ -53,6 +53,14 @@ public class MySharedPreferences {
         return getString("userId", "0");
     }
     
+    /**
+     * Получает уровень прав текущего пользователя
+     * @return уровень прав пользователя (1 - обычный пользователь, 2 - администратор)
+     */
+    public int getUserPermission() {
+        return getInt("permission", 1); // По умолчанию обычный пользователь
+    }
+    
     // Получение вещественного значения (float) по ключу, если значение отсутствует — возвращается defaultValue
     public float getFloat(String key, float defaultValue) {
         return sharedPreferences.getFloat(key, defaultValue);
