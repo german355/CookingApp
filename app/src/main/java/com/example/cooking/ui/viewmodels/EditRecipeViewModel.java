@@ -652,6 +652,16 @@ public class EditRecipeViewModel extends AndroidViewModel {
      * Сохраняет рецепт
      */
     public void saveRecipe() {
+        // Проверка прав пользователя: может редактировать только свои рецепты или админ
+        if (recipeId.getValue() != null) {
+            String currentUserId = preferences.getUserId();
+            int permission = preferences.getUserPermission();
+            if (!currentUserId.equals(String.valueOf(recipeId.getValue())) && permission < 2) {
+                errorMessage.setValue("У вас нет прав для сохранения изменений");
+                saveResult.setValue(false);
+                return;
+            }
+        }
         String recipeTitle = title.getValue();
         List<Ingredient> recipeIngredients = ingredients.getValue();
         List<Step> recipeSteps = steps.getValue();
@@ -721,4 +731,3 @@ public class EditRecipeViewModel extends AndroidViewModel {
         this.title.setValue(title);
     }
 }
-

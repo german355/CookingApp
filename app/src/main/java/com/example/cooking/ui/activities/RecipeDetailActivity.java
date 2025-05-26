@@ -351,9 +351,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_recipe_detail, menu);
         // Получаем SharedPreferences для доступа к данным пользователя
-        com.example.cooking.utils.MySharedPreferences sharedPreferences = new com.example.cooking.utils.MySharedPreferences(this);
-        String currentUserId = sharedPreferences.getString("user_id", null);
-        int permission = sharedPreferences.getInt("permission", 1); // 1 - обычный пользователь, 2 - админ
+        com.example.cooking.utils.MySharedPreferences prefs = new com.example.cooking.utils.MySharedPreferences(this);
+        String currentUserId = prefs.getUserId();
+        int permission = prefs.getUserPermission(); // 1 - обычный пользователь, 2 - админ
 
         // Получаем ID создателя рецепта
         String recipeCreatorId = currentRecipe != null ? currentRecipe.getUserId() : null;
@@ -411,8 +411,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
         
         // Получаем ID текущего пользователя и его права доступа
         com.example.cooking.utils.MySharedPreferences prefs = new com.example.cooking.utils.MySharedPreferences(this);
-        String currentUserId = prefs.getString("userId", "0");
-        int permissionLevel = prefs.getInt("permission", 1);
+        String currentUserId = prefs.getUserId();
+        int permissionLevel = prefs.getUserPermission();
         
         // Имеет право редактировать, если пользователь - автор рецепта или админ
         boolean hasEditPermission = (recipe.getUserId() != null && recipe.getUserId().equals(currentUserId)) 
@@ -494,7 +494,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
             
             // Получаем уровень доступа пользователя
             com.example.cooking.utils.MySharedPreferences preferences = new com.example.cooking.utils.MySharedPreferences(this);
-            int permissionLevel = preferences.getInt("permission", 1);
+            int permissionLevel = preferences.getUserPermission();
             
             // Перезагружаем рецепт
             viewModel.init(recipeId, permissionLevel);

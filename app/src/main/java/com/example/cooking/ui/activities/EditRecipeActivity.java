@@ -98,6 +98,16 @@ public class EditRecipeActivity extends AppCompatActivity {
         }
         Log.d(TAG, "Получен Recipe для редактирования: ID = " + recipeToEdit.getId());
         
+        // Валидация прав на редактирование
+        MySharedPreferences prefs = new MySharedPreferences(this);
+        String currentUserId = prefs.getUserId();
+        int permission = prefs.getUserPermission();
+        if (!recipeToEdit.getUserId().equals(currentUserId) && permission < 2) {
+            Toast.makeText(this, "У вас нет прав для редактирования этого рецепта", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+        
         titleEditText = findViewById(R.id.recipe_title);
         titleInputLayout = findViewById(R.id.recipe_title_layout);
         ingredientsRecyclerView = findViewById(R.id.ingredients_recyclerview);
