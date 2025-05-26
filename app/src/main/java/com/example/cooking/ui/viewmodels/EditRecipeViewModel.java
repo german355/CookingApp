@@ -47,6 +47,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
 
     // LiveData для данных рецепта
     private final MutableLiveData<Integer> recipeId = new MutableLiveData<>();
+    private final MutableLiveData<String> recipeOwnerId = new MutableLiveData<>();
     private final MutableLiveData<String> title = new MutableLiveData<>("");
     private final MutableLiveData<List<Ingredient>> ingredients = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<Step>> steps = new MutableLiveData<>(new ArrayList<>());
@@ -68,6 +69,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
      */
     public void setRecipeData(@NonNull Recipe recipeToEdit) {
         recipeId.setValue(recipeToEdit.getId());
+        recipeOwnerId.setValue(recipeToEdit.getUserId());
         title.setValue(recipeToEdit.getTitle() != null ? recipeToEdit.getTitle() : "");
         photoUrl.setValue(recipeToEdit.getPhoto_url()); // Сохраняем исходный URL
         imageBytes.setValue(null); // Сбрасываем новое/выбранное изображение
@@ -371,7 +373,6 @@ public class EditRecipeViewModel extends AndroidViewModel {
         // ingredientsListError.setValue(null); // Все ингредиенты валидны
         return true;
     }
-
      private boolean validateStepsList() {
         List<Step> currentList = steps.getValue();
         if (currentList == null || currentList.isEmpty()) {
@@ -472,35 +473,62 @@ public class EditRecipeViewModel extends AndroidViewModel {
 
         // Создаем объект рецепта для обновления
         Recipe updatedRecipe = new Recipe();
-        updatedRecipe.setId(currentRecipeId);
+        if (recipeId.getValue() != null) {
+            updatedRecipe.setId(recipeId.getValue());
+        }
         updatedRecipe.setTitle(currentTitle);
-        updatedRecipe.setIngredients(new ArrayList<>(currentIngredients));
-        updatedRecipe.setSteps(new ArrayList<>(currentSteps));
+        // Преобразуем List в ArrayList, так как Recipe ожидает ArrayList
+        updatedRecipe.setIngredients(currentIngredients != null ? new ArrayList<>(currentIngredients) : new ArrayList<>());
+        updatedRecipe.setSteps(currentSteps != null ? new ArrayList<>(currentSteps) : new ArrayList<>());
         updatedRecipe.setPhoto_url(currentPhotoUrl);
 
         // Обновляем рецепт через репозиторий
-        unifiedRecipeRepository.updateRecipe(
-                updatedRecipe,
-                currentImageBytes,
-                new UnifiedRecipeRepository.RecipeSaveCallback() {
-                    @Override
-                    public void onSuccess(com.example.cooking.network.models.GeneralServerResponse response, Recipe updatedRecipe) {
-                        isSaving.postValue(false);
-                        saveResult.postValue(true);
-                        Log.d(TAG, "Рецепт успешно обновлен");
-                    }
-
-                    @Override
-                    public void onFailure(String error, com.example.cooking.network.models.GeneralServerResponse errorResponse) {
-                        isSaving.postValue(false);
-                        String errorMsg = "Ошибка при обновлении рецепта: " + error;
-                        if (errorResponse != null && errorResponse.getMessage() != null) {
-                            errorMsg += " (" + errorResponse.getMessage() + ")";
+        if (recipeOwnerId.getValue() != null) {
+            // Обновляем существующий рецепт на сервере
+            unifiedRecipeRepository.updateRecipe(
+                    updatedRecipe,
+                    currentImageBytes,
+                    new UnifiedRecipeRepository.RecipeSaveCallback() {
+                        @Override
+                        public void onSuccess(com.example.cooking.network.models.GeneralServerResponse response, Recipe updatedRecipe) {
+                            isSaving.postValue(false);
+                            saveResult.postValue(true);
+                            Log.d(TAG, "Рецепт успешно обновлен");
                         }
-                        errorMessage.postValue(errorMsg);
-                        Log.e(TAG, errorMsg);
+
+                        @Override
+                        public void onFailure(String error, com.example.cooking.network.models.GeneralServerResponse errorResponse) {
+                            isSaving.postValue(false);
+                            String errorMsg = "Ошибка при обновлении рецепта: " + error;
+                            if (errorResponse != null && errorResponse.getMessage() != null) {
+                                errorMsg += " (" + errorResponse.getMessage() + ")";
+                            }
+                            errorMessage.postValue(errorMsg);
+                            Log.e(TAG, errorMsg);
+                        }
+                    });
+        } else {
+            // Создаем новый рецепт
+            unifiedRecipeRepository.insert(updatedRecipe, new UnifiedRecipeRepository.RecipeSaveCallback() {
+                @Override
+                public void onSuccess(com.example.cooking.network.models.GeneralServerResponse response, Recipe updatedRecipe) {
+                    isSaving.postValue(false);
+                    if (response != null && response.isSuccess()) {
+                        saveResult.postValue(true);
+                    } else {
+                        errorMessage.postValue("Ошибка при сохранении рецепта");
+                        saveResult.postValue(false);
                     }
-                });
+                }
+
+                @Override
+                public void onFailure(String error, com.example.cooking.network.models.GeneralServerResponse errorResponse) {
+                    isSaving.postValue(false);
+                    errorMessage.postValue("Ошибка при сохранении рецепта: " + error);
+                    saveResult.postValue(false);
+                }
+            });
+        }
     }
 
     @Override
@@ -653,10 +681,10 @@ public class EditRecipeViewModel extends AndroidViewModel {
      */
     public void saveRecipe() {
         // Проверка прав пользователя: может редактировать только свои рецепты или админ
-        if (recipeId.getValue() != null) {
+        if (recipeOwnerId.getValue() != null) {
             String currentUserId = preferences.getUserId();
             int permission = preferences.getUserPermission();
-            if (!currentUserId.equals(String.valueOf(recipeId.getValue())) && permission < 2) {
+            if (!currentUserId.equals(recipeOwnerId.getValue()) && permission < 2) {
                 errorMessage.setValue("У вас нет прав для сохранения изменений");
                 saveResult.setValue(false);
                 return;
