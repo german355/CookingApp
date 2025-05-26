@@ -84,4 +84,9 @@
         <item name="android:background">?attr/colorSurfaceContainerHighest</item>
         <item name="android:padding">8dp</item>
     </style>
+
+    <style name="RoundedButton" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources> 
