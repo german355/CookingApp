@@ -32,6 +32,7 @@ import com.example.cooking.Recipe.Step;
 import com.example.cooking.ui.adapters.IngredientAdapter;
 import com.example.cooking.ui.adapters.StepAdapter;
 import com.example.cooking.ui.viewmodels.AddRecipeViewModel;
+import com.example.cooking.utils.MySharedPreferences;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -301,6 +302,13 @@ public class AddRecipeActivity extends AppCompatActivity implements
         // Обработчик клика по кнопке "Сохранить"
         saveButton.setOnClickListener(v -> {
             Log.d(TAG, "onClick: Нажата кнопка 'Сохранить'");
+            // Проверка авторизации: userId должен быть задан
+            MySharedPreferences prefs = new MySharedPreferences(AddRecipeActivity.this);
+            String userId = prefs.getUserId();
+            if (userId == null || userId.isEmpty() || "0".equals(userId)) {
+                Toast.makeText(AddRecipeActivity.this, "Войдите в систему, чтобы добавлять рецепты", Toast.LENGTH_LONG).show();
+                return;
+            }
             viewModel.saveRecipe();
         });
     }
