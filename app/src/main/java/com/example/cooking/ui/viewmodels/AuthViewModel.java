@@ -111,7 +111,7 @@ public class AuthViewModel extends AndroidViewModel {
                             Log.d(TAG, "signInWithEmailPassword: Успешный вход, ID: " + internalUserId + ", Права: " + permissionLevel);
 
                             // Синхронизируем лайкнутые рецепты
-                            likedRecipesRepository.syncLikedRecipesFromServerIfNeeded();
+                            likedRecipesRepository.syncLikedRecipesFromServer(internalUserId);
                         }
 
                         @Override
@@ -480,7 +480,7 @@ public class AuthViewModel extends AndroidViewModel {
                             isLoading.postValue(false);
                             isAuthenticated.postValue(true);
                             Log.d(TAG, "Google Sign-In (login): успешный вход, ID: " + internalUserId + ", Права: " + permissionLevel);
-                            likedRecipesRepository.syncLikedRecipesFromServerIfNeeded();
+                            likedRecipesRepository.syncLikedRecipesFromServer(internalUserId);
                         }
 
                         @Override
@@ -507,7 +507,7 @@ public class AuthViewModel extends AndroidViewModel {
                                             isLoading.postValue(false);
                                             isAuthenticated.postValue(true);
                                             Log.d(TAG, "Google Sign-In (login after register): успешный вход после регистрации, ID: " + internalUserId + ", Права: " + permissionLevel);
-                                            likedRecipesRepository.syncLikedRecipesFromServerIfNeeded();
+                                            likedRecipesRepository.syncLikedRecipesFromServer(internalUserId);
                                         }
 
                                         @Override

@@ -31,9 +31,9 @@ public class SearchResponse extends BaseApiResponse {
     
     /**
      * Получает список результатов поиска
-     * @return список рецептов
+     * @return список ID рецептов
      */
-    public List<Recipe> getResults() {
+    public List<String> getResults() {
         return data != null ? data.getResults() : null;
     }
     
@@ -50,24 +50,24 @@ public class SearchResponse extends BaseApiResponse {
      */
     public static class Data {
         @SerializedName("results")
-        private List<Recipe> results;
+        private List<String> results;
         
         @SerializedName("total_results")
         private int totalResults;
         
         /**
          * Получает результаты поиска
-         * @return список найденных рецептов
+         * @return список ID найденных рецептов
          */
-        public List<Recipe> getResults() {
+        public List<String> getResults() {
             return results;
         }
         
         /**
          * Устанавливает результаты поиска
-         * @param results список найденных рецептов
+         * @param results список ID найденных рецептов
          */
-        public void setResults(List<Recipe> results) {
+        public void setResults(List<String> results) {
             this.results = results;
         }
         

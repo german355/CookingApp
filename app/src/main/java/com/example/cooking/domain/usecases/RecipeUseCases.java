@@ -39,6 +39,7 @@ public class RecipeUseCases {
             searchService.searchRecipes(query, new RecipeSearchService.SearchCallback() {
                 @Override
                 public void onSearchResults(List<Recipe> recipes) {
+                    // Полученные объекты уже полные — напрямую отдаем UI
                     searchResultsLiveData.postValue(recipes);
                     isRefreshingLiveData.postValue(false);
                 }

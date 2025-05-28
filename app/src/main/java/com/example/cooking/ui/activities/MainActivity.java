@@ -389,8 +389,7 @@ public class MainActivity extends AppCompatActivity {
         suggestionAdapter.addAll(list);
         suggestionAdapter.notifyDataSetChanged();
 
-        // Логируем поисковый запрос
-        Log.d(TAG, "Выполнен поиск по запросу: " + query);
+
 
     }
 
