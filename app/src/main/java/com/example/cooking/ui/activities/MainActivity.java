@@ -1,14 +1,17 @@
 package com.example.cooking.ui.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -21,6 +24,11 @@ import com.example.cooking.ui.viewmodels.SharedRecipeViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.appbar.MaterialToolbar;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Главная активность приложения.
@@ -42,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
     private MainViewModel viewModel;
     private SharedRecipeViewModel sharedRecipeViewModel;
 
+    // Поля для истории поиска
+    private SharedPreferences searchPrefs;
+    private ArrayAdapter<String> suggestionAdapter;
+    private SearchView.SearchAutoComplete searchAutoComplete;
+
     /**
      * Вызывается при создании активности.
      * Инициализирует интерфейс и настраивает навигацию.
@@ -61,8 +74,9 @@ public class MainActivity extends AppCompatActivity {
         setupEventHandlers();
         setupObservers();
 
-        viewModel.initGoogleSignIn(getString(R.string.default_web_client_id));
-        
+        // Обновление меню при смене фрагмента
+        navController.addOnDestinationChangedListener((controller, destination, args) -> invalidateOptionsMenu());
+
         // Загрузка данных о рецептах при старте приложения
         sharedRecipeViewModel.loadInitialRecipes();
 
@@ -244,6 +258,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment != null) {
+            Fragment currentFragment = navHostFragment.getChildFragmentManager().getPrimaryNavigationFragment();
+            if (currentFragment != null) {
+                currentFragment.onActivityResult(requestCode, resultCode, data);
+            }
+        }
         if (requestCode == REQUEST_ADD_RECIPE) {
             if (resultCode == RESULT_OK) {
                 Log.d(TAG, "Получен результат: Рецепт добавлен");
@@ -286,6 +307,16 @@ public class MainActivity extends AppCompatActivity {
                         R.color.md_theme_onSurface, null));
             }
         }
+        // Инициализация истории поиска
+        searchPrefs = getSharedPreferences("search_prefs", MODE_PRIVATE);
+        Set<String> historySet = searchPrefs.getStringSet("search_history", new LinkedHashSet<>());
+        List<String> historyList = new ArrayList<>(historySet);
+        suggestionAdapter = new ArrayAdapter<>(this,
+            android.R.layout.simple_dropdown_item_1line, historyList);
+        searchAutoComplete = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        searchAutoComplete.setAdapter(suggestionAdapter);
+        searchAutoComplete.setThreshold(1);
+
         // Логика поиска
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -299,6 +330,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
         // Показывать/скрывать заголовок Toolbar в зависимости от состояния поиска
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
@@ -345,7 +377,34 @@ public class MainActivity extends AppCompatActivity {
         // Выполняем поиск через SharedViewModel
         sharedRecipeViewModel.searchRecipes(query);
         
+        // Сохранение в историю поиска
+        Set<String> savedSet = searchPrefs.getStringSet("search_history", new LinkedHashSet<>());
+        List<String> list = new ArrayList<>(savedSet);
+        list.remove(query);
+        list.add(0, query);
+        if (list.size() > 10) list.remove(list.size() - 1);
+        LinkedHashSet<String> newSet = new LinkedHashSet<>(list);
+        searchPrefs.edit().putStringSet("search_history", newSet).apply();
+        suggestionAdapter.clear();
+        suggestionAdapter.addAll(list);
+        suggestionAdapter.notifyDataSetChanged();
+
         // Логируем поисковый запрос
         Log.d(TAG, "Выполнен поиск по запросу: " + query);
+
+    }
+
+    // Показываем или скрываем кнопку поиска в зависимости от фрагмента
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        int id = navController.getCurrentDestination() != null
+            ? navController.getCurrentDestination().getId() : -1;
+        boolean visible = id == R.id.nav_home || id == R.id.nav_favorites;
+        searchItem.setVisible(visible);
+        if (!visible && searchItem.isActionViewExpanded()) {
+            searchItem.collapseActionView();
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 }

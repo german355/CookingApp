@@ -30,6 +30,7 @@ import com.example.cooking.ui.viewmodels.MainViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseUser;
 
 /**
@@ -140,16 +141,11 @@ public class AuthFragment extends Fragment {
                 return;
             }
             if (isAuthenticated) {
-                Log.d(TAG, "Пользователь успешно авторизовался, обновляем MainViewModel");
-                // Получаем ViewModel активности
+                // Событие успешного входа
                 MainViewModel mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
-                // Обновляем состояние авторизации в MainViewModel, что автоматически обновит UI
-                mainViewModel.checkAuthState();
-
+                mainViewModel.triggerLoginEvent();
                 Toast.makeText(requireContext(), "Вход выполнен успешно", Toast.LENGTH_SHORT).show();
-
-                // Возвращаемся назад с помощью Navigation Component
-                navController.navigateUp();
+                navController.navigate(R.id.destination_profile);
             }
         });
     }

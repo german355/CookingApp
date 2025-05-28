@@ -193,8 +193,6 @@ public class RecipeSearchService {
      * Показывает тост для отладки
      */
     private void showToast(String message) {
-        new Handler(Looper.getMainLooper()).post(() -> {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-        });
+        // Debug-toasts suppressed to reduce spam
     }
 }

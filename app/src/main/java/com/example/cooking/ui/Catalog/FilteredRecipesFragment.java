@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-// import androidx.navigation.fragment.NavHostFragment; // Не используется здесь явно
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,11 +13,12 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
 
 import com.example.cooking.R;
 import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.ui.adapters.RecipeListAdapter;
-import java.util.List; // ArrayList не используется напрямую, достаточно List
+import java.util.List; 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 /**
@@ -37,9 +37,6 @@ public class FilteredRecipesFragment extends Fragment implements RecipeListAdapt
     private String categoryName;
     private String filterKey;
     private String filterType;
-
-    // Флаг для отслеживания инициированного пользователем обновления
-    private boolean userInitiatedRefresh = false;
 
     // Конструктор по умолчанию, обязателен для фрагментов
     public FilteredRecipesFragment() {}
@@ -72,14 +69,6 @@ public class FilteredRecipesFragment extends Fragment implements RecipeListAdapt
         recipeListAdapter = new RecipeListAdapter(this);
         recyclerView.setAdapter(recipeListAdapter);
         
-        // Настраиваем SwipeRefreshLayout
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            userInitiatedRefresh = true;
-            if (viewModel != null) {
-                viewModel.refreshData();
-            }
-        });
-
         return view;
     }
 
@@ -87,66 +76,39 @@ public class FilteredRecipesFragment extends Fragment implements RecipeListAdapt
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(this).get(FilteredRecipesViewModel.class);
+        // Набор наблюдателей
+        setUpObservers(viewModel);
+        // Pull-to-refresh
+        swipeRefreshLayout.setOnRefreshListener(() -> viewModel.onRefreshRequested());
+        // Инициация фильтрации
+        if (categoryName != null && filterKey != null && filterType != null) {
+            viewModel.onFilterRequested(filterKey, filterType);
+        }
+    }
 
-        // Инициация загрузки отфильтрованных рецептов
-        viewModel.loadFilteredRecipes(filterKey, filterType);
-
-        // Наблюдение за списком отфильтрованных рецептов
-        viewModel.getFilteredRecipes().observe(getViewLifecycleOwner(), recipes -> {
+    /**
+     * Настройка наблюдения за LiveData из ViewModel
+     */
+    private void setUpObservers(FilteredRecipesViewModel vm) {
+        vm.getFilteredRecipes().observe(getViewLifecycleOwner(), recipes -> {
             if (recipes != null && !recipes.isEmpty()) {
                 recipeListAdapter.submitList(recipes);
                 recyclerView.setVisibility(View.VISIBLE);
                 emptyView.setVisibility(View.GONE);
-                android.util.Log.d("FilteredRecipes", "Отображено рецептов: " + recipes.size());
+                Log.d("FilteredRecipes", "Отображено рецептов: " + recipes.size());
             } else {
                 recyclerView.setVisibility(View.GONE);
                 emptyView.setVisibility(View.VISIBLE);
-                android.util.Log.d("FilteredRecipes", "Рецепты не найдены или список пуст для текущих фильтров.");
                 emptyView.setText("Рецепты для категории \"" + categoryName + "\" не найдены");
             }
         });
-
-        // Наблюдение за состоянием загрузки
-        viewModel.getIsRefreshing().observe(getViewLifecycleOwner(), isRefreshing -> {
-            if (isRefreshing) {
-                // Если обновление в процессе
-                if (userInitiatedRefresh) {
-                    // Если обновление было инициировано пользователем через swipe, 
-                    // оставляем SwipeRefreshLayout видимым, скрываем progressBar
-                    swipeRefreshLayout.setRefreshing(true);
-                    progressBar.setVisibility(View.GONE);
-                } else {
-                    // Если обновление НЕ было инициировано пользователем, 
-                    // показываем progressBar, не показываем SwipeRefreshLayout
-                    swipeRefreshLayout.setRefreshing(false);
-                    // Показываем прогресс бар только при первой загрузке, когда список пустой
-                    if (recipeListAdapter.getItemCount() == 0) {
-                        progressBar.setVisibility(View.VISIBLE);
-                    }
-                }
-            } else {
-                // Обновление закончилось, сбрасываем флаг и убираем оба индикатора
-                userInitiatedRefresh = false;
-                swipeRefreshLayout.setRefreshing(false);
-                progressBar.setVisibility(View.GONE);
-            }
+        vm.getIsRefreshing().observe(getViewLifecycleOwner(), isRefreshing -> {
+            swipeRefreshLayout.setRefreshing(isRefreshing);
+            progressBar.setVisibility(isRefreshing && recipeListAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
         });
-
-        // Наблюдение за сообщениями об ошибках
-        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+        vm.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
                 Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-                
-                // Проверяем, пустой ли список
-                boolean isEmpty = recipeListAdapter.getItemCount() == 0;
-                recyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
-                emptyView.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
-                
-                if (isEmpty) {
-                    emptyView.setText(error);
-                }
-                
-                android.util.Log.e("FilteredRecipes", "Ошибка: " + error);
             }
         });
     }

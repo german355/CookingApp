@@ -48,6 +48,12 @@ public class FavoritesViewModel extends AndroidViewModel {
     private final String userId;
     private final boolean isUserLoggedIn;
     
+    // Флаг, что источник SharedRecipeViewModel уже добавлен
+    private boolean isSharedObserverSet = false;
+    
+    // Флаг, что источник searchQuery уже добавлен
+    private boolean isSearchQueryObserverSet = false;
+    
     public FavoritesViewModel(@NonNull Application application) {
         super(application);
         repository = new LikedRecipesRepository(application);
@@ -79,7 +85,9 @@ public class FavoritesViewModel extends AndroidViewModel {
      * Настраивает наблюдение за данными из SharedRecipeViewModel
      */
     private void setupSharedViewModelObserver() {
-        if (sharedRecipeViewModel == null) return;
+        // Проверяем, что источник ещё не добавлен и viewModel проинициализирована
+        if (sharedRecipeViewModel == null || isSharedObserverSet) return;
+        isSharedObserverSet = true;
         
         filteredLikedRecipes.addSource(sharedRecipeViewModel.getRecipes(), resource -> {
             if (resource == null || !resource.isSuccess() || resource.getData() == null) {
@@ -110,6 +118,9 @@ public class FavoritesViewModel extends AndroidViewModel {
      * Настраивает наблюдение за поисковым запросом
      */
     private void setupSearchQueryObserver() {
+        // Проверяем, что observer ещё не настроен и viewModel инициализирована
+        if (sharedRecipeViewModel == null || isSearchQueryObserverSet) return;
+        isSearchQueryObserverSet = true;
         filteredLikedRecipes.addSource(searchQuery, query -> {
             if (sharedRecipeViewModel == null) return;
             
@@ -290,5 +301,19 @@ public class FavoritesViewModel extends AndroidViewModel {
             // Если SharedViewModel не инициализирован, обновляем напрямую через репозиторий
             repository.updateLikeStatusLocal(recipe.getId(), isLiked);
         }
+    }
+    
+    /**
+     * Обработка запроса обновления от UI (event-driven)
+     */
+    public void onRefreshRequested() {
+        refreshLikedRecipes();
+    }
+    
+    /**
+     * Обработка запроса поиска от UI (event-driven)
+     */
+    public void onSearchRequested(String query) {
+        searchQuery.setValue(query);
     }
 }

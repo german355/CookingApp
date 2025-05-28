@@ -112,8 +112,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Удалить аккаунт"
-                android:textColor="#FFFFFF"
-                android:backgroundTint="#F44336"
+                android:textColor="?attr/colorOnError"
+                android:backgroundTint="?attr/colorError"
                 android:textSize="14sp"/>
         </LinearLayout>
         
@@ -128,8 +128,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Выход из аккаунта"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#F44336"
+            android:textColor="?attr/colorOnError"
+            android:backgroundTint="?attr/colorError"
             android:padding="12dp"
             android:layout_marginTop="16dp" />
     </LinearLayout>

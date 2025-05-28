@@ -128,12 +128,8 @@ public class ProfileFragment extends Fragment {
                 Log.d(TAG, "Текущее значение isAuthenticated: " + isAuth);
 
                 if (isAuth != null && !isAuth) {
-                    Log.d(TAG, "Обнаружен выход пользователя, инициируем событие в MainViewModel");
-                    // Инициируем событие выхода в MainViewModel, которое переключит фрагмент
+                    // Инициируем событие выхода в MainViewModel
                     mainViewModel.triggerLogoutEvent();
-
-                    // Возвращаемся на корневой экран профиля
-                    navController.navigateUp();
                 }
                 // Сбрасываем флаг успеха, чтобы он не сработал снова
                 viewModel.clearOperationSuccess();

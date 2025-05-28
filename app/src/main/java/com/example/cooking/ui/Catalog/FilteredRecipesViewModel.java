@@ -146,6 +146,20 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
         sharedViewModel.refreshRecipes();
     }
 
+    /**
+     * Обработка запроса фильтрации от UI
+     */
+    public void onFilterRequested(String filterKey, String filterType) {
+        loadFilteredRecipes(filterKey, filterType);
+    }
+
+    /**
+     * Обработка запроса на обновление от UI
+     */
+    public void onRefreshRequested() {
+        refreshData();
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();

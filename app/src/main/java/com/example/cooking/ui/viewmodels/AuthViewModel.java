@@ -463,42 +463,75 @@ public class AuthViewModel extends AndroidViewModel {
             authManager.handleGoogleSignInResult(data, new FirebaseAuthManager.AuthCallback() {
                 @Override
                 public void onSuccess(FirebaseUser user) {
-                    // После успешного Google Sign-In с Firebase, логинимся на нашем сервере
-                    Log.d(TAG,
-                            "Google Sign-In success with Firebase, calling server login for user: " + user.getEmail());
+                    // Сначала пробуем вход на сервере
                     userService.loginFirebaseUser(user.getEmail(), user.getUid(), new UserService.UserCallback() {
                         @Override
                         public void onSuccess(ApiResponse response) {
-                            // Получаем внутренний ID и права от сервера
+                            // Вход успешен
                             String internalUserId = response.getUserId();
-                            int permissionLevel = response.getPermission(); // Получаем permission
+                            int permissionLevel = response.getPermission();
                             if (internalUserId == null || internalUserId.isEmpty()) {
-                                Log.e(TAG,
-                                        "Внутренний userId не пришел от сервера при Google Sign-In! Сохраняем Firebase UID.");
-                                internalUserId = user.getUid(); // Запасной вариант
+                                internalUserId = user.getUid();
                             }
-                            if (permissionLevel == 0) { // Если сервер не вернул или вернул 0
-                                Log.w(TAG, "Уровень прав не пришел от сервера при Google Sign-In. Установлен 1.");
-                                permissionLevel = 1; // Значение по умолчанию
+                            if (permissionLevel == 0) {
+                                permissionLevel = 1;
                             }
-                            // Сохраняем данные с внутренним ID и правами
                             saveUserData(user, internalUserId, permissionLevel);
                             isLoading.postValue(false);
                             isAuthenticated.postValue(true);
-                            Log.d(TAG, "Google Sign-In: Успешный вход, ID: " + internalUserId + ", Права: "
-                                    + permissionLevel);
+                            Log.d(TAG, "Google Sign-In (login): успешный вход, ID: " + internalUserId + ", Права: " + permissionLevel);
+                            likedRecipesRepository.syncLikedRecipesFromServerIfNeeded();
                         }
 
                         @Override
-                        public void onFailure(String errorMessage) {
-                            // Ошибка при логине на НАШЕМ сервере после Google Sign-In
-                            Log.e(TAG, "Ошибка логина на сервере после Google Sign-In: " + errorMessage);
-                            // Сохраняем Firebase UID и права по умолчанию (1) при ошибке сервера
-                            saveUserData(user, user.getUid(), 1);
-                            isLoading.postValue(false);
-                            isAuthenticated.postValue(true); // Считаем аутентифицированным локально
-                            AuthViewModel.this.errorMessage
-                                    .postValue("Ошибка синхронизации с сервером: " + errorMessage);
+                        public void onFailure(String loginError) {
+                            // Вход не удался, пробуем регистрацию на сервере
+                            Log.w(TAG, "Вход на сервере не удался: " + loginError + ", пробуем регистрацию");
+                            userService.registerFirebaseUser(user.getEmail(), user.getDisplayName(), user.getUid(), new UserService.UserCallback() {
+                                @Override
+                                public void onSuccess(ApiResponse response) {
+                                    // Регистрация успешна, повторяем попытку входа
+                                    userService.loginFirebaseUser(user.getEmail(), user.getUid(), new UserService.UserCallback() {
+                                        @Override
+                                        public void onSuccess(ApiResponse response) {
+                                            // Вход после регистрации успешен
+                                            String internalUserId = response.getUserId();
+                                            int permissionLevel = response.getPermission();
+                                            if (internalUserId == null || internalUserId.isEmpty()) {
+                                                internalUserId = user.getUid();
+                                            }
+                                            if (permissionLevel == 0) {
+                                                permissionLevel = 1;
+                                            }
+                                            saveUserData(user, internalUserId, permissionLevel);
+                                            isLoading.postValue(false);
+                                            isAuthenticated.postValue(true);
+                                            Log.d(TAG, "Google Sign-In (login after register): успешный вход после регистрации, ID: " + internalUserId + ", Права: " + permissionLevel);
+                                            likedRecipesRepository.syncLikedRecipesFromServerIfNeeded();
+                                        }
+
+                                        @Override
+                                        public void onFailure(String secondLoginError) {
+                                            // Второй вход не удался, сохраняем локально
+                                            Log.e(TAG, "Ошибка авторизации на сервере после регистрации: " + secondLoginError);
+                                            saveUserData(user, user.getUid(), 1);
+                                            isLoading.postValue(false);
+                                            isAuthenticated.postValue(true);
+                                            errorMessage.postValue("Ошибка авторизации на сервере после регистрации: " + secondLoginError);
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onFailure(String regError) {
+                                    // Регистрация не удалась, сохраняем локально
+                                    Log.e(TAG, "Регистрация на сервере не удалась: " + regError);
+                                    saveUserData(user, user.getUid(), 1);
+                                    isLoading.postValue(false);
+                                    isAuthenticated.postValue(true);
+                                    errorMessage.postValue("Регистрация на сервере не удалась: " + regError);
+                                }
+                            });
                         }
                     });
                 }

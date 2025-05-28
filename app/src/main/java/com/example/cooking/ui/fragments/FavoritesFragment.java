@@ -25,8 +25,8 @@ import com.example.cooking.R;
 import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.ui.adapters.RecipeListAdapter;
 import com.example.cooking.ui.viewmodels.FavoritesViewModel;
+import com.example.cooking.ui.viewmodels.SharedRecipeViewModel;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +55,8 @@ public class FavoritesFragment extends Fragment implements RecipeListAdapter.OnR
         userId = preferences.getString("userId", "0");
         
         viewModel = new ViewModelProvider(this).get(FavoritesViewModel.class);
+        SharedRecipeViewModel sharedVM = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
+        viewModel.setSharedRecipeViewModel(sharedVM);
         
         if (!viewModel.isUserLoggedIn()) {
             View authBlockView = inflater.inflate(R.layout.fragment_auth_block, container, false);
@@ -82,10 +84,6 @@ public class FavoritesFragment extends Fragment implements RecipeListAdapter.OnR
         
         observeViewModel();
         
-        if (getActivity() != null && viewModel.isUserLoggedIn()) {
-            viewModel.observeLikeChanges(getViewLifecycleOwner(), getActivity());
-        }
-
         return view;
     }
     
@@ -97,8 +95,7 @@ public class FavoritesFragment extends Fragment implements RecipeListAdapter.OnR
     
     private void setupSwipeRefresh() {
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            Log.d(TAG, "Swipe to refresh triggered.");
-            viewModel.refreshLikedRecipes();
+            viewModel.onRefreshRequested();
         });
     }
     
@@ -242,13 +239,7 @@ public class FavoritesFragment extends Fragment implements RecipeListAdapter.OnR
     @Override
     public void onResume() {
         super.onResume();
-        String currentUserId = new MySharedPreferences(requireContext()).getString("userId", "0");
-        if (!Objects.equals(userId, currentUserId)) {
-            userId = currentUserId;
-            viewModel.updateUser(userId);
-        } else if (viewModel.isUserLoggedIn()) {
-             Log.d(TAG, "onResume: User is logged in.");
-        }
+        viewModel.onRefreshRequested();
     }
     
     @Override
@@ -268,16 +259,7 @@ public class FavoritesFragment extends Fragment implements RecipeListAdapter.OnR
      * Вызывает соответствующий метод ViewModel.
      */
     public void refreshData() {
-        if (viewModel != null) {
-             Log.d(TAG, "refreshData called.");
-             String currentUserId = new MySharedPreferences(requireContext()).getString("userId", "0");
-              if (!Objects.equals(userId, currentUserId)) {
-                 userId = currentUserId;
-                 viewModel.updateUser(userId);
-             } else {
-                 viewModel.refreshLikedRecipes();
-             }
-        }
+        viewModel.onRefreshRequested();
     }
     
     @Override

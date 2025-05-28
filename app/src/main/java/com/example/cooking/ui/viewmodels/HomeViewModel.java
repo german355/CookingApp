@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.fragment.app.FragmentActivity;
 
@@ -42,35 +43,48 @@ public class HomeViewModel extends AndroidViewModel {
     // LiveData для списка рецептов
     private final MutableLiveData<List<Recipe>> recipesLiveData = new MutableLiveData<>();
 
+    private final Observer<Resource<List<Recipe>>> recipesObserver;
+    private final Observer<Boolean> refreshingObserver;
+    private final Observer<String> sharedErrorObserver;
+    private final Observer<List<Recipe>> searchResultsObserver;
+
     public HomeViewModel(@NonNull Application application) {
         super(application);
         this.likedRecipesRepository = new LikedRecipesRepository(application);
         this.executor = Executors.newFixedThreadPool(2);
+        
+        // init observer fields
+        this.recipesObserver = resource -> {
+            if (resource.getStatus() == Resource.Status.SUCCESS && resource.getData() != null) {
+                recipesLiveData.postValue(resource.getData());
+            } else if (resource.getStatus() == Resource.Status.ERROR) {
+                errorMessage.postValue(resource.getMessage());
+            }
+        };
+        this.refreshingObserver = isLoading -> isRefreshing.postValue(isLoading);
+        this.sharedErrorObserver = error -> {
+            if (error != null && !error.isEmpty()) {
+                errorMessage.postValue(error);
+            }
+        };
+        this.searchResultsObserver = recipes -> {
+            if (recipes != null) {
+                searchResults.postValue(recipes);
+            }
+        };
         
         // Инициализируем SharedRecipeViewModel
         sharedRecipeViewModel = new ViewModelProvider.AndroidViewModelFactory(application)
             .create(SharedRecipeViewModel.class);
             
         // Подписываемся на обновления рецептов
-        sharedRecipeViewModel.getRecipes().observeForever(resource -> {
-            if (resource.getStatus() == Resource.Status.SUCCESS && resource.getData() != null) {
-                recipesLiveData.postValue(resource.getData());
-            } else if (resource.getStatus() == Resource.Status.ERROR) {
-                errorMessage.postValue(resource.getMessage());
-            }
-        });
+        sharedRecipeViewModel.getRecipes().observeForever(recipesObserver);
         
         // Подписываемся на состояние загрузки
-        sharedRecipeViewModel.getIsRefreshing().observeForever(isLoading -> 
-            isRefreshing.postValue(isLoading)
-        );
+        sharedRecipeViewModel.getIsRefreshing().observeForever(refreshingObserver);
         
         // Подписываемся на ошибки
-        sharedRecipeViewModel.getErrorMessage().observeForever(error -> {
-            if (error != null && !error.isEmpty()) {
-                errorMessage.postValue(error);
-            }
-        });
+        sharedRecipeViewModel.getErrorMessage().observeForever(sharedErrorObserver);
     }
     
     // Поле для хранения LikeSyncViewModel
@@ -260,6 +274,10 @@ public class HomeViewModel extends AndroidViewModel {
         if (executor != null && !executor.isShutdown()) {
             executor.shutdown();
         }
+        sharedRecipeViewModel.getRecipes().removeObserver(recipesObserver);
+        sharedRecipeViewModel.getIsRefreshing().removeObserver(refreshingObserver);
+        sharedRecipeViewModel.getErrorMessage().removeObserver(sharedErrorObserver);
+        sharedRecipeViewModel.getSearchResults().removeObserver(searchResultsObserver);
          Log.d(TAG, "HomeViewModel cleared.");
     }
 
@@ -269,11 +287,7 @@ public class HomeViewModel extends AndroidViewModel {
      */
     public void searchRecipes(String query) {
         // Подписываемся на результаты поиска
-        sharedRecipeViewModel.getSearchResults().observeForever(recipes -> {
-            if (recipes != null) {
-                searchResults.postValue(recipes);
-            }
-        });
+        sharedRecipeViewModel.getSearchResults().observeForever(searchResultsObserver);
         
         // Вызываем поиск (без параметра useSmartSearch, так как его нет в сигнатуре)
         sharedRecipeViewModel.searchRecipes(query);
