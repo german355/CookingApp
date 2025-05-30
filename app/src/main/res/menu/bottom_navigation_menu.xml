@@ -10,7 +10,7 @@
         android:title="Избранное" />
     <item
         android:id="@+id/nav_catalog"
-        android:icon="@android:drawable/ic_menu_gallery"
+        android:icon="@drawable/layers"
         android:title="Каталог" />
     <item
         android:id="@+id/nav_profile"

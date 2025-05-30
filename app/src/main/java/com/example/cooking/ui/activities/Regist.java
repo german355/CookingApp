@@ -146,7 +146,7 @@ public class Regist extends AppCompatActivity {
         // Наблюдаем за сообщениями об ошибках
         viewModel.getErrorMessage().observe(this, errorMsg -> {
             if (errorMsg != null && !errorMsg.isEmpty()) {
-                Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+                emailInputLayout.setError(errorMsg);
                 viewModel.clearErrorMessage();
             }
         });
@@ -154,6 +154,8 @@ public class Regist extends AppCompatActivity {
         // Наблюдаем за состоянием аутентификации
         viewModel.getIsAuthenticated().observe(this, isAuthenticated -> {
             if (isAuthenticated) {
+                // Уведомляем пользователя о подтверждении почты
+                Toast.makeText(this, "На вашу почту отправлено письмо для подтверждения", Toast.LENGTH_LONG).show();
                 // Переходим на главный экран
                 navigateToMainActivity();
             }

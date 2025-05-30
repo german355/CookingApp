@@ -18,7 +18,7 @@
             android:layout_height="?attr/actionBarSize"
             app:title="Регистрация"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:titleCentered="true"
+            app:titleCentered="false"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

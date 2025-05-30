@@ -89,29 +89,6 @@ public class AuthFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        // Получаем NavController
-        navController = Navigation.findNavController(view);
-
-        // Инициализация Toolbar
-        MaterialToolbar toolbar = view.findViewById(R.id.toolbar_auth);
-        
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Используем NavController для возврата назад, если он доступен
-                if (navController != null) {
-                    navController.navigateUp();
-                } else if (getActivity() != null) {
-                    // Как запасной вариант, если NavController почему-то не инициализирован
-                    getActivity().getOnBackPressedDispatcher().onBackPressed();
-                }
-            }
-        });
-    }
-
     private void setupObservers() {
         // Наблюдатель для состояния загрузки
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
@@ -129,7 +106,7 @@ public class AuthFragment extends Fragment {
         // Наблюдатель для сообщений об ошибках
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), errorMessage -> {
             if (errorMessage != null && !errorMessage.isEmpty()) {
-                // Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show();
+                emailInputLayout.setError(errorMessage);
                 viewModel.clearErrorMessage();
             }
         });

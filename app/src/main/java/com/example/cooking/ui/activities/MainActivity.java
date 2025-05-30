@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 .findFragmentById(R.id.nav_host_fragment);
         if (navHostFragment != null) {
             navController = navHostFragment.getNavController();
+            toolbar.setNavigationOnClickListener(v -> navController.navigateUp());
 
             // Убираем стандартную привязку
             // NavigationUI.setupWithNavController(bottomNavigationView, navController);
@@ -136,6 +137,13 @@ public class MainActivity extends AppCompatActivity {
                         CharSequence label = destination.getLabel();
                         getSupportActionBar().setTitle(label != null ? label : "");
                     }
+                }
+
+                // Показываем кнопку назад только в экране авторизации
+                if (id == R.id.destination_auth || id == R.id.destination_settings) {
+                    if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                } else {
+                    if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 }
             });
 
