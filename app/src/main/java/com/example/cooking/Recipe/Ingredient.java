@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public class Ingredient implements Parcelable {
     private String name; // Название ингредиента
-    private int count;   // Количество ингредиента (целочисленное)
+    private float count;   // Количество ингредиента (может быть дробным)
     private String type; // Единица измерения (например, "г", "мл", "шт")
 
     /**
@@ -22,7 +22,7 @@ public class Ingredient implements Parcelable {
 
     protected Ingredient(Parcel in) {
         name = in.readString();
-        count = in.readInt();
+        count = in.readFloat();
         type = in.readString();
     }
 
@@ -54,11 +54,11 @@ public class Ingredient implements Parcelable {
         this.type = type;
     }
 
-    public int getCount() {
+    public float getCount() {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(float count) {
         this.count = count;
     }
     
@@ -74,7 +74,7 @@ public class Ingredient implements Parcelable {
     /**
      * Возвращает единицу измерения ингредиента.
      * Если тип не указан, возвращает пустую строку.
-     * @return единица измерения или пустая строка.
+     * @return единица измерения или пустая строку.
      */
     public String getUnit() {
         return type != null ? type : "";
@@ -88,7 +88,7 @@ public class Ingredient implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeInt(count);
+        dest.writeFloat(count);
         dest.writeString(type);
     }
 
@@ -99,7 +99,7 @@ public class Ingredient implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ingredient that = (Ingredient) o;
-        return count == that.count &&
+        return Float.compare(count, that.count) == 0 &&
                Objects.equals(name, that.name) &&
                Objects.equals(type, that.type);
     }

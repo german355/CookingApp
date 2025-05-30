@@ -3,6 +3,7 @@ package com.example.cooking.network.responses;
 import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.network.models.BaseApiResponse;
 import com.google.gson.annotations.SerializedName;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,7 +61,7 @@ public class SearchResponse extends BaseApiResponse {
          * @return список ID найденных рецептов
          */
         public List<String> getResults() {
-            return results;
+            return results != null ? results : new ArrayList<>();
         }
         
         /**

@@ -384,7 +384,7 @@ public class AddRecipeViewModel extends AndroidViewModel {
             Ingredient ingredient = currentList.get(i);
             String name = ingredient.getName();
             String type = ingredient.getType();
-            int count = ingredient.getCount();
+            float count = ingredient.getCount();
             
             Log.d(TAG, "validateIngredientsList: Проверка ингредиента #" + i + 
                     ": name='" + name + "', type='" + type + "', count=" + count);

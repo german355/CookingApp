@@ -32,8 +32,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
     /**
      * Конструктор адаптера
-     * @param recipes список рецептов
-     * @param listener слушатель кликов
+     * recipes список рецептов
+     *  listener слушатель кликов
      */
     public RecipeAdapter(List<Recipe> recipes, OnRecipeClickListener listener) {
         this.recipes = recipes;
@@ -42,7 +42,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
     /**
      * Обновляет список рецептов и уведомляет об изменениях
-     * @param recipes новый список рецептов
+     * recipes новый список рецептов
      */
     public void updateRecipes(List<Recipe> recipes) {
         this.recipes = recipes;
@@ -85,8 +85,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
         /**
          * Привязывает данные рецепта к элементам интерфейса
-         * @param recipe рецепт для отображения
-         * @param listener слушатель кликов
+         *  recipe рецепт для отображения
+         *  listener слушатель кликов
          */
         public void bind(Recipe recipe, OnRecipeClickListener listener) {
             titleTextView.setText(recipe.getTitle());

@@ -1,5 +1,6 @@
 package com.example.cooking.ui.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,11 +15,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.NavOptions;
 import androidx.appcompat.widget.SearchView;
 
 import com.example.cooking.R;
+import com.example.cooking.ui.fragments.HomeFragment;
 import com.example.cooking.ui.viewmodels.MainViewModel;
 import com.example.cooking.ui.viewmodels.SharedRecipeViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -255,23 +258,47 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onResume");
     }
 
+    /**
+     * Обрабатывает результаты возврата из других Activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        if (navHostFragment != null) {
-            Fragment currentFragment = navHostFragment.getChildFragmentManager().getPrimaryNavigationFragment();
-            if (currentFragment != null) {
-                currentFragment.onActivityResult(requestCode, resultCode, data);
-            }
-        }
-        if (requestCode == REQUEST_ADD_RECIPE) {
-            if (resultCode == RESULT_OK) {
-                Log.d(TAG, "Получен результат: Рецепт добавлен");
-                Toast.makeText(this, "Рецепт успешно добавлен", Toast.LENGTH_SHORT).show();
+        
+        Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
+        
+        // Обработка результата от AddRecipeActivity
+        if (requestCode == REQUEST_ADD_RECIPE && resultCode == RESULT_OK) {
+            if (data != null && data.hasExtra("recipeAdded") && data.getBooleanExtra("recipeAdded", false)) {
+                // Обновляем HomeFragment для отображения нового рецепта
                 refreshHomeFragment();
+                
+                // Показываем сообщение пользователю
+                Toast.makeText(this, "Рецепт успешно добавлен", Toast.LENGTH_SHORT).show();
+            }
+        } 
+        // Обработка результата от RecipeDetailActivity
+        else if (requestCode == 200) {
+            Log.d(TAG, "Вернулись из просмотра деталей рецепта, resultCode=" + resultCode);
+            
+            // Проверяем, что результат успешный (RESULT_OK = -1)
+            if (resultCode == Activity.RESULT_OK) {
+                Log.d(TAG, "Результат активности: RESULT_OK, восстанавливаем последний поиск");
+                
+                // Передаем событие в HomeFragment для восстановления последнего поиска
+                NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+                if (navHostFragment != null) {
+                    Fragment currentFragment = navHostFragment.getChildFragmentManager().getPrimaryNavigationFragment();
+                    if (currentFragment instanceof HomeFragment) {
+                        HomeFragment homeFragment = (HomeFragment) currentFragment;
+                        homeFragment.restoreLastSearch();
+                        Log.d(TAG, "Вызван метод restoreLastSearch() в HomeFragment");
+                    } else {
+                        Log.d(TAG, "Текущий фрагмент не является HomeFragment");
+                    }
+                }
             } else {
-                Log.d(TAG, "Получен результат: Отмена добавления рецепта");
+                Log.d(TAG, "Результат активности не RESULT_OK, не восстанавливаем поиск");
             }
         }
     }
@@ -359,38 +386,43 @@ public class MainActivity extends AppCompatActivity {
         });
         return true;
     }
-
+    
     /**
      * Выполняет поиск по введенному запросу
      */
     private void performSearch(String query) {
-        // Очищаем фокус с SearchView после отправки
-
+        Log.d(TAG, "Выполняю поиск: " + query);
         
-        // Убедимся, что мы на главном экране или каталоге
-        int currentDestId = navController.getCurrentDestination().getId();
-        if (currentDestId != R.id.nav_home && currentDestId != R.id.nav_catalog) {
-            // Если мы не на главном экране или в каталоге, переходим на главный экран
-            bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        // Сохраняем запрос в истории поиска
+        if (query != null && !query.trim().isEmpty()) {
+            Set<String> historySet = searchPrefs.getStringSet("search_history", new LinkedHashSet<>());
+            Set<String> newHistorySet = new LinkedHashSet<>(historySet);
+            newHistorySet.add(query);
+            searchPrefs.edit().putStringSet("search_history", newHistorySet).apply();
+            suggestionAdapter.clear();
+            suggestionAdapter.addAll(newHistorySet);
+            suggestionAdapter.notifyDataSetChanged();
         }
         
-        // Выполняем поиск через SharedViewModel
-        sharedRecipeViewModel.searchRecipes(query);
+        // Убедимся, что мы на главном экране
+NavDestination current = navController.getCurrentDestination();
+if (current == null || current.getId() != R.id.nav_home) {
+            // Если мы не на главном экране, переходим на него
+            navigateToHomeFragment();
+        }
         
-        // Сохранение в историю поиска
-        Set<String> savedSet = searchPrefs.getStringSet("search_history", new LinkedHashSet<>());
-        List<String> list = new ArrayList<>(savedSet);
-        list.remove(query);
-        list.add(0, query);
-        if (list.size() > 10) list.remove(list.size() - 1);
-        LinkedHashSet<String> newSet = new LinkedHashSet<>(list);
-        searchPrefs.edit().putStringSet("search_history", newSet).apply();
-        suggestionAdapter.clear();
-        suggestionAdapter.addAll(list);
-        suggestionAdapter.notifyDataSetChanged();
-
-
-
+        // Получаем текущий HomeFragment и вызываем поиск
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        if (navHostFragment != null) {
+            Fragment currentFragment = navHostFragment.getChildFragmentManager().getPrimaryNavigationFragment();
+            if (currentFragment instanceof HomeFragment) {
+                HomeFragment homeFragment = (HomeFragment) currentFragment;
+                homeFragment.performSearch(query);
+                Log.d(TAG, "Передал запрос '" + query + "' в HomeFragment");
+            } else {
+                Log.e(TAG, "Не удалось найти HomeFragment для выполнения поиска");
+            }
+        }
     }
 
     // Показываем или скрываем кнопку поиска в зависимости от фрагмента

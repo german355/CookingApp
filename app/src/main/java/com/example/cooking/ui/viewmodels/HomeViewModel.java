@@ -21,6 +21,9 @@ import com.example.cooking.utils.MySharedPreferences;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.lang.reflect.Field;
+
+import com.example.cooking.BuildConfig;
 
 /**
  * ViewModel для HomeFragment
@@ -39,6 +42,11 @@ public class HomeViewModel extends AndroidViewModel {
     
     // LiveData для результатов поиска
     private final MutableLiveData<List<Recipe>> searchResults = new MutableLiveData<>();
+    
+    // Флаг, указывающий, что мы находимся в режиме поиска
+    private boolean isInSearchMode = false;
+    // Последний поисковый запрос для возможности восстановления
+    private String lastSearchQuery = "";
     
     // LiveData для списка рецептов
     private final MutableLiveData<List<Recipe>> recipesLiveData = new MutableLiveData<>();
@@ -68,8 +76,33 @@ public class HomeViewModel extends AndroidViewModel {
             }
         };
         this.searchResultsObserver = recipes -> {
+            Log.d(TAG, "---> searchResultsObserver вызван с " + (recipes != null ? recipes.size() : "null") + " рецептами");
             if (recipes != null) {
+                Log.d(TAG, "Получены результаты поиска в HomeViewModel: " + recipes.size() + " рецептов");
+                if (!recipes.isEmpty()) {
+                    Log.d(TAG, "Первый рецепт в результатах: " + recipes.get(0).getTitle() + " (ID: " + recipes.get(0).getId() + ")");
+                }
+                Log.d(TAG, "searchResults LiveData до обновления: " + (searchResults.getValue() != null ? searchResults.getValue().size() : "null") + " рецептов");
                 searchResults.postValue(recipes);
+                Log.d(TAG, "Результаты поиска отправлены в LiveData searchResults");
+                
+                if (BuildConfig.DEBUG) {
+                    try {
+                        java.lang.reflect.Field observersField = androidx.lifecycle.LiveData.class.getDeclaredField("mObservers");
+                        observersField.setAccessible(true);
+                        Object observers = observersField.get(searchResults);
+                        if (observers != null) {
+                            int size = ((java.util.Map<?, ?>) observers).size();
+                            Log.d(TAG, "Количество наблюдателей для searchResults: " + size);
+                        } else {
+                            Log.w(TAG, "Наблюдатели для searchResults отсутствуют (observers == null)");
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Ошибка при проверке наблюдателей: " + e.getMessage());
+                    }
+                }
+            } else {
+                Log.w(TAG, "Получен нулевой список результатов поиска");
             }
         };
         
@@ -85,6 +118,9 @@ public class HomeViewModel extends AndroidViewModel {
         
         // Подписываемся на ошибки
         sharedRecipeViewModel.getErrorMessage().observeForever(sharedErrorObserver);
+        
+        // Подписываемся на результаты поиска (чтобы HomeFragment сразу получал данные)
+        sharedRecipeViewModel.getSearchResults().observeForever(searchResultsObserver);
     }
     
     // Поле для хранения LikeSyncViewModel
@@ -278,18 +314,59 @@ public class HomeViewModel extends AndroidViewModel {
         sharedRecipeViewModel.getIsRefreshing().removeObserver(refreshingObserver);
         sharedRecipeViewModel.getErrorMessage().removeObserver(sharedErrorObserver);
         sharedRecipeViewModel.getSearchResults().removeObserver(searchResultsObserver);
-         Log.d(TAG, "HomeViewModel cleared.");
+        Log.d(TAG, "HomeViewModel cleared.");
     }
 
-    /**
-     * Выполнить поиск рецептов, учитывая настройку Smart Search
-     * @param query строка поиска
-     */
-    public void searchRecipes(String query) {
-        // Подписываемся на результаты поиска
-        sharedRecipeViewModel.getSearchResults().observeForever(searchResultsObserver);
-        
-        // Вызываем поиск (без параметра useSmartSearch, так как его нет в сигнатуре)
-        sharedRecipeViewModel.searchRecipes(query);
+
+
+
+
+/**
+ * Выполняет поиск рецептов по указанному запросу
+ * @param query Строка поиска
+ */
+public void searchRecipes(String query) {
+    Log.d(TAG, "Выполняю поиск рецептов: " + query);
+    
+    // Запоминаем последний запрос и устанавливаем режим поиска
+    lastSearchQuery = query;
+    isInSearchMode = true;
+    
+    // Инициируем поиск через SharedRecipeViewModel
+    sharedRecipeViewModel.searchRecipes(query);
+}
+
+/**
+ * Проверяет, находимся ли мы в режиме поиска
+ * @return true если в режиме поиска, иначе false
+ */
+public boolean isInSearchMode() {
+    return isInSearchMode;
+}
+
+/**
+ * Устанавливает режим поиска
+ * @param inSearchMode значение режима поиска
+ */
+public void setInSearchMode(boolean inSearchMode) {
+    isInSearchMode = inSearchMode;
+}
+
+/**
+ * Возвращает последний поисковый запрос
+ * @return строка последнего поиска
+ */
+public String getLastSearchQuery() {
+    return lastSearchQuery;
+}
+
+/**
+ * Восстанавливает последний поиск
+ */
+public void restoreLastSearch() {
+    if (isInSearchMode && !lastSearchQuery.isEmpty()) {
+        Log.d(TAG, "Восстанавливаю последний поиск: " + lastSearchQuery);
+        searchRecipes(lastSearchQuery);
     }
+}
 } 

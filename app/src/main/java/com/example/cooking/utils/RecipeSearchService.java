@@ -21,6 +21,8 @@ import java.util.concurrent.Executors;
 
 public class RecipeSearchService {
     
+    private static final String TAG = "RecipeSearchService";
+    
     public interface SearchCallback {
         void onSearchResults(List<Recipe> recipes);
         void onSearchError(String error);
@@ -40,7 +42,11 @@ public class RecipeSearchService {
      * Поиск рецептов по запросу
      */
     public void searchRecipes(String query, SearchCallback callback) {
+        Log.d(TAG, "-------------- НАЧАЛО ПОИСКА --------------");
+        Log.d(TAG, "Поисковый запрос: '" + query + "'");
+        
         if (query == null || query.trim().isEmpty()) {
+            Log.d(TAG, "Поисковый запрос пуст или null, возвращаем пустой список");
             callback.onSearchResults(Collections.emptyList());
             return;
         }
@@ -134,29 +140,73 @@ public class RecipeSearchService {
         ApiCallHandler.execute(callToExecute, new ApiCallHandler.ApiCallback<SearchResponse>() {
             @Override
             public void onSuccess(SearchResponse response) {
-                Log.d("RecipeSearchService", "Успешный ответ от умного поиска");
-                if (response != null && response.getData() != null && response.getData().getResults() != null) {
-                    List<String> ids = response.getData().getResults();
-                    if (!ids.isEmpty()) {
-                        Log.d("RecipeSearchService", "Получено ID: " + ids.size() + " из " + response.getTotalResults());
-                        showToast("Найдено " + ids.size() + " рецептов");
-                        dbExecutor.execute(() -> {
-                            RecipeLocalRepository localRepo = new RecipeLocalRepository(context);
-                            List<Recipe> fullRecipes = new ArrayList<>();
-                            for (String idStr : ids) {
-                                try {
-                                    int id = Integer.parseInt(idStr);
-                                    Recipe full = localRepo.getRecipeByIdSync(id);
-                                    if (full != null) fullRecipes.add(full);
-                                } catch (NumberFormatException ignored) {}
+                Log.d(TAG, "Успешный ответ от умного поиска");
+                
+                if (response == null) {
+                    Log.e(TAG, "Ответ API нулевой (response == null)");
+                    fallbackToSimpleSearch(query, callback);
+                    return;
+                }
+                
+                if (response.getData() == null) {
+                    Log.e(TAG, "Данные в ответе нулевые (response.getData() == null)");
+                    fallbackToSimpleSearch(query, callback);
+                    return;
+                }
+                
+                if (response.getData().getResults() == null) {
+                    Log.e(TAG, "Результаты в данных нулевые (response.getData().getResults() == null)");
+                    fallbackToSimpleSearch(query, callback);
+                    return;
+                }
+                
+                List<String> ids = response.getData().getResults();
+                Log.d(TAG, "Формат полученных результатов: " + ids.getClass().getName());
+                
+                if (!ids.isEmpty()) {
+                    Log.d(TAG, "Получено ID: " + ids.size() + " из " + response.getTotalResults());
+                    Log.d(TAG, "Первые 10 ID (или меньше): " + ids.subList(0, Math.min(10, ids.size())));
+                    showToast("Найдено " + ids.size() + " рецептов");
+                    
+                    dbExecutor.execute(() -> {
+                        RecipeLocalRepository localRepo = new RecipeLocalRepository(context);
+                        List<Recipe> fullRecipes = new ArrayList<>();
+                        
+                        Log.d(TAG, "Начинаю получение рецептов из БД по " + ids.size() + " ID");
+                        
+                        int foundCount = 0;
+                        int notFoundCount = 0;
+                        
+                        for (String idStr : ids) {
+                            try {
+                                int id = Integer.parseInt(idStr);
+                                Log.d(TAG, "Ищу рецепт в БД по ID: " + id);
+                                Recipe full = localRepo.getRecipeByIdSync(id);
+                                
+                                if (full != null) {
+                                    fullRecipes.add(full);
+                                    foundCount++;
+                                    Log.d(TAG, "Найден рецепт: ID=" + id + ", название=" + full.getTitle());
+                                } else {
+                                    notFoundCount++;
+                                    Log.w(TAG, "Рецепт с ID=" + id + " не найден в локальной БД");
+                                }
+                            } catch (NumberFormatException e) {
+                                Log.e(TAG, "Неверный формат ID: " + idStr, e);
                             }
-                            uiHandler.post(() -> callback.onSearchResults(fullRecipes));
+                        }
+                        
+                        Log.d(TAG, "Итоги поиска: найдено " + foundCount + " рецептов, не найдено " + notFoundCount);
+                        
+                        final List<Recipe> finalRecipes = new ArrayList<>(fullRecipes); // создаем копию для безопасной передачи
+                        uiHandler.post(() -> {
+                            Log.d(TAG, "Отправляю на UI " + finalRecipes.size() + " рецептов");
+                            callback.onSearchResults(finalRecipes);
                         });
-                        return;
-                    }
-                    Log.d("RecipeSearchService", "Список ID пуст");
+                    });
+                    return;
                 } else {
-                    Log.e("RecipeSearchService", "Нет данных или результатов в ответе");
+                    Log.d(TAG, "Список ID пуст, переходим к простому поиску");
                 }
                 showToast("Переключаюсь на обычный поиск: нет результатов");
                 fallbackToSimpleSearch(query, callback);
@@ -175,6 +225,7 @@ public class RecipeSearchService {
      * Показывает тост для отладки
      */
     private void showToast(String message) {
+        Log.d(TAG, "TOAST: " + message);
         // Debug-toasts suppressed to reduce spam
     }
 }

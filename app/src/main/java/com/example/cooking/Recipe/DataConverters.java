@@ -28,7 +28,6 @@ public class DataConverters {
                 return new ArrayList<>();
             }
             
-            Log.d(TAG, "Успешно преобразовано " + ingredients.size() + " ингредиентов из JSON");
             return ingredients;
         } catch (JsonSyntaxException e) {
             Log.e(TAG, "Ошибка при десериализации JSON ингредиентов: " + e.getMessage() + "\nJSON: " + value);
@@ -44,7 +43,6 @@ public class DataConverters {
         
         try {
             String json = new Gson().toJson(ingredients);
-            Log.d(TAG, "Успешно сериализовано " + ingredients.size() + " ингредиентов в JSON");
             return json;
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при сериализации ингредиентов в JSON: " + e.getMessage());
@@ -76,7 +74,6 @@ public class DataConverters {
                 }
             }
             
-            Log.d(TAG, "Успешно преобразовано " + steps.size() + " шагов из JSON");
             return steps;
         } catch (JsonSyntaxException e) {
             Log.e(TAG, "Ошибка при десериализации JSON шагов: " + e.getMessage() + "\nJSON: " + value);
@@ -92,7 +89,6 @@ public class DataConverters {
         
         try {
             String json = new Gson().toJson(steps);
-            Log.d(TAG, "Успешно сериализовано " + steps.size() + " шагов в JSON");
             return json;
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при сериализации шагов в JSON: " + e.getMessage());

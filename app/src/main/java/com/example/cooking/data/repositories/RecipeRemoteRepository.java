@@ -52,7 +52,6 @@ public class RecipeRemoteRepository {
         }
 
         // Больше не нужно получать userId для этого запроса
-        Log.d(TAG, "Отправляем запрос getRecipes");
 
         // Вызываем API с использованием ApiCallHandler
         Call<RecipesResponse> call = apiService.getRecipes();
@@ -61,17 +60,14 @@ public class RecipeRemoteRepository {
             public void onSuccess(RecipesResponse response) {
                 if (response.getRecipes() != null) {
                     List<Recipe> recipes = response.getRecipes();
-                        Log.d(TAG, "Загружено с сервера рецептов: " + recipes.size());
-                        callback.onRecipesLoaded(recipes);
+                    callback.onRecipesLoaded(recipes);
                 } else {
-                    Log.e(TAG, "Список рецептов в ответе пуст");
                     callback.onDataNotAvailable("Список рецептов пуст");
                 }
             }
 
             @Override
             public void onError(String errorMessage) {
-                Log.e(TAG, "Ошибка при загрузке рецептов: " + errorMessage);
                 callback.onDataNotAvailable(errorMessage);
             }
         });

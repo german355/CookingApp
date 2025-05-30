@@ -40,7 +40,17 @@ public class RecipeUseCases {
                 @Override
                 public void onSearchResults(List<Recipe> recipes) {
                     // Полученные объекты уже полные — напрямую отдаем UI
+                    android.util.Log.d("RecipeUseCases", "Получены результаты поиска в RecipeUseCases: " + (recipes != null ? recipes.size() : 0) + " рецептов");
+                    if (recipes != null && !recipes.isEmpty()) {
+                        android.util.Log.d("RecipeUseCases", "Первый рецепт: " + recipes.get(0).getTitle());
+                    }
+                    
+                    // Проверяем searchResultsLiveData перед отправкой
+                    android.util.Log.d("RecipeUseCases", "searchResultsLiveData перед отправкой: " + (searchResultsLiveData != null ? "не null" : "null"));
+                    
                     searchResultsLiveData.postValue(recipes);
+                    android.util.Log.d("RecipeUseCases", "Результаты поиска отправлены в LiveData");
+                    
                     isRefreshingLiveData.postValue(false);
                 }
                 
@@ -79,7 +89,7 @@ public class RecipeUseCases {
                     
                     if (localRecipes != null && !localRecipes.isEmpty()) {
                         // Если есть кэшированные рецепты, возвращаем их
-                        android.util.Log.d("RecipeUseCases", "Офлайн режим: загружено " + localRecipes.size() + " рецептов из кэша");
+
                         
                         // Отображаем тост о работе в офлайн-режиме
                         new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
@@ -106,7 +116,7 @@ public class RecipeUseCases {
                         });
                     }
                 } catch (Exception e) {
-                    android.util.Log.e("RecipeUseCases", "Ошибка при загрузке кэшированных рецептов: " + e.getMessage(), e);
+                    android.util.Log.e("RecipeUseCases", "Error loading cached recipes", e);
                     errorMessageLiveData.postValue("Ошибка при загрузке кэшированных рецептов: " + e.getMessage());
                     if (recipesLiveData != null) {
                         recipesLiveData.postValue(Resource.error("Ошибка при загрузке кэшированных рецептов", null));
