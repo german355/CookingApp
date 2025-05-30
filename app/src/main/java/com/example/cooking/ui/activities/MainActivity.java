@@ -22,6 +22,7 @@ import androidx.appcompat.widget.SearchView;
 
 import com.example.cooking.R;
 import com.example.cooking.ui.fragments.HomeFragment;
+import com.example.cooking.ui.fragments.AuthFragment;
 import com.example.cooking.ui.viewmodels.MainViewModel;
 import com.example.cooking.ui.viewmodels.SharedRecipeViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -264,41 +265,31 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        
         Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
-        
-        // Обработка результата от AddRecipeActivity
         if (requestCode == REQUEST_ADD_RECIPE && resultCode == RESULT_OK) {
             if (data != null && data.hasExtra("recipeAdded") && data.getBooleanExtra("recipeAdded", false)) {
-                // Обновляем HomeFragment для отображения нового рецепта
                 refreshHomeFragment();
-                
-                // Показываем сообщение пользователю
                 Toast.makeText(this, "Рецепт успешно добавлен", Toast.LENGTH_SHORT).show();
             }
-        } 
-        // Обработка результата от RecipeDetailActivity
-        else if (requestCode == 200) {
-            Log.d(TAG, "Вернулись из просмотра деталей рецепта, resultCode=" + resultCode);
-            
-            // Проверяем, что результат успешный (RESULT_OK = -1)
+        } else if (requestCode == 200) {
             if (resultCode == Activity.RESULT_OK) {
-                Log.d(TAG, "Результат активности: RESULT_OK, восстанавливаем последний поиск");
-                
-                // Передаем событие в HomeFragment для восстановления последнего поиска
                 NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
                 if (navHostFragment != null) {
                     Fragment currentFragment = navHostFragment.getChildFragmentManager().getPrimaryNavigationFragment();
                     if (currentFragment instanceof HomeFragment) {
-                        HomeFragment homeFragment = (HomeFragment) currentFragment;
-                        homeFragment.restoreLastSearch();
+                        ((HomeFragment) currentFragment).restoreLastSearch();
                         Log.d(TAG, "Вызван метод restoreLastSearch() в HomeFragment");
-                    } else {
-                        Log.d(TAG, "Текущий фрагмент не является HomeFragment");
                     }
                 }
-            } else {
-                Log.d(TAG, "Результат активности не RESULT_OK, не восстанавливаем поиск");
+            }
+        } else if (requestCode == com.example.cooking.auth.FirebaseAuthManager.RC_SIGN_IN) {
+            Log.d(TAG, "Forwarding Google Sign-In result to AuthFragment");
+            NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+            if (navHostFragment != null) {
+                Fragment currentFragment = navHostFragment.getChildFragmentManager().getPrimaryNavigationFragment();
+                if (currentFragment instanceof AuthFragment) {
+                    currentFragment.onActivityResult(requestCode, resultCode, data);
+                }
             }
         }
     }
