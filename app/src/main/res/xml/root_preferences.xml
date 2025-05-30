@@ -22,10 +22,6 @@
                 android:key="smart_search_enabled"
                 app:iconSpaceReserved="false"/>
 
-        <SwitchPreference
-                android:defaultValue="true"
-                android:title="Рекомендации" android:key="switch_preference_1"
-                app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>
 
