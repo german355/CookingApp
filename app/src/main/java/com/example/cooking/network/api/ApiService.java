@@ -87,10 +87,10 @@ public interface ApiService {
     /**
      * Простой поиск рецептов по строке.
      * @param query строка поиска
-     * @return Call объект с ответом типа RecipesResponse
+     * @return Call объект с ответом типа SearchResponse
      */
     @GET("recipes/search-simple")
-    Call<RecipesResponse> searchRecipesSimple(@Query("q") String query);
+    Call<SearchResponse> searchRecipesSimple(@Query("q") String query);
     
     /**
      * Расширенный поиск рецептов с пагинацией

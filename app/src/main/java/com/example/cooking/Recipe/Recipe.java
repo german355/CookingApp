@@ -165,38 +165,30 @@ public class Recipe implements Parcelable {
         public ArrayList<Step> read(JsonReader in) throws IOException {
             if (in.peek() == JsonToken.NULL) {
                 in.nextNull();
-                android.util.Log.d("StepsAdapter", "Steps: JSON был null, возвращен пустой список.");
                 return new ArrayList<>();
             }
 
             if (in.peek() == JsonToken.STRING) {
                 String jsonString = in.nextString();
-                android.util.Log.d("StepsAdapter", "Steps: читается как JSON-строка: " + jsonString);
                 if (jsonString.isEmpty()) {
-                    android.util.Log.d("StepsAdapter", "Steps: JSON-строка пуста, возвращен пустой список.");
                     return new ArrayList<>();
                 }
                 try {
                     ArrayList<Step> parsedSteps = GSON_INSTANCE.fromJson(jsonString, STEP_LIST_TYPE);
-                    android.util.Log.d("StepsAdapter", "Steps: JSON-строка успешно распарсена, количество шагов: " + (parsedSteps != null ? parsedSteps.size() : 0));
                     return parsedSteps != null ? parsedSteps : new ArrayList<>();
                 } catch (Exception e) {
-                    android.util.Log.e("StepsAdapter", "Steps: ошибка парсинга JSON-строки: " + jsonString, e);
+                    
                     return new ArrayList<>();
                 }
             } else if (in.peek() == JsonToken.BEGIN_ARRAY) {
-                android.util.Log.d("StepsAdapter", "Steps: читается как JSON-массив.");
                 try {
                     ArrayList<Step> parsedSteps = GSON_INSTANCE.fromJson(in, STEP_LIST_TYPE);
-                    android.util.Log.d("StepsAdapter", "Steps: JSON-массив успешно распарсен, количество шагов: " + (parsedSteps != null ? parsedSteps.size() : 0));
                     return parsedSteps != null ? parsedSteps : new ArrayList<>();
-                } catch (Exception e) {
-                    android.util.Log.e("StepsAdapter", "Steps: ошибка парсинга JSON-массива.", e);
+                } catch (Exception e) {                        
                     return new ArrayList<>();
                 }
             } else {
-                JsonToken token = in.peek();
-                android.util.Log.w("StepsAdapter", "Steps: неожиданный JSON токен: " + token + ". Пропуск значения.");
+                JsonToken token = in.peek();                
                 in.skipValue();
                 return new ArrayList<>();
             }

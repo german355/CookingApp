@@ -65,7 +65,7 @@ public class NetworkService {
                         Log.d(TAG, "OkHttp: " + message));
                     
                     // Устанавливаем максимальный уровень логирования
-                    loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+                    loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
                     
                     // Создаем кэш для запросов
                     Cache cache = new Cache(context.getCacheDir(), CACHE_SIZE);

@@ -1,5 +1,6 @@
 package com.example.cooking.ui.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -113,6 +114,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
             finish(); // Закрываем активность, если данных нет
             return;
         }
+        setResult(Activity.RESULT_OK);
 
         // Извлекаем данные из объекта Recipe
         recipeId = currentRecipe.getId();
@@ -501,10 +503,16 @@ public class RecipeDetailActivity extends AppCompatActivity {
         }
     }
 
-    // Обработка нажатия кнопки "Назад" в ActionBar
+    @Override
+    public void onBackPressed() {
+        setResult(Activity.RESULT_OK);
+        super.onBackPressed();
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
-        getOnBackPressedDispatcher().onBackPressed();
+        setResult(Activity.RESULT_OK);
+        finish();
         return true;
     }
 }

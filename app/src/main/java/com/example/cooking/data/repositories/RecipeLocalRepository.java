@@ -44,8 +44,6 @@ public class RecipeLocalRepository {
                 List<Recipe> recipes = new ArrayList<>();
                 if (entities != null) {
                      for (RecipeEntity entity : entities) {
-                         // Логируем состояние isLiked ПЕРЕД конвертацией
-                         Log.d(TAG, "  Entity ID: " + entity.getId() + ", isLiked: " + entity.isLiked());
                          recipes.add(entity.toRecipe());
                      }
                 }

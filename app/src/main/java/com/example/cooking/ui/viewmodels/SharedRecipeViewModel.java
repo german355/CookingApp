@@ -306,13 +306,10 @@ public class SharedRecipeViewModel extends AndroidViewModel {
         MySharedPreferences preferences = new MySharedPreferences(getApplication());
         boolean smartSearchEnabled = preferences.getBoolean("smart_search_enabled", true);
         
-        // isRefreshing управляется внутри searchRecipes в RecipeUseCases
-        // Поэтому нет необходимости устанавливать его здесь вручную перед вызовом
-        // isRefreshing.setValue(true); 
+
         
         recipeUseCases.searchRecipes(query, smartSearchEnabled, searchResults, errorMessage, isRefreshing);
-        // isRefreshing будет обновлен внутри коллбэков searchRecipes, поэтому убираем отсюда:
-        // isRefreshing.setValue(false); 
+
     }
 
     /**
@@ -320,26 +317,7 @@ public class SharedRecipeViewModel extends AndroidViewModel {
      */
     public void loadLocalRecipes() {
         isRefreshing.setValue(true); // Показываем индикатор загрузки
-        // Запускаем в фоновом потоке через executor, хотя сам getAllRecipesSync уже синхронный
-        // Но для единообразия и если внутри getAllRecipesSync будет работа с БД, лучше так.
-        // Однако, UnifiedRecipeRepository.getAllRecipesSync() уже должен вызываться из фонового потока.
-        // А getAllRecipesLocal() возвращает LiveData и не требует явного потока здесь.
-        // Правильнее будет вызывать метод, который сам управляет потоками или возвращает LiveData.
-        
-        // Вариант 1: Если хотим обновить recipes LiveData из локальных данных
-        // Этот вариант предполагает, что recipes LiveData должно показывать локальный кэш
-        // без обращения к сети. RecipeUseCases.refreshRecipes обращается к сети.
-        // Создадим для этого специальный метод в RecipeUseCases или используем существующий,
-        // который не делает сетевой запрос.
 
-        // Давайте упростим: если loadLocalRecipes нужен для отображения кэша, 
-        // то он может просто обновить recipes.setValue() напрямую, если данные есть.
-        // Но это нарушает идею, что ViewModel работает только через UseCases.
-
-        // Правильный подход: UseCase должен предоставлять метод для загрузки локальных данных.
-        // Пока что, если цель - просто отобразить данные из recipes LiveData (которое уже слушает локальную БД),
-        // то этот метод может быть не нужен или его логика должна быть другой.
-        // Оставим пока простой вариант с обновлением recipes из локального хранилища через repository, но в фоне.
         executor.execute(() -> {
             List<Recipe> localRecipesList = repository.getAllRecipesSync(); 
             if (localRecipesList != null && !localRecipesList.isEmpty()) {
@@ -352,9 +330,7 @@ public class SharedRecipeViewModel extends AndroidViewModel {
                 recipes.postValue(Resource.success(localRecipesList));
             } else {
                 Log.d(TAG, "(BG) Локальные данные отсутствуют, возможно, стоит загрузить с сервера");
-                // Если локальных нет, можно инициировать refreshRecipes(), который уже есть
-                // recipes.postValue(Resource.error("Локальные данные отсутствуют", null));
-                 // Вызываем refreshRecipes в основном потоке, т.к. он сам управляет своим фоновым потоком
+
                 new Handler(Looper.getMainLooper()).post(this::refreshRecipes); 
             }
             isRefreshing.postValue(false); // Скрываем индикатор загрузки

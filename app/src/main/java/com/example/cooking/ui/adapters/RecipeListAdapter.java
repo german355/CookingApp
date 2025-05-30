@@ -1,8 +1,12 @@
 package com.example.cooking.ui.adapters;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import com.example.cooking.ui.activities.MainActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +20,8 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 import com.bumptech.glide.Glide;
 import com.example.cooking.R;
@@ -106,6 +112,17 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
     public Recipe getRecipeAt(int position) {
         return getItem(position);
     }
+    
+    @Override
+    public void submitList(List<Recipe> list) {
+        Log.d(TAG, "submitList: получен новый список размером " + (list != null ? list.size() : 0) + " рецептов");
+        if (list != null && !list.isEmpty()) {
+            Log.d(TAG, "Первый рецепт в новом списке: " + list.get(0).getTitle() + " (ID: " + list.get(0).getId() + ")");
+        } else {
+            Log.d(TAG, "Получен пустой список рецептов!");
+        }
+        super.submitList(list);
+    }
 
     /**
      * Вызывается, когда {@link RecyclerView} нуждается в новом {@link RecipeViewHolder}
@@ -127,7 +144,7 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
     /**
      * Вызывается {@link RecyclerView} для отображения данных в указанной позиции.
      * Этот метод должен обновить содержимое {@link RecipeViewHolder#itemView}, чтобы отразить элемент
-     * в данной позиции.
+     * в данной позиции в наборе данных.
      *
      * @param holder   {@link RecipeViewHolder}, который должен быть обновлен для представления
      *                 содержимого элемента в данной позиции в наборе данных.
@@ -136,6 +153,8 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
         Recipe recipe = getItem(position);
+        
+        Log.d(TAG, "onBindViewHolder: привязка данных для позиции " + position + ", рецепт: " + recipe.getTitle() + " (ID: " + recipe.getId() + ")");
         
         holder.titleTextView.setText(recipe.getTitle());
         
@@ -190,16 +209,28 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
         holder.cardView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), RecipeDetailActivity.class);
             intent.putExtra(RecipeDetailActivity.EXTRA_SELECTED_RECIPE, recipe);
-
             Log.d(TAG, "Starting RecipeDetailActivity for recipe: " + recipe.getTitle() + " (ID: " + recipe.getId() + ")");
             if (recipe.getPhoto_url() != null) {
                 Log.d(TAG, "Photo URL: " + recipe.getPhoto_url());
             }
-            
-            // Запуск Activity для отображения деталей рецепта.
-            // Используется startActivityForResult, но код результата (200) может не обрабатываться
-            // в родительской Activity. Если результат не нужен, предпочтительнее использовать startActivity(intent).
-            ((AppCompatActivity) v.getContext()).startActivityForResult(intent, 200);
+            // Извлекаем Activity из ContextWrapper
+            Context context = v.getContext();
+            Activity activity = null;
+            Context baseContext = context;
+            while (baseContext instanceof ContextWrapper) {
+                if (baseContext instanceof Activity) {
+                    activity = (Activity) baseContext;
+                    break;
+                }
+                baseContext = ((ContextWrapper) baseContext).getBaseContext();
+            }
+            if (activity != null) {
+                Log.d(TAG, "Launching RecipeDetailActivity via Activity for result");
+                activity.startActivityForResult(intent, 200);
+            } else {
+                Log.d(TAG, "Activity not found, launching normally");
+                context.startActivity(intent);
+            }
         });
     }
 
