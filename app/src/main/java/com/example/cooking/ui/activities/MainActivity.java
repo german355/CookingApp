@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
+import android.widget.AdapterView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -342,6 +343,15 @@ public class MainActivity extends AppCompatActivity {
         searchAutoComplete = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
         searchAutoComplete.setAdapter(suggestionAdapter);
         searchAutoComplete.setThreshold(1);
+        searchAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String suggestion = suggestionAdapter.getItem(position);
+                if (suggestion != null) {
+                    searchView.setQuery(suggestion, true);
+                }
+            }
+        });
 
         // Логика поиска
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -354,6 +364,23 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String newText) {
                 // Можно реализовать live-поиск
                 return false;
+            }
+        });
+
+        // Перехват клика по подсказкам, чтобы подавить стандартный launchSuggestion и избежать NPE
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+                String suggestion = suggestionAdapter.getItem(position);
+                if (suggestion != null) {
+                    searchView.setQuery(suggestion, true);
+                }
+                return true;
             }
         });
 
