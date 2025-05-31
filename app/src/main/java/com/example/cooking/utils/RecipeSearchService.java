@@ -65,7 +65,6 @@ public class RecipeSearchService {
             int page = 1;
             int perPage = 20;
             
-            Log.d("RecipeSearchService", "Выполняю умный поиск (асинхронно) с параметрами: query=" + query + ", userId=" + userId);
             showToast("Выполняю умный поиск");
             
             try {
@@ -82,16 +81,11 @@ public class RecipeSearchService {
                 final Call<SearchResponse> smartCall = freshApiService.searchRecipes(formattedQuery, userId, page, perPage);
                 
                 String fullUrl = smartCall.request().url().toString();
-                Log.d("RecipeSearchService", "URL умного поиска: " + fullUrl);
-                Log.d("RecipeSearchService", "Заголовка запроса: " + smartCall.request().headers().toString());
-                // showToast("URL поиска: " + fullUrl); // Можно закомментировать, чтобы не перегружать пользователя тостами
 
-                // Сразу используем асинхронный вызов
                 useAsyncCall(smartCall, query, callback);
                 
             } catch (Exception e) { // Этот блок catch теперь будет ловить ошибки, возникшие при подготовке вызова (например, в getApiService или searchRecipes)
-                Log.e("RecipeSearchService", "Исключение при подготовке или запуске умного поиска: " + e.getMessage(), e);
-                showToast("Ошибка умного поиска: " + e.getMessage());
+                showToast("Ошибка умного поиска");
                 fallbackToSimpleSearch(query, callback);
             }
         } else {
@@ -127,8 +121,7 @@ public class RecipeSearchService {
             }
             @Override
             public void onError(String errorMessage) {
-                Log.e("RecipeSearchService", "Ошибка простого поиска: " + errorMessage);
-                callback.onSearchError("Ошибка поиска: " + errorMessage);
+                callback.onSearchError("Ошибка поиска");
             }
         });
     }
@@ -140,39 +133,31 @@ public class RecipeSearchService {
         ApiCallHandler.execute(callToExecute, new ApiCallHandler.ApiCallback<SearchResponse>() {
             @Override
             public void onSuccess(SearchResponse response) {
-                Log.d(TAG, "Успешный ответ от умного поиска");
-                
+
                 if (response == null) {
-                    Log.e(TAG, "Ответ API нулевой (response == null)");
                     fallbackToSimpleSearch(query, callback);
                     return;
                 }
                 
                 if (response.getData() == null) {
-                    Log.e(TAG, "Данные в ответе нулевые (response.getData() == null)");
                     fallbackToSimpleSearch(query, callback);
                     return;
                 }
                 
                 if (response.getData().getResults() == null) {
-                    Log.e(TAG, "Результаты в данных нулевые (response.getData().getResults() == null)");
                     fallbackToSimpleSearch(query, callback);
                     return;
                 }
                 
                 List<String> ids = response.getData().getResults();
-                Log.d(TAG, "Формат полученных результатов: " + ids.getClass().getName());
-                
+
                 if (!ids.isEmpty()) {
-                    Log.d(TAG, "Получено ID: " + ids.size() + " из " + response.getTotalResults());
-                    Log.d(TAG, "Первые 10 ID (или меньше): " + ids.subList(0, Math.min(10, ids.size())));
                     showToast("Найдено " + ids.size() + " рецептов");
                     
                     dbExecutor.execute(() -> {
                         RecipeLocalRepository localRepo = new RecipeLocalRepository(context);
                         List<Recipe> fullRecipes = new ArrayList<>();
-                        
-                        Log.d(TAG, "Начинаю получение рецептов из БД по " + ids.size() + " ID");
+
                         
                         int foundCount = 0;
                         int notFoundCount = 0;
@@ -180,42 +165,30 @@ public class RecipeSearchService {
                         for (String idStr : ids) {
                             try {
                                 int id = Integer.parseInt(idStr);
-                                Log.d(TAG, "Ищу рецепт в БД по ID: " + id);
                                 Recipe full = localRepo.getRecipeByIdSync(id);
-                                
+
                                 if (full != null) {
                                     fullRecipes.add(full);
                                     foundCount++;
-                                    Log.d(TAG, "Найден рецепт: ID=" + id + ", название=" + full.getTitle());
                                 } else {
                                     notFoundCount++;
-                                    Log.w(TAG, "Рецепт с ID=" + id + " не найден в локальной БД");
                                 }
                             } catch (NumberFormatException e) {
-                                Log.e(TAG, "Неверный формат ID: " + idStr, e);
                             }
                         }
-                        
-                        Log.d(TAG, "Итоги поиска: найдено " + foundCount + " рецептов, не найдено " + notFoundCount);
-                        
+
                         final List<Recipe> finalRecipes = new ArrayList<>(fullRecipes); // создаем копию для безопасной передачи
                         uiHandler.post(() -> {
-                            Log.d(TAG, "Отправляю на UI " + finalRecipes.size() + " рецептов");
                             callback.onSearchResults(finalRecipes);
                         });
                     });
                     return;
-                } else {
-                    Log.d(TAG, "Список ID пуст, переходим к простому поиску");
                 }
-                showToast("Переключаюсь на обычный поиск: нет результатов");
                 fallbackToSimpleSearch(query, callback);
             }
             @Override
             public void onError(String errorMessage) {
-                Log.e("RecipeSearchService", "Ошибка умного поиска: " + errorMessage);
-                showToast("Переключаюсь на обычный поиск: " + (errorMessage.length() > 30 ? errorMessage.substring(0, 30) + "..." : errorMessage));
-                // Если умный поиск не сработал, пробуем откатиться к простому поиску
+                showToast("Извините но наш поиск решил отдохнуть");
                 fallbackToSimpleSearch(query, callback);
             }
         });
@@ -225,7 +198,6 @@ public class RecipeSearchService {
      * Показывает тост для отладки
      */
     private void showToast(String message) {
-        Log.d(TAG, "TOAST: " + message);
-        // Debug-toasts suppressed to reduce spam
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }

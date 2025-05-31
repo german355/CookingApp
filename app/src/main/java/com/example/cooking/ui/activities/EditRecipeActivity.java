@@ -224,7 +224,7 @@ public class EditRecipeActivity extends AppCompatActivity {
 
         viewModel.getErrorMessage().observe(this, error -> {
             if (error != null && !error.isEmpty()) {
-                Toast.makeText(this, "Ошибка: " + error, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Ой что-то пошло не так", Toast.LENGTH_LONG).show();
                 viewModel.clearErrorMessage();
             }
         });
@@ -238,15 +238,7 @@ public class EditRecipeActivity extends AppCompatActivity {
         recipeImageView.setOnClickListener(v -> checkStoragePermissionAndPickImage());
         textImage.setOnClickListener(v -> checkStoragePermissionAndPickImage());
 
-        saveButton.setOnClickListener(v -> {
-            Log.d(TAG, "Нажата кнопка сохранения");
-            if (validateInput()) {
-                Log.d(TAG, "Валидация пройдена, вызываем viewModel.saveRecipe()");
-                viewModel.saveRecipe();
-            } else {
-                 Log.w(TAG, "Валидация не пройдена");
-            }
-        });
+        saveButton.setOnClickListener(v -> viewModel.saveRecipe());
         
         titleEditText.addTextChangedListener(new android.text.TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -259,30 +251,6 @@ public class EditRecipeActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-    
-    private boolean validateInput() {
-        String title = titleEditText.getText().toString().trim();
-        if (TextUtils.isEmpty(title)) {
-            titleInputLayout.setErrorEnabled(true);
-            titleInputLayout.setError("Название рецепта не может быть пустым");
-            return false;
-        } else {
-            titleInputLayout.setError(null);
-            titleInputLayout.setErrorEnabled(false);
-        }
-        
-        if (viewModel.getIngredients().getValue() == null || viewModel.getIngredients().getValue().isEmpty()) {
-            Toast.makeText(this, "Добавьте хотя бы один ингредиент", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        
-        if (viewModel.getSteps().getValue() == null || viewModel.getSteps().getValue().isEmpty()) {
-            Toast.makeText(this, "Добавьте хотя бы один шаг", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        
-        return true;
     }
     
     private void checkStoragePermissionAndPickImage() {
@@ -323,7 +291,7 @@ public class EditRecipeActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PICK_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri imageUri = data.getData();
-            viewModel.setImageUri(imageUri);
+            viewModel.processSelectedImage(imageUri);
         }
     }
     

@@ -6,11 +6,16 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import com.example.cooking.R;
 import com.example.cooking.utils.ThemeUtils;
+import android.content.Context;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        // Использовать тот же файл SharedPreferences для умного поиска
+        getPreferenceManager().setSharedPreferencesName("acs");
+        getPreferenceManager().setSharedPreferencesMode(Context.MODE_PRIVATE);
+
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
         // Находим ListPreference для выбора темы

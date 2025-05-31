@@ -95,7 +95,6 @@ public class FilteredRecipesFragment extends Fragment implements RecipeListAdapt
                 recipeListAdapter.submitList(recipes);
                 recyclerView.setVisibility(View.VISIBLE);
                 emptyView.setVisibility(View.GONE);
-                Log.d("FilteredRecipes", "Отображено рецептов: " + recipes.size());
             } else {
                 recyclerView.setVisibility(View.GONE);
                 emptyView.setVisibility(View.VISIBLE);
@@ -108,7 +107,7 @@ public class FilteredRecipesFragment extends Fragment implements RecipeListAdapt
         });
         vm.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
-                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Ой что-то пошло не так", Toast.LENGTH_SHORT).show();
             }
         });
     }

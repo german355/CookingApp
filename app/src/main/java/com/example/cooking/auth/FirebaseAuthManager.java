@@ -88,22 +88,14 @@ public class FirebaseAuthManager {
      * @param defaultWebClientId строковый идентификатор из google-services.json
      */
     public void initGoogleSignIn(Context context, String defaultWebClientId) {
-        Log.d(TAG, "Initializing Google Sign In with client ID: " + defaultWebClientId);
         try {
             GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(defaultWebClientId)
                     .requestEmail()
                     .build();
             googleSignInClient = GoogleSignIn.getClient(context, gso);
-            
-            // Проверка, что клиент успешно инициализирован
-            if (googleSignInClient != null) {
-                Log.d(TAG, "Google Sign In client initialized successfully");
-            } else {
-                Log.e(TAG, "Google Sign In client is null after initialization");
-            }
+
         } catch (Exception e) {
-            Log.e(TAG, "Error initializing Google Sign In client", e);
             Toast.makeText(context, "Ошибка настройки Google Sign In", Toast.LENGTH_SHORT).show();
         }
     }

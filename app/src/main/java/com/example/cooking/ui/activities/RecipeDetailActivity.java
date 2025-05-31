@@ -275,7 +275,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         // Наблюдаем за ошибками
         viewModel.getErrorMessage().observe(this, error -> {
             if (error != null && !error.isEmpty()) {
-                Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Ой что-то пошло не так", Toast.LENGTH_LONG).show();
             }
         });
         

@@ -81,28 +81,23 @@ public class RecipeRemoteRepository {
      */
     public void updateLikeStatus(Recipe recipe, boolean isLiked) {
         if (!isNetworkAvailable()) {
-            Log.e(TAG, "Нет подключения к интернету, невозможно обновить статус лайка");
             return;
         }
 
         if (recipe == null) {
-            Log.e(TAG, "Рецепт для обновления статуса лайка равен null");
             return;
         }
 
         int recipeId = recipe.getId();
         String userId = preferences.getString("userId", "0");
         if (userId.equals("0")) {
-            Log.e(TAG, "ID пользователя не найден. Невозможно обновить статус лайка");
             return;
                 }
 
-        // URL формат: /recipes/{id}/like или /recipes/{id}/unlike
         String endpoint = "/recipes/" + recipeId + (isLiked ? "/like" : "/unlike");
         String url = ServerConfig.getFullUrl(endpoint);
         
-        Log.d(TAG, "Отправка запроса на " + url + " для userId=" + userId);
-        
+
         // Тут можно использовать NetworkService напрямую или реализовать API метод в ApiService
         // Для примера оставим реализацию с OkHttpClient
     }

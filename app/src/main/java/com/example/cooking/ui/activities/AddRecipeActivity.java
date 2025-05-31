@@ -74,11 +74,8 @@ public class AddRecipeActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate: Activity создается");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_recipe);
-        Log.d(TAG, "onCreate: Layout установлен - activity_add_recipe");
-
         // Настраиваем toolbar
         setupToolbar();
 
@@ -106,7 +103,6 @@ public class AddRecipeActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Добавить рецепт");
-        Log.d(TAG, "setupToolbar: Toolbar настроен, заголовок установлен");
     }
     
     /**
@@ -127,35 +123,30 @@ public class AddRecipeActivity extends AppCompatActivity implements
         addStepButton = findViewById(R.id.add_step_button);
 
         recipeImageView.setImageResource(R.drawable.select_recipe_view);
-        Log.d(TAG, "initViews: Все UI элементы инициализированы");
     }
     
     /**
      * Настраивает RecyclerView
      */
     private void setupRecyclerViews() {
-        // Создаем адаптеры, передавая 'this' как слушателя
         ingredientAdapter = new IngredientAdapter(this);
         stepAdapter = new StepAdapter(this, this);
 
-        // Настраиваем RecyclerView для ингредиентов
         ingredientsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         ingredientsRecyclerView.setAdapter(ingredientAdapter);
         ingredientsRecyclerView.setNestedScrollingEnabled(false);
         ingredientsRecyclerView.setHasFixedSize(false);
 
-        // Настраиваем RecyclerView для шагов
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         stepsRecyclerView.setLayoutManager(layoutManager);
         stepsRecyclerView.setAdapter(stepAdapter);
-        stepsRecyclerView.setNestedScrollingEnabled(false); // Отключаем вложенную прокрутку
+        stepsRecyclerView.setNestedScrollingEnabled(false);
         stepsRecyclerView.setHasFixedSize(false);
-        stepsRecyclerView.setItemViewCacheSize(20); // Кэшируем больше элементов для плавной прокрутки
+        stepsRecyclerView.setItemViewCacheSize(20);
         
-        // Отключаем анимацию скролла для предотвращения конфликтов с родительским ScrollView
         stepsRecyclerView.setItemAnimator(null);
 
-        Log.d(TAG, "setupRecyclerViews: RecyclerView настроены");
+
     }
     
     /**
@@ -176,7 +167,7 @@ public class AddRecipeActivity extends AppCompatActivity implements
         // Наблюдаем за сообщениями об ошибках
         viewModel.getErrorMessage().observe(this, errorMsg -> {
             if (errorMsg != null && !errorMsg.isEmpty()) {
-                Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Ой, что-то пошло не так", Toast.LENGTH_LONG).show();
             }
         });
         
@@ -201,7 +192,7 @@ public class AddRecipeActivity extends AppCompatActivity implements
                 ingredientsErrorTextView.setVisibility(error != null ? View.VISIBLE : View.GONE);
                 ingredientsErrorTextView.setText(error);
             } else if (error != null) {
-                Toast.makeText(this, "Ошибка ингредиентов: " + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Ой, что-то пошло не так", Toast.LENGTH_SHORT).show();
             }
         });
         
@@ -211,7 +202,7 @@ public class AddRecipeActivity extends AppCompatActivity implements
                 stepsErrorTextView.setVisibility(error != null ? View.VISIBLE : View.GONE);
                 stepsErrorTextView.setText(error);
             } else if (error != null) {
-                Toast.makeText(this, "Ошибка шагов: " + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Ой, что-то пошло не так", Toast.LENGTH_SHORT).show();
             }
         });
         
@@ -232,7 +223,6 @@ public class AddRecipeActivity extends AppCompatActivity implements
         
         // Наблюдаем за списком ингредиентов
         viewModel.getIngredients().observe(this, ingredients -> {
-            Log.d(TAG, "Список ингредиентов обновлен, количество: " + (ingredients != null ? ingredients.size() : 0));
             // Создаем новый список, чтобы DiffUtil в ListAdapter корректно обработал изменения
             ingredientAdapter.submitList(ingredients != null ? new ArrayList<>(ingredients) : null);
             // Прокручиваем к последнему элементу, если он был добавлен
@@ -248,7 +238,6 @@ public class AddRecipeActivity extends AppCompatActivity implements
         
         // Наблюдаем за списком шагов
         viewModel.getSteps().observe(this, steps -> {
-            Log.d(TAG, "Список шагов обновлен, количество: " + (steps != null ? steps.size() : 0));
             // Создаем новый список, чтобы DiffUtil в ListAdapter корректно обработал изменения
             stepAdapter.submitList(steps != null ? new ArrayList<>(steps) : null);
             // Прокручиваем к последнему элементу, если он был добавлен
@@ -283,26 +272,21 @@ public class AddRecipeActivity extends AppCompatActivity implements
         
         // Обработчик клика по изображению
         recipeImageView.setOnClickListener(view -> {
-            Log.d(TAG, "onClick: Нажата кнопка выбора изображения");
             checkStoragePermissionAndPickImage();
         });
         
         // Обработчик клика по кнопке "Добавить ингредиент"
         addIngredientButton.setOnClickListener(v -> {
-            Log.d(TAG, "onClick: Нажата кнопка 'Добавить ингредиент'");
             viewModel.addEmptyIngredient();
         });
         
         // Обработчик клика по кнопке "Добавить шаг"
         addStepButton.setOnClickListener(v -> {
-            Log.d(TAG, "onClick: Нажата кнопка 'Добавить шаг'");
             viewModel.addEmptyStep();
         });
         
         // Обработчик клика по кнопке "Сохранить"
         saveButton.setOnClickListener(v -> {
-            Log.d(TAG, "onClick: Нажата кнопка 'Сохранить'");
-            // Проверка авторизации: userId должен быть задан
             MySharedPreferences prefs = new MySharedPreferences(AddRecipeActivity.this);
             String userId = prefs.getUserId();
             if (userId == null || userId.isEmpty() || "0".equals(userId)) {
@@ -326,8 +310,7 @@ public class AddRecipeActivity extends AppCompatActivity implements
         
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{permission}, REQUEST_STORAGE_PERMISSION);
-            Log.d(TAG, "checkStoragePermissionAndPickImage: Запрошено разрешение: " + permission);
-            Toast.makeText(this, "Для выбора фото необходимо предоставить разрешение на доступ к галерее", 
+            Toast.makeText(this, "Для выбора фото необходимо предоставить разрешение на доступ к галерее",
                     Toast.LENGTH_LONG).show();
         } else {
             openGallery();
@@ -341,10 +324,8 @@ public class AddRecipeActivity extends AppCompatActivity implements
         try {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, REQUEST_PICK_IMAGE);
-            Log.d(TAG, "openGallery: Галерея открыта");
         } catch (Exception e) {
-            Log.e(TAG, "openGallery: Ошибка при открытии галереи", e);
-            Toast.makeText(this, "Не удалось открыть галерею: " + e.getMessage(), 
+            Toast.makeText(this, "Не удалось открыть галерею",
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -354,11 +335,9 @@ public class AddRecipeActivity extends AppCompatActivity implements
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_STORAGE_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "onRequestPermissionsResult: Разрешение получено, открываем галерею");
                 openGallery();
             } else {
-                Log.d(TAG, "onRequestPermissionsResult: Разрешение отклонено");
-                Toast.makeText(this, "Для выбора изображения необходим доступ к хранилищу", 
+                Toast.makeText(this, "Для выбора изображения необходим доступ к хранилищу",
                         Toast.LENGTH_SHORT).show();
             }
         }
@@ -429,25 +408,21 @@ public class AddRecipeActivity extends AppCompatActivity implements
 
     @Override
     public void onIngredientUpdated(int position, Ingredient ingredient) {
-        Log.d(TAG, "onIngredientUpdated: pos=" + position + ", data=" + ingredient);
         viewModel.updateIngredient(position, ingredient);
     }
 
     @Override
     public void onIngredientRemoved(int position) {
-        Log.d(TAG, "onIngredientRemoved: pos=" + position);
         viewModel.removeIngredient(position);
     }
 
     @Override
     public void onStepUpdated(int position, Step step) {
-        Log.d(TAG, "onStepUpdated: pos=" + position + ", data=" + step);
         viewModel.updateStep(position, step);
     }
 
     @Override
     public void onStepRemoved(int position) {
-        Log.d(TAG, "onStepRemoved: pos=" + position);
         viewModel.removeStep(position);
     }
 }

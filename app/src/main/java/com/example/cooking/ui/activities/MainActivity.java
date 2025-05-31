@@ -112,11 +112,6 @@ public class MainActivity extends AppCompatActivity {
         if (navHostFragment != null) {
             navController = navHostFragment.getNavController();
             toolbar.setNavigationOnClickListener(v -> navController.navigateUp());
-
-            // Убираем стандартную привязку
-            // NavigationUI.setupWithNavController(bottomNavigationView, navController);
-            // NavigationUI.setupActionBarWithNavController(this, navController);
-
             // Следим за изменениями пункта назначения для обновления UI
             navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
                 int id = destination.getId();
@@ -154,27 +149,21 @@ public class MainActivity extends AppCompatActivity {
 
                 // Опции навигации для сохранения состояния
                 NavOptions options = new NavOptions.Builder()
-                        .setLaunchSingleTop(true) // Не перезапускать, если уже наверху стека
-                        .setRestoreState(true) // Восстановить состояние при возврате
-                        // Перейти к началу *основного* графа, не включая его, сохранив стек текущей
-                        // вкладки
+                        .setLaunchSingleTop(true)
+                        .setRestoreState(true)
                         .setPopUpTo(navController.getGraph().getStartDestinationId(), false, true)
                         .build();
 
                 try {
                     navController.navigate(destinationId, null, options);
-                    return true; // Успешно перешли
+                    return true;
                 } catch (IllegalArgumentException e) {
-                    // Если destinationId не найден в текущем графе (редко, но возможно)
                     Log.e(TAG, "Не удалось найти пункт назначения: " + item.getTitle(), e);
                     return false;
                 }
             });
 
-            // Устанавливаем начальный выбранный элемент (например, Главная)
-            // Это может быть не нужно, если startDestination графа совпадает с элементом
-            // меню
-            if (savedInstanceState == null) { // Только при первом запуске
+            if (savedInstanceState == null) {
                 bottomNavigationView.setSelectedItemId(navController.getGraph().getStartDestinationId());
             }
         }
@@ -194,7 +183,6 @@ public class MainActivity extends AppCompatActivity {
      * Настраивает наблюдателей LiveData из ViewModel
      */
     private void setupObservers() {
-        // Наблюдатель для видимости кнопки добавления
         viewModel.getShowAddButton().observe(this, show -> {
             if (show) {
                 addButton.show();
@@ -203,16 +191,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Наблюдатель для состояния авторизации
         viewModel.getIsUserLoggedIn().observe(this, isLoggedIn -> {
             Log.d(TAG, "Состояние авторизации изменилось: " + isLoggedIn);
 
-            // Если мы сейчас на экранах профиля и статус авторизации изменился
             if (navController.getCurrentDestination() != null) {
                 int currentDestId = navController.getCurrentDestination().getId();
 
                 if (currentDestId == R.id.nav_profile) {
-                    // Перезагружаем текущий фрагмент профиля
                     navController.navigate(R.id.nav_profile);
                 }
             }
@@ -229,7 +214,6 @@ public class MainActivity extends AppCompatActivity {
                 if (currentDestId == R.id.nav_profile ||
                         currentDestId == R.id.destination_profile ||
                         currentDestId == R.id.destination_settings) {
-                    // Возвращаемся к корневому экрану профиля
                     navController.navigate(R.id.nav_profile);
                 }
             }
@@ -240,7 +224,6 @@ public class MainActivity extends AppCompatActivity {
      * Обрабатывает нажатие на кнопку добавления рецепта
      */
     private void handleAddButtonClick() {
-        Log.d(TAG, "Нажата кнопка добавления рецепта");
         Intent intent = new Intent(this, AddRecipeActivity.class);
         startActivityForResult(intent, REQUEST_ADD_RECIPE);
     }
@@ -292,7 +275,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         } else if (requestCode == com.example.cooking.auth.FirebaseAuthManager.RC_SIGN_IN) {
-            Log.d(TAG, "Forwarding Google Sign-In result to AuthFragment");
             NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
             if (navHostFragment != null) {
                 Fragment currentFragment = navHostFragment.getChildFragmentManager().getPrimaryNavigationFragment();
@@ -307,7 +289,6 @@ public class MainActivity extends AppCompatActivity {
      * Обновляет домашний фрагмент при возврате из AddRecipeActivity
      */
     private void refreshHomeFragment() {
-        // Обновляем рецепты через SharedRecipeViewModel при возврате из AddRecipeActivity
         sharedRecipeViewModel.refreshRecipes();
     }
 
@@ -317,7 +298,6 @@ public class MainActivity extends AppCompatActivity {
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setQueryHint("Поиск по рецептам");
-        // Стилизация SearchView (по желанию)
         int searchPlateId = searchView.getContext().getResources().getIdentifier(
                 "android:id/search_plate", null, null);
         View searchPlate = searchView.findViewById(searchPlateId);
@@ -362,12 +342,11 @@ public class MainActivity extends AppCompatActivity {
             }
             @Override
             public boolean onQueryTextChange(String newText) {
-                // Можно реализовать live-поиск
                 return false;
             }
         });
 
-        // Перехват клика по подсказкам, чтобы подавить стандартный launchSuggestion и избежать NPE
+        // Перехват клика по подсказкам
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
             public boolean onSuggestionSelect(int position) {
@@ -384,7 +363,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Показывать/скрывать заголовок Toolbar в зависимости от состояния поиска
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -433,7 +411,6 @@ public class MainActivity extends AppCompatActivity {
         // Убедимся, что мы на главном экране
 NavDestination current = navController.getCurrentDestination();
 if (current == null || current.getId() != R.id.nav_home) {
-            // Если мы не на главном экране, переходим на него
             navigateToHomeFragment();
         }
         
@@ -444,9 +421,6 @@ if (current == null || current.getId() != R.id.nav_home) {
             if (currentFragment instanceof HomeFragment) {
                 HomeFragment homeFragment = (HomeFragment) currentFragment;
                 homeFragment.performSearch(query);
-                Log.d(TAG, "Передал запрос '" + query + "' в HomeFragment");
-            } else {
-                Log.e(TAG, "Не удалось найти HomeFragment для выполнения поиска");
             }
         }
     }

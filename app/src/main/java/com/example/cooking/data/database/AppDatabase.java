@@ -43,8 +43,6 @@ public abstract class AppDatabase extends RoomDatabase {
                             context.getApplicationContext(), // Важно использовать ApplicationContext
                             AppDatabase.class,
                             DATABASE_NAME)
-                            // ВНИМАНИЕ: При изменении схемы удаляет и пересоздает БД, все данные будут потеряны.
-                            // Для производственных приложений следует использовать миграции.
                             .fallbackToDestructiveMigration() 
                             .build();
                 }

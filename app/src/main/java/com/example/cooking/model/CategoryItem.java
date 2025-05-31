@@ -7,11 +7,11 @@ import java.util.Objects;
  * Содержит информацию, необходимую для идентификации, фильтрации и отображения категории.
  */
 public class CategoryItem {
-    private String name; // Отображаемое имя категории
+    private String name;
     private String filterKey; // Ключ, используемый для фильтрации рецептов по этой категории
     private String filterType; // Тип фильтра (например, "meal_type" или "food_type")
-    private String description; // Краткое описание категории
-    private String imageUrl; // URL-адрес изображения для категории (может быть null)
+    private String description;
+    private String imageUrl;
 
     public CategoryItem(String name, String filterKey, String filterType, String description, String imageUrl) {
         this.name = name;

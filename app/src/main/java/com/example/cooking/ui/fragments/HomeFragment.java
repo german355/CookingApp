@@ -124,8 +124,6 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
             if (!viewModel.isInSearchMode()) {
                 adapter.submitList(recipes);
                 showEmptyView(recipes == null || recipes.isEmpty());
-            } else {
-                Log.d(TAG, "getRecipes observer: пропускаем обновление, так как в режиме поиска");
             }
         });
         viewModel.getIsRefreshing().observe(getViewLifecycleOwner(), isRefreshing -> {
@@ -141,23 +139,19 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         viewModel.getSearchResults().observe(getViewLifecycleOwner(), searchResults -> {
             swipeRefreshLayout.setRefreshing(false);
             if (searchResults != null && !searchResults.isEmpty()) {
-                Log.d(TAG, "searchResultsObserver: получены результаты поиска: " + searchResults.size());
                 Toast.makeText(requireContext(), "Найдено " + searchResults.size() + " рецептов", Toast.LENGTH_SHORT).show();
 
                 // При обычном поиске прокручиваем в начало после обновления списка
                 if (!isRestoring) {
                     adapter.submitList(searchResults, () -> {
                         recyclerView.scrollToPosition(0);
-                        Log.d(TAG, "searchResultsObserver: прокрутка к началу списка (post-submit)");
                     });
                 } else {
                     adapter.submitList(searchResults);
-                    Log.d(TAG, "searchResultsObserver: пропускаем прокрутку, восстанавливаем позицию");
                     isRestoring = false;
                 }
                 showEmptyView(false);
             } else {
-                Log.d(TAG, "searchResultsObserver: результаты поиска пусты или null");
                 showEmptyView(true);
                 swipeRefreshLayout.setRefreshing(false);
             }
@@ -211,7 +205,7 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
      * Показывает сообщение об ошибке
      */
     private void showErrorMessage(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "Ой, что-то пошло не так", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -220,10 +214,7 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         // Обновление списка рецептов при возврате к фрагменту,
         // но только если мы не в режиме поиска
         if (!homeViewModel.isInSearchMode()) {
-            Log.d(TAG, "onResume: Обновляем список рецептов (не в режиме поиска)");
             homeViewModel.refreshRecipes();
-        } else {
-            Log.d(TAG, "onResume: Пропускаем обновление рецептов, так как мы в режиме поиска");
         }
     }
     
@@ -235,11 +226,9 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
             savedScrollPosition = lm.findFirstVisibleItemPosition();
             View firstView = lm.findViewByPosition(savedScrollPosition);
             savedScrollOffset = (firstView != null) ? (firstView.getTop() - recyclerView.getPaddingTop()) : 0;
-            Log.d(TAG, "onPause: savedScrollPosition=" + savedScrollPosition + ", offset=" + savedScrollOffset);
         }
         if (recyclerView != null && recyclerView.getLayoutManager() != null) {
             recyclerViewState = recyclerView.getLayoutManager().onSaveInstanceState();
-            Log.d(TAG, "onPause: сохранено состояние RecyclerView");
         }
     }
     
@@ -256,15 +245,12 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         // Вызываем поиск в HomeViewModel
         homeViewModel.searchRecipes(query);
         
-        // Логируем действие для отладки
-        Log.d(TAG, "Запрос поиска отправлен в HomeViewModel");
     }
     
     /**
      * Восстанавливает последний поисковый запрос при возврате из деталей рецепта
      */
     public void restoreLastSearch() {
-        Log.d(TAG, "restoreLastSearch: начинаем восстановление списка");
         isRestoring = true;
          
         if (homeViewModel.isInSearchMode() && homeViewModel.getLastSearchQuery() != null) {
@@ -275,10 +261,8 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
                     if (savedScrollPosition >= 0 && recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
                         ((LinearLayoutManager) recyclerView.getLayoutManager())
                             .scrollToPositionWithOffset(savedScrollPosition, savedScrollOffset);
-                        Log.d(TAG, "restoreLastSearch: scrollToPositionWithOffset pos=" + savedScrollPosition + " offset=" + savedScrollOffset);
                     } else if (recyclerViewState != null) {
                         recyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
-                        Log.d(TAG, "restoreLastSearch: положение списка восстановлено через state");
                     }
                     // Сброс флага и сохранённых значений
                     isRestoring = false;
@@ -288,11 +272,9 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
                 showEmptyView(lastResults.isEmpty());
                 Toast.makeText(requireContext(), "Восстановлены результаты поиска", Toast.LENGTH_SHORT).show();
             } else {
-                Log.d(TAG, "restoreLastSearch: нет сохраненных результатов поиска");
                 isRestoring = false;
             }
         } else {
-            Log.d(TAG, "restoreLastSearch: нет активного поиска для восстановления");
             isRestoring = false;
         }
     }

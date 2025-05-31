@@ -50,13 +50,11 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
          * Проверяет, являются ли два объекта одним и тем же элементом.
          * Сравнение обычно производится по уникальному идентификатору.
          *
-         * @param oldItem Старый элемент.
          * @param newItem Новый элемент.
          * @return True, если элементы представляют один и тот же объект, иначе false.
          */
         @Override
         public boolean areItemsTheSame(@NonNull Recipe oldItem, @NonNull Recipe newItem) {
-            // Проверяем, тот же ли это рецепт по ID
             return oldItem.getId() == newItem.getId();
         }
 
@@ -115,12 +113,6 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
     
     @Override
     public void submitList(List<Recipe> list) {
-        Log.d(TAG, "submitList: получен новый список размером " + (list != null ? list.size() : 0) + " рецептов");
-        if (list != null && !list.isEmpty()) {
-            Log.d(TAG, "Первый рецепт в новом списке: " + list.get(0).getTitle() + " (ID: " + list.get(0).getId() + ")");
-        } else {
-            Log.d(TAG, "Получен пустой список рецептов!");
-        }
         super.submitList(list);
     }
 
@@ -153,9 +145,7 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
         Recipe recipe = getItem(position);
-        
-        Log.d(TAG, "onBindViewHolder: привязка данных для позиции " + position + ", рецепт: " + recipe.getTitle() + " (ID: " + recipe.getId() + ")");
-        
+
         holder.titleTextView.setText(recipe.getTitle());
         
         // Загрузка изображения рецепта
@@ -171,17 +161,14 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
             holder.imageView.setImageResource(R.drawable.white_card_background); // TODO: Рассмотреть использование более информативной заглушки
         }
         
-        Log.d(TAG, "Binding ViewHolder for Recipe ID: " + recipe.getId() + ", Title: " + recipe.getTitle() + ", isLiked: " + recipe.isLiked());
-        
+
         holder.favoriteButton.setChecked(recipe.isLiked());
         
         // Динамическое изменение цвета иконки "Нравится"
         if (recipe.isLiked()) {
             holder.favoriteButton.setButtonTintList(ColorStateList.valueOf(Color.parseColor("#FF0031"))); // Красный цвет для "лайка"
-            Log.d(TAG, "Recipe ID: " + recipe.getId() + " is Liked. Setting RED tint.");
         } else {
             holder.favoriteButton.setButtonTintList(null); // Сброс на цвет по умолчанию (из темы)
-            Log.d(TAG, "Recipe ID: " + recipe.getId() + " is NOT Liked. Setting NULL tint.");
         }
         
         // Убедимся, что кнопка избранного всегда поверх других элементов в CardView
@@ -209,11 +196,6 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
         holder.cardView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), RecipeDetailActivity.class);
             intent.putExtra(RecipeDetailActivity.EXTRA_SELECTED_RECIPE, recipe);
-            Log.d(TAG, "Starting RecipeDetailActivity for recipe: " + recipe.getTitle() + " (ID: " + recipe.getId() + ")");
-            if (recipe.getPhoto_url() != null) {
-                Log.d(TAG, "Photo URL: " + recipe.getPhoto_url());
-            }
-            // Извлекаем Activity из ContextWrapper
             Context context = v.getContext();
             Activity activity = null;
             Context baseContext = context;
@@ -225,10 +207,8 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
                 baseContext = ((ContextWrapper) baseContext).getBaseContext();
             }
             if (activity != null) {
-                Log.d(TAG, "Launching RecipeDetailActivity via Activity for result");
                 activity.startActivityForResult(intent, 200);
             } else {
-                Log.d(TAG, "Activity not found, launching normally");
                 context.startActivity(intent);
             }
         });
@@ -239,13 +219,9 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
      * Хранит ссылки на View-компоненты макета элемента списка.
      */
     static class RecipeViewHolder extends RecyclerView.ViewHolder {
-        /** Текстовое поле для отображения названия рецепта. */
         TextView titleTextView;
-        /** View для отображения изображения рецепта. */
         ShapeableImageView imageView;
-        /** Корневой элемент карточки рецепта, обрабатывающий клики для перехода к деталям. */
         CardView cardView;
-        /** Кнопка (чекбокс) для добавления/удаления рецепта из избранного. */
         MaterialCheckBox favoriteButton;
 
         /**

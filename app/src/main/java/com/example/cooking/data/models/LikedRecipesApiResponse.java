@@ -17,9 +17,7 @@ public class LikedRecipesApiResponse {
     @SerializedName("message")
     private String message; // Может быть null при успехе
 
-    // Важно: Используем RecipeEntity, так как сервер возвращает полные рецепты.
-    // Убедитесь, что поля RecipeEntity соответствуют полям в JSON-массиве 'recipes'
-    // или используйте @SerializedName в RecipeEntity, если имена полей отличаются (например, photo vs photo_url).
+
     @SerializedName("recipes")
     private List<RecipeEntity> recipes;
 

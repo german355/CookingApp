@@ -114,7 +114,6 @@ public class UnifiedRecipeRepository {
                         if (likedIdsList != null) {
                             likedRecipeIds.addAll(likedIdsList);
                         }
-                        Log.d(TAG, "(BG Thread) Загружены ID лайкнутых рецептов: " + likedRecipeIds.size());
                     }
 
                     List<Recipe> localRecipes = localRepository.getAllRecipesSync(); // Вызов к БД
@@ -138,12 +137,9 @@ public class UnifiedRecipeRepository {
                         for (Integer deletedId : deletedRecipeIds) {
                             localRepository.deleteRecipe(deletedId); // Вызов к БД
                         }
-                        Log.d(TAG, "(BG Thread) Удалено " + deletedRecipeIds.size() + " рецептов");
                     }
 
                     localRepository.insertAll(remoteRecipes); // Вызов к БД
-                    Log.d(TAG, "(BG Thread) Сохранено в локальное хранилище: " + remoteRecipes.size() + " рецептов");
-                    // Обновляем LiveData в основном потоке
                     if (recipesLiveData != null) {
                         mainThreadHandler.post(() -> recipesLiveData.setValue(Resource.success(remoteRecipes)));
                     }
@@ -153,7 +149,6 @@ public class UnifiedRecipeRepository {
                         // Загружаем данные из локального хранилища в офлайн режиме
                         List<Recipe> localRecipes = localRepository.getAllRecipesSync();
                         if (localRecipes != null && !localRecipes.isEmpty()) {
-                            Log.d(TAG, "(BG Thread) Загружено " + localRecipes.size() + " рецептов из локального хранилища (офлайн режим)");
                             if (recipesLiveData != null) {
                                 mainThreadHandler.post(() -> recipesLiveData.setValue(Resource.success(localRecipes)));
                             }
@@ -176,14 +171,13 @@ public class UnifiedRecipeRepository {
                     }
                 }
             } catch (Exception e) {
-                Log.e(TAG, "(BG Thread) Ошибка при синхронизации: " + e.getMessage(), e);
                 if (errorMessage != null) {
                     // Обновляем LiveData об ошибке в основном потоке
-                    mainThreadHandler.post(() -> errorMessage.setValue("Ошибка синхронизации: " + e.getMessage()));
+                    mainThreadHandler.post(() -> errorMessage.setValue("Ошибка синхронизации" ));
                 }
                 // Также обновляем recipesLiveData с ошибкой
                 if (recipesLiveData != null) {
-                    mainThreadHandler.post(() -> recipesLiveData.setValue(Resource.error("Ошибка синхронизации: " + e.getMessage(), null)));
+                    mainThreadHandler.post(() -> recipesLiveData.setValue(Resource.error("Ошибка синхронизации", null)));
                 }
             }
         });

@@ -124,7 +124,6 @@ public class FavoritesFragment extends Fragment implements RecipeListAdapter.OnR
         });
         
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
-             Log.d(TAG, "Observer received error message: " + error);
              swipeRefreshLayout.setRefreshing(false);
              hideLoading();
              if (error != null && !error.isEmpty()) {
@@ -194,7 +193,6 @@ public class FavoritesFragment extends Fragment implements RecipeListAdapter.OnR
     * Показывает состояние ошибки (когда не удалось загрузить данные и список пуст).
     */
     private void showErrorState(String message) {
-        Log.d(TAG, "Showing error state: " + message);
         recyclerView.setVisibility(View.GONE);
         if (emptyContainer != null) emptyContainer.setVisibility(View.GONE);
         emptyView.setText(message != null ? message : getString(R.string.error_loading_recipes));

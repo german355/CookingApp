@@ -76,33 +76,8 @@ public class HomeViewModel extends AndroidViewModel {
             }
         };
         this.searchResultsObserver = recipes -> {
-            Log.d(TAG, "---> searchResultsObserver вызван с " + (recipes != null ? recipes.size() : "null") + " рецептами");
             if (recipes != null) {
-                Log.d(TAG, "Получены результаты поиска в HomeViewModel: " + recipes.size() + " рецептов");
-                if (!recipes.isEmpty()) {
-                    Log.d(TAG, "Первый рецепт в результатах: " + recipes.get(0).getTitle() + " (ID: " + recipes.get(0).getId() + ")");
-                }
-                Log.d(TAG, "searchResults LiveData до обновления: " + (searchResults.getValue() != null ? searchResults.getValue().size() : "null") + " рецептов");
                 searchResults.postValue(recipes);
-                Log.d(TAG, "Результаты поиска отправлены в LiveData searchResults");
-                
-                if (BuildConfig.DEBUG) {
-                    try {
-                        java.lang.reflect.Field observersField = androidx.lifecycle.LiveData.class.getDeclaredField("mObservers");
-                        observersField.setAccessible(true);
-                        Object observers = observersField.get(searchResults);
-                        if (observers != null) {
-                            int size = ((java.util.Map<?, ?>) observers).size();
-                            Log.d(TAG, "Количество наблюдателей для searchResults: " + size);
-                        } else {
-                            Log.w(TAG, "Наблюдатели для searchResults отсутствуют (observers == null)");
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "Ошибка при проверке наблюдателей: " + e.getMessage());
-                    }
-                }
-            } else {
-                Log.w(TAG, "Получен нулевой список результатов поиска");
             }
         };
         
@@ -136,18 +111,11 @@ public class HomeViewModel extends AndroidViewModel {
 
             likeSyncViewModel.getLikeChangeEvent().observe(owner, event -> {
                 if (event != null && !event.equals(lastProcessedLikeEvent)) {
-                    Log.d(TAG, "Received like change event from LikeSyncViewModel: " + event.getRecipeId() + " -> " + event.isLiked());
-                    // Добавляем логирование перед обновлением
-                    Log.i(TAG, "[LikeSync] Updating local statuses for Recipe ID: " + event.getRecipeId() + " to liked: " + event.isLiked());
-                    // Обновляем статус лайка в ЛОКАЛЬНОЙ БД ОСНОВНЫХ рецептов
+
                     updateLocalLikeStatus(event.getRecipeId(), event.isLiked());
-                    // Обновляем статус лайка в ЛОКАЛЬНОЙ БД ЛАЙКНУТЫХ рецептов
                     updateLikedRepositoryStatus(event.getRecipeId(), event.isLiked());
-                    // Мы не сохраняем это событие как lastProcessed, так как обновление локальной БД
-                    // должно быть идемпотентным.
+
                     lastProcessedLikeEvent = event;
-                } else if (event != null) {
-                    Log.d(TAG, "[LikeSync] Ignored duplicate/own like event: " + event.getRecipeId() + " -> " + event.isLiked());
                 }
             });
         }
@@ -224,8 +192,7 @@ public class HomeViewModel extends AndroidViewModel {
     public void updateLocalLikeStatus(int recipeId, boolean isLiked) {
         executeIfActive(() -> {
             try {
-                Log.d(TAG, "Updating like status in local REPOSITORY for recipe " + recipeId + " to " + isLiked);
-                // Обновляем статус лайка через SharedRecipeViewModel
+
                 String userId = new MySharedPreferences(getApplication()).getString("userId", "0");
                 Recipe recipe = null;
                 List<Recipe> currentRecipes = recipesLiveData.getValue();
@@ -241,7 +208,7 @@ public class HomeViewModel extends AndroidViewModel {
                     sharedRecipeViewModel.updateLikeStatus(recipe, isLiked, userId);
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Error updating like status in local repository: " + e.getMessage(), e);
+                Log.e(TAG, "Error updating like status in local repository", e);
             }
         });
     }
@@ -266,8 +233,6 @@ public class HomeViewModel extends AndroidViewModel {
         
         if (recipe != null) {
             updateLikeStatus(recipe, isLiked);
-        } else {
-            Log.e(TAG, "Recipe not found with id: " + recipeId);
         }
     }
 
@@ -296,8 +261,6 @@ public class HomeViewModel extends AndroidViewModel {
             } catch (Exception e) {
                  Log.e(TAG, "Error executing task in executor", e);
             }
-        } else {
-            Log.w(TAG, "Executor is null or shut down, skipping task");
         }
     }
     
@@ -314,7 +277,6 @@ public class HomeViewModel extends AndroidViewModel {
         sharedRecipeViewModel.getIsRefreshing().removeObserver(refreshingObserver);
         sharedRecipeViewModel.getErrorMessage().removeObserver(sharedErrorObserver);
         sharedRecipeViewModel.getSearchResults().removeObserver(searchResultsObserver);
-        Log.d(TAG, "HomeViewModel cleared.");
     }
 
 
@@ -326,8 +288,7 @@ public class HomeViewModel extends AndroidViewModel {
  * @param query Строка поиска
  */
 public void searchRecipes(String query) {
-    Log.d(TAG, "Выполняю поиск рецептов: " + query);
-    
+
     // Запоминаем последний запрос и устанавливаем режим поиска
     lastSearchQuery = query;
     isInSearchMode = true;
@@ -365,7 +326,6 @@ public String getLastSearchQuery() {
  */
 public void restoreLastSearch() {
     if (isInSearchMode && !lastSearchQuery.isEmpty()) {
-        Log.d(TAG, "Восстанавливаю последний поиск: " + lastSearchQuery);
         searchRecipes(lastSearchQuery);
     }
 }

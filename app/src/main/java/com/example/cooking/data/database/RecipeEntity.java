@@ -26,12 +26,12 @@ public class RecipeEntity {
     private String title;        // Название рецепта
     private List<Ingredient> ingredients; // Список ингредиентов
     private List<Step> instructions;   // Список шагов приготовления
-    private String created_at;   // Дата создания (или последнего обновления) рецепта
-    private String userId;       // Идентификатор пользователя, создавшего рецепт (если применимо)
-    private String mealType;     // Тип приема пищи (напр., Завтрак, Обед)
-    private String foodType;     // Тип блюда (напр., Суп, Салат)
-    private String photo_url;    // URL основного изображения рецепта
-    private boolean isLiked;     // Статус "лайк" от пользователя для данного рецепта
+    private String created_at;
+    private String userId;
+    private String mealType;
+    private String foodType;
+    private String photo_url;
+    private boolean isLiked;
 
     /**
      * Конструктор по умолчанию.

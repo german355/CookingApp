@@ -32,7 +32,7 @@ public class DataConverters {
      */
     @TypeConverter
     public static String fromIngredientList(List<Ingredient> ingredients) {
-        if (ingredients == null || ingredients.isEmpty()) { // Добавил проверку на isEmpty для консистентности
+        if (ingredients == null || ingredients.isEmpty()) {
             return null;
         }
         return GSON_INSTANCE.toJson(ingredients);
@@ -57,7 +57,6 @@ public class DataConverters {
         }
     }
 
-    // --- Step List Converters ---
 
     /**
      * Конвертирует список объектов {@link Step} в JSON-строку.

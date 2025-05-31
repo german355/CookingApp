@@ -81,7 +81,6 @@ public class CatalogFragment extends Fragment implements CategoryAdapter.OnCateg
                     );
             navController.navigate(action);
         } else {
-            Log.e("CatalogFragment", "NavHostFragment не найден, навигация невозможна.");
             Toast.makeText(getContext(), "Ошибка навигации", Toast.LENGTH_SHORT).show();
         }
     }

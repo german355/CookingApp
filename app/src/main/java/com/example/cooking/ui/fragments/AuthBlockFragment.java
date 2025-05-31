@@ -22,7 +22,6 @@ public class AuthBlockFragment extends Fragment {
     private static final String TAG = "AuthBlockFragment";
     
     public AuthBlockFragment() {
-        // Пустой конструктор
     }
     
     @Override

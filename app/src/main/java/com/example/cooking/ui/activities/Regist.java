@@ -254,9 +254,7 @@ public class Regist extends AppCompatActivity {
             try {
                 viewModel.signInWithGoogle(this);
             } catch (Exception e) {
-                Log.e(TAG, "Ошибка при запуске Google Sign-In: " + e.getMessage());
-                Toast.makeText(this, "Ошибка при входе через Google: " + e.getMessage(), 
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Ошибка при входе через Google" , Toast.LENGTH_SHORT).show();
             }
         });
         

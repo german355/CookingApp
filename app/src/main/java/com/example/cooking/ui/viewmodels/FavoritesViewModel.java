@@ -74,7 +74,6 @@ public class FavoritesViewModel extends AndroidViewModel {
     public void setSharedRecipeViewModel(SharedRecipeViewModel viewModel) {
         this.sharedRecipeViewModel = viewModel;
         
-        // Настраиваем наблюдение за данными из SharedRecipeViewModel
         setupSharedViewModelObserver();
         
         // Настраиваем наблюдение за поисковым запросом

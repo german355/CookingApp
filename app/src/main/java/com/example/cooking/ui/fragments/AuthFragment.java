@@ -89,6 +89,12 @@ public class AuthFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
+    }
+
     private void setupObservers() {
         // Наблюдатель для состояния загрузки
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
@@ -187,8 +193,7 @@ public class AuthFragment extends Fragment {
             try {
                 viewModel.signInWithGoogle(requireActivity());
             } catch (Exception e) {
-                Log.e(TAG, "Ошибка при запуске Google Sign-In: " + e.getMessage());
-                Toast.makeText(requireContext(), "Ошибка при входе через Google: " + e.getMessage(),
+                Toast.makeText(requireContext(), "Ошибка при входе через Google",
                         Toast.LENGTH_SHORT).show();
             }
         });

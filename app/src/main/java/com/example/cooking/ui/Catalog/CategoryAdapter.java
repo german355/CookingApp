@@ -5,14 +5,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-// import android.widget.Toast; // Не используется, можно удалить
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.cooking.R;
 import com.example.cooking.model.CategoryItem;
 import com.bumptech.glide.Glide;
 import java.util.List;
-import android.util.Log; // Оставляем для закомментированных логов
 
 /**
  * Адаптер для отображения списка категорий в RecyclerView.
@@ -74,12 +72,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
          */
         public void bind(final CategoryItem categoryItem, final OnCategoryClickListener listener) {
 
-            // Log.d("CategoryAdapter", "Binding category: " + categoryItem.getName()); // Отладочный лог
 
             String imageUrl = categoryItem.getImageUrl();
 
             if (imageUrl != null && !imageUrl.isEmpty()) {
-                // Log.d("CategoryAdapter", "Loading image from URL: " + imageUrl); // Отладочный лог
                 Glide.with(itemView.getContext())
                         .load(imageUrl)
                         .placeholder(R.drawable.placeholder_image) 
@@ -87,8 +83,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
                         .centerCrop()
                         .into(categoryImage);
             } else {
-                // Log.w("CategoryAdapter", "Image URL is null or empty for category: " + categoryItem.getName() + ". Setting placeholder."); // Отладочный лог
-                categoryImage.setImageResource(R.drawable.placeholder_image); 
+                categoryImage.setImageResource(R.drawable.placeholder_image);
             }
 
             itemView.setOnClickListener(v -> {

@@ -41,8 +41,7 @@ public class LikedRecipeEntity {
     public Recipe toRecipe() {
         Recipe recipe = new Recipe();
         recipe.setId(this.recipeId);
-        recipe.setLiked(true);         // Так как это сущность лайкнутого рецепта
-        // Другие поля Recipe (title, ingredients, etc.) здесь не заполняются
+        recipe.setLiked(true);
         return recipe;
     }
 

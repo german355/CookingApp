@@ -92,7 +92,6 @@ public class ProfileFragment extends Fragment {
         // Наблюдатель за сообщениями об ошибках
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), errorMessage -> {
             if (errorMessage != null && !errorMessage.isEmpty() && isAdded()) {
-                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
                 // Очищаем ошибку после показа
                 viewModel.clearErrorMessage();
             }

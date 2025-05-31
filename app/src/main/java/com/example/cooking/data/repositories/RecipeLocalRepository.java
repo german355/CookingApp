@@ -40,14 +40,12 @@ public class RecipeLocalRepository {
         return Transformations.map(
             recipeDao.getAllRecipes(),
             entities -> {
-                Log.d(TAG, "Transforming RecipeEntities to Recipes. Count: " + (entities != null ? entities.size() : 0));
                 List<Recipe> recipes = new ArrayList<>();
                 if (entities != null) {
                      for (RecipeEntity entity : entities) {
                          recipes.add(entity.toRecipe());
                      }
                 }
-                Log.d(TAG, "Transformation complete. Returning Recipes count: " + recipes.size());
                 return recipes;
             }
         );

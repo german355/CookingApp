@@ -121,7 +121,7 @@ public class ProfileViewModel extends AndroidViewModel {
 
                     @Override
                     public void onFailure(String errorMsg) {
-                        Log.e(TAG, "Ошибка при обновлении имени пользователя на сервере: " + errorMsg);
+                        Log.e(TAG, "Ошибка при обновлении имени пользователя");
                     }
                 });
             }
@@ -129,7 +129,7 @@ public class ProfileViewModel extends AndroidViewModel {
             @Override
             public void onError(String message) {
                 isLoading.postValue(false);
-                errorMessage.postValue("Ошибка при обновлении имени: " + message);
+                errorMessage.postValue("Ошибка при обновлении имени");
             }
         });
     }
@@ -180,7 +180,7 @@ public class ProfileViewModel extends AndroidViewModel {
                     @Override
                     public void onError(String message) {
                         isLoading.postValue(false);
-                        errorMessage.postValue("Ошибка при обновлении пароля: " + message);
+                        errorMessage.postValue("Ошибка при обновлении пароля");
                     }
                 });
             }
@@ -188,7 +188,7 @@ public class ProfileViewModel extends AndroidViewModel {
             @Override
             public void onError(String message) {
                 isLoading.postValue(false);
-                errorMessage.postValue("Ошибка аутентификации: " + message);
+                errorMessage.postValue("Ошибка аутентификации");
             }
         });
     }
