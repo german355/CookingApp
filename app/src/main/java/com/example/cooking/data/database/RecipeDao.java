@@ -153,4 +153,10 @@ public interface RecipeDao {
      */
     @Query("SELECT * FROM recipes ")
     List<RecipeEntity> getAllRecipesSync();
+
+    /**
+     * Сбрасывает статус лайка для всех рецептов.
+     */
+    @Query("UPDATE recipes SET isLiked = 0")
+    void clearAllLikeStatus();
 } 

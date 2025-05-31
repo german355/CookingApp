@@ -7,6 +7,7 @@ import com.example.cooking.data.models.ApiResponse;
 import com.example.cooking.data.models.PasswordResetRequest;
 import com.example.cooking.data.models.PasswordResetResponse;
 import com.example.cooking.network.models.GeneralServerResponse;
+import com.example.cooking.network.responses.LikedRecipesResponse;
 import com.example.cooking.network.responses.RecipesResponse;
 import com.example.cooking.network.responses.SearchResponse;
 
@@ -77,12 +78,12 @@ public interface ApiService {
     Call<String> getRecipesAsString();
     
     /**
-     * Получает список лайкнутых рецептов пользователя.
+     * Получает список ID лайкнутых рецептов пользователя.
      * @param userId ID пользователя
-     * @return Call объект с ответом типа RecipesResponse
+     * @return Call объект с ответом типа LikedRecipesResponse
      */
     @GET("recipes/liked")
-    Call<RecipesResponse> getLikedRecipes(@Query("userId") String userId);
+    Call<LikedRecipesResponse> getLikedRecipes(@Query("userId") String userId);
     
     /**
      * Простой поиск рецептов по строке.

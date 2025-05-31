@@ -31,6 +31,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseUser;
 
 /**
@@ -128,7 +129,7 @@ public class AuthFragment extends Fragment {
                 MainViewModel mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
                 mainViewModel.triggerLoginEvent();
                 Toast.makeText(requireContext(), "Вход выполнен успешно", Toast.LENGTH_SHORT).show();
-                navController.navigate(R.id.destination_profile);
+                navController.navigate(R.id.nav_profile);
             }
         });
     }

@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // Показываем кнопку назад только в экране авторизации
-                if (id == R.id.destination_auth || id == R.id.destination_settings) {
+                if (id == R.id.destination_auth || id == R.id.destination_settings ||   id == R.id.destination_profile) {
                     if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 } else {
                     if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(false);

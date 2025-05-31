@@ -19,6 +19,7 @@ import com.example.cooking.data.database.RecipeDao;
 import com.example.cooking.data.database.RecipeEntity;
 import com.example.cooking.network.api.ApiService;
 import com.example.cooking.network.models.GeneralServerResponse;
+import com.example.cooking.network.responses.LikedRecipesResponse;
 import com.example.cooking.network.responses.RecipesResponse;
 import com.example.cooking.network.services.NetworkService;
 
@@ -147,33 +148,22 @@ public class LikedRecipesRepository {
     private void fetchAndStoreLikedRecipes(String userId) {
         Log.d(TAG, "[fetchAndStore] Выполнение запроса к apiService.getLikedRecipes для userId: " + userId);
         // Используем общий ApiService
-        retrofit2.Call<RecipesResponse> call = apiService.getLikedRecipes(userId);
+        retrofit2.Call<LikedRecipesResponse> call = apiService.getLikedRecipes(userId);
         try {
             // Используем execute() для синхронного выполнения в фоновом потоке Executor'a
-            retrofit2.Response<RecipesResponse> response = call.execute();
+            retrofit2.Response<LikedRecipesResponse> response = call.execute();
             Log.d(TAG, "[fetchAndStore] Получен ответ от сервера: Code=" + response.code() + ", isSuccessful="
                     + response.isSuccessful());
 
             if (response.isSuccessful() && response.body() != null) {
-                RecipesResponse recipesResponse = response.body();
-                if (recipesResponse.isSuccess()) {
-                    List<Recipe> recipes = recipesResponse.getRecipes();
-                    if (recipes != null) {
-                        Log.i(TAG, "[fetchAndStore] Успешно загружено " + recipes.size()
-                                + " лайкнутых рецептов с сервера для userId: " + userId);
-                        // Конвертируем и сохраняем
-                        storeServerLikedRecipes(recipes);
-                    } else {
-                        Log.w(TAG,
-                                "[fetchAndStore] Сервер вернул success=true, но null список лайкнутых рецептов для userId: "
-                                        + userId);
-                        // Очищаем локальные лайки, раз сервер говорит, что их нет
-                        storeServerLikedRecipes(new ArrayList<>());
-                    }
+                LikedRecipesResponse likedResponse = response.body();
+                if (likedResponse.isSuccess()) {
+                    List<Integer> recipeIds = likedResponse.getRecipeIds();
+                    storeServerLikedRecipes(recipeIds);
                 } else {
                     // Сервер вернул success=false
                     Log.e(TAG, "[fetchAndStore] Ошибка при синхронизации лайкнутых рецептов (success=false): " +
-                            "Code: " + response.code() + ", Message: " + recipesResponse.getMessage());
+                            "Code: " + response.code() + ", Message: " + likedResponse.getMessage());
                 }
             } else {
                 // Неуспешный HTTP ответ
@@ -190,43 +180,32 @@ public class LikedRecipesRepository {
      * Конвертирует и сохраняет лайкнутые рецепты, полученные с сервера.
      * Перезаписывает старые данные.
      */
-    private void storeServerLikedRecipes(List<Recipe> serverRecipes) {
+    private void storeServerLikedRecipes(List<Integer> serverRecipeIds) {
         executor.execute(() -> {
             List<LikedRecipeEntity> likedEntitiesToInsert = new ArrayList<>();
-            List<RecipeEntity> recipeEntitiesToInsert = new ArrayList<>();
-
-            for (Recipe recipe : serverRecipes) {
-                if (recipe != null) { // Проверка на null
-                    // Создаем сущность для таблицы лайков (только recipeId)
-                    likedEntitiesToInsert.add(new LikedRecipeEntity(recipe.getId()));
-                    // Создаем сущность для основной таблицы рецептов (для обновления/вставки)
-                    recipeEntitiesToInsert.add(new RecipeEntity(recipe));
-                }
+            // формируем список из ID
+            for (Integer id : serverRecipeIds) {
+                likedEntitiesToInsert.add(new LikedRecipeEntity(id));
             }
 
             // Выполняем операции в транзакции для атомарности
             try {
                 Log.d(TAG, "[DB Sync] Запуск транзакции для обновления лайков");
                 AppDatabase.getInstance(context).runInTransaction(() -> {
-                    // 1. Очистить старые лайки
-                    Log.d(TAG, "[DB Sync] Удаление старых записей из liked_recipes");
+                    // очистить все
                     likedRecipeDao.deleteAll();
-                    // 2. Вставить новые лайки, если они есть
+                    recipeDao.clearAllLikeStatus();
+                    // вставить новые лайки и обновить флаг
                     if (!likedEntitiesToInsert.isEmpty()) {
-                        Log.d(TAG, "[DB Sync] Вставка " + likedEntitiesToInsert.size()
-                                + " новых записей в liked_recipes");
                         likedRecipeDao.insertAll(likedEntitiesToInsert);
-                    }
-                    // 3. Вставить/Обновить полные данные рецептов в основную таблицу recipes
-                    if (!recipeEntitiesToInsert.isEmpty()) {
-                        Log.d(TAG, "[DB Sync] Вставка/Обновление " + recipeEntitiesToInsert.size()
-                                + " записей в recipes.");
-                        recipeDao.insertAll(recipeEntitiesToInsert); // Используем RecipeDao
+                        for (LikedRecipeEntity e : likedEntitiesToInsert) {
+                            recipeDao.updateLikeStatus(e.getRecipeId(), true);
+                        }
                     }
                 });
                 Log.i(TAG, "[DB Sync] Транзакция обновления лайков успешно завершена.");
             } catch (Exception e) {
-                Log.e(TAG, "[DB Sync] Ошибка во время транзакции обновления лайков", e);
+                Log.e(TAG, "[DB Sync] Ошибка во время транзакции обновления лайков", e);    
             }
         });
     }

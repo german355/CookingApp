@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import com.example.cooking.R;
 import com.example.cooking.ui.viewmodels.MainViewModel;
 import com.example.cooking.auth.FirebaseAuthManager;
@@ -38,13 +38,13 @@ public class SharedProfileFragment extends Fragment {
         profile = view.findViewById(R.id.profile_container);
         settings = view.findViewById(R.id.settings_container);
 
-        // Получаем NavController
-        navController = Navigation.findNavController(view);
+        // Получаем NavController через NavHostFragment
+        navController = NavHostFragment.findNavController(this);
 
         profile.setOnClickListener(view1 -> {
-            Boolean isLoggedIn = activityViewModel.getIsUserLoggedIn().getValue();
+            FirebaseUser currentUser = FirebaseAuthManager.getInstance().getCurrentUser();
 
-            if (isLoggedIn != null && isLoggedIn) {
+            if (currentUser != null) {
                 // Используем NavController для навигации к профилю
                 navController.navigate(R.id.action_sharedProfile_to_profile);
             } else {
@@ -75,6 +75,17 @@ public class SharedProfileFragment extends Fragment {
         settings.setOnClickListener(view1 -> {
             // Используем NavController для навигации к настройкам
             navController.navigate(R.id.action_sharedProfile_to_settings);
+        });
+
+        // Подписка на событие входа и обновление имени пользователя
+        activityViewModel.getLoginEvent().observe(getViewLifecycleOwner(), unused -> {
+            FirebaseUser currentUser = FirebaseAuthManager.getInstance().getCurrentUser();
+            if (currentUser != null) {
+                String displayName = currentUser.getDisplayName();
+                profileName.setText(displayName != null && !displayName.isEmpty()
+                        ? displayName : profileName.getText().toString());
+                profile_description.setText("Настройки профиля");
+            }
         });
     }
 
