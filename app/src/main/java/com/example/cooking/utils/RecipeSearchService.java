@@ -51,21 +51,15 @@ public class RecipeSearchService {
             return;
         }
         
-        // Показываем тост для отладки
-        showToast("Начинаю поиск: " + query);
-        
         MySharedPreferences preferences = new MySharedPreferences(context);
         boolean smartSearchEnabled = preferences.getBoolean("smart_search_enabled", true);
         
         Log.d("RecipeSearchService", "Smart search enabled from prefs: " + smartSearchEnabled);
-        showToast("Умный поиск включен: " + smartSearchEnabled);
-        
         if (smartSearchEnabled) {
             String userId = preferences.getString("userId", "0");
             int page = 1;
             int perPage = 20;
-            
-            showToast("Выполняю умный поиск");
+
             
             try {
                 // Сбрасываем закэшированные сетевые клиенты

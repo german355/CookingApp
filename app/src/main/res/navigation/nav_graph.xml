@@ -81,7 +81,7 @@
     <!-- Каталог -->
     <fragment
         android:id="@+id/nav_catalog"
-        android:name="com.example.cooking.ui.Catalog.CatalogFragment"
+        android:name="com.example.cooking.ui.fragments.CatalogFragment"
         android:label="Каталог"
         tools:layout="@layout/fragment_catalog" >
         <action
@@ -96,7 +96,7 @@
     <!-- Отфильтрованные рецепты -->
     <fragment
         android:id="@+id/nav_filtered_recipes"
-        android:name="com.example.cooking.ui.Catalog.FilteredRecipesFragment"
+        android:name="com.example.cooking.ui.fragments.FilteredRecipesFragment"
         android:label="Filtered Recipes"
         tools:layout="@layout/fragment_filtered_recipes">
 

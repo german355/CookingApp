@@ -1,17 +1,15 @@
-package com.example.cooking.ui.Catalog;
+package com.example.cooking.ui.viewmodels;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 
 import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.network.utils.Resource;
-import com.example.cooking.ui.viewmodels.SharedRecipeViewModel;
+import com.example.cooking.ui.fragments.FilteredRecipesFragment;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
