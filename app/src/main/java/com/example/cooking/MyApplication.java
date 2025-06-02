@@ -20,7 +20,7 @@ public class MyApplication extends Application {
         // Инициализация темы приложения при запуске
         initializeTheme();
 
-        // Инициализация LTR клиента
+        
 
     }
 
