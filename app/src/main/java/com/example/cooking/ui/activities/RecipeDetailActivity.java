@@ -196,6 +196,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private void setupStepsRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         stepsRecyclerView.setLayoutManager(layoutManager);
+        stepsRecyclerView.setNestedScrollingEnabled(false);
         // Создаем адаптер
         stepAdapter = new StepAdapter(this); 
         stepsRecyclerView.setAdapter(stepAdapter);
@@ -210,6 +211,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private void setupIngredientsRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         ingredientsRecyclerView.setLayoutManager(layoutManager);
+        ingredientsRecyclerView.setNestedScrollingEnabled(false);
         // Инициализируем адаптер списком, полученным из Parcelable
         ingredientAdapter = new IngredientViewAdapter(this, this.ingredients);
         ingredientsRecyclerView.setAdapter(ingredientAdapter);

@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -79,6 +80,10 @@ public class EditRecipeActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Activity создается");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_recipe);
+        
+        // Сброс прокрутки NestedScrollView к началу
+        NestedScrollView scrollView = findViewById(R.id.main_scroll_view);
+        scrollView.post(() -> scrollView.fullScroll(View.FOCUS_UP));
         
         viewModel = new ViewModelProvider(this).get(EditRecipeViewModel.class);
         
@@ -147,6 +152,7 @@ public class EditRecipeActivity extends AppCompatActivity {
             });
         ingredientsRecyclerView.setAdapter(ingredientsAdapter);
         ingredientsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        ingredientsRecyclerView.setNestedScrollingEnabled(false);
         
         stepsAdapter = new EditStepsAdapter(new ArrayList<>(),
             new EditStepsAdapter.StepInteractionListener() {
@@ -162,6 +168,7 @@ public class EditRecipeActivity extends AppCompatActivity {
             });
         stepsRecyclerView.setAdapter(stepsAdapter);
         stepsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        stepsRecyclerView.setNestedScrollingEnabled(false);
     }
     
     private void setupObservers() {

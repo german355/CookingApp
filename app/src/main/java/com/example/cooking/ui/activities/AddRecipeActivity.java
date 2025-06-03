@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -76,6 +77,10 @@ public class AddRecipeActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_recipe);
+        // Сброс прокрутки NestedScrollView к началу
+        NestedScrollView scrollView = findViewById(R.id.main_scroll_view);
+        scrollView.post(() -> scrollView.fullScroll(View.FOCUS_UP));
+
         // Настраиваем toolbar
         setupToolbar();
 
@@ -132,13 +137,18 @@ public class AddRecipeActivity extends AppCompatActivity implements
         ingredientAdapter = new IngredientAdapter(this);
         stepAdapter = new StepAdapter(this, this);
 
-        ingredientsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // Настраиваем LinearLayoutManager с автоизмерением для корректного отображения всех элементов
+        LinearLayoutManager ingredientsLayoutManager = new LinearLayoutManager(this);
+        ingredientsLayoutManager.setAutoMeasureEnabled(true);
+        ingredientsRecyclerView.setLayoutManager(ingredientsLayoutManager);
         ingredientsRecyclerView.setAdapter(ingredientAdapter);
         ingredientsRecyclerView.setNestedScrollingEnabled(false);
         ingredientsRecyclerView.setHasFixedSize(false);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        stepsRecyclerView.setLayoutManager(layoutManager);
+        // Аналогично для RecyclerView шагов
+        LinearLayoutManager stepsLayoutManager = new LinearLayoutManager(this);
+        stepsLayoutManager.setAutoMeasureEnabled(true);
+        stepsRecyclerView.setLayoutManager(stepsLayoutManager);
         stepsRecyclerView.setAdapter(stepAdapter);
         stepsRecyclerView.setNestedScrollingEnabled(false);
         stepsRecyclerView.setHasFixedSize(false);
@@ -238,17 +248,8 @@ public class AddRecipeActivity extends AppCompatActivity implements
         
         // Наблюдаем за списком шагов
         viewModel.getSteps().observe(this, steps -> {
-            // Создаем новый список, чтобы DiffUtil в ListAdapter корректно обработал изменения
+            // Обновляем список шагов
             stepAdapter.submitList(steps != null ? new ArrayList<>(steps) : null);
-            // Прокручиваем к последнему элементу, если он был добавлен
-            if (steps != null && !steps.isEmpty()) {
-                stepsRecyclerView.post(() -> {
-                    int position = steps.size() - 1;
-                    if (position >= 0) {
-                        stepsRecyclerView.smoothScrollToPosition(position);
-                    }
-                });
-            }
         });
     }
     
