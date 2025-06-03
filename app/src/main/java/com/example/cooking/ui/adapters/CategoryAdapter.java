@@ -1,4 +1,4 @@
-package com.example.cooking.ui.Catalog;
+package com.example.cooking.ui.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;

@@ -1,4 +1,4 @@
-package com.example.cooking.ui.Catalog;
+package com.example.cooking.ui.fragments;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import android.util.Log;
+import com.example.cooking.ui.adapters.CategoryAdapter;
 
 public class CatalogFragment extends Fragment implements CategoryAdapter.OnCategoryClickListener {
 

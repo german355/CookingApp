@@ -1,4 +1,4 @@
-package com.example.cooking.ui.Catalog;
+package com.example.cooking.ui.fragments;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -13,12 +13,12 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.util.Log;
 
 import com.example.cooking.R;
 import com.example.cooking.Recipe.Recipe;
+import com.example.cooking.ui.fragments.FilteredRecipesFragment;
+import com.example.cooking.ui.viewmodels.FilteredRecipesViewModel;
 import com.example.cooking.ui.adapters.RecipeListAdapter;
-import java.util.List; 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 /**

@@ -1,20 +1,14 @@
 package com.example.cooking.ui.activities;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -41,18 +34,13 @@ import com.example.cooking.R;
 import com.example.cooking.Recipe.Ingredient;
 import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.Recipe.Step;
-import com.example.cooking.config.ServerConfig;
-import com.example.cooking.adapters.EditIngredientsAdapter;
-import com.example.cooking.adapters.EditStepsAdapter;
+import com.example.cooking.ui.adapters.EditIngredientsAdapter;
+import com.example.cooking.ui.adapters.EditStepsAdapter;
 import com.example.cooking.ui.viewmodels.EditRecipeViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.gson.Gson;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 public class EditRecipeActivity extends AppCompatActivity {
     private static final String TAG = "EditRecipeActivity";

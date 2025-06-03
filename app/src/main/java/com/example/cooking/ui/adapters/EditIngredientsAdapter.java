@@ -1,4 +1,4 @@
-package com.example.cooking.adapters;
+package com.example.cooking.ui.adapters;
 
 import android.content.Context;
 import android.text.Editable;
