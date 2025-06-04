@@ -29,11 +29,17 @@ import com.example.cooking.ui.viewmodels.SharedRecipeViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.example.cooking.ui.activities.AddRecipeActivity;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.content.res.ColorStateList;
+import androidx.core.content.ContextCompat;
 
 /**
  * Главная активность приложения.
@@ -46,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     // UI компоненты
     public BottomNavigationView bottomNavigationView;
     private FloatingActionButton addButton;
+    private FloatingActionButton fabAddRecipe;
+    private FloatingActionButton fabChat;
     private MaterialToolbar toolbar;
 
     // Навигация
@@ -59,6 +67,14 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences searchPrefs;
     private ArrayAdapter<String> suggestionAdapter;
     private SearchView.SearchAutoComplete searchAutoComplete;
+
+    // Анимации для FAB
+    private Animation fabShowAnim;
+    private Animation fabHideAnim;
+
+    // Оригинальные цвет и иконка главной FAB
+    private ColorStateList fabOriginalTint;
+    private int fabOriginalIcon;
 
     /**
      * Вызывается при создании активности.
@@ -97,10 +113,19 @@ public class MainActivity extends AppCompatActivity {
     private void initViews() {
         // Инициализируем кнопку добавления рецепта
         addButton = findViewById(R.id.fab_add);
+        // Сохраняем оригинальные цвет и иконку
+        fabOriginalTint = addButton.getBackgroundTintList();
+        fabOriginalIcon = R.drawable.more_vert;
+        fabAddRecipe = findViewById(R.id.fab_add_recipe);
+        fabChat = findViewById(R.id.fab_chat);
         toolbar = findViewById(R.id.toolbar);
         
         // Инициализируем нижнюю навигацию
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        // Загрузка анимаций FAB
+        fabShowAnim = AnimationUtils.loadAnimation(this, R.anim.fab_show);
+        fabHideAnim = AnimationUtils.loadAnimation(this, R.anim.fab_hide);
     }
 
     /**
@@ -174,8 +199,14 @@ public class MainActivity extends AppCompatActivity {
      */
     private void setupEventHandlers() {
         // Настраиваем кнопку добавления рецепта
-        addButton.setOnClickListener(view -> {
-            handleAddButtonClick();
+        addButton.setOnClickListener(v -> viewModel.toggleFabMenu());
+        fabAddRecipe.setOnClickListener(v -> {
+            startActivity(new Intent(this, AddRecipeActivity.class));
+            viewModel.toggleFabMenu();
+        });
+        fabChat.setOnClickListener(v -> {
+            startActivity(new Intent(this, AiChatActivity.class));
+            viewModel.toggleFabMenu();
         });
     }
 
@@ -216,6 +247,29 @@ public class MainActivity extends AppCompatActivity {
                         currentDestId == R.id.destination_settings) {
                     navController.navigate(R.id.nav_profile);
                 }
+            }
+        });
+
+        viewModel.getIsFabMenuExpanded().observe(this, expanded -> {
+            if (expanded) {
+                fabAddRecipe.setVisibility(View.VISIBLE);
+                fabChat.setVisibility(View.VISIBLE);
+                fabAddRecipe.startAnimation(fabShowAnim);
+                fabChat.startAnimation(fabShowAnim);
+                // Сменить иконку и цвет главной FAB
+                addButton.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
+                addButton.setBackgroundTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, android.R.color.darker_gray)
+                ));
+            } else {
+                fabAddRecipe.startAnimation(fabHideAnim);
+                fabChat.startAnimation(fabHideAnim);
+                // после анимации скрываем
+                fabAddRecipe.postDelayed(() -> fabAddRecipe.setVisibility(View.GONE), fabHideAnim.getDuration());
+                fabChat.postDelayed(() -> fabChat.setVisibility(View.GONE), fabHideAnim.getDuration());
+                // Вернуть оригинальную иконку и цвет
+                addButton.setImageResource(fabOriginalIcon);
+                addButton.setBackgroundTintList(fabOriginalTint);
             }
         });
     }

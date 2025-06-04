@@ -39,6 +39,8 @@ public class MainViewModel extends AndroidViewModel {
     private final MutableLiveData<String> searchQueryEvent = new MutableLiveData<>();
     // Событие добавления рецепта
     private final MutableLiveData<Void> recipeAddedEvent = new MutableLiveData<>();
+    // Состояние раскрытого меню FAB
+    private final MutableLiveData<Boolean> isFabMenuExpanded = new MutableLiveData<>(false);
 
     /**
      * Создает новый MainViewModel
@@ -201,5 +203,16 @@ public class MainViewModel extends AndroidViewModel {
 
     public LiveData<Void> getRecipeAddedEvent() {
         return recipeAddedEvent;
+    }
+
+    // Получить статус меню FAB
+    public LiveData<Boolean> getIsFabMenuExpanded() {
+        return isFabMenuExpanded;
+    }
+
+    // Переключить состояние меню FAB
+    public void toggleFabMenu() {
+        Boolean current = isFabMenuExpanded.getValue();
+        isFabMenuExpanded.setValue(current == null || !current);
     }
 }
