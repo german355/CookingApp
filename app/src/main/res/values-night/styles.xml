@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Переопределяем стиль SearchView для темной темы -->
+    <style name="Widget.App.SearchView" parent="Widget.Material3.SearchView">
+        <!-- Наследуем базовые настройки, но меняем фон -->
+        <item name="android:background">@drawable/search_view_background</item>
+        <item name="queryBackground">@android:color/transparent</item>
+        <item name="iconifiedByDefault">false</item>
+        <!-- Подсказка все еще берется из разметки -->
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="submitBackground">@android:color/transparent</item>
+        <item name="android:editTextColor">?attr/colorOnSurface</item>
+        <item name="android:textColorHint">?attr/colorOnSurfaceVariant</item>
+        <item name="android:textAppearance">@style/TextAppearance.App.SearchView</item>
+        <!-- Устанавливаем фон поиска как основной фон страницы -->
+        <item name="android:backgroundTint">@color/md_theme_background</item> 
+        <item name="android:elevation">4dp</item>
+    </style>
+
+
+</resources> 

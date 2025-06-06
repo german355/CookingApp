@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">Cooking</string>
+    <string name="no_recipes_available">Нет доступных рецептов. Попробуйте обновить позже.</string>
+    <string name="search">Найти рецепт...</string>
+    <string name="no_search_results">По запросу \"%1$s\" ничего не найдено</string>
+    <string name="search_error">Ошибка при поиске: %1$s</string>
+
+
+    <string name="default_web_client_id">735196544943-8nha6idmte73q0orur9m37taklrglv9g.apps.googleusercontent.com
+    </string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+    <!-- Favorites Fragment -->
+    <string name="no_favorites_yet">У вас пока нет избранных рецептов. Самое время добавить!</string>
+    <string name="error_loading_recipes">Ошибка при загрузке рецептов.</string>
+
+    <string name="recipe_image_description">Изображение рецепта</string>
+    <string name="empty_list_description">Пустой список</string>
+    <string name="no_recipes_found">Рецептов не найдено</string>
+    <string name="no_recipes_description">Попробуйте изменить параметры поиска или обновить список</string>
+    <string name="error_description">Ошибка</string>
+    <string name="error_loading_recipes_title">Ошибка загрузки рецептов</string>
+    
+    <!-- Step Adapter Strings -->
+    <string name="step_label_format">Шаг %d</string>
+    <string name="step_description_error">Ошибка загрузки описания шага</string>
+    <string name="step_no_description">Нет описания для этого шага</string>
+
+    <!-- Chat Error Messages -->
+    <string name="error_need_auth">Для отправки сообщений войдите в аккаунт</string>
+    <string name="error_sending_message">Ошибка отправки сообщения</string>
+    <string name="chat_cleared">Чат очищен</string>
+    <string name="error_clearing_chat">Не удалось очистить чат</string>
+</resources>
