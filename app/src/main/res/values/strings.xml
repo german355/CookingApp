@@ -45,4 +45,5 @@
     <string name="error_sending_message">Ошибка отправки сообщения</string>
     <string name="chat_cleared">Чат очищен</string>
     <string name="error_clearing_chat">Не удалось очистить чат</string>
+    <string name="chat_welcome">Здравствуйте! Я ваш виртуальный помощник. Чем могу помочь?</string>
 </resources>

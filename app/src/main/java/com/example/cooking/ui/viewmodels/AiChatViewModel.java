@@ -7,15 +7,18 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.cooking.R;
 import com.example.cooking.data.repositories.ChatRepository;
+import com.example.cooking.data.repositories.RecipeLocalRepository;
 import com.example.cooking.model.Message;
 import com.example.cooking.network.models.chat.ChatMessage;
 import com.example.cooking.network.models.chat.ChatMessageResponse;
 import com.example.cooking.network.models.chat.ChatHistoryResponse;
+import com.example.cooking.Recipe.Recipe;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AiChatViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Message>> messages = new MutableLiveData<>(new ArrayList<>());
@@ -33,7 +36,12 @@ public class AiChatViewModel extends AndroidViewModel {
         isLoading.setValue(true);
         chatRepository.getChatHistory().observeForever(response -> {
             isLoading.setValue(false);
-            if (response != null && response.getMessages() != null) {
+            if (response != null && response.getMessageCount() == 0) {
+                // Если нет сообщений — показать приветственный экран без истории
+                List<Message> welcome = new ArrayList<>();
+                welcome.add(new Message(getApplication().getString(R.string.chat_welcome), false));
+                messages.setValue(welcome);
+            } else if (response != null && response.getMessages() != null) {
                 List<Message> domainMessages = new ArrayList<>();
                 for (ChatMessage chatMsg : response.getMessages()) {
                     domainMessages.add(new Message(chatMsg.getMessage(), chatMsg.isUser()));
@@ -89,10 +97,26 @@ public class AiChatViewModel extends AndroidViewModel {
             // isLoading.setValue(false);
             if (response != null && response.isSuccess()) {
                 String aiText = response.getAiResponse();
-                List<Message> listToUpdate = removedLoading ? updatedMessages : new ArrayList<>(messages.getValue());
-                // Удален индикатор, теперь добавляем AI-сообщение
-                listToUpdate.add(new Message(aiText, false));
-                messages.setValue(listToUpdate);
+                List<Message> listWithoutRecipes = removedLoading ? updatedMessages : new ArrayList<>(messages.getValue());
+                listWithoutRecipes.add(new Message(aiText, false));
+                messages.setValue(listWithoutRecipes);
+                
+                if (response.getHasRecipes() && response.getRecipesIds() != null && !response.getRecipesIds().isEmpty()) {
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    executor.execute(() -> {
+                        RecipeLocalRepository localRepo = new RecipeLocalRepository(getApplication());
+                        List<Recipe> recipes = new ArrayList<>();
+                        for (int id : response.getRecipesIds()) {
+                            Recipe recipe = localRepo.getRecipeByIdSync(id);
+                            if (recipe != null) recipes.add(recipe);
+                        }
+                        if (!recipes.isEmpty()) {
+                            List<Message> finalList = new ArrayList<>(listWithoutRecipes);
+                            finalList.add(new Message(recipes));
+                            messages.postValue(finalList);
+                        }
+                    });
+                }
             } else {
                 // Если индикатор был удален, устанавливаем обновленный список без ответа AI
                 // Иначе оставляем как есть, т.к. индикатора не было
@@ -104,10 +128,6 @@ public class AiChatViewModel extends AndroidViewModel {
         });
     }
 
-    public void onPhotoButtonClicked() {
-        // TODO: обработать выбор фото
-    }
-    
     public LiveData<String> getShowMessage() {
         return showMessage;
     }
@@ -134,5 +154,9 @@ public class AiChatViewModel extends AndroidViewModel {
                 showMessage.setValue(getApplication().getString(R.string.error_clearing_chat));
             }
         });
+    }
+    
+    public void onPhotoButtonClicked() {
+        // TODO: обработать выбор фото
     }
 }

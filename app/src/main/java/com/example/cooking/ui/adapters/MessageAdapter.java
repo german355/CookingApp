@@ -8,8 +8,10 @@ import android.widget.FrameLayout.LayoutParams;
 import android.view.Gravity;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.cooking.R;
+import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.model.Message;
 import com.example.cooking.model.Message.MessageType;
 import com.example.cooking.ui.widgets.LoadingDots;
@@ -21,6 +23,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int TYPE_USER = 0;
     private static final int TYPE_AI = 1;
     private static final int TYPE_LOADING = 2;
+    private static final int TYPE_RECIPES = 3;
 
     public MessageAdapter(List<Message> messages) {
         this.messages = messages;
@@ -38,6 +41,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             View view = inflater.inflate(R.layout.item_loading, parent, false);
             return new LoadingViewHolder(view);
         } else {
+            if (viewType == TYPE_RECIPES) {
+                View view = inflater.inflate(R.layout.item_chat_recipes, parent, false);
+                return new RecipesViewHolder(view);
+            }
             View view = inflater.inflate(R.layout.item_message, parent, false);
             return new MessageViewHolder(view);
         }
@@ -49,7 +56,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (holder instanceof LoadingViewHolder) {
             // nothing to bind
         } else {
-            ((MessageViewHolder) holder).bind(message);
+            if (holder instanceof RecipesViewHolder) {
+                ((RecipesViewHolder) holder).bind(message.getAttachedRecipes());
+            } else {
+                ((MessageViewHolder) holder).bind(message);
+            }
         }
     }
 
@@ -62,7 +73,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public int getItemViewType(int position) {
         Message msg = messages.get(position);
         if (msg.getType() == MessageType.LOADING) return TYPE_LOADING;
-        return msg.isUser() ? TYPE_USER : TYPE_AI;
+        if (msg.getType() == MessageType.USER) return TYPE_USER;
+        if (msg.getType() == MessageType.AI) return TYPE_AI;
+        if (msg.getType() == MessageType.RECIPES) return TYPE_RECIPES;
+        return TYPE_AI;
     }
 
     static class MessageViewHolder extends RecyclerView.ViewHolder {
@@ -85,6 +99,24 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 textView.setBackgroundResource(R.drawable.bg_message_bubble);
             }
             textView.setLayoutParams(params);
+        }
+    }
+
+    static class RecipesViewHolder extends RecyclerView.ViewHolder {
+        RecyclerView recyclerView;
+        RecipeListAdapter adapter;
+
+        public RecipesViewHolder(@NonNull View itemView) {
+            super(itemView);
+            recyclerView = itemView.findViewById(R.id.recycler_view_recipes);
+            recyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext(), RecyclerView.HORIZONTAL, false));
+            // Передаём true, чтобы адаптер знал, что это режим чата и выставил корректную ширину карточек
+            adapter = new RecipeListAdapter((recipe, isLiked) -> {}, true);
+            recyclerView.setAdapter(adapter);
+        }
+
+        public void bind(List<Recipe> recipes) {
+            adapter.submitList(recipes);
         }
     }
 

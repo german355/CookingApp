@@ -40,6 +40,7 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
     
     private static final String TAG = "RecipeListAdapter";
     private final OnRecipeLikeListener likeListener;
+    private final boolean isChatMode;
 
     /**
      * Коллбэк для {@link DiffUtil}, который определяет, как сравнивать элементы списка
@@ -96,8 +97,12 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
      *                     Не должен быть null, если предполагается обработка лайков.
      */
     public RecipeListAdapter(@NonNull OnRecipeLikeListener likeListener) {
+        this(likeListener, false);
+    }
+    public RecipeListAdapter(@NonNull OnRecipeLikeListener likeListener, boolean isChatMode) {
         super(DIFF_CALLBACK);
         this.likeListener = likeListener;
+        this.isChatMode = isChatMode;
     }
 
     /**
@@ -130,7 +135,7 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
     public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recipe_card, parent, false);
-        return new RecipeViewHolder(view);
+        return new RecipeViewHolder(view, isChatMode);
     }
 
     /**
@@ -219,22 +224,34 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
      * Хранит ссылки на View-компоненты макета элемента списка.
      */
     static class RecipeViewHolder extends RecyclerView.ViewHolder {
+        CardView cardView;
         TextView titleTextView;
         ShapeableImageView imageView;
-        CardView cardView;
         MaterialCheckBox favoriteButton;
+        boolean isChatMode;
 
         /**
          * Конструктор ViewHolder.
          *
          * @param itemView View-компонент элемента списка (инфлейченный из XML-макета).
+         * @param isChatMode true, если режим чата, false иначе.
          */
-        RecipeViewHolder(View itemView) {
+        RecipeViewHolder(View itemView, boolean isChatMode) {
             super(itemView);
+            cardView = itemView.findViewById(R.id.recipe_card);
             titleTextView = itemView.findViewById(R.id.recipe_title);
             imageView = itemView.findViewById(R.id.recipe_image);
-            cardView = itemView.findViewById(R.id.recipe_card);
             favoriteButton = itemView.findViewById(R.id.favorite_button);
+            this.isChatMode = isChatMode;
+            if (isChatMode) {
+                int width = itemView.getContext()
+                        .getResources()
+                        .getDimensionPixelSize(R.dimen.chat_recipe_card_width);
+                RecyclerView.LayoutParams params =
+                        (RecyclerView.LayoutParams) cardView.getLayoutParams();
+                params.width = width;
+                cardView.setLayoutParams(params);
+            }
         }
     }
 } 
