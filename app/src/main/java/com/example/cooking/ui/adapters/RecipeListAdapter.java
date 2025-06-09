@@ -118,6 +118,19 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
     
     @Override
     public void submitList(List<Recipe> list) {
+        Log.d(TAG, "Submitting list to adapter. Size: " + (list != null ? list.size() : 0));
+        if (list != null) {
+            for (int i = 0; i < Math.min(5, list.size()); i++) {
+                Recipe r = list.get(i);
+                Log.d(TAG, String.format("Recipe[%d]: id=%d, title='%s', liked=%b", 
+                    i, r.getId(), r.getTitle(), r.isLiked()));
+            }
+            if (list.size() > 5) {
+                Log.d(TAG, "... and " + (list.size() - 5) + " more recipes");
+            }
+        } else {
+            Log.d(TAG, "Received null list in submitList");
+        }
         super.submitList(list);
     }
 

@@ -32,6 +32,8 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
+import io.reactivex.rxjava3.core.Single;
+
 /**
  * Единый интерфейс API для взаимодействия с сервером
  */
@@ -45,14 +47,14 @@ public interface ApiService {
      * @return ответ сервера
      */
     @POST("auth/register")
-    Call<ApiResponse> registerUser(@Body UserRegisterRequest request);
+    Single<ApiResponse> registerUser(@Body UserRegisterRequest request);
     
     /**
      * Вход пользователя
      * @return ответ сервера
      */
     @POST("auth/login")
-    Call<ApiResponse> loginUser();
+    Single<ApiResponse> loginUser();
     
     /**
      * Запрос на сброс пароля
@@ -60,7 +62,7 @@ public interface ApiService {
      * @return ответ сервера
      */
     @POST("auth/password-reset-request")
-    Call<ApiResponse> requestPasswordReset(@Body PasswordResetRequest request);
+    Single<ApiResponse> requestPasswordReset(@Body PasswordResetRequest request);
     
     // =============== Рецепты - получение и поиск ===============
     

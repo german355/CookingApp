@@ -11,9 +11,11 @@ import com.example.cooking.data.models.PasswordResetRequest;
 import com.example.cooking.data.models.PasswordResetResponse;
 import com.example.cooking.network.api.ApiService;
 import com.example.cooking.network.services.NetworkService;
-import com.example.cooking.network.utils.ApiCallHandler;
 
-import retrofit2.Call;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 // import com.example.cooking.data.repository.UserRepository; // Пример
 // import com.example.cooking.domain.usecase.PasswordRecoveryUseCase; // Пример
@@ -31,6 +33,8 @@ public class PasswordRecoveryViewModel extends AndroidViewModel {
 
     private ApiService apiService;
 
+    private final CompositeDisposable disposables = new CompositeDisposable();
+
     // Конструктор
     public PasswordRecoveryViewModel(Application application) {
         super(application);
@@ -38,9 +42,6 @@ public class PasswordRecoveryViewModel extends AndroidViewModel {
         apiService = NetworkService.getApiService(application.getApplicationContext());
     }
 
-    // public PasswordRecoveryViewModel(AuthApiService apiService) { // Вариант с DI
-    //     this.authApiService = apiService;
-    // }
 
     public void onEmailChanged(String newEmail) {
         _email.setValue(newEmail);
@@ -56,23 +57,28 @@ public class PasswordRecoveryViewModel extends AndroidViewModel {
             return;
         }
 
-        // Сетевой запрос
-        PasswordResetRequest request = new PasswordResetRequest(currentEmail);
-        Call<ApiResponse> call = apiService.requestPasswordReset(request);
-        
-        ApiCallHandler.execute(call, new ApiCallHandler.ApiCallback<ApiResponse>() {
-            @Override
-            public void onSuccess(ApiResponse response) {
-                _isLoading.postValue(false);
-                _recoveryStatus.postValue(new RecoveryStatus.Success(response.getMessage()));
-            }
-            
-            @Override
-            public void onError(String errorMessage) {
-                _isLoading.postValue(false);
-                _recoveryStatus.postValue(new RecoveryStatus.Error(errorMessage));
-            }
-        });
+        // Сетевой запрос через RxJava
+        disposables.add(
+            apiService.requestPasswordReset(new PasswordResetRequest(currentEmail))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    response -> {
+                        _isLoading.postValue(false);
+                        _recoveryStatus.postValue(new RecoveryStatus.Success(response.getMessage()));
+                    },
+                    throwable -> {
+                        _isLoading.postValue(false);
+                        _recoveryStatus.postValue(new RecoveryStatus.Error(throwable.getMessage()));
+                    }
+                )
+        );
+    }
+
+    @Override
+    protected void onCleared() {
+        disposables.clear();
+        super.onCleared();
     }
 
     // Запечатанный класс для состояния восстановления (эквивалент sealed class в Kotlin)

@@ -1,6 +1,8 @@
 package com.example.cooking.ui.viewmodels;
 
+import android.app.Activity;
 import android.app.Application;
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -20,6 +22,12 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 /**
  * ViewModel для экрана профиля пользователя
  */
@@ -31,6 +39,7 @@ public class ProfileViewModel extends AndroidViewModel {
     private final MySharedPreferences preferences;
     private final UserService userService;
     private final ExecutorService databaseExecutor;
+    private final CompositeDisposable disposables;
 
     // LiveData для состояний UI
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
@@ -50,6 +59,7 @@ public class ProfileViewModel extends AndroidViewModel {
         likedRecipeDao = AppDatabase.getInstance(application).likedRecipeDao();
         recipeDao = AppDatabase.getInstance(application).recipeDao();
         databaseExecutor = Executors.newSingleThreadExecutor();
+        disposables = new CompositeDisposable();
 
         // Проверяем текущее состояние аутентификации
         checkAuthenticationState();
@@ -93,48 +103,31 @@ public class ProfileViewModel extends AndroidViewModel {
             errorMessage.setValue("Имя не может быть пустым");
             return;
         }
-
-        isLoading.setValue(true);
-
         FirebaseUser user = authManager.getCurrentUser();
         if (user == null) {
-            isLoading.setValue(false);
             errorMessage.setValue("Пользователь не авторизован");
             return;
         }
-
-        // Обновляем имя в профиле Firebase
-        authManager.updateUserDisplayName(user, newName, new FirebaseAuthManager.UpdateProfileCallback() {
-            @Override
-            public void onSuccess() {
-                // Обновляем данные в SharedPreferences
-                preferences.putString("username", newName);
-
-                // Обновляем LiveData
-                displayName.postValue(newName);
-                isLoading.postValue(false);
-                operationSuccess.postValue(true);
-
-                // Обновляем имя пользователя на сервере
-                userService.updateUserName(user.getUid(), newName, new UserService.UserCallback() {
-                    @Override
-                    public void onSuccess(ApiResponse response) {
-                        Log.d(TAG, "Имя пользователя успешно обновлено на сервере");
-                    }
-
-                    @Override
-                    public void onFailure(String errorMsg) {
-                        Log.e(TAG, "Ошибка при обновлении имени пользователя");
-                    }
-                });
-            }
-
-            @Override
-            public void onError(String message) {
-                isLoading.postValue(false);
-                errorMessage.postValue("Ошибка при обновлении имени");
-            }
-        });
+        disposables.add(
+            authManager.updateUserDisplayNameCompletable(user, newName)
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe(d -> isLoading.postValue(true))
+                .observeOn(AndroidSchedulers.mainThread())
+                .andThen(Completable.fromAction(() -> {
+                    preferences.putString("username", newName);
+                    displayName.postValue(newName);
+                }))
+                .andThen(userService.updateUserNameSingle(user.getUid(), newName).ignoreElement())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doFinally(() -> {
+                    isLoading.postValue(false);
+                    operationSuccess.postValue(true);
+                })
+                .subscribe(
+                    () -> {},
+                    t -> errorMessage.postValue("Ошибка при обновлении имени: " + t.getMessage())
+                )
+        );
     }
 
     /**
@@ -144,56 +137,27 @@ public class ProfileViewModel extends AndroidViewModel {
      * @param newPassword     новый пароль
      */
     public void updatePassword(String currentPassword, String newPassword) {
-        if (currentPassword == null || currentPassword.isEmpty()) {
-            errorMessage.setValue("Текущий пароль не может быть пустым");
+        if (currentPassword == null || newPassword == null) {
+            errorMessage.setValue("Пароли не могут быть пустыми");
             return;
         }
-
-        if (newPassword == null || newPassword.isEmpty()) {
-            errorMessage.setValue("Новый пароль не может быть пустым");
-            return;
-        }
-
-        if (newPassword.length() < 6) {
-            errorMessage.setValue("Новый пароль должен содержать не менее 6 символов");
-            return;
-        }
-
-        isLoading.setValue(true);
-
         FirebaseUser user = authManager.getCurrentUser();
         if (user == null || user.getEmail() == null) {
-            isLoading.setValue(false);
             errorMessage.setValue("Пользователь не авторизован");
             return;
         }
-
-        // Сначала повторно аутентифицируем пользователя
-        authManager.reauthenticate(user, user.getEmail(), currentPassword, new FirebaseAuthManager.AuthCallback() {
-            @Override
-            public void onSuccess(FirebaseUser user) {
-                // После успешной повторной аутентификации обновляем пароль
-                authManager.updateUserPassword(user, newPassword, new FirebaseAuthManager.UpdateProfileCallback() {
-                    @Override
-                    public void onSuccess() {
-                        isLoading.postValue(false);
-                        operationSuccess.postValue(true);
-                    }
-
-                    @Override
-                    public void onError(String message) {
-                        isLoading.postValue(false);
-                        errorMessage.postValue("Ошибка при обновлении пароля");
-                    }
-                });
-            }
-
-            @Override
-            public void onError(String message) {
-                isLoading.postValue(false);
-                errorMessage.postValue("Ошибка аутентификации");
-            }
-        });
+        disposables.add(
+            authManager.reauthenticateSingle(user, user.getEmail(), currentPassword)
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe(d -> isLoading.postValue(true))
+                .flatMapCompletable(u -> authManager.updateUserPasswordCompletable(u, newPassword))
+                .observeOn(AndroidSchedulers.mainThread())
+                .doFinally(() -> isLoading.postValue(false))
+                .subscribe(
+                    () -> operationSuccess.postValue(true),
+                    t -> errorMessage.postValue("Ошибка при обновлении пароля: " + t.getMessage())
+                )
+        );
     }
 
     /**
@@ -206,63 +170,41 @@ public class ProfileViewModel extends AndroidViewModel {
             errorMessage.setValue("Пароль не может быть пустым");
             return;
         }
-
-        isLoading.setValue(true);
-
         FirebaseUser user = authManager.getCurrentUser();
         if (user == null || user.getEmail() == null) {
-            isLoading.setValue(false);
             errorMessage.setValue("Пользователь не авторизован");
             return;
         }
-
-        // Сначала повторно аутентифицируем пользователя
-        authManager.reauthenticate(user, user.getEmail(), password, new FirebaseAuthManager.AuthCallback() {
-            @Override
-            public void onSuccess(FirebaseUser user) {
-                // После успешной повторной аутентификации удаляем аккаунт
-                user.delete()
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                // Очищаем данные в SharedPreferences
-                                preferences.putString("userId", "");
-                                preferences.putString("username", "");
-                                preferences.putString("email", "");
-
-                                // Обновляем LiveData
-                                isAuthenticated.postValue(false);
-                                displayName.postValue("");
-                                email.postValue("");
-                                isLoading.postValue(false);
-                                operationSuccess.postValue(true);
-
-                                // Удаляем данные пользователя с сервера
-                                userService.deleteUser(user.getUid(), new UserService.UserCallback() {
-                                    @Override
-                                    public void onSuccess(ApiResponse response) {
-                                        Log.d(TAG, "Данные пользователя успешно удалены с сервера");
-                                    }
-
-                                    @Override
-                                    public void onFailure(String errorMsg) {
-                                        Log.e(TAG, "Ошибка при удалении данных пользователя с сервера: " + errorMsg);
-                                    }
-                                });
-                            } else {
-                                isLoading.postValue(false);
-                                errorMessage.postValue("Ошибка при удалении аккаунта: " +
-                                        (task.getException() != null ? task.getException().getMessage()
-                                                : "Неизвестная ошибка"));
-                            }
-                        });
-            }
-
-            @Override
-            public void onError(String message) {
-                isLoading.postValue(false);
-                errorMessage.postValue("Ошибка аутентификации: " + message);
-            }
-        });
+        disposables.add(
+            authManager.reauthenticateSingle(user, user.getEmail(), password)
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe(d -> isLoading.postValue(true))
+                .flatMapCompletable(u -> Completable.create(emitter -> {
+                    u.delete().addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) emitter.onComplete();
+                        else emitter.onError(task.getException());
+                    });
+                }))
+                .observeOn(AndroidSchedulers.mainThread())
+                .andThen(Completable.fromAction(() -> {
+                    preferences.putString("userId", "");
+                    preferences.putString("username", "");
+                    preferences.putString("email", "");
+                    isAuthenticated.postValue(false);
+                    displayName.postValue("");
+                    email.postValue("");
+                }))
+                .andThen(userService.deleteUserSingle(user.getUid()).ignoreElement())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doFinally(() -> {
+                    isLoading.postValue(false);
+                    operationSuccess.postValue(true);
+                })
+                .subscribe(
+                    () -> {},
+                    t -> errorMessage.postValue("Ошибка при удалении аккаунта: " + t.getMessage())
+                )
+        );
     }
 
     /**
@@ -370,10 +312,43 @@ public class ProfileViewModel extends AndroidViewModel {
         return email;
     }
 
+    /**
+     * Запуск процесса входа через Google
+     */
+    public void signInWithGoogle(Activity activity) {
+        authManager.signInWithGoogle(activity);
+    }
+
+    /**
+     * Обработка результата входа через Google через RxJava
+     */
+    public void handleGoogleSignInResult(Intent data) {
+        isLoading.setValue(true);
+        disposables.add(
+            authManager.handleGoogleSignInResultSingle(data)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    user -> {
+                        isLoading.postValue(false);
+                        isAuthenticated.postValue(true);
+                        displayName.postValue(user.getDisplayName());
+                        email.postValue(user.getEmail());
+                        operationSuccess.postValue(true);
+                    },
+                    throwable -> {
+                        isLoading.postValue(false);
+                        errorMessage.postValue("Ошибка входа через Google: " + throwable.getMessage());
+                    }
+                )
+        );
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
         databaseExecutor.shutdown();
+        disposables.clear();
         Log.d(TAG, "ExecutorService остановлен в onCleared");
     }
 }

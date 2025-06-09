@@ -22,6 +22,12 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.core.Completable;
+
 /**
  * SharedViewModel для данных о рецептах.
  * Является единым источником данных для всех фрагментов, работающих с рецептами.
@@ -36,6 +42,7 @@ public class SharedRecipeViewModel extends AndroidViewModel {
     private final RecipeUseCases recipeUseCases;
     private final UnifiedRecipeRepository repository;
     private final ExecutorService executor;
+    private final CompositeDisposable disposables = new CompositeDisposable();
 
     // LiveData для рецептов с обернутым статусом
     private final MutableLiveData<Resource<List<Recipe>>> recipes = new MutableLiveData<>(Resource.loading(null));
@@ -67,7 +74,7 @@ public class SharedRecipeViewModel extends AndroidViewModel {
      * Настройка наблюдения за локальными данными
      */
     private void initLocalDataObserver() {
-        repository.getAllRecipesLocal().observeForever(recipesList -> {
+        recipeUseCases.getAllRecipesLocalLiveData().observeForever(recipesList -> {
             // Обновляем UI любыми изменениями локальной БД, включая удаление всех элементов
             if (recipesList != null) {
                 recipes.setValue(Resource.success(recipesList));
@@ -131,13 +138,13 @@ public class SharedRecipeViewModel extends AndroidViewModel {
         
         // Запускаем загрузку локальных данных в фоновом потоке
         executor.execute(() -> {
-            List<Recipe> localRecipesList = repository.getAllRecipesSync();
+            List<Recipe> localRecipesList = recipeUseCases.getAllRecipesSync();
             
             if (localRecipesList != null && !localRecipesList.isEmpty()) {
                 Log.d(TAG, "Локально доступно " + localRecipesList.size() + " рецептов. Показываем их перед обновлением с сервера.");
                 
                 // Применяем статус лайков
-                Set<Integer> likedRecipeIds = repository.getLikedRecipeIds();
+                Set<Integer> likedRecipeIds = recipeUseCases.getLikedRecipeIds();
                 for (Recipe recipe : localRecipesList) {
                     recipe.setLiked(likedRecipeIds.contains(recipe.getId()));
                 }
@@ -154,7 +161,7 @@ public class SharedRecipeViewModel extends AndroidViewModel {
                 Log.d(TAG, "Локальные данные отсутствуют. Загружаем с сервера.");
                 // Если локальных данных нет, загружаем данные с сервера обычным образом
                 // и оставляем индикатор загрузки активным
-                new Handler(Looper.getMainLooper()).post(this::refreshRecipes);
+                new Handler(Looper.getMainLooper()).post(this::refreshRecipes); 
             }
         });
     }
@@ -272,45 +279,66 @@ public class SharedRecipeViewModel extends AndroidViewModel {
      * Выполнить поиск среди рецептов
      */
     public void searchRecipes(String query) {
+        Log.d(TAG, "searchRecipes called with query: '" + query + "'");
         if (query == null || query.trim().isEmpty()) {
             // Если запрос пустой, загружаем и показываем все локальные рецепты
             Log.d(TAG, "Поисковый запрос пуст, показываем все рецепты");
             // Останавливаем индикатор загрузки
             isRefreshing.setValue(false);
             
-            // Загружаем все рецепты из локальной БД в фоновом потоке
+            // Load recipes from DB off main thread
             executor.execute(() -> {
-                try {
-                    List<Recipe> allRecipes = repository.getAllRecipesSync();
-                    if (allRecipes != null && !allRecipes.isEmpty()) {
-                        Log.d(TAG, "Загружено " + allRecipes.size() + " рецептов для отображения вместо пустого поиска");
-                        // Применяем статус лайков
-                        Set<Integer> likedRecipeIds = repository.getLikedRecipeIds();
-                        for (Recipe recipe : allRecipes) {
-                            recipe.setLiked(likedRecipeIds.contains(recipe.getId()));
-                        }
-                        // Загружаем все рецепты в результаты поиска
-                        searchResults.postValue(allRecipes);
-                    } else {
-                        Log.d(TAG, "Нет локальных рецептов для отображения");
-                        // Если локальных рецептов нет, устанавливаем пустой список
-                        searchResults.postValue(new ArrayList<>());
+                List<Recipe> allRecipes = repository.getAllRecipesSync();
+                if (allRecipes != null && !allRecipes.isEmpty()) {
+                    Log.d(TAG, "(BG) Loaded " + allRecipes.size() + " recipes for empty search");
+                    // Apply liked status
+                    Set<Integer> likedRecipeIds = repository.getLikedRecipeIds();
+                    for (Recipe recipe : allRecipes) {
+                        recipe.setLiked(likedRecipeIds.contains(recipe.getId()));
                     }
-                } catch (Exception e) {
-                    Log.e(TAG, "Ошибка при загрузке рецептов для пустого поиска: " + e.getMessage(), e);
-                    searchResults.postValue(new ArrayList<>());
                 }
+                // Post results (either list or empty)
+                searchResults.postValue(allRecipes != null ? allRecipes : new ArrayList<>());
             });
             return;
         }
         
         MySharedPreferences preferences = new MySharedPreferences(getApplication());
         boolean smartSearchEnabled = preferences.getBoolean("smart_search_enabled", true);
+        Log.d(TAG, "searchRecipes smartSearchEnabled: " + smartSearchEnabled);
         
-
-        
-        recipeUseCases.searchRecipes(query, smartSearchEnabled, searchResults, errorMessage, isRefreshing);
-
+        disposables.add(
+            recipeUseCases.searchRecipesRx(query, smartSearchEnabled)
+                .subscribeOn(Schedulers.io())
+                .flatMap(recipesList -> {
+                    Log.d(TAG, "searchRecipes Rx flatMap received size: " + (recipesList != null ? recipesList.size() : 0));
+                    return Single.fromCallable(() -> {
+                        Set<Integer> likedIds = recipeUseCases.getLikedRecipeIds();
+                        for (Recipe recipe : recipesList) {
+                            recipe.setLiked(likedIds.contains(recipe.getId()));
+                        }
+                        return recipesList;
+                    }).subscribeOn(Schedulers.io());
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(d -> {
+                    isRefreshing.setValue(true);
+                    Log.d(TAG, "searchRecipes doOnSubscribe for query: '" + query + "'");
+                })
+                .doOnSuccess(list -> Log.d(TAG, "searchRecipes doOnSuccess size: " + (list != null ? list.size() : 0)))
+                .doOnError(throwable -> Log.e(TAG, "searchRecipes doOnError: " + throwable.getMessage(), throwable))
+                .doFinally(() -> isRefreshing.setValue(false))
+                .subscribe(
+                    list -> {
+                        Log.d(TAG, "searchRecipes subscribe onSuccess list size: " + (list != null ? list.size() : 0));
+                        searchResults.setValue(list);
+                    },
+                    throwable -> {
+                        Log.e(TAG, "searchRecipes subscribe onError: " + throwable.getMessage(), throwable);
+                        errorMessage.setValue("Ошибка поиска: " + throwable.getMessage());
+                    }
+                )
+        );
     }
 
     /**
@@ -320,11 +348,11 @@ public class SharedRecipeViewModel extends AndroidViewModel {
         isRefreshing.setValue(true); // Показываем индикатор загрузки
 
         executor.execute(() -> {
-            List<Recipe> localRecipesList = repository.getAllRecipesSync(); 
+            List<Recipe> localRecipesList = recipeUseCases.getAllRecipesSync(); 
             if (localRecipesList != null && !localRecipesList.isEmpty()) {
                 Log.d(TAG, "(BG) Загружено " + localRecipesList.size() + " рецептов из локального хранилища");
                 // Применяем статус лайков (этот блок тоже должен быть в фоновом потоке, если getLikedRecipeIds делает запрос к БД)
-                Set<Integer> likedRecipeIds = repository.getLikedRecipeIds(); // getLikedRecipeIds уже должен быть потокобезопасным или вызываться в фоне
+                Set<Integer> likedRecipeIds = recipeUseCases.getLikedRecipeIds(); // getLikedRecipeIds уже должен быть потокобезопасным или вызываться в фоне
                 for (Recipe recipe : localRecipesList) {
                     recipe.setLiked(likedRecipeIds.contains(recipe.getId()));
                 }
@@ -350,8 +378,12 @@ public class SharedRecipeViewModel extends AndroidViewModel {
             return;
         }
         
-        // Используем UseCase
-        recipeUseCases.toggleLike(userId, recipeId, errorMessage);
+        disposables.add(
+            recipeUseCases.toggleLikeRx(userId, recipeId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {}, throwable -> errorMessage.setValue("Ошибка лайка: " + throwable.getMessage()))
+        );
     }
     
     /**
@@ -377,42 +409,19 @@ public class SharedRecipeViewModel extends AndroidViewModel {
             return;
         }
         
-        isRefreshing.setValue(true);
-        
-        executor.execute(() -> {
-            try {
-                // Удаляем рецепт через репозиторий
-                // Используем метод удаления из репозитория
-                repository.deleteRecipe(recipeId, new UnifiedRecipeRepository.DeleteRecipeCallback() {
-                    @Override
-                    public void onDeleteSuccess() {
-                        // Обновляем список рецептов после удаления
-                        refreshRecipes();
-                        if (callback != null) {
-                            new Handler(Looper.getMainLooper()).post(callback::onDeleteSuccess);
-                        }
-                    }
-
-                    @Override
-                    public void onDeleteFailure(String error) {
-                        if (callback != null) {
-                            new Handler(Looper.getMainLooper()).post(() -> 
-                                callback.onDeleteFailure(error)
-                            );
-                        }
-                    }
-                });
-            } catch (Exception e) {
-                Log.e(TAG, "Ошибка при удалении рецепта", e);
-                if (callback != null) {
-                    new Handler(Looper.getMainLooper()).post(() -> 
-                        callback.onDeleteFailure("Ошибка при удалении рецепта: " + e.getMessage())
-                    );
-                }
-            } finally {
-                isRefreshing.postValue(false);
-            }
-        });
+        disposables.add(
+            recipeUseCases.deleteRecipeRx(recipeId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(d -> isRefreshing.setValue(true))
+                .doFinally(() -> isRefreshing.setValue(false))
+                .subscribe(() -> {
+                    refreshRecipes();
+                    if (callback != null) callback.onDeleteSuccess();
+                }, throwable -> {
+                    if (callback != null) callback.onDeleteFailure(throwable.getMessage());
+                })
+        );
     }
     
     /**
@@ -431,12 +440,6 @@ public class SharedRecipeViewModel extends AndroidViewModel {
         }
     }
     
-    /**
-     * Обновляет статус лайка для рецепта
-     * @param recipe рецепт для обновления
-     * @param isLiked новый статус лайка
-     * @param userId ID пользователя
-     */
     /**
      * Обновляет статус лайка для рецепта
      * @param recipe рецепт для обновления
@@ -472,5 +475,6 @@ public class SharedRecipeViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         executor.shutdown();
+        disposables.clear();
     }
 }

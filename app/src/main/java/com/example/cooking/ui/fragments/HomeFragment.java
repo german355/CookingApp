@@ -137,21 +137,26 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         
         // Наблюдаем за результатами поиска
         viewModel.getSearchResults().observe(getViewLifecycleOwner(), searchResults -> {
+            Log.d(TAG, "HomeFragment received searchResults size: " + (searchResults != null ? searchResults.size() : 0));
             swipeRefreshLayout.setRefreshing(false);
+            Log.d(TAG, "HomeFragment in searchMode, updating adapter with searchResults");
             if (searchResults != null && !searchResults.isEmpty()) {
                 Toast.makeText(requireContext(), "Найдено " + searchResults.size() + " рецептов", Toast.LENGTH_SHORT).show();
 
                 // При обычном поиске прокручиваем в начало после обновления списка
                 if (!isRestoring) {
                     adapter.submitList(searchResults, () -> {
+                        Log.d(TAG, "HomeFragment adapter.submitList with animation, position reset to 0");
                         recyclerView.scrollToPosition(0);
                     });
                 } else {
+                    Log.d(TAG, "HomeFragment adapter.submitList restoring without animation");
                     adapter.submitList(searchResults);
                     isRestoring = false;
                 }
                 showEmptyView(false);
             } else {
+                Log.d(TAG, "HomeFragment searchResults empty, showing emptyView");
                 showEmptyView(true);
                 swipeRefreshLayout.setRefreshing(false);
             }

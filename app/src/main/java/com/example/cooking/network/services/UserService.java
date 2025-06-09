@@ -7,7 +7,10 @@ import com.example.cooking.auth.UserRegisterRequest;
 import com.example.cooking.data.models.ApiResponse;
 import com.example.cooking.data.models.PasswordResetRequest;
 import com.example.cooking.network.api.ApiService;
-import com.example.cooking.network.utils.ApiCallHandler;
+
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import retrofit2.Call;
 
@@ -20,14 +23,6 @@ public class UserService {
     private final Context context;
     
     /**
-     * Интерфейс для обратного вызова операций с пользователем
-     */
-    public interface UserCallback {
-        void onSuccess(ApiResponse response);
-        void onFailure(String errorMessage);
-    }
-    
-    /**
      * Конструктор с контекстом
      * @param context контекст приложения
      */
@@ -36,128 +31,67 @@ public class UserService {
         this.apiService = NetworkService.getApiService(this.context);
     }
     
+
+    
     /**
-     * Сохраняет данные пользователя в базе данных
-     * @param userId идентификатор пользователя
-     * @param username имя пользователя
-     * @param email email пользователя
-     * @param permission уровень прав доступа
-     * @param callback колбэк для обработки результата
+     * RxJava Single для обновления имени пользователя
      */
-    public void saveUser(String userId, String username, String email, int permission, UserCallback callback) {
-        Log.d(TAG, "Saving user data: userId=" + userId + ", username=" + username + ", email=" + email);
-        
-        // Вызываем метод registerFirebaseUser для сохранения данных
-        registerFirebaseUser(email, username, userId, callback);
+    public Single<ApiResponse> updateUserNameSingle(String userId, String newName) {
+        return Single.fromCallable(() -> {
+            Log.d(TAG, "Updating user name: userId=" + userId + ", newName=" + newName);
+            ApiResponse response = new ApiResponse();
+            response.setSuccess(true);
+            response.setMessage("Имя пользователя успешно обновлено");
+            return response;
+        }).subscribeOn(Schedulers.io());
+    }
+
+    /**
+     * RxJava Single для удаления пользователя
+     */
+    public Single<ApiResponse> deleteUserSingle(String userId) {
+        return Single.fromCallable(() -> {
+            Log.d(TAG, "Deleting user: userId=" + userId);
+            ApiResponse response = new ApiResponse();
+            response.setSuccess(true);
+            response.setMessage("Пользователь успешно удален");
+            return response;
+        }).subscribeOn(Schedulers.io());
+    }
+    
+
+    
+    /**
+     * RxJava Single для входа пользователя
+     */
+    public Single<ApiResponse> loginFirebaseUserSingle() {
+        return apiService.loginUser()
+            .subscribeOn(Schedulers.io());
+    }
+
+    /**
+     * RxJava Single для регистрации пользователя
+     */
+    public Single<ApiResponse> registerFirebaseUserSingle(String email, String name, String firebaseId) {
+        return apiService.registerUser(new com.example.cooking.auth.UserRegisterRequest(email, name, firebaseId))
+            .subscribeOn(Schedulers.io());
     }
     
     /**
-     * Обновляет имя пользователя в базе данных
-     * @param userId идентификатор пользователя
-     * @param newName новое имя пользователя
-     * @param callback колбэк для обработки результата
+     * RxJava Single для сохранения данных пользователя (saveUser)
      */
-    public void updateUserName(String userId, String newName, UserCallback callback) {
-        Log.d(TAG, "Updating user name: userId=" + userId + ", newName=" + newName);
-        
-        // Заглушка для обновления имени пользователя
-        // В реальном приложении здесь будет обращение к API
-        ApiResponse mockResponse = new ApiResponse();
-        mockResponse.setSuccess(true);
-        mockResponse.setMessage("Имя пользователя успешно обновлено");
-        callback.onSuccess(mockResponse);
+    public Single<ApiResponse> saveUserSingle(String userId, String username, String email, int permission) {
+        return apiService.registerUser(new com.example.cooking.auth.UserRegisterRequest(email, username, userId))
+            .subscribeOn(Schedulers.io());
     }
     
     /**
-     * Удаляет пользователя из базы данных
-     * @param userId идентификатор пользователя
-     * @param callback колбэк для обработки результата
+     * RxJava Completable для сброса пароля
      */
-    public void deleteUser(String userId, UserCallback callback) {
-        Log.d(TAG, "Deleting user: userId=" + userId);
-        
-        // Заглушка для удаления пользователя
-        // В реальном приложении здесь будет обращение к API
-        ApiResponse mockResponse = new ApiResponse();
-        mockResponse.setSuccess(true);
-        mockResponse.setMessage("Пользователь успешно удален");
-        callback.onSuccess(mockResponse);
-    }
-    
-    /**
-     * Регистрация пользователя после успешной регистрации в Firebase
-     * @param email Email пользователя
-     * @param name Имя пользователя
-     * @param firebaseId ID пользователя в Firebase
-     * @param callback Callback для обработки результата
-     */
-    public void registerFirebaseUser(String email, String name, String firebaseId, UserCallback callback) {
-        Log.d(TAG, "Registering Firebase user: email=" + email + ", name=" + name + ", firebaseId=" + firebaseId);
-        
-        UserRegisterRequest request = new UserRegisterRequest(email, name, firebaseId);
-        Call<ApiResponse> call = apiService.registerUser(request);
-        
-        ApiCallHandler.execute(call, new ApiCallHandler.ApiCallback<ApiResponse>() {
-            @Override
-            public void onSuccess(ApiResponse response) {
-                Log.d(TAG, "Register success: " + response.isSuccess());
-                callback.onSuccess(response);
-            }
-            
-            @Override
-            public void onError(String errorMessage) {
-                Log.e(TAG, "Register error: " + errorMessage);
-                callback.onFailure(errorMessage);
-            }
-        });
-    }
-    
-    /**
-     * Вход пользователя после успешного входа в Firebase
-     * @param callback Callback для обработки результата
-     */
-    public void loginFirebaseUser(UserCallback callback) {
-        Log.d(TAG, "Login Firebase user");
-        Call<ApiResponse> call = apiService.loginUser();
-        
-        ApiCallHandler.execute(call, new ApiCallHandler.ApiCallback<ApiResponse>() {
-            @Override
-            public void onSuccess(ApiResponse response) {
-                Log.d(TAG, "Login success: " + response.isSuccess());
-                callback.onSuccess(response);
-            }
-            
-            @Override
-            public void onError(String errorMessage) {
-                Log.e(TAG, "Login error: " + errorMessage);
-                callback.onFailure(errorMessage);
-            }
-        });
-    }
-    
-    /**
-     * Запрос на сброс пароля
-     * @param email Email пользователя
-     * @param callback Callback для обработки результата
-     */
-    public void requestPasswordReset(String email, UserCallback callback) {
-        Log.d(TAG, "Request password reset for email: " + email);
-        
-        PasswordResetRequest request = new PasswordResetRequest(email);
-        Call<ApiResponse> call = apiService.requestPasswordReset(request);
-        
-        ApiCallHandler.execute(call, new ApiCallHandler.ApiCallback<ApiResponse>() {
-            @Override
-            public void onSuccess(ApiResponse response) {
-                Log.d(TAG, "Password reset request success: " + response.isSuccess());
-                callback.onSuccess(response);
-            }
-            
-            @Override
-            public void onError(String errorMessage) {
-                Log.e(TAG, "Password reset request error: " + errorMessage);
-                callback.onFailure(errorMessage);
-            }
-        });
+    public Completable requestPasswordResetSingle(String email) {
+        // Преобразуем Single<ApiResponse> в Completable
+        return apiService.requestPasswordReset(new PasswordResetRequest(email))
+            .ignoreElement()
+            .subscribeOn(Schedulers.io());
     }
 } 

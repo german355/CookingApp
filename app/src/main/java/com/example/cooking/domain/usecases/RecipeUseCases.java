@@ -1,14 +1,20 @@
 package com.example.cooking.domain.usecases;
 
 import android.app.Application;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.data.repositories.RecipeRemoteRepository;
 import com.example.cooking.data.repositories.UnifiedRecipeRepository;
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.utils.RecipeSearchService;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 public class RecipeUseCases {
@@ -189,7 +195,7 @@ public class RecipeUseCases {
             errorMessageLiveData.setValue("Войдите, чтобы добавить рецепт в избранное");
             return;
         }
-        repository.toggleLike( recipeId);
+        repository.toggleLike(recipeId);
     }
 
     public void addLike(String userId, int recipeId, MutableLiveData<String> errorMessageLiveData) {
@@ -235,5 +241,86 @@ public class RecipeUseCases {
             return;
         }
         repository.setLikeStatus( recipeId, newLikeStatus);
+    }
+
+    // RxJava-based searchRecipes
+    public Single<List<Recipe>> searchRecipesRx(String query, boolean smartSearchEnabled) {
+        return Single.create(emitter -> {
+            if (smartSearchEnabled) {
+                RecipeSearchService searchService = new RecipeSearchService(application);
+                searchService.searchRecipes(query, new RecipeSearchService.SearchCallback() {
+                    @Override public void onSearchResults(List<Recipe> recipes) {
+                        emitter.onSuccess(recipes);
+                    }
+                    @Override public void onSearchError(String error) {
+                        emitter.onError(new Throwable(error));
+                    }
+                });
+            } else {
+                executor.execute(() -> {
+                    List<Recipe> all = repository.getAllRecipesSync();
+                    List<Recipe> filtered = new ArrayList<>();
+                    for (Recipe r : all) {
+                        if (r.getTitle() != null && r.getTitle().toLowerCase().contains(query.toLowerCase())) {
+                            filtered.add(r);
+                        }
+                    }
+                    emitter.onSuccess(filtered);
+                });
+            }
+        });
+    }
+
+    // RxJava-based toggleLike
+    public Completable toggleLikeRx(String userId, int recipeId) {
+        return Completable.fromAction(() -> {
+            if (!isNetworkAvailable()) throw new IllegalStateException("Offline mode");
+            if (userId == null || userId.equals("0") || userId.isEmpty()) throw new IllegalArgumentException("User not logged in");
+            repository.toggleLike(recipeId);
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    // RxJava-based deleteRecipe
+    public Completable deleteRecipeRx(int recipeId) {
+        return Completable.create(emitter -> {
+            repository.deleteRecipe(recipeId, new UnifiedRecipeRepository.DeleteRecipeCallback() {
+                @Override public void onDeleteSuccess() {
+                    emitter.onComplete();
+                }
+                @Override public void onDeleteFailure(String error) {
+                    emitter.onError(new Throwable(error));
+                }
+            });
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    // Доступ к локальным данным через UseCase
+    public LiveData<List<Recipe>> getAllRecipesLocalLiveData() {
+        return repository.getAllRecipesLocal();
+    }
+
+    public List<Recipe> getAllRecipesSync() {
+        return repository.getAllRecipesSync();
+    }
+
+    public Set<Integer> getLikedRecipeIds() {
+        return repository.getLikedRecipeIds();
+    }
+
+    // UseCase для удаления рецепта
+    public interface DeleteRecipeCallback {
+        void onDeleteSuccess();
+        void onDeleteFailure(String error);
+    }
+
+    public void deleteRecipe(int recipeId, DeleteRecipeCallback callback) {
+        repository.deleteRecipe(recipeId, new UnifiedRecipeRepository.DeleteRecipeCallback() {
+            @Override public void onDeleteSuccess() {
+                callback.onDeleteSuccess();
+            }
+            @Override public void onDeleteFailure(String error) {
+                callback.onDeleteFailure(error);
+            }
+        });
     }
 } 

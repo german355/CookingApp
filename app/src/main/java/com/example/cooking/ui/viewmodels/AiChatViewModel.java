@@ -10,8 +10,7 @@ import com.example.cooking.data.repositories.ChatRepository;
 import com.example.cooking.data.repositories.RecipeLocalRepository;
 import com.example.cooking.model.Message;
 import com.example.cooking.network.models.chat.ChatMessage;
-import com.example.cooking.network.models.chat.ChatMessageResponse;
-import com.example.cooking.network.models.chat.ChatHistoryResponse;
+
 import com.example.cooking.Recipe.Recipe;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

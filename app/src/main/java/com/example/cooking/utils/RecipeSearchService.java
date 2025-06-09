@@ -42,6 +42,7 @@ public class RecipeSearchService {
      * Поиск рецептов по запросу
      */
     public void searchRecipes(String query, SearchCallback callback) {
+        Log.d(TAG, "searchRecipes start for query: '" + query + "'");
         Log.d(TAG, "-------------- НАЧАЛО ПОИСКА --------------");
         Log.d(TAG, "Поисковый запрос: '" + query + "'");
         
@@ -53,13 +54,14 @@ public class RecipeSearchService {
         
         MySharedPreferences preferences = new MySharedPreferences(context);
         boolean smartSearchEnabled = preferences.getBoolean("smart_search_enabled", true);
+        Log.d(TAG, "smartSearchEnabled: " + smartSearchEnabled);
         
         Log.d("RecipeSearchService", "Smart search enabled from prefs: " + smartSearchEnabled);
         if (smartSearchEnabled) {
+            Log.d(TAG, "Использую умный поиск для запроса: '" + query + "'");
             int page = 1;
             int perPage = 20;
 
-            
             try {
                 // Сбрасываем закэшированные сетевые клиенты
                 NetworkService.reset();
@@ -78,10 +80,12 @@ public class RecipeSearchService {
                 useAsyncCall(smartCall, query, callback);
                 
             } catch (Exception e) { // Этот блок catch теперь будет ловить ошибки, возникшие при подготовке вызова (например, в getApiService или searchRecipes)
+                Log.e(TAG, "Ошибка подготовки умного поиска, exception:", e);
                 showToast("Ошибка умного поиска");
                 fallbackToSimpleSearch(query, callback);
             }
         } else {
+            Log.d(TAG, "smartSearchEnabled=false, переходим к простому поиску");
             fallbackToSimpleSearch(query, callback);
         }
     }
@@ -91,6 +95,7 @@ public class RecipeSearchService {
      */
     private void fallbackToSimpleSearch(String query, SearchCallback callback) {
         Log.d("RecipeSearchService", "Использую простой поиск для запроса: " + query);
+        Log.d(TAG, "fallbackToSimpleSearch start for query: '" + query + "'");
         Call<SearchResponse> call = apiService.searchRecipesSimple(query.trim());
         Log.d("RecipeSearchService", "URL простого поиска: " + call.request().url());
         ApiCallHandler.execute(call, new ApiCallHandler.ApiCallback<SearchResponse>() {
@@ -98,7 +103,7 @@ public class RecipeSearchService {
             public void onSuccess(SearchResponse response) {
                 List<String> ids = response != null && response.getData() != null
                     ? response.getData().getResults() : Collections.emptyList();
-                Log.d("RecipeSearchService", "Простой поиск вернул ID: " + ids.size());
+                Log.d(TAG, "fallbackToSimpleSearch onSuccess ids size: " + ids.size());
                 dbExecutor.execute(() -> {
                     RecipeLocalRepository localRepo = new RecipeLocalRepository(context);
                     List<Recipe> fullRecipes = new ArrayList<>();
@@ -109,11 +114,15 @@ public class RecipeSearchService {
                             if (full != null) fullRecipes.add(full);
                         } catch (NumberFormatException ignore) {}
                     }
-                    uiHandler.post(() -> callback.onSearchResults(fullRecipes));
+                    uiHandler.post(() -> {
+                        callback.onSearchResults(fullRecipes);
+                        Log.d(TAG, "fallbackToSimpleSearch posting fullRecipes size: " + fullRecipes.size());
+                    });
                 });
             }
             @Override
             public void onError(String errorMessage) {
+                Log.e(TAG, "fallbackToSimpleSearch onError: " + errorMessage);
                 callback.onSearchError("Ошибка поиска");
             }
         });
@@ -126,32 +135,34 @@ public class RecipeSearchService {
         ApiCallHandler.execute(callToExecute, new ApiCallHandler.ApiCallback<SearchResponse>() {
             @Override
             public void onSuccess(SearchResponse response) {
+                Log.d(TAG, "useAsyncCall onSuccess response: " + response);
 
                 if (response == null) {
+                    Log.d(TAG, "useAsyncCall response null, fallbackToSimpleSearch");
                     fallbackToSimpleSearch(query, callback);
                     return;
                 }
                 
                 if (response.getData() == null) {
+                    Log.d(TAG, "useAsyncCall data null, fallbackToSimpleSearch");
                     fallbackToSimpleSearch(query, callback);
                     return;
                 }
                 
                 if (response.getData().getResults() == null) {
+                    Log.d(TAG, "useAsyncCall results null, fallbackToSimpleSearch");
                     fallbackToSimpleSearch(query, callback);
                     return;
                 }
                 
                 List<String> ids = response.getData().getResults();
+                Log.d(TAG, "useAsyncCall initial ids size: " + ids.size());
 
                 if (!ids.isEmpty()) {
                     showToast("Найдено " + ids.size() + " рецептов");
-                    
                     dbExecutor.execute(() -> {
                         RecipeLocalRepository localRepo = new RecipeLocalRepository(context);
                         List<Recipe> fullRecipes = new ArrayList<>();
-
-                        
                         int foundCount = 0;
                         int notFoundCount = 0;
                         
@@ -170,17 +181,22 @@ public class RecipeSearchService {
                             }
                         }
 
+                        Log.d(TAG, "useAsyncCall DB load foundCount: " + foundCount + ", notFoundCount: " + notFoundCount + ", fullRecipes size: " + fullRecipes.size());
+                        
                         final List<Recipe> finalRecipes = new ArrayList<>(fullRecipes); // создаем копию для безопасной передачи
                         uiHandler.post(() -> {
+                            Log.d(TAG, "useAsyncCall posting finalRecipes size: " + finalRecipes.size());
                             callback.onSearchResults(finalRecipes);
                         });
                     });
                     return;
                 }
+                Log.d(TAG, "useAsyncCall ids empty, fallbackToSimpleSearch");
                 fallbackToSimpleSearch(query, callback);
             }
             @Override
             public void onError(String errorMessage) {
+                Log.e(TAG, "useAsyncCall onError: " + errorMessage);
                 showToast("Извините но наш поиск решил отдохнуть");
                 fallbackToSimpleSearch(query, callback);
             }

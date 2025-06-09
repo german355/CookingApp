@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.cooking.Recipe.Ingredient;
 import com.example.cooking.Recipe.Recipe;
-import com.example.cooking.data.repositories.LikedRecipesRepository;
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.utils.MySharedPreferences;
 
@@ -27,10 +26,6 @@ import java.util.stream.Collectors;
  */
 public class FavoritesViewModel extends AndroidViewModel {
     private static final String TAG = "FavoritesViewModel";
-    
-    // Репозиторий для работы с избранными рецептами
-    private final LikedRecipesRepository repository;
-    
     // Ссылка на SharedRecipeViewModel
     private SharedRecipeViewModel sharedRecipeViewModel;
     
@@ -56,8 +51,7 @@ public class FavoritesViewModel extends AndroidViewModel {
     
     public FavoritesViewModel(@NonNull Application application) {
         super(application);
-        repository = new LikedRecipesRepository(application);
-        
+
         // Получаем ID пользователя
         MySharedPreferences preferences = new MySharedPreferences(application);
         userId = preferences.getString("userId", "0");
@@ -174,17 +168,6 @@ public class FavoritesViewModel extends AndroidViewModel {
     }
     
     /**
-     * Выполняет поиск среди избранных рецептов
-     */
-    public void performSearch(String query) {
-        if (query == null || query.isEmpty()) {
-            refreshLikedRecipes();
-            return;
-        }
-        searchQuery.setValue(query);
-    }
-    
-    /**
      * Обновляет список избранных рецептов
      */
     public void refreshLikedRecipes() {
@@ -230,50 +213,7 @@ public class FavoritesViewModel extends AndroidViewModel {
     public boolean isUserLoggedIn() {
         return isUserLoggedIn;
     }
-    
-    /**
-     * Обновляет информацию о пользователе и перезагружает данные
-     */
-    public void updateUser(String newUserId) {
-        Log.d(TAG, "Updating user from " + userId + " to " + newUserId);
-        
-        // Обновляем локальное состояние
-        MySharedPreferences preferences = new MySharedPreferences(getApplication());
-        preferences.putString("userId", newUserId);
-        
-        // Если поменялся пользователь, обновляем данные
-        if (sharedRecipeViewModel != null) {
-            // Используем RefreshRecipes вместо того, чтобы заново устанавливать соединение 
-            // с SharedRecipeViewModel - это запустит каскад обновлений через наблюдателей
-            sharedRecipeViewModel.refreshRecipes();
-        }
-        
-        // Сообщаем об изменении
-        Log.d(TAG, "User updated, refreshing data");
-    }
-    
-    /**
-     * Устанавливает наблюдение за изменениями лайков в SharedRecipeViewModel
-     */
-    public void observeLikeChanges(androidx.lifecycle.LifecycleOwner lifecycleOwner, androidx.fragment.app.FragmentActivity activity) {
-        if (sharedRecipeViewModel == null) {
-            // Инициализируем SharedRecipeViewModel, если это еще не было сделано
-            sharedRecipeViewModel = new ViewModelProvider(activity).get(SharedRecipeViewModel.class);
-            
-            // Настраиваем наблюдение за данными из SharedRecipeViewModel
-            setupSharedViewModelObserver();
-            
-            // Настраиваем наблюдение за поисковым запросом
-            setupSearchQueryObserver();
-        }
-        
-        // Наблюдаем за обновлениями в SharedRecipeViewModel
-        sharedRecipeViewModel.getRecipes().observe(lifecycleOwner, resource -> {
-            // Обновление уже происходит через наблюдателей, настроенных в setupSharedViewModelObserver()
-            // Этот метод просто обеспечивает инициализацию SharedRecipeViewModel и подключение наблюдателей
-            Log.d(TAG, "observeLikeChanges: SharedRecipeViewModel обновился");
-        });
-    }
+
     
     /**
      * Изменяет статус лайка рецепта
@@ -292,14 +232,8 @@ public class FavoritesViewModel extends AndroidViewModel {
             return;
         }
         
-        // Обновляем статус лайка в SharedViewModel
-        if (sharedRecipeViewModel != null) {
-            sharedRecipeViewModel.updateLikeStatus(recipe, isLiked);
-        } else {
-            Log.e(TAG, "toggleLikeStatus: SharedRecipeViewModel равен null");
-            // Если SharedViewModel не инициализирован, обновляем напрямую через репозиторий
-            repository.updateLikeStatusLocal(recipe.getId(), isLiked);
-        }
+        sharedRecipeViewModel.updateLikeStatus(recipe, isLiked);
+
     }
     
     /**
@@ -309,10 +243,5 @@ public class FavoritesViewModel extends AndroidViewModel {
         refreshLikedRecipes();
     }
     
-    /**
-     * Обработка запроса поиска от UI (event-driven)
-     */
-    public void onSearchRequested(String query) {
-        searchQuery.setValue(query);
-    }
+
 }

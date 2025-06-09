@@ -7,7 +7,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.cooking.Recipe.Recipe;
-import com.example.cooking.data.repositories.LikedRecipesRepository;
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.utils.MySharedPreferences;
 import java.util.List;
@@ -20,8 +19,7 @@ public class RecipeDetailViewModel extends AndroidViewModel {
     private static final String TAG = "RecipeDetailViewModel";
     
     private final SharedRecipeViewModel sharedRecipeViewModel;
-    private final LikedRecipesRepository likedRecipesRepository;
-    
+
     private final MutableLiveData<Recipe> recipe = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLikedLiveData = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
@@ -40,7 +38,6 @@ public class RecipeDetailViewModel extends AndroidViewModel {
      */
     public RecipeDetailViewModel(@NonNull Application application) {
         super(application);
-        this.likedRecipesRepository = new LikedRecipesRepository(application);
         this.sharedRecipeViewModel = new SharedRecipeViewModel(application);
         
         // Получаем userId текущего пользователя

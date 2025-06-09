@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.cooking.Recipe.Recipe;
-import com.example.cooking.data.repositories.LikedRecipesRepository;
 
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.utils.MySharedPreferences;
@@ -33,7 +32,6 @@ public class HomeViewModel extends AndroidViewModel {
     private static final String TAG = "HomeViewModel";
     
     private final SharedRecipeViewModel sharedRecipeViewModel;
-    private final LikedRecipesRepository likedRecipesRepository;
     private final ExecutorService executor;
     
     // LiveData для состояния загрузки и ошибок
@@ -58,7 +56,6 @@ public class HomeViewModel extends AndroidViewModel {
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
-        this.likedRecipesRepository = new LikedRecipesRepository(application);
         this.executor = Executors.newFixedThreadPool(2);
         
         // init observer fields
@@ -97,30 +94,12 @@ public class HomeViewModel extends AndroidViewModel {
         // Подписываемся на результаты поиска (чтобы HomeFragment сразу получал данные)
         sharedRecipeViewModel.getSearchResults().observeForever(searchResultsObserver);
     }
-    
-    // Поле для хранения LikeSyncViewModel
-    private LikeSyncViewModel likeSyncViewModel;
+
     // Поле для хранения последнего обработанного события лайка
     private LikeSyncViewModel.LikeEvent lastProcessedLikeEvent;
     
-    // Метод для инициализации наблюдения за Shared ViewModel. Вызывается из Фрагмента.
-    public void observeLikeChanges(LifecycleOwner owner, FragmentActivity activity) {
-        if (activity != null) {
-            // Инициализируем Shared ViewModel здесь, используя Activity scope
-            likeSyncViewModel = new ViewModelProvider(activity).get(LikeSyncViewModel.class);
 
-            likeSyncViewModel.getLikeChangeEvent().observe(owner, event -> {
-                if (event != null && !event.equals(lastProcessedLikeEvent)) {
 
-                    updateLocalLikeStatus(event.getRecipeId(), event.isLiked());
-                    updateLikedRepositoryStatus(event.getRecipeId(), event.isLiked());
-
-                    lastProcessedLikeEvent = event;
-                }
-            });
-        }
-    }
-    
     /**
      * Получить LiveData со списком рецептов из локального хранилища
      */
@@ -185,33 +164,7 @@ public class HomeViewModel extends AndroidViewModel {
         recipe.setLiked(isLiked);
         updateLocalRecipeLikeStatus(recipe.getId(), isLiked);
     }
-    
-    /**
-     * Обновляет статус лайка в локальной БД ОСНОВНЫХ рецептов (RecipeEntity).
-     */
-    public void updateLocalLikeStatus(int recipeId, boolean isLiked) {
-        executeIfActive(() -> {
-            try {
 
-                String userId = new MySharedPreferences(getApplication()).getString("userId", "0");
-                Recipe recipe = null;
-                List<Recipe> currentRecipes = recipesLiveData.getValue();
-                if (currentRecipes != null) {
-                    for (Recipe r : currentRecipes) {
-                        if (r.getId() == recipeId) {
-                            recipe = r;
-                            break;
-                        }
-                    }
-                }
-                if (recipe != null) {
-                    sharedRecipeViewModel.updateLikeStatus(recipe, isLiked, userId);
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Error updating like status in local repository", e);
-            }
-        });
-    }
     
     /**
      * Обновляет статус лайка в репозитории
@@ -219,7 +172,6 @@ public class HomeViewModel extends AndroidViewModel {
      * @param isLiked новое состояние лайка
      */
     public void updateLikedRepositoryStatus(int recipeId, boolean isLiked) {
-        String userId = new MySharedPreferences(getApplication()).getString("userId", "0");
         Recipe recipe = null;
         List<Recipe> currentRecipes = recipesLiveData.getValue();
         if (currentRecipes != null) {
@@ -249,20 +201,7 @@ public class HomeViewModel extends AndroidViewModel {
             recipesLiveData.postValue(currentRecipes);
         }
     }
-    
-    /**
-     * Метод, выполняющий операцию в executor с проверкой его состояния
-     * @param task задача для выполнения
-     */
-    private void executeIfActive(Runnable task) {
-        if (executor != null && !executor.isShutdown()) {
-            try {
-                executor.execute(task);
-            } catch (Exception e) {
-                 Log.e(TAG, "Error executing task in executor", e);
-            }
-        }
-    }
+
     
     /**
      * Очистить ресурсы
@@ -288,10 +227,11 @@ public class HomeViewModel extends AndroidViewModel {
  * @param query Строка поиска
  */
 public void searchRecipes(String query) {
-
+    Log.d(TAG, "HomeViewModel.searchRecipes called with query: '" + query + "', isInSearchMode set to true");
     // Запоминаем последний запрос и устанавливаем режим поиска
     lastSearchQuery = query;
     isInSearchMode = true;
+    Log.d(TAG, "HomeViewModel.lastSearchQuery='" + lastSearchQuery + "'");
     
     // Инициируем поиск через SharedRecipeViewModel
     sharedRecipeViewModel.searchRecipes(query);
