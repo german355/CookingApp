@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.cooking.data.database.AppDatabase;
 import com.example.cooking.data.database.LikedRecipeDao;
+import com.example.cooking.data.database.RecipeDao;
 import com.example.cooking.data.models.ApiResponse;
 import com.example.cooking.network.services.UserService;
 import com.example.cooking.auth.FirebaseAuthManager;
@@ -25,6 +26,7 @@ import java.util.concurrent.Executors;
 public class ProfileViewModel extends AndroidViewModel {
     private static final String TAG = "ProfileViewModel";
     private final LikedRecipeDao likedRecipeDao;
+    private final RecipeDao recipeDao;
     private final FirebaseAuthManager authManager;
     private final MySharedPreferences preferences;
     private final UserService userService;
@@ -46,6 +48,7 @@ public class ProfileViewModel extends AndroidViewModel {
         preferences = new MySharedPreferences(application);
         userService = new UserService(application);
         likedRecipeDao = AppDatabase.getInstance(application).likedRecipeDao();
+        recipeDao = AppDatabase.getInstance(application).recipeDao();
         databaseExecutor = Executors.newSingleThreadExecutor();
 
         // Проверяем текущее состояние аутентификации
@@ -278,6 +281,7 @@ public class ProfileViewModel extends AndroidViewModel {
                     if (userId != null && !userId.equals("0")) {
                         // Очищаем лайки пользователя в локальной базе данных
                         likedRecipeDao.deleteAll();
+                        recipeDao.clearAllLikeStatus();
                         Log.d(TAG, "Лайки успешно удалены для пользователя " + userId);
                     } else {
                          Log.w(TAG, "userId недействителен (" + userId + "), удаление лайков пропущено");

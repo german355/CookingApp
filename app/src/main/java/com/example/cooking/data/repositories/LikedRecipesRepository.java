@@ -26,22 +26,18 @@ import com.example.cooking.network.services.NetworkService;
 
 // Импортируем RecipeLocalRepository
 import com.example.cooking.data.repositories.RecipeLocalRepository;
+import com.example.cooking.data.repositories.NetworkRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LikedRecipesRepository {
+public class LikedRecipesRepository extends NetworkRepository {
     private static final String TAG = "LikedRecipesRepository_DEBUG"; // Используем другой тег для отладочных логов
     private static final String API_URL = ServerConfig.BASE_API_URL;
-    private final Context context; // Добавляем Context для проверки сети
     private final LikedRecipeDao likedRecipeDao;
     private final RecipeDao recipeDao;
-    private final ApiService apiService;
-    private final ExecutorService executor;
     private final RecipeLocalRepository recipeLocalRepository; // Добавляем зависимость
 
     public interface LikedRecipesCallback {
@@ -51,18 +47,13 @@ public class LikedRecipesRepository {
     }
 
     public LikedRecipesRepository(Context context) {
-        Log.d(TAG, "Constructor: START"); // <--- Новый лог
-        this.context = context.getApplicationContext(); // Сохраняем Application Context
+        super(context);
+        Log.d(TAG, "Constructor: START");
         AppDatabase db = AppDatabase.getInstance(this.context);
         likedRecipeDao = db.likedRecipeDao();
         recipeDao = db.recipeDao();
-        executor = Executors.newSingleThreadExecutor();
-        // Создаем экземпляр RecipeLocalRepository
         recipeLocalRepository = new RecipeLocalRepository(this.context);
-
-        // Получаем ApiService из NetworkService
-        apiService = NetworkService.getApiService(this.context);
-        Log.d(TAG, "Constructor: END"); // <--- Новый лог
+        Log.d(TAG, "Constructor: END");
     }
 
     /**
@@ -137,7 +128,7 @@ public class LikedRecipesRepository {
             return;
         }
         Log.d(TAG, "syncLikedRecipesFromServer: Network IS available. Proceeding with sync."); // Новый лог
-        executor.execute(this::fetchAndStoreLikedRecipes);
+        executeInBackground(this::fetchAndStoreLikedRecipes);
     }
 
     /**
@@ -179,7 +170,7 @@ public class LikedRecipesRepository {
      * Перезаписывает старые данные.
      */
     private void storeServerLikedRecipes(List<Integer> serverRecipeIds) {
-        executor.execute(() -> {
+        executeInBackground(() -> {
             List<LikedRecipeEntity> likedEntitiesToInsert = new ArrayList<>();
             // формируем список из ID
             for (Integer id : serverRecipeIds) {
@@ -213,7 +204,7 @@ public class LikedRecipesRepository {
      * Используется при действии пользователя "лайкнуть".
      */
     public void insertLikedRecipeLocal(int recipeId) {
-        executor.execute(() -> {
+        executeInBackground(() -> {
             Log.d(TAG, "Добавление лайка в локальную базу: recipeId=" + recipeId);
             likedRecipeDao.insert(new LikedRecipeEntity(recipeId));
         });
@@ -224,7 +215,7 @@ public class LikedRecipesRepository {
      * Используется при действии пользователя "снять лайк" или при удалении рецепта.
      */
     public void deleteLikedRecipeLocal(int recipeId) {
-        executor.execute(() -> {
+        executeInBackground(() -> {
             Log.d(TAG, "Удаление лайка из локальной базы: recipeId=" + recipeId);
             likedRecipeDao.deleteById(recipeId);
         });
@@ -251,22 +242,11 @@ public class LikedRecipesRepository {
         }
         
         // Обновляем статус лайка в таблице recipes
-        executor.execute(() -> {
+        executeInBackground(() -> {
             recipeLocalRepository.updateLikeStatus(recipeId, isLiked);
         });
     }
 
-    /**
-     * Проверка наличия сети.
-     */
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-        }
-        return false;
-    }
 
     /**
      * Получает синхронно список ID лайкнутых рецептов.
@@ -279,7 +259,7 @@ public class LikedRecipesRepository {
      * Отправляет запрос на сервер для добавления лайка и добавляет запись в локальную БД
      */
     public void addLikedRecipe(int recipeId) {
-        executor.execute(() -> {
+        executeInBackground(() -> {
             // Добавляем запись в локальную БД напрямую
             Log.d(TAG, "Добавление лайка напрямую в БД: recipeId=" + recipeId);
             likedRecipeDao.insert(new LikedRecipeEntity(recipeId));
@@ -287,7 +267,7 @@ public class LikedRecipesRepository {
         
         // Код для отправки запроса на сервер
         if (isNetworkAvailable()) {
-            executor.execute(() -> {
+            executeInBackground(() -> {
                 try {
                     Log.d(TAG, "Отправка запроса на лайк рецепта: recipeId=" + recipeId);
                     
@@ -314,7 +294,7 @@ public class LikedRecipesRepository {
      * Отправляет запрос на сервер для удаления лайка и удаляет запись из локальной БД
      */
     public void removeLikedRecipe(int recipeId) {
-        executor.execute(() -> {
+        executeInBackground(() -> {
             // Удаляем запись из локальной БД напрямую
             Log.d(TAG, "Удаление лайка напрямую из БД: recipeId=" + recipeId);
             likedRecipeDao.deleteById(recipeId);
@@ -322,13 +302,9 @@ public class LikedRecipesRepository {
         
         // Код для отправки запроса на сервер
         if (isNetworkAvailable()) {
-            executor.execute(() -> {
+            executeInBackground(() -> {
                 try {
                     Log.d(TAG, "Отправка запроса на снятие лайка: recipeId=" + recipeId);
-                    
-                    // API использует тот же эндпоинт для лайка и снятия лайка
-                    // поэтому отправляем тот же запрос - сервер должен определить действие по наличию/отсутствию записи
-                    // Отправляем запрос на сервер 
                     retrofit2.Call<GeneralServerResponse> call = apiService.toggleLikeRecipe(recipeId);
                     retrofit2.Response<GeneralServerResponse> response = call.execute();
                     
@@ -346,26 +322,5 @@ public class LikedRecipesRepository {
             Log.w(TAG, "Нет подключения к сети, лайк удален только локально");
         }
     }
-    
-    /**
-     * Очищает таблицу лайков при выходе пользователя
-     */
-    public void clearLikedRecipes() {
-        executor.execute(() -> {
-            likedRecipeDao.deleteAll();
-        });
-    }
-    
-    /**
-     * Запускает синхронизацию лайкнутых рецептов с сервера, если это необходимо.
-     * Используется для инициализации данных при логине пользователя.
-     */
-    public void syncLikedRecipesFromServerIfNeeded() {
-        // Запускаем синхронизацию, если пользователь авторизован через Firebase
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            syncLikedRecipesFromServer(); // Вызываем версию без userId
-        } else {
-            Log.d(TAG, "Пропуск синхронизации: пользователь не авторизован");
-        }
-    }
+
 }

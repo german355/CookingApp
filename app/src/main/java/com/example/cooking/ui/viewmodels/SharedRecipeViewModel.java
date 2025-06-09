@@ -29,8 +29,8 @@ import java.util.concurrent.Executors;
 public class SharedRecipeViewModel extends AndroidViewModel {
     private static final String TAG = "SharedRecipeViewModel";
 
-    // Минимальный интервал между обновлениями данных с сервера (5 минут)
-    private static final long MIN_REFRESH_INTERVAL = 2 * 60 * 1000;
+    // Минимальный интервал между обновлениями данных с сервера (3 минуты)
+    private static final long MIN_REFRESH_INTERVAL = 3 * 60 * 1000;
 
     // Use Cases и репозиторий
     private final RecipeUseCases recipeUseCases;
@@ -68,7 +68,8 @@ public class SharedRecipeViewModel extends AndroidViewModel {
      */
     private void initLocalDataObserver() {
         repository.getAllRecipesLocal().observeForever(recipesList -> {
-            if (recipesList != null && !recipesList.isEmpty()) {
+            // Обновляем UI любыми изменениями локальной БД, включая удаление всех элементов
+            if (recipesList != null) {
                 recipes.setValue(Resource.success(recipesList));
                 Log.d(TAG, "Локальные данные обновлены: " + recipesList.size() + " рецептов");
             }

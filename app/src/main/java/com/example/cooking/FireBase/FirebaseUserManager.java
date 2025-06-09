@@ -43,23 +43,6 @@ public class FirebaseUserManager {
         return user != null ? user.getUid() : null;
     }
 
-    /**
-     * Получение email пользователя
-     * @return email пользователя или null, если пользователь не авторизован или email не указан
-     */
-    public String getUserEmail() {
-        FirebaseUser user = getCurrentUser();
-        return user != null ? user.getEmail() : null;
-    }
-
-    /**
-     * Получение номера телефона пользователя
-     * @return номер телефона пользователя или null, если пользователь не авторизован или телефон не указан
-     */
-    public String getUserPhoneNumber() {
-        FirebaseUser user = getCurrentUser();
-        return user != null ? user.getPhoneNumber() : null;
-    }
 
     /**
      * Получение отображаемого имени пользователя

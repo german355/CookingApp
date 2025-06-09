@@ -73,14 +73,6 @@ public interface ApiService {
     Call<RecipesResponse> getRecipes();
     
     /**
-     * Альтернативный метод для получения рецептов в виде строки
-     * Используется как запасной вариант, когда возникают проблемы с десериализацией JSON
-     * @return Call объект с ответом в виде строки
-     */
-    @GET("recipes")
-    Call<String> getRecipesAsString();
-    
-    /**
      * Получает список ID лайкнутых рецептов пользователя.
      * Идентификация пользователя происходит через Firebase токен в заголовках.
      * @return Call объект с ответом типа LikedRecipesResponse
@@ -95,21 +87,6 @@ public interface ApiService {
      */
     @GET("recipes/search-simple")
     Call<SearchResponse> searchRecipesSimple(@Query("q") String query);
-    
-    /**
-     * Расширенный поиск рецептов с пагинацией.
-     * Идентификация пользователя происходит через Firebase токен в заголовках.
-     * @param query строка поиска
-     * @param page номер страницы
-     * @param perPage количество рецептов на странице
-     * @return Call объект с ответом типа SearchResponse
-     */
-    @GET("search")
-    Call<SearchResponse> searchRecipes(
-        @Query("q")        String query,
-        @Query("page")     int page,
-        @Query("per_page") int perPage
-    );
     
     // =============== Рецепты - создание, обновление, удаление ===============
     
@@ -170,6 +147,23 @@ public interface ApiService {
     Call<GeneralServerResponse> toggleLikeRecipe(
         @Path("recipeId") int recipeId
     );
+
+
+    /**
+     * Расширенный поиск рецептов с пагинацией.
+     * Идентификация пользователя происходит через Firebase токен в заголовках.
+     * @param query строка поиска
+     * @param page номер страницы
+     * @param perPage количество рецептов на странице
+     * @return Call объект с ответом типа SearchResponse
+     */
+    @GET("search")
+    Call<SearchResponse> searchRecipes(
+            @Query("q")        String query,
+            @Query("page")     int page,
+            @Query("per_page") int perPage
+    );
+
 
     // =============== AI Chat ===============
 

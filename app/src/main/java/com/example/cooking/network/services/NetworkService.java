@@ -7,13 +7,10 @@ import com.example.cooking.network.api.ApiService;
 import com.example.cooking.network.interceptors.AuthInterceptor;
 import com.example.cooking.network.interceptors.RetryInterceptor;
 
-import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
-import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
-import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;

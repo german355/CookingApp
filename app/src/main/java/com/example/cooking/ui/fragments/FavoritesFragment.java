@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.cooking.ui.activities.MainActivity;
-import com.example.cooking.utils.MySharedPreferences;
+import com.example.cooking.auth.FirebaseAuthManager;
 import com.example.cooking.R;
 import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.ui.adapters.RecipeListAdapter;
@@ -45,20 +45,17 @@ public class FavoritesFragment extends Fragment implements RecipeListAdapter.OnR
     private CircularProgressIndicator progressIndicator;
     private View emptyContainer; // Контейнер для EmptyFavoritesFragment
     
-    private String userId;
-    
     private FavoritesViewModel viewModel;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        MySharedPreferences preferences = new MySharedPreferences(requireContext());
-        userId = preferences.getString("userId", "0");
+        FirebaseAuthManager authManager = FirebaseAuthManager.getInstance();
         
         viewModel = new ViewModelProvider(this).get(FavoritesViewModel.class);
         SharedRecipeViewModel sharedVM = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
         viewModel.setSharedRecipeViewModel(sharedVM);
         
-        if (!viewModel.isUserLoggedIn()) {
+        if (!authManager.isUserSignedIn()) {
             View authBlockView = inflater.inflate(R.layout.fragment_auth_block, container, false);
             Button loginButton = authBlockView.findViewById(R.id.btn_login);
             

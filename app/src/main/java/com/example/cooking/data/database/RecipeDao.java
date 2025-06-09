@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 import androidx.room.Delete;
+import androidx.room.Transaction;
 
 import com.example.cooking.Recipe.Recipe;
 
@@ -24,7 +25,7 @@ public interface RecipeDao {
      * Возвращает результат как {@link LiveData}, что позволяет UI автоматически обновляться при изменениях данных.
      * @return {@link LiveData} со списком всех {@link RecipeEntity}.
      */
-    @Query("SELECT * FROM recipes ")
+    @Query("SELECT * FROM recipes ORDER BY title ASC")
     LiveData<List<RecipeEntity>> getAllRecipes();
     
     /**
@@ -32,7 +33,7 @@ public interface RecipeDao {
      * Синхронный вызов, возвращающий простой список.
      * @return Список всех {@link RecipeEntity}.
      */
-    @Query("SELECT * FROM recipes ")
+    @Query("SELECT * FROM recipes ORDER BY title ASC")
     List<RecipeEntity> getAllRecipesList();
     
     /**
@@ -151,7 +152,7 @@ public interface RecipeDao {
      * Синхронный вызов для непосредственного использования.
      * @return Список {@link RecipeEntity}.
      */
-    @Query("SELECT * FROM recipes ")
+    @Query("SELECT * FROM recipes ORDER BY title ASC")
     List<RecipeEntity> getAllRecipesSync();
 
     /**
@@ -159,4 +160,14 @@ public interface RecipeDao {
      */
     @Query("UPDATE recipes SET isLiked = 0")
     void clearAllLikeStatus();
+
+    /**
+     * Транзакционный метод для атомарного удаления и вставки всех рецептов.
+     * @param recipes Список объектов {@link RecipeEntity} для замены.
+     */
+    @Transaction
+    default void replaceAllRecipes(List<RecipeEntity> recipes) {
+        deleteAll();
+        insertAll(recipes);
+    }
 } 

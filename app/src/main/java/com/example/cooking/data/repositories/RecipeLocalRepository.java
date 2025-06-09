@@ -13,22 +13,20 @@ import com.example.cooking.data.database.RecipeEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Репозиторий для работы с локальной базой данных рецептов
  */
-public class RecipeLocalRepository {
+public class RecipeLocalRepository extends NetworkRepository{
     
     private static final String TAG = "RecipeLocalRepository";
     private final RecipeDao recipeDao;
-    private final ExecutorService executor;
+
     
     public RecipeLocalRepository(Context context) {
+        super(context);
         AppDatabase database = AppDatabase.getInstance(context);
         recipeDao = database.recipeDao();
-        executor = Executors.newSingleThreadExecutor();
     }
     
     /**
@@ -83,7 +81,7 @@ public class RecipeLocalRepository {
         for (Recipe recipe : recipes) {
             entities.add(new RecipeEntity(recipe));
         }
-        executor.execute(() -> recipeDao.insertAll(entities));
+        executeInBackground(() -> recipeDao.insertAll(entities));
     }
     
     /**
@@ -91,7 +89,7 @@ public class RecipeLocalRepository {
      * @param recipe рецепт для вставки
      */
     public void insert(Recipe recipe) {
-        executor.execute(() -> recipeDao.insert(new RecipeEntity(recipe)));
+        executeInBackground(() -> recipeDao.insert(new RecipeEntity(recipe)));
     }
     
     /**
@@ -99,7 +97,7 @@ public class RecipeLocalRepository {
      * @param recipe рецепт для обновления
      */
     public void update(Recipe recipe) {
-        executor.execute(() -> recipeDao.update(new RecipeEntity(recipe)));
+        executeInBackground(() -> recipeDao.update(new RecipeEntity(recipe)));
     }
     
     /**
@@ -164,7 +162,7 @@ public class RecipeLocalRepository {
      * Очистить все рецепты из базы данных
      */
     public void clearAll() {
-        executor.execute(recipeDao::deleteAll);
+        executeInBackground(recipeDao::deleteAll);
     }
     
     /**
@@ -185,7 +183,7 @@ public class RecipeLocalRepository {
      */
     public void deleteRecipe(int recipeId) {
         try {
-            executor.execute(() -> {
+            executeInBackground(() -> {
                 try {
                     RecipeEntity recipe = recipeDao.getRecipeById(recipeId);
                     if (recipe != null) {
@@ -201,5 +199,21 @@ public class RecipeLocalRepository {
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при запуске задачи удаления рецепта: " + recipeId, e);
         }
+    }
+    
+    /**
+     * Заменить все рецепты в базе данных, используя транзакционный метод DAO.
+     * @param recipes список новых рецептов
+     */
+    public void replaceAllRecipes(List<Recipe> recipes) {
+        List<RecipeEntity> entities = new ArrayList<>();
+        if (recipes != null) {
+            for (Recipe recipe : recipes) {
+                entities.add(new RecipeEntity(recipe));
+            }
+        }
+        // Вызываем транзакционный метод DAO для атомарной замены
+        recipeDao.replaceAllRecipes(entities);
+        Log.d(TAG, "Все рецепты заменены в локальной БД через recipeDao.replaceAllRecipes");
     }
 }

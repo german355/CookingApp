@@ -3,6 +3,7 @@ package com.example.cooking.ui.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -20,6 +21,7 @@ import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.NavOptions;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
 
 import com.example.cooking.R;
 import com.example.cooking.ui.fragments.HomeFragment;
@@ -39,7 +41,6 @@ import java.util.Set;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.content.res.ColorStateList;
-import androidx.core.content.ContextCompat;
 
 /**
  * Главная активность приложения.
@@ -140,10 +141,8 @@ public class MainActivity extends AppCompatActivity {
             // Следим за изменениями пункта назначения для обновления UI
             navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
                 int id = destination.getId();
-                boolean showAddButton = id != R.id.nav_profile &&
-                        id != R.id.destination_profile &&
-                        id != R.id.destination_auth &&
-                        id != R.id.destination_settings;
+                // Показываем FAB кнопку только на HomeFragment
+                boolean showAddButton = id == R.id.nav_home;
                 viewModel.setShowAddButton(showAddButton);
                 
                 // Показываем поиск только на главном экране, в каталоге и в избранном
@@ -350,6 +349,13 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
+        // Меняем цвет иконки поиска в зависимости от темы
+        int nightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (nightMode == Configuration.UI_MODE_NIGHT_YES) {
+            searchItem.getIcon().setTint(ContextCompat.getColor(this, android.R.color.white));
+        } else {
+            searchItem.getIcon().setTint(ContextCompat.getColor(this, android.R.color.black));
+        }
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setQueryHint("Поиск по рецептам");
         int searchPlateId = searchView.getContext().getResources().getIdentifier(

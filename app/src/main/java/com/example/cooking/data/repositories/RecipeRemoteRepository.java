@@ -20,12 +20,10 @@ import retrofit2.Call;
 /**
  * Репозиторий для работы с удаленным API рецептов
  */
-public class RecipeRemoteRepository {
+public class RecipeRemoteRepository extends NetworkRepository {
 
     private static final String TAG = "RecipeRemoteRepository";
 
-    private final Context context;
-    private final ApiService apiService;
     private final MySharedPreferences preferences;
 
     public interface RecipesCallback {
@@ -34,9 +32,8 @@ public class RecipeRemoteRepository {
     }
 
     public RecipeRemoteRepository(Context context) {
-        this.context = context.getApplicationContext();
+        super(context);
         this.preferences = new MySharedPreferences(context);
-        this.apiService = NetworkService.getApiService(context);
     }
 
     /**
@@ -73,14 +70,5 @@ public class RecipeRemoteRepository {
         });
     }
 
-    /**
-     * Проверяет доступность сети
-     * 
-     * @return true, если сеть доступна, иначе false
-     */
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
+
 }
