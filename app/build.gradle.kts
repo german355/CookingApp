@@ -71,7 +71,7 @@ dependencies {
     implementation("androidx.security:security-crypto:1.0.0")
     implementation("com.squareup.picasso:picasso:2.8")
 
-    // WorkManager для фоновой синхронизации в LTR-клиенте
+    // WorkManager для фоновой синхронизации 
     implementation("androidx.work:work-runtime:2.9.0")
 
     // RxJava
@@ -81,8 +81,8 @@ dependencies {
 
     // Зависимости Navigation Component
     val nav_version = "2.7.7"
-    // implementation("androidx.navigation:navigation-fragment-ktx:$nav_version") // Используем ktx для Kotlin - ЗАМЕНЯЕТСЯ
-    // implementation("androidx.navigation:navigation-ui-ktx:$nav_version") // Используем ktx для Kotlin - ЗАМЕНЯЕТСЯ
+    //implementation("androidx.navigation:navigation-fragment-ktx:$nav_version") // Используем ktx для Kotlin
+    //implementation("androidx.navigation:navigation-ui-ktx:$nav_version") // Используем ktx для Kotlin
     implementation("androidx.navigation:navigation-fragment:$nav_version") // Java версия
     implementation("androidx.navigation:navigation-ui:$nav_version") // Java версия
 }
