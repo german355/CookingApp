@@ -163,6 +163,7 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
         Recipe recipe = getItem(position);
+        Log.d(TAG, "Binding recipe at position=" + position + ", id=" + recipe.getId() + ", liked=" + recipe.isLiked());
 
         holder.titleTextView.setText(recipe.getTitle());
         
@@ -195,6 +196,7 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
         // Обработчик нажатия на кнопку "Нравится"
         holder.favoriteButton.setOnClickListener(v -> {
             boolean isChecked = holder.favoriteButton.isChecked();
+            Log.d(TAG, "Favorite button clicked for recipeId=" + recipe.getId() + ", newLiked=" + isChecked);
 
             if (likeListener != null) {
                 // Временно отключаем кнопку для предотвращения многократных быстрых нажатий,

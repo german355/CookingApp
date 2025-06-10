@@ -97,7 +97,7 @@ public interface ApiService {
      */
     @Multipart
     @POST("recipes/add")
-    Call<GeneralServerResponse> addRecipe(
+    Single<GeneralServerResponse> addRecipe(
             @Part("title") RequestBody title,
             @Part("ingredients") RequestBody ingredients,
             @Part("instructions") RequestBody instructions,
@@ -109,7 +109,7 @@ public interface ApiService {
      */
     @Multipart
     @POST("recipes/add")
-    Call<GeneralServerResponse> addRecipeWithoutPhoto(
+    Single<GeneralServerResponse> addRecipeWithoutPhoto(
             @Part("title") RequestBody title,
             @Part("ingredients") RequestBody ingredients,
             @Part("instructions") RequestBody instructions
@@ -120,7 +120,7 @@ public interface ApiService {
      */
     @Multipart
     @PUT("recipes/update/{id}")
-    Call<GeneralServerResponse> updateRecipe(
+    Single<GeneralServerResponse> updateRecipe(
             @Path("id") int recipeId,
             @Header("X-User-Permission") String permissionHeader,
             @Part("title") RequestBody title,

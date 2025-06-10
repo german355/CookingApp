@@ -58,7 +58,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
 
     public EditRecipeViewModel(@NonNull Application application) {
         super(application);
-        unifiedRecipeRepository = new UnifiedRecipeRepository(application, Executors.newSingleThreadExecutor());
+        unifiedRecipeRepository = new UnifiedRecipeRepository(application);
         preferences = new MySharedPreferences(application);
         executor = Executors.newSingleThreadExecutor();
     }
@@ -192,8 +192,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
         newStep.setNumber(newList.size() + 1); // Устанавливаем номер
         newList.add(newStep);
         steps.setValue(newList);
-        // Убираем валидацию при добавлении нового пустого шага
-        // validateStepsList(); // Перепроверяем валидность списка
+
     }
 
     /**

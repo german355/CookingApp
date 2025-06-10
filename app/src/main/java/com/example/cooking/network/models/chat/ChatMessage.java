@@ -1,6 +1,7 @@
 package com.example.cooking.network.models.chat;
 
 import com.google.gson.annotations.SerializedName;
+import java.util.List;
 
 /**
  * Модель сообщения для AI-чата (DTO)
@@ -15,6 +16,12 @@ public class ChatMessage {
 
     @SerializedName("timestamp")
     private String timestamp;
+
+    @SerializedName("has_recipes")
+    private boolean hasRecipes;
+
+    @SerializedName("recipe_ids")
+    private List<Integer> recipeIds;
 
     public boolean isUser() {
         return isUser;
@@ -38,5 +45,21 @@ public class ChatMessage {
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public boolean isHasRecipes() {
+        return hasRecipes;
+    }
+
+    public void setHasRecipes(boolean hasRecipes) {
+        this.hasRecipes = hasRecipes;
+    }
+
+    public List<Integer> getRecipeIds() {
+        return recipeIds;
+    }
+
+    public void setRecipeIds(List<Integer> recipeIds) {
+        this.recipeIds = recipeIds;
     }
 }

@@ -84,9 +84,7 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
         if (resource != null && resource.isSuccess()) {
             applyFilters(filterKey, filterType, resource);
         } else {
-            // Если данных еще нет, запускаем загрузку, а фильтрация произойдет 
-            // автоматически через observeForever при получении данных
-            sharedViewModel.refreshIfNeeded();
+
         }
     }
     

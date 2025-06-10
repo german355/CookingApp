@@ -26,7 +26,7 @@ public class RecipeUseCases {
     public RecipeUseCases(Application application, ExecutorService executor) {
         this.application = application;
         this.executor = executor;
-        this.repository = new UnifiedRecipeRepository(application, executor);
+        this.repository = new UnifiedRecipeRepository(application);
         this.connectivityManager = (android.net.ConnectivityManager) application.getSystemService(android.content.Context.CONNECTIVITY_SERVICE);
     }
     
@@ -184,11 +184,8 @@ public class RecipeUseCases {
     public void toggleLike(String userId, int recipeId, MutableLiveData<String> errorMessageLiveData) {
         // Проверяем доступность сети перед установкой лайка
         if (!isNetworkAvailable()) {
-            // Отображаем уведомление о невозможности поставить лайк в офлайн-режиме
             errorMessageLiveData.setValue("Вы в офлайн режиме и не можете ставить лайки");
-            // Показываем Toast
             android.widget.Toast.makeText(application, "Вы в офлайн режиме и не можете ставить лайки", android.widget.Toast.LENGTH_SHORT).show();
-            return;
         }
         
         if (userId == null || userId.equals("0") || userId.isEmpty()) {
@@ -227,20 +224,17 @@ public class RecipeUseCases {
     }
 
     public void setLikeStatus(String userId, int recipeId, boolean newLikeStatus, MutableLiveData<String> errorMessageLiveData) {
+        android.util.Log.d("RecipeUseCases", "setLikeStatus called: id=" + recipeId + " liked=" + newLikeStatus + " networkAvailable=" + isNetworkAvailable());
         // Проверяем доступность сети перед установкой статуса лайка
         if (!isNetworkAvailable()) {
-            // Отображаем уведомление о невозможности поставить лайк в офлайн-режиме
             errorMessageLiveData.setValue("Вы в офлайн режиме и не можете ставить лайки");
-            // Показываем Toast
             android.widget.Toast.makeText(application, "Вы в офлайн режиме и не можете ставить лайки", android.widget.Toast.LENGTH_SHORT).show();
-            return;
         }
         
         if (userId == null || userId.equals("0") || userId.isEmpty()) {
             errorMessageLiveData.setValue("Войдите, чтобы установить статус лайка");
-            return;
         }
-        repository.setLikeStatus( recipeId, newLikeStatus);
+        repository.setLikeStatus(recipeId, newLikeStatus);
     }
 
     // RxJava-based searchRecipes

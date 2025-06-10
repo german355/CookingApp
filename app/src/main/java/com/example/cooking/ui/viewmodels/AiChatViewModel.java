@@ -41,11 +41,28 @@ public class AiChatViewModel extends AndroidViewModel {
                 welcome.add(new Message(getApplication().getString(R.string.chat_welcome), false));
                 messages.setValue(welcome);
             } else if (response != null && response.getMessages() != null) {
-                List<Message> domainMessages = new ArrayList<>();
-                for (ChatMessage chatMsg : response.getMessages()) {
-                    domainMessages.add(new Message(chatMsg.getMessage(), chatMsg.isUser()));
-                }
-                messages.setValue(domainMessages);
+                // Загрузка истории с рецептами: формируем список сообщений и прикрепляем рецепты сразу после каждого ответа
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                executor.execute(() -> {
+                    RecipeLocalRepository localRepo = new RecipeLocalRepository(getApplication());
+                    List<Message> fullList = new ArrayList<>();
+                    for (ChatMessage chatMsg : response.getMessages()) {
+                        // текстовое сообщение
+                        fullList.add(new Message(chatMsg.getMessage(), chatMsg.isUser()));
+                        // вложенные рецепты (если есть)
+                        if (chatMsg.getRecipeIds() != null && !chatMsg.getRecipeIds().isEmpty()) {
+                            List<Recipe> recipes = new ArrayList<>();
+                            for (Integer id : chatMsg.getRecipeIds()) {
+                                Recipe recipe = localRepo.getRecipeByIdSync(id);
+                                if (recipe != null) recipes.add(recipe);
+                            }
+                            if (!recipes.isEmpty()) {
+                                fullList.add(new Message(recipes));
+                            }
+                        }
+                    }
+                    messages.postValue(fullList);
+                });
             }
         });
     }

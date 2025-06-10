@@ -69,8 +69,8 @@ public class MainViewModel extends AndroidViewModel {
      * Проверяет состояние авторизации пользователя
      */
     public void checkAuthState() {
-        String userId = preferences.getString("userId", "0");
-        isUserLoggedIn.setValue(!userId.equals("0"));
+        // Используем проверку FirebaseAuth вместо SharedPreferences
+        isUserLoggedIn.setValue(authManager.isUserSignedIn());
     }
 
     /**
@@ -168,7 +168,9 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void triggerLoginEvent() {
+        // Событие успешного входа и обновление статуса авторизации
         loginEvent.setValue(null);
+        isUserLoggedIn.setValue(true);
     }
 
     public LiveData<Void> getLogoutEvent() {

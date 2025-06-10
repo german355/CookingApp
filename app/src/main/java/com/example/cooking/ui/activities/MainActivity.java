@@ -491,7 +491,7 @@ if (current == null || current.getId() != R.id.nav_home) {
         MenuItem searchItem = menu.findItem(R.id.action_search);
         int id = navController.getCurrentDestination() != null
             ? navController.getCurrentDestination().getId() : -1;
-        boolean visible = id == R.id.nav_home || id == R.id.nav_favorites;
+        boolean visible = id == R.id.nav_home;
         searchItem.setVisible(visible);
         if (!visible && searchItem.isActionViewExpanded()) {
             searchItem.collapseActionView();

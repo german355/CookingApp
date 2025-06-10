@@ -14,6 +14,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import retrofit2.Call;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 /**
  * Сервис для работы с пользователем
  */
@@ -93,5 +95,10 @@ public class UserService {
         return apiService.requestPasswordReset(new PasswordResetRequest(email))
             .ignoreElement()
             .subscribeOn(Schedulers.io());
+    }
+
+    // Проверяет, авторизован ли пользователь через Firebase
+    public static boolean isUserLoggedIn() {
+        return FirebaseAuth.getInstance().getCurrentUser() != null;
     }
 } 

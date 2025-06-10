@@ -56,7 +56,7 @@ public class AddRecipeViewModel extends AndroidViewModel {
     public AddRecipeViewModel(@NonNull Application application) {
         super(application);
         preferences = new MySharedPreferences(application);
-        unifiedRecipeRepository = new UnifiedRecipeRepository(application, java.util.concurrent.Executors.newSingleThreadExecutor());
+        unifiedRecipeRepository = new UnifiedRecipeRepository(application);
 
         // Инициализируем списки с одним пустым элементом
         ArrayList<Ingredient> initialIngredients = new ArrayList<>();
