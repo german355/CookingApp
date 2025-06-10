@@ -17,7 +17,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Утилитный класс для обработки API-запросов
+ * Утилитный класс для обработки API-запросов(Не трогать, работает)
  */
 public class ApiCallHandler {
     private static final String TAG = "ApiCallHandler";

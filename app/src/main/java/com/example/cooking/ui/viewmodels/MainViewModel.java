@@ -58,8 +58,8 @@ public class MainViewModel extends AndroidViewModel {
         checkAuthState();
         // Инициализация Google Sign In перенесена во ViewModel
         initGoogleSignIn(getApplication().getString(R.string.default_web_client_id));
-        // Первичная загрузка рецептов
-        sharedRecipeViewModel.loadInitialRecipes();
+        // Первичная загрузка рецептов происходит автоматически при первом обращении к getRecipes()
+        // sharedRecipeViewModel.loadInitialRecipes(); // Убираем дублирование запросов
         // Обработка событий поиска и добавления рецепта
         searchQueryEvent.observeForever(sharedRecipeViewModel::searchRecipes);
         recipeAddedEvent.observeForever(ignored -> sharedRecipeViewModel.refreshRecipes());

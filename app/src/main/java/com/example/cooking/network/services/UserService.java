@@ -78,24 +78,7 @@ public class UserService {
         return apiService.registerUser(new com.example.cooking.auth.UserRegisterRequest(email, name, firebaseId))
             .subscribeOn(Schedulers.io());
     }
-    
-    /**
-     * RxJava Single для сохранения данных пользователя (saveUser)
-     */
-    public Single<ApiResponse> saveUserSingle(String userId, String username, String email, int permission) {
-        return apiService.registerUser(new com.example.cooking.auth.UserRegisterRequest(email, username, userId))
-            .subscribeOn(Schedulers.io());
-    }
-    
-    /**
-     * RxJava Completable для сброса пароля
-     */
-    public Completable requestPasswordResetSingle(String email) {
-        // Преобразуем Single<ApiResponse> в Completable
-        return apiService.requestPasswordReset(new PasswordResetRequest(email))
-            .ignoreElement()
-            .subscribeOn(Schedulers.io());
-    }
+
 
     // Проверяет, авторизован ли пользователь через Firebase
     public static boolean isUserLoggedIn() {

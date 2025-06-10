@@ -6,6 +6,7 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import com.example.cooking.auth.FirebaseAuthManager;
 import com.example.cooking.ui.activities.MainActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +17,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -197,17 +201,21 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
         holder.favoriteButton.setOnClickListener(v -> {
             boolean isChecked = holder.favoriteButton.isChecked();
             Log.d(TAG, "Favorite button clicked for recipeId=" + recipe.getId() + ", newLiked=" + isChecked);
-
+            
+            // Проверяем авторизацию пользователя
+            if (!FirebaseAuthManager.getInstance().isUserSignedIn()) {
+                // Пользователь не авторизован, показываем уведомление и навигацию
+                showLoginRequiredDialog(v);
+                // Возвращаем кнопку в исходное состояние
+                holder.favoriteButton.setChecked(!isChecked);
+                return;
+            }
+            
+            // Пользователь авторизован, обрабатываем лайк
             if (likeListener != null) {
-                // Временно отключаем кнопку для предотвращения многократных быстрых нажатий,
-                // пока выполняется операция добавления/удаления из избранного.
                 holder.favoriteButton.setEnabled(false);
-                
                 likeListener.onRecipeLike(recipe, isChecked);
-                
-                // Включаем кнопку обратно с небольшой задержкой.
-                // Это простое решение для предотвращения двойных кликов.
-                // В более сложных сценариях может потребоваться управление состоянием через ViewModel.
+                // Включаем кнопку обратно с небольшой задержкой
                 holder.favoriteButton.postDelayed(() -> holder.favoriteButton.setEnabled(true), 500); // 500 мс задержка
             }
         });
@@ -268,5 +276,27 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
                 cardView.setLayoutParams(params);
             }
         }
+    }
+    
+    /**
+     * Показывает диалоговое окно и навигацию к AuthFragment
+     * @param anchorView View для навигации и получения контекста
+     */
+    private void showLoginRequiredDialog(View anchorView) {
+        Context context = anchorView.getContext();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.auth_required_title)
+               .setMessage(R.string.auth_required_message)
+               .setPositiveButton(R.string.login, (dialog, which) -> {
+                   // Навигация к AuthFragment через NavController на переданном view
+                   try {
+                       NavController navController = Navigation.findNavController(anchorView);
+                       navController.navigate(R.id.destination_auth);
+                   } catch (Exception e) {
+                       Toast.makeText(context, R.string.please_login_to_continue, Toast.LENGTH_SHORT).show();
+                   }
+               })
+               .setNegativeButton(R.string.cancel, null)
+               .show();
     }
 } 

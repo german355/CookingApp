@@ -1,6 +1,7 @@
 package com.example.cooking.domain.usecases;
 
 import android.app.Application;
+import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.cooking.Recipe.Recipe;
@@ -8,11 +9,7 @@ import com.example.cooking.data.repositories.RecipeRemoteRepository;
 import com.example.cooking.data.repositories.UnifiedRecipeRepository;
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.utils.RecipeSearchService;
-import io.reactivex.rxjava3.core.Completable;
-import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.schedulers.Schedulers;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -88,7 +85,8 @@ public class RecipeUseCases {
         // Проверяем доступность сети перед загрузкой данных
         if (!isNetworkAvailable()) {
             // Если сеть недоступна, загружаем данные из локального кэша
-            executor.execute(() -> {
+            if (!executor.isShutdown()) {
+                executor.execute(() -> {
                 try {
                     // Получаем все рецепты из локальной базы данных
                     List<Recipe> localRecipes = repository.getAllRecipesSync();
@@ -133,7 +131,15 @@ public class RecipeUseCases {
                         onComplete.run();
                     }
                 }
-            });
+                });
+            } else {
+                Log.w("RecipeUseCases", "ExecutorService закрыт, выходим из метода без выполнения задач");
+                isRefreshingLiveData.postValue(false);
+                if (onComplete != null) {
+                    onComplete.run();
+                }
+                return;
+            }
             return;
         }
         
@@ -153,23 +159,38 @@ public class RecipeUseCases {
                 // Если при загрузке с сервера произошла ошибка, но это офлайн-режим,
                 // то загружаем данные из кэша
                 if (error.contains("офлайн режиме")) {
-                    executor.execute(() -> {
-                        List<Recipe> localRecipes = repository.getAllRecipesSync();
-                        if (localRecipes != null && !localRecipes.isEmpty()) {
-                            if (recipesLiveData != null) {
-                                recipesLiveData.postValue(Resource.success(localRecipes));
+                    if (!executor.isShutdown()) {
+                        executor.execute(() -> {
+                            List<Recipe> localRecipes = repository.getAllRecipesSync();
+                            if (localRecipes != null && !localRecipes.isEmpty()) {
+                                if (recipesLiveData != null) {
+                                    recipesLiveData.postValue(Resource.success(localRecipes));
+                                }
+                            } else {
+                                if (recipesLiveData != null) {
+                                    recipesLiveData.postValue(Resource.error("Нет сохраненных рецептов для отображения в офлайн режиме", null));
+                                }
                             }
-                        } else {
-                            if (recipesLiveData != null) {
-                                recipesLiveData.postValue(Resource.error("Нет сохраненных рецептов для отображения в офлайн режиме", null));
-                            }
+                        });
+                    } else {
+                        Log.w("RecipeUseCases", "ExecutorService закрыт, пропускаем выполнение задачи");
+                        if (recipesLiveData != null) {
+                            recipesLiveData.postValue(Resource.error("ExecutorService закрыт", null));
                         }
-                    });
+                    }
                 } else {
                     // Это обычная ошибка загрузки
                     errorMessageLiveData.postValue(error);
                     if (recipesLiveData != null) {
-                        recipesLiveData.postValue(Resource.error(error, null));
+                        if (!executor.isShutdown()) {
+                            executor.execute(() -> {
+                                List<Recipe> localRecipes = repository.getAllRecipesSync();
+                                recipesLiveData.postValue(Resource.error(error, localRecipes));
+                            });
+                        } else {
+                            Log.w("RecipeUseCases", "ExecutorService закрыт, пропускаем выполнение задачи для обычной ошибки");
+                            recipesLiveData.postValue(Resource.error(error, null));
+                        }
                     }
                 }
                 
@@ -180,36 +201,7 @@ public class RecipeUseCases {
             }
         });
     }
-    
-    public void toggleLike(String userId, int recipeId, MutableLiveData<String> errorMessageLiveData) {
-        // Проверяем доступность сети перед установкой лайка
-        if (!isNetworkAvailable()) {
-            errorMessageLiveData.setValue("Вы в офлайн режиме и не можете ставить лайки");
-            android.widget.Toast.makeText(application, "Вы в офлайн режиме и не можете ставить лайки", android.widget.Toast.LENGTH_SHORT).show();
-        }
-        
-        if (userId == null || userId.equals("0") || userId.isEmpty()) {
-            errorMessageLiveData.setValue("Войдите, чтобы добавить рецепт в избранное");
-            return;
-        }
-        repository.toggleLike(recipeId);
-    }
 
-    public void addLike(String userId, int recipeId, MutableLiveData<String> errorMessageLiveData) {
-        if (userId == null || userId.equals("0") || userId.isEmpty()) {
-            errorMessageLiveData.setValue("Войдите, чтобы добавить рецепт в избранное");
-            return;
-        }
-        setLikeStatus(userId, recipeId, true, errorMessageLiveData);
-    }
-
-    public void removeLike(String userId, int recipeId, MutableLiveData<String> errorMessageLiveData) {
-        if (userId == null || userId.equals("0") || userId.isEmpty()) {
-            errorMessageLiveData.setValue("Войдите, чтобы убрать рецепт из избранного");
-            return;
-        }
-        setLikeStatus(userId, recipeId, false, errorMessageLiveData);
-    }
     
     /**
      * Проверяет доступность сети
@@ -237,56 +229,7 @@ public class RecipeUseCases {
         repository.setLikeStatus(recipeId, newLikeStatus);
     }
 
-    // RxJava-based searchRecipes
-    public Single<List<Recipe>> searchRecipesRx(String query, boolean smartSearchEnabled) {
-        return Single.create(emitter -> {
-            if (smartSearchEnabled) {
-                RecipeSearchService searchService = new RecipeSearchService(application);
-                searchService.searchRecipes(query, new RecipeSearchService.SearchCallback() {
-                    @Override public void onSearchResults(List<Recipe> recipes) {
-                        emitter.onSuccess(recipes);
-                    }
-                    @Override public void onSearchError(String error) {
-                        emitter.onError(new Throwable(error));
-                    }
-                });
-            } else {
-                executor.execute(() -> {
-                    List<Recipe> all = repository.getAllRecipesSync();
-                    List<Recipe> filtered = new ArrayList<>();
-                    for (Recipe r : all) {
-                        if (r.getTitle() != null && r.getTitle().toLowerCase().contains(query.toLowerCase())) {
-                            filtered.add(r);
-                        }
-                    }
-                    emitter.onSuccess(filtered);
-                });
-            }
-        });
-    }
 
-    // RxJava-based toggleLike
-    public Completable toggleLikeRx(String userId, int recipeId) {
-        return Completable.fromAction(() -> {
-            if (!isNetworkAvailable()) throw new IllegalStateException("Offline mode");
-            if (userId == null || userId.equals("0") || userId.isEmpty()) throw new IllegalArgumentException("User not logged in");
-            repository.toggleLike(recipeId);
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-    }
-
-    // RxJava-based deleteRecipe
-    public Completable deleteRecipeRx(int recipeId) {
-        return Completable.create(emitter -> {
-            repository.deleteRecipe(recipeId, new UnifiedRecipeRepository.DeleteRecipeCallback() {
-                @Override public void onDeleteSuccess() {
-                    emitter.onComplete();
-                }
-                @Override public void onDeleteFailure(String error) {
-                    emitter.onError(new Throwable(error));
-                }
-            });
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-    }
 
     // Доступ к локальным данным через UseCase
     public LiveData<List<Recipe>> getAllRecipesLocalLiveData() {

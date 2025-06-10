@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
 public class RecipeDetailViewModel extends AndroidViewModel {
     private static final String TAG = "RecipeDetailViewModel";
     
-    private final SharedRecipeViewModel sharedRecipeViewModel;
+    private SharedRecipeViewModel sharedRecipeViewModel;
 
     private final MutableLiveData<Recipe> recipe = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLikedLiveData = new MutableLiveData<>(false);
@@ -39,14 +39,23 @@ public class RecipeDetailViewModel extends AndroidViewModel {
      */
     public RecipeDetailViewModel(@NonNull Application application) {
         super(application);
-        this.sharedRecipeViewModel = new SharedRecipeViewModel(application);
-        
-        // FirebaseAuth для проверки авторизации
+        // НЕ создаем новый экземпляр, так как это приводит к дублированию запросов!
+        // SharedRecipeViewModel должен передаваться извне или создаваться через ViewModelProvider
+        this.sharedRecipeViewModel = null; // Временно устанавливаем null
+    }
+    
+    /**
+     * Устанавливает SharedRecipeViewModel (должен вызываться из Activity/Fragment)
+     */
+    public void setSharedRecipeViewModel(SharedRecipeViewModel sharedRecipeViewModel) {
+        this.sharedRecipeViewModel = sharedRecipeViewModel;
         
         // Propagate errors from SharedRecipeViewModel to this ViewModel
-        sharedRecipeViewModel.getErrorMessage().observeForever(err -> {
-            if (err != null && !err.isEmpty()) errorMessage.postValue(err);
-        });
+        if (sharedRecipeViewModel != null) {
+            sharedRecipeViewModel.getErrorMessage().observeForever(err -> {
+                if (err != null && !err.isEmpty()) errorMessage.postValue(err);
+            });
+        }
     }
     
     /**
@@ -63,6 +72,11 @@ public class RecipeDetailViewModel extends AndroidViewModel {
      * Загружает рецепт из SharedRecipeViewModel
      */
     private void loadRecipe() {
+        if (sharedRecipeViewModel == null) {
+            errorMessage.setValue("SharedRecipeViewModel не установлен");
+            return;
+        }
+        
         isLoading.setValue(true);
         
         // Подписываемся на обновления рецептов
@@ -82,13 +96,12 @@ public class RecipeDetailViewModel extends AndroidViewModel {
                     errorMessage.postValue(resource.getMessage());
                 }
                 isLoading.postValue(false);
-                // Удаляем наблюдателя после получения данных
-                sharedRecipeViewModel.getRecipes().removeObserver(this);
+                // Не удаляем наблюдателя: разрешаем обновление после изменений
             }
         });
         
-        // Запрашиваем обновление данных, если нужно
-        sharedRecipeViewModel.loadInitialRecipesIfNeeded();
+        // Убираем дополнительный вызов, который может вызывать дублирование запросов
+        // sharedRecipeViewModel.loadInitialRecipesIfNeeded();
     }
     
     /**
@@ -107,6 +120,11 @@ public class RecipeDetailViewModel extends AndroidViewModel {
      * Переключает лайк для текущего рецепта
      */
     public void toggleLike() {
+        if (sharedRecipeViewModel == null) {
+            errorMessage.setValue("SharedRecipeViewModel не установлен");
+            return;
+        }
+        
         // Проверяем, вошел ли пользователь через Firebase
         FirebaseUser userToggle = FirebaseAuth.getInstance().getCurrentUser();
         if (userToggle == null) {
@@ -129,6 +147,11 @@ public class RecipeDetailViewModel extends AndroidViewModel {
      * Удаляет рецепт
      */
     public void deleteRecipe() {
+        if (sharedRecipeViewModel == null) {
+            errorMessage.setValue("SharedRecipeViewModel не установлен");
+            return;
+        }
+        
         if (!sharedRecipeViewModel.isNetworkAvailable()) {
             errorMessage.setValue("Отсутствует подключение к интернету");
             return;
@@ -162,7 +185,7 @@ public class RecipeDetailViewModel extends AndroidViewModel {
      * Проверяет подключение к интернету
      */
     private boolean isNetworkAvailable() {
-        return sharedRecipeViewModel.isNetworkAvailable();
+        return sharedRecipeViewModel != null && sharedRecipeViewModel.isNetworkAvailable();
     }
     
     /**

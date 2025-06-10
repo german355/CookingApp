@@ -46,4 +46,11 @@
     <string name="chat_cleared">Чат очищен</string>
     <string name="error_clearing_chat">Не удалось очистить чат</string>
     <string name="chat_welcome">Здравствуйте! Я ваш виртуальный помощник. Чем могу помочь?</string>
+    
+    <!-- Auth Dialog Strings -->
+    <string name="auth_required_title">Требуется вход</string>
+    <string name="auth_required_message">Чтобы добавить рецепт в избранное, войдите в свой аккаунт</string>
+    <string name="login">Войти</string>
+    <string name="cancel">Отмена</string>
+    <string name="please_login_to_continue">Пожалуйста, войдите в аккаунт, чтобы продолжить</string>
 </resources>

@@ -47,67 +47,6 @@ public class LikedRecipesRepository extends NetworkRepository {
         Log.d(TAG, "Constructor: END");
     }
 
-    /**
-     * Получить LiveData ПОЛНЫХ лайкнутых рецептов из локальной базы данных (Room).
-     * Загружает ID лайков, затем по этим ID получает полные данные из
-     * RecipeLocalRepository.
-     * Это основной метод для получения данных в UI.
-     */
-    public LiveData<List<Recipe>> getLikedRecipes() {
-        Log.d(TAG, "getLikedRecipes: START"); // <--- Новый лог
-        // Запускаем фоновую синхронизацию лайков
-        syncLikedRecipesFromServer();
-        Log.d(TAG, "getLikedRecipes: Called syncLikedRecipesFromServer"); // <--- Новый лог
-
-        // Получаем LiveData списка ID лайкнутых рецептов
-        LiveData<List<LikedRecipeEntity>> likedEntitiesLiveData = likedRecipeDao.getLikedRecipes();
-
-        // Используем Transformations.switchMap для загрузки полных данных по ID
-        return Transformations.switchMap(likedEntitiesLiveData, entities -> {
-            MediatorLiveData<List<Recipe>> fullRecipesLiveData = new MediatorLiveData<>();
-            if (entities == null || entities.isEmpty()) {
-                fullRecipesLiveData.setValue(new ArrayList<>()); // Если лайков нет, возвращаем пустой список
-                return fullRecipesLiveData;
-            }
-
-            // Получаем LiveData всех рецептов из локальной базы
-            LiveData<List<Recipe>> allLocalRecipesLiveData = recipeLocalRepository.getAllRecipes();
-
-            // Используем MediatorLiveData для объединения данных
-            fullRecipesLiveData.addSource(allLocalRecipesLiveData, allLocalRecipes -> {
-                List<Recipe> likedFullRecipes = new ArrayList<>();
-                if (allLocalRecipes != null && !entities.isEmpty()) {
-                    // Создаем карту всех локальных рецептов для быстрого доступа по ID
-                    java.util.Map<Integer, Recipe> allRecipesMap = new java.util.HashMap<>();
-                    for (Recipe r : allLocalRecipes) {
-                        allRecipesMap.put(r.getId(), r);
-                    }
-
-                    // Формируем список лайкнутых рецептов с полными данными
-                    for (LikedRecipeEntity entity : entities) {
-                        Recipe fullRecipe = allRecipesMap.get(entity.getRecipeId());
-                        if (fullRecipe != null) {
-                            // Важно: Устанавливаем флаг isLiked вручную, т.к. он берется из общей таблицы
-                            fullRecipe.setLiked(true);
-                            likedFullRecipes.add(fullRecipe);
-                        } else {
-                            // Если полного рецепта нет в локальной базе (маловероятно при правильной
-                            // синхронизации)
-                            // Можно добавить заглушку или пропустить
-                            Log.w(TAG, "Полный рецепт для liked recipeId " + entity.getRecipeId()
-                                    + " не найден в RecipeLocalRepository");
-                        }
-                    }
-                }
-                // Сортируем по ID или дате, если нужно
-                // Collections.sort(likedFullRecipes, ...);
-                fullRecipesLiveData.setValue(likedFullRecipes);
-                Log.d(TAG, "Сформирован полный список лайкнутых рецептов: " + likedFullRecipes.size());
-            });
-
-            return fullRecipesLiveData;
-        });
-    }
 
     /**
      * Запускает синхронизацию с сервером если есть сеть
@@ -214,18 +153,6 @@ public class LikedRecipesRepository extends NetworkRepository {
                 );
     }
 
-    /**
-     * Удалить лайкнутый рецепт из локальной базы.
-     * Используется при действии пользователя "снять лайк" или при удалении рецепта.
-     */
-    public void deleteLikedRecipeLocal(int recipeId) {
-        Completable.fromAction(() -> likedRecipeDao.deleteById(recipeId))
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                        () -> {},
-                        throwable -> Log.e(TAG, "Ошибка deleteLikedRecipeLocal", throwable)
-                );
-    }
 
     /**
      * Проверить, лайкнут ли рецепт локально (синхронно).
@@ -297,5 +224,24 @@ public class LikedRecipesRepository extends NetworkRepository {
      */
     public void clearDisposables() {
         disposables.clear();
+    }
+    
+    /**
+     * Полностью очищает все лайки пользователя.
+     * Используется при выходе из аккаунта.
+     */
+    public void clearAllLikes() {
+        Completable.fromAction(() -> {
+            // Очищаем таблицу лайков
+            likedRecipeDao.deleteAll();
+            // Сбрасываем флаги isLiked у всех рецептов
+            recipeDao.clearAllLikeStatus();
+            Log.d(TAG, "Все лайки успешно очищены");
+        })
+        .subscribeOn(Schedulers.io())
+        .subscribe(
+            () -> {},
+            throwable -> Log.e(TAG, "Ошибка при очистке всех лайков", throwable)
+        );
     }
 }

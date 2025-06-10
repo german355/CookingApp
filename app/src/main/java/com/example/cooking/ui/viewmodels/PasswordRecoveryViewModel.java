@@ -6,19 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import android.util.Patterns;
 
-import com.example.cooking.data.models.ApiResponse;
-import com.example.cooking.data.models.PasswordResetRequest;
-import com.example.cooking.data.models.PasswordResetResponse;
-import com.example.cooking.network.api.ApiService;
-import com.example.cooking.network.services.NetworkService;
-
-import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
-
-// import com.example.cooking.data.repository.UserRepository; // Пример
-// import com.example.cooking.domain.usecase.PasswordRecoveryUseCase; // Пример
+import com.example.cooking.domain.usecases.PasswordRecoveryUseCase;
 
 public class PasswordRecoveryViewModel extends AndroidViewModel {
 
@@ -31,15 +19,12 @@ public class PasswordRecoveryViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> _isLoading = new MutableLiveData<>();
     public LiveData<Boolean> isLoading = _isLoading;
 
-    private ApiService apiService;
-
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    private final PasswordRecoveryUseCase recoveryUseCase;
 
     // Конструктор
     public PasswordRecoveryViewModel(Application application) {
         super(application);
-        // Получаем экземпляр сервиса.
-        apiService = NetworkService.getApiService(application.getApplicationContext());
+        recoveryUseCase = new PasswordRecoveryUseCase(application);
     }
 
 
@@ -48,36 +33,19 @@ public class PasswordRecoveryViewModel extends AndroidViewModel {
     }
 
     public void requestPasswordRecovery() {
-        _isLoading.setValue(true);
         String currentEmail = _email.getValue();
-
-        if (currentEmail == null || currentEmail.trim().isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(currentEmail).matches()) {
+        if (currentEmail == null || currentEmail.trim().isEmpty() ||
+            !Patterns.EMAIL_ADDRESS.matcher(currentEmail).matches()) {
             _recoveryStatus.setValue(new RecoveryStatus.Error("Введите корректный email"));
             _isLoading.setValue(false);
             return;
         }
-
-        // Сетевой запрос через RxJava
-        disposables.add(
-            apiService.requestPasswordReset(new PasswordResetRequest(currentEmail))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    response -> {
-                        _isLoading.postValue(false);
-                        _recoveryStatus.postValue(new RecoveryStatus.Success(response.getMessage()));
-                    },
-                    throwable -> {
-                        _isLoading.postValue(false);
-                        _recoveryStatus.postValue(new RecoveryStatus.Error(throwable.getMessage()));
-                    }
-                )
-        );
+        recoveryUseCase.requestPasswordRecovery(currentEmail, _isLoading, _recoveryStatus);
     }
 
     @Override
     protected void onCleared() {
-        disposables.clear();
+        recoveryUseCase.clear();
         super.onCleared();
     }
 

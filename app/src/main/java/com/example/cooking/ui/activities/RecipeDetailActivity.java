@@ -152,6 +152,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
         // Инициализируем и настраиваем ViewModel
         viewModel = new ViewModelProvider(this).get(RecipeDetailViewModel.class);
         
+        // Получаем общий экземпляр SharedRecipeViewModel и устанавливаем его в RecipeDetailViewModel
+        com.example.cooking.ui.viewmodels.SharedRecipeViewModel sharedRecipeViewModel = 
+            new ViewModelProvider(this).get(com.example.cooking.ui.viewmodels.SharedRecipeViewModel.class);
+        viewModel.setSharedRecipeViewModel(sharedRecipeViewModel);
+        
         // Получаем уровень доступа пользователя
         com.example.cooking.utils.MySharedPreferences preferences = new com.example.cooking.utils.MySharedPreferences(this);
         int permissionLevel = preferences.getInt("permission", 1);

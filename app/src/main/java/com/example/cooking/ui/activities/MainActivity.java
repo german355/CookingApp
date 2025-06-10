@@ -99,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
         // Обновление меню при смене фрагмента
         navController.addOnDestinationChangedListener((controller, destination, args) -> invalidateOptionsMenu());
 
-        // Загрузка данных о рецептах при старте приложения
-        sharedRecipeViewModel.loadInitialRecipes();
+        // Загрузка данных о рецептах уже происходит в MainViewModel
+        // sharedRecipeViewModel.loadInitialRecipes(); // Убираем дублирование
 
         // Устанавливаем цвет статус-бара программно
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -200,11 +200,19 @@ public class MainActivity extends AppCompatActivity {
         // Настраиваем кнопку добавления рецепта
         addButton.setOnClickListener(v -> viewModel.toggleFabMenu());
         fabAddRecipe.setOnClickListener(v -> {
-            startActivity(new Intent(this, AddRecipeActivity.class));
+            if (viewModel.isUserLoggedIn()) {
+                startActivity(new Intent(this, AddRecipeActivity.class));
+            } else {
+                Toast.makeText(this, R.string.please_login_to_continue, Toast.LENGTH_SHORT).show();
+            }
             viewModel.toggleFabMenu();
         });
         fabChat.setOnClickListener(v -> {
-            startActivity(new Intent(this, AiChatActivity.class));
+            if (viewModel.isUserLoggedIn()) {
+                startActivity(new Intent(this, AiChatActivity.class));
+            } else {
+                Toast.makeText(this, R.string.please_login_to_continue, Toast.LENGTH_SHORT).show();
+            }
             viewModel.toggleFabMenu();
         });
     }

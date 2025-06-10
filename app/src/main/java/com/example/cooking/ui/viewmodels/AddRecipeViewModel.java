@@ -93,7 +93,7 @@ public class AddRecipeViewModel extends AndroidViewModel {
         
         // Получаем ID пользователя
         String userId = preferences.getString("userId", "99");
-        
+        Log.d(TAG, userId);
         // Подготавливаем данные
         String titleText = title.getValue();
         List<Ingredient> ingredientsList = ingredients.getValue();

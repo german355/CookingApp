@@ -57,6 +57,12 @@ public class SharedRecipeViewModel extends AndroidViewModel {
     // Время последнего обновления данных с сервера
     private long lastRefreshTime = 0;
 
+    // Флаг для предотвращения множественных одновременных запросов
+    private volatile boolean isCurrentlyRefreshing = false;
+
+    // Флаг для отслеживания режима поиска
+    private final MutableLiveData<Boolean> isInSearchMode = new MutableLiveData<>(false);
+
     // Handler для периодического обновления
     private final Handler periodicHandler = new Handler(Looper.getMainLooper());
     // Запускаемый Runnable для обновления с сервера
@@ -76,8 +82,7 @@ public class SharedRecipeViewModel extends AndroidViewModel {
 
         // Инициализация наблюдения за данными из локального репозитория
         initLocalDataObserver();
-        // Запускаем периодический таск обновления
-        periodicHandler.postDelayed(periodicRunnable, MIN_REFRESH_INTERVAL);
+         periodicHandler.postDelayed(periodicRunnable, MIN_REFRESH_INTERVAL);
     }
 
     /**
@@ -125,9 +130,16 @@ public class SharedRecipeViewModel extends AndroidViewModel {
     }
 
     /**
+     * Получить LiveData с состоянием режима поиска
+     */
+    public LiveData<Boolean> getIsInSearchMode() {
+        return isInSearchMode;
+    }
+
+    /**
      * Загрузка рецептов при первом запуске
      */
-    public void loadInitialRecipes() {
+    public synchronized void loadInitialRecipes() {
         if (!isInitialLoadDone) {
             Log.d(TAG, "Выполняется первичная загрузка рецептов");
 
@@ -135,18 +147,33 @@ public class SharedRecipeViewModel extends AndroidViewModel {
             loadLocalRecipesAndThenRefresh();
             isInitialLoadDone = true;
         } else {
-            updateFromServerInBackground();
+            Log.d(TAG, "Первичная загрузка уже выполнена, пропускаем");
         }
     }
 
     /**
      * Загружает локальные данные, а затем запускает обновление с сервера
      */
-    private void loadLocalRecipesAndThenRefresh() {
+    private synchronized void loadLocalRecipesAndThenRefresh() {
+        // Проверяем, не выполняется ли уже обновление
+        if (isCurrentlyRefreshing) {
+            Log.d(TAG, "Обновление уже выполняется, пропускаем дублирующий запрос");
+            return;
+        }
+        
+        isCurrentlyRefreshing = true;
+        Log.d(TAG, "Начинаем загрузку локальных данных и обновление с сервера");
+        
         // Показ локальных данных через initLocalDataObserver, затем синхронизация через UseCase
         isRefreshing.setValue(true);
         recipeUseCases.refreshRecipes(isRefreshing, errorMessage, recipes,
-            () -> isRefreshing.setValue(false)
+            () -> {
+                isRefreshing.setValue(false);
+                synchronized (this) {
+                    isCurrentlyRefreshing = false; // Сбрасываем флаг после завершения
+                    Log.d(TAG, "Загрузка локальных данных и обновление с сервера завершены");
+                }
+            }
         );
     }
 
@@ -199,7 +226,14 @@ public class SharedRecipeViewModel extends AndroidViewModel {
     /**
      * Обновление списка рецептов с сервера
      */
-    public void refreshRecipes() {
+    public synchronized void refreshRecipes() {
+        // Проверяем, не выполняется ли уже обновление
+        if (isCurrentlyRefreshing) {
+            Log.d(TAG, "Обновление уже выполняется, пропускаем запрос");
+            return;
+        }
+        
+        isCurrentlyRefreshing = true;
         isRefreshing.setValue(true);
         Log.d(TAG, "Обновление рецептов с сервера...");
 
@@ -207,7 +241,11 @@ public class SharedRecipeViewModel extends AndroidViewModel {
         lastRefreshTime = System.currentTimeMillis();
 
         // Используем Use Case для обновления рецептов
-        recipeUseCases.refreshRecipes(isRefreshing, errorMessage, recipes, null);
+        recipeUseCases.refreshRecipes(isRefreshing, errorMessage, recipes, () -> {
+            synchronized (this) {
+                isCurrentlyRefreshing = false; // Сбрасываем флаг после завершения
+            }
+        });
     }
 
     /**
@@ -226,10 +264,6 @@ public class SharedRecipeViewModel extends AndroidViewModel {
         Log.d(TAG, "SharedRecipeViewModel: invoking recipeUseCases.setLikeStatus");
         // Используем UseCase для установки статуса лайка
         recipeUseCases.setLikeStatus(userId, recipeId, isLiked, errorMessage);
-        Log.d(TAG, "SharedRecipeViewModel: recipeUseCases.setLikeStatus invoked");
-
-        // Логирование можно оставить здесь или перенести в UseCase/Repository, если нужно
-        Log.d(TAG, "Запрошено обновление статуса лайка рецепта " + recipeId + " на " + isLiked);
     }
 
 
@@ -237,6 +271,9 @@ public class SharedRecipeViewModel extends AndroidViewModel {
      * Выполнить поиск среди рецептов
      */
     public void searchRecipes(String query) {
+        // Устанавливаем режим поиска
+        isInSearchMode.setValue(true);
+        
         // Используем UseCase для поиска, он управляет isRefreshing и LiveData
         isRefreshing.setValue(true);
         // Получаем настройку умного поиска из SharedPreferences
@@ -257,13 +294,22 @@ public class SharedRecipeViewModel extends AndroidViewModel {
     public void loadLocalRecipes() {
         // UI обновится через LiveData observer, индикатор сбрасываем
         isRefreshing.setValue(false);
-        // Получаем все рецепты из локального хранилища и обновляем результаты поиска
+        // Получаем все рецепты из локального хранилища и обновляем основной список
         List<Recipe> all = repository.getAllRecipesSync();
-        searchResults.setValue(all);
         recipes.setValue(Resource.success(all));
     }
 
-
+    /**
+     * Выход из режима поиска - показываем все рецепты
+     */
+    public void exitSearchMode() {
+        // Выходим из режима поиска
+        isInSearchMode.setValue(false);
+        // Очищаем результаты поиска
+        searchResults.setValue(null);
+        // Отключаем индикатор загрузки
+        isRefreshing.setValue(false);
+    }
 
     /**
      * Интерфейс для колбэка удаления рецепта
@@ -356,8 +402,31 @@ public class SharedRecipeViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        executor.shutdown();
-        disposables.clear();
+        Log.d(TAG, "onCleared() вызван - начинаем очистку ресурсов");
+        
+        // Останавливаем периодические задачи
         periodicHandler.removeCallbacks(periodicRunnable);
+        
+        // Очищаем disposables
+        disposables.clear();
+        
+        // Безопасно закрываем executor
+        if (!executor.isShutdown()) {
+            Log.d(TAG, "Закрываем ExecutorService");
+            executor.shutdown();
+            try {
+                // Ждем завершения выполняющихся задач максимум 2 секунды
+                if (!executor.awaitTermination(2, java.util.concurrent.TimeUnit.SECONDS)) {
+                    Log.w(TAG, "ExecutorService не завершился за 2 секунды, принудительно останавливаем");
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                Log.w(TAG, "Прерывание при ожидании завершения ExecutorService", e);
+                executor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        } else {
+            Log.d(TAG, "ExecutorService уже закрыт");
+        }
     }
 }

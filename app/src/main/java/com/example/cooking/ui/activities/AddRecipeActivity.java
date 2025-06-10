@@ -38,6 +38,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import com.example.cooking.auth.FirebaseAuthManager;
 
 /**
  * Активность для добавления нового рецепта
@@ -290,7 +291,8 @@ public class AddRecipeActivity extends AppCompatActivity implements
         saveButton.setOnClickListener(v -> {
             MySharedPreferences prefs = new MySharedPreferences(AddRecipeActivity.this);
             String userId = prefs.getUserId();
-            if (userId == null || userId.isEmpty() || "0".equals(userId)) {
+            Log.d(TAG, userId);
+            if (!FirebaseAuthManager.getInstance().isUserSignedIn()) {
                 Toast.makeText(AddRecipeActivity.this, "Войдите в систему, чтобы добавлять рецепты", Toast.LENGTH_LONG).show();
                 return;
             }

@@ -12,17 +12,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.cooking.auth.FirebaseAuthManager;
-import com.example.cooking.data.repositories.LikedRecipesRepository;
-import com.example.cooking.utils.MySharedPreferences;
+import com.example.cooking.domain.usecases.AuthUseCase;
 import com.example.cooking.data.models.ApiResponse;
-import com.example.cooking.network.services.UserService;
-import com.google.firebase.auth.FirebaseUser;
-
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 /**
  * ViewModel для управления аутентификацией пользователя
@@ -30,11 +21,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class AuthViewModel extends AndroidViewModel {
     private static final String TAG = "AuthViewModel";
 
-    private final FirebaseAuthManager authManager;
-    private final MySharedPreferences preferences;
-    private final UserService userService;
-    private final LikedRecipesRepository likedRecipesRepository;
-    private final CompositeDisposable disposables = new CompositeDisposable();
+    private final AuthUseCase authUseCase;
 
     // LiveData для состояний UI
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
@@ -59,11 +46,7 @@ public class AuthViewModel extends AndroidViewModel {
 
     public AuthViewModel(@NonNull Application application) {
         super(application);
-        authManager = new FirebaseAuthManager(application);
-        preferences = new MySharedPreferences(application);
-        userService = new UserService(application);
-        likedRecipesRepository = new LikedRecipesRepository(application);
-
+        authUseCase = new AuthUseCase(application);
         checkAuthenticationState();
     }
 
@@ -71,17 +54,7 @@ public class AuthViewModel extends AndroidViewModel {
      * Проверяет текущее состояние аутентификации пользователя
      */
     private void checkAuthenticationState() {
-        FirebaseUser currentUser = authManager.getCurrentUser();
-        if (currentUser != null) {
-            isAuthenticated.setValue(true);
-
-            // Загружаем данные пользователя из SharedPreferences
-            displayName.setValue(preferences.getString("username", ""));
-            email.setValue(preferences.getString("email", ""));
-            permission.setValue(preferences.getInt("permission", 1));
-        } else {
-            isAuthenticated.setValue(false);
-        }
+        authUseCase.checkAuthenticationState(isAuthenticated, displayName, email, permission);
     }
 
     /**
@@ -92,38 +65,10 @@ public class AuthViewModel extends AndroidViewModel {
             return;
         }
 
-        isLoading.setValue(true);
-
-        disposables.add(
-            authManager.signInWithEmailAndPasswordSingle(email, password)
-                .flatMap(user -> {
-                    likedRecipesRepository.syncLikedRecipesFromServer();
-                    return userService.loginFirebaseUserSingle()
-                        .map(resp -> new Pair<>(user, resp));
-                })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    pair -> {
-                        FirebaseUser user = pair.first;
-                        ApiResponse resp = pair.second;
-                        String internal = resp.getUserId();
-                        int perm = resp.getPermission();
-                        if (internal == null || internal.isEmpty()) {
-                            internal = user.getUid();
-                        }
-                        if (perm == 0) {
-                            perm = 1;
-                        }
-                        saveUserData(user, internal, perm);
-                        isLoading.postValue(false);
-                        isAuthenticated.postValue(true);
-                    },
-                    err -> {
-                        errorMessage.setValue(err.getMessage());
-                        isLoading.setValue(false);
-                    }
-                )
+        authUseCase.signInWithEmailPassword(
+            email, password,
+            isLoading, isAuthenticated, displayName, this.email, permission,
+            errorMessage
         );
     }
 
@@ -135,40 +80,9 @@ public class AuthViewModel extends AndroidViewModel {
             return;
         }
 
-        isLoading.setValue(true);
-        pendingEmail = email;
-        pendingUsername = username;
-        pendingPermissionLevel = 1;
-
-        disposables.add(
-            authManager.registerWithEmailAndPasswordSingle(email, password)
-                .flatMap(user -> authManager.updateUserDisplayNameCompletable(user, username).andThen(Single.just(user)))
-                .flatMap(user -> userService.saveUserSingle(user.getUid(), username, pendingEmail, pendingPermissionLevel)
-                    .map(resp -> new Pair<>(user, resp)))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    pair -> {
-                        FirebaseUser user = pair.first;
-                        ApiResponse resp = pair.second;
-                        String internal = resp.getUserId();
-                        int perm = resp.getPermission();
-                        if (internal == null || internal.isEmpty()) {
-                            internal = user.getUid();
-                        }
-                        if (perm == 0) {
-                            perm = pendingPermissionLevel;
-                        }
-                        saveUserData(user, internal, perm);
-                        isLoading.postValue(false);
-                        isAuthenticated.postValue(true);
-                    },
-                    err -> {
-                        isLoading.setValue(false);
-                        errorMessage.setValue(err.getMessage());
-                        Log.e(TAG, "registerUser Rx error: " + err.getMessage());
-                    }
-                )
+        authUseCase.registerUser(
+            email, password, username, pendingPermissionLevel,
+            isLoading, errorMessage, isAuthenticated
         );
     }
 
@@ -176,47 +90,27 @@ public class AuthViewModel extends AndroidViewModel {
      * Выполняет выход пользователя
      */
     public void signOut() {
-        authManager.signOut();
-
-        // Очищаем данные пользователя из SharedPreferences
-        preferences.putString("userId", "0");
-        preferences.putString("username", "");
-        preferences.putString("email", "");
-        preferences.putInt("permission", 1);
-
-        // Обновляем LiveData
-        isAuthenticated.setValue(false);
-        displayName.setValue("");
-        email.setValue("");
-        permission.setValue(1);
+        authUseCase.signOut(isLoading, isAuthenticated);
     }
 
     /**
-     * Сохраняет данные пользователя в SharedPreferences
+     * Обрабатывает результат входа через Google
      * 
-     * @param user            Firebase пользователь
-     * @param internalUserId  Внутренний ID пользователя, полученный от нашего
-     *                        сервера
-     * @param permissionLevel Уровень прав пользователя, полученный от нашего
-     *                        сервера
+     * @param requestCode код запроса
+     * @param resultCode  код результата
+     * @param data        данные Intent
      */
-    private void saveUserData(FirebaseUser user, String internalUserId, int permissionLevel) {
-        String userName = user.getDisplayName() != null ? user.getDisplayName() : "";
-        String userEmail = user.getEmail() != null ? user.getEmail() : "";
+    public void handleGoogleSignInResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != AuthUseCase.RC_SIGN_IN) {
+            isLoading.setValue(false);
+            return;
+        }
 
-        // Сохраняем ВНУТРЕННИЙ ID в SharedPreferences
-        Log.d(TAG, "Сохранение userId в SharedPreferences: " + internalUserId);
-        preferences.putString("userId", internalUserId);
-        preferences.putString("username", userName);
-        preferences.putString("email", userEmail);
-        // Сохраняем УРОВЕНЬ ПРАВ
-        Log.d(TAG, "Сохранение permission в SharedPreferences: " + permissionLevel);
-        preferences.putInt("permission", permissionLevel);
-
-        // Обновляем LiveData
-        displayName.postValue(userName);
-        email.postValue(userEmail);
-        permission.postValue(permissionLevel);
+        authUseCase.handleGoogleSignInResult(
+            data,
+            isLoading, isAuthenticated, displayName, this.email, permission,
+            errorMessage
+        );
     }
 
     /**
@@ -382,7 +276,7 @@ public class AuthViewModel extends AndroidViewModel {
      * Проверяет, авторизован ли пользователь
      */
     public boolean isUserLoggedIn() {
-        return authManager.getCurrentUser() != null;
+        return authUseCase.isUserLoggedIn();
     }
 
     /**
@@ -391,7 +285,7 @@ public class AuthViewModel extends AndroidViewModel {
      * @param webClientId идентификатор из google-services.json
      */
     public void initGoogleSignIn(String webClientId) {
-        authManager.initGoogleSignIn(getApplication().getApplicationContext(), webClientId);
+        authUseCase.initGoogleSignIn(getApplication().getApplicationContext(), webClientId);
     }
 
     /**
@@ -402,72 +296,16 @@ public class AuthViewModel extends AndroidViewModel {
     public void signInWithGoogle(android.app.Activity activity) {
         isLoading.setValue(true);
         try {
-            authManager.signInWithGoogle(activity);
+            authUseCase.signInWithGoogle(activity);
         } catch (Exception e) {
             errorMessage.setValue(e.getMessage());
             isLoading.setValue(false);
         }
     }
 
-    /**
-     * Обрабатывает результат входа через Google
-     * 
-     * @param requestCode код запроса
-     * @param resultCode  код результата
-     * @param data        данные Intent
-     */
-    public void handleGoogleSignInResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode != FirebaseAuthManager.RC_SIGN_IN) {
-            isLoading.setValue(false);
-            return;
-        }
-        disposables.add(
-            // Получаем FirebaseUser через Rx
-            authManager.handleGoogleSignInResultSingle(data)
-                .subscribeOn(Schedulers.io())
-                .flatMap(user ->
-                    // Пытаемся логиниться на сервере
-                    userService.loginFirebaseUserSingle()
-                        .onErrorResumeNext(err ->
-                            // При провале регистрация пробуем регистрировать
-                            userService.registerFirebaseUserSingle(user.getEmail(), user.getDisplayName(), user.getUid())
-                                .flatMap(reg -> userService.loginFirebaseUserSingle())
-                        )
-                        // Возвращаем пару (user, serverResponse)
-                        .map(resp -> new android.util.Pair<>(user, resp))
-                )
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(d -> isLoading.setValue(true))
-                .doFinally(() -> isLoading.setValue(false))
-                .subscribe(
-                    pair -> {
-                        FirebaseUser user = pair.first;
-                        ApiResponse resp = pair.second;
-                        String internalId = resp.getUserId();
-                        int perm = resp.getPermission();
-                        if (internalId == null || internalId.isEmpty()) internalId = user.getUid();
-                        if (perm == 0) perm = 1;
-                        saveUserData(user, internalId, perm);
-                        isAuthenticated.setValue(true);
-                        likedRecipesRepository.syncLikedRecipesFromServer();
-                        Log.d(TAG, "Google Sign-In: успешный вход, ID=" + internalId + ", Права=" + perm);
-                    },
-                    t -> {
-                        // Не удалось ни логин, ни регистрация
-                        FirebaseUser cur = authManager.getCurrentUser();
-                        if (cur != null) {
-                            saveUserData(cur, cur.getUid(), 1);
-                            isAuthenticated.setValue(true);
-                        }
-                        errorMessage.setValue("Ошибка авторизации: " + t.getMessage());
-                    }
-                )
-        );
-    }
-
     @Override
     protected void onCleared() {
-        disposables.clear();
+        authUseCase.clear();
         super.onCleared();
     }
 }

@@ -4,34 +4,25 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import java.util.ArrayList;
-import java.util.List;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import android.content.Intent;
-import android.widget.Toast;
-
-import com.example.cooking.ui.activities.MainActivity;
-import com.example.cooking.utils.MySharedPreferences;
 import com.example.cooking.R;
 import com.example.cooking.Recipe.Recipe;
-import com.example.cooking.ui.adapters.RecipeListAdapter;
-import com.example.cooking.ui.activities.AddRecipeActivity;
-import com.example.cooking.utils.RecipeSearchService;
-import com.example.cooking.ui.viewmodels.SharedRecipeViewModel;
 import com.example.cooking.network.utils.Resource;
-import android.widget.SearchView;
+import com.example.cooking.ui.adapters.RecipeListAdapter;
+import com.example.cooking.ui.viewmodels.SharedRecipeViewModel;
+import com.example.cooking.utils.MySharedPreferences;
+
+import java.util.List;
 
 /**
  * Фрагмент главного экрана.
@@ -99,23 +90,51 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         swipeRefreshLayout.setOnRefreshListener(() -> sharedRecipeViewModel.refreshRecipes());
         
         // Подписываемся на LiveData из SharedRecipeViewModel
-        sharedRecipeViewModel.getRecipes().observe(getViewLifecycleOwner(), resource -> {
-            if (resource.getStatus() == Resource.Status.SUCCESS && resource.getData()!=null) {
-                adapter.submitList(resource.getData());
-                showEmptyView(resource.getData().isEmpty());
-            } else if (resource.getStatus() == Resource.Status.ERROR) {
-                showEmptyView(true);
-                Toast.makeText(requireContext(), resource.getMessage(), Toast.LENGTH_SHORT).show();
+        
+        // Наблюдение за режимом поиска для определения, какие данные показывать
+        sharedRecipeViewModel.getIsInSearchMode().observe(getViewLifecycleOwner(), isInSearchMode -> {
+            if (isInSearchMode != null && isInSearchMode) {
+                // В режиме поиска - показываем результаты поиска
+                // Логика обновления будет в наблюдателе searchResults
+            } else {
+                // Не в режиме поиска - показываем основной список рецептов
+                // Обновляем данные из основного списка
+                if (sharedRecipeViewModel.getRecipes().getValue() != null && 
+                    sharedRecipeViewModel.getRecipes().getValue().getData() != null) {
+                    adapter.submitList(sharedRecipeViewModel.getRecipes().getValue().getData());
+                    showEmptyView(sharedRecipeViewModel.getRecipes().getValue().getData().isEmpty());
+                }
             }
         });
-        sharedRecipeViewModel.getIsRefreshing().observe(getViewLifecycleOwner(), isRefreshing -> swipeRefreshLayout.setRefreshing(isRefreshing));
+        
+        // Наблюдение за основным списком рецептов
+        sharedRecipeViewModel.getRecipes().observe(getViewLifecycleOwner(), resource -> {
+            // Отображаем данные только если НЕ в режиме поиска
+            Boolean isInSearchMode = sharedRecipeViewModel.getIsInSearchMode().getValue();
+            if ((isInSearchMode == null || !isInSearchMode) && resource.getData() != null) {
+                adapter.submitList(resource.getData());
+                showEmptyView(resource.getData().isEmpty());
+            }
+        });
+        
+        // Наблюдение за результатами поиска
+        sharedRecipeViewModel.getSearchResults().observe(getViewLifecycleOwner(), searchResults -> {
+            // Отображаем результаты поиска только если В режиме поиска
+            Boolean isInSearchMode = sharedRecipeViewModel.getIsInSearchMode().getValue();
+            if (isInSearchMode != null && isInSearchMode && searchResults != null) {
+                adapter.submitList(searchResults);
+                showEmptyView(searchResults.isEmpty());
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        
+        // Наблюдение за состоянием загрузки
+        sharedRecipeViewModel.getIsRefreshing().observe(getViewLifecycleOwner(), isRefreshing -> 
+            swipeRefreshLayout.setRefreshing(isRefreshing));
+            
+        // Наблюдение за ошибками
         sharedRecipeViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) showErrorMessage(error);
-        });
-        sharedRecipeViewModel.getSearchResults().observe(getViewLifecycleOwner(), searchResults -> {
-            adapter.submitList(searchResults);
-            showEmptyView(searchResults.isEmpty());
-            swipeRefreshLayout.setRefreshing(false);
         });
         
         return view;
@@ -137,7 +156,6 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
      */
     @Override
     public void onRecipeLike(Recipe recipe, boolean isLiked) {
-        Log.d(TAG, "onRecipeLike: recipeId=" + recipe.getId() + ", isLiked=" + isLiked);
         if (recipe != null) {
             sharedRecipeViewModel.updateLikeStatus(recipe, isLiked);
         }
@@ -213,9 +231,9 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         // Показываем индикатор загрузки
         swipeRefreshLayout.setRefreshing(true);
         
-        // Если пустой запрос — выходим из режима поиска и показываем все локальные рецепты
+        // Если пустой запрос — выходим из режима поиска и показываем все рецепты
         if (query == null || query.trim().isEmpty()) {
-            sharedRecipeViewModel.loadLocalRecipes();
+            sharedRecipeViewModel.exitSearchMode();
             return;
         }
         

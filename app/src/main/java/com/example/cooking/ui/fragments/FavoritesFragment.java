@@ -234,7 +234,9 @@ public class FavoritesFragment extends Fragment implements RecipeListAdapter.OnR
     @Override
     public void onResume() {
         super.onResume();
-        viewModel.onRefreshRequested();
+        // Убираем автоматическое обновление при onResume, так как это может вызывать дублирование запросов
+        // Данные обновляются автоматически через SharedRecipeViewModel
+        // viewModel.onRefreshRequested();
     }
     
     @Override

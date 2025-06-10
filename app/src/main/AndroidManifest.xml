@@ -29,7 +29,8 @@
         
         <activity
             android:name=".ui.activities.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,31 +40,36 @@
         <activity
             android:name=".ui.activities.RecipeDetailActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.MainActivity" />
+            android:parentActivityName=".ui.activities.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.Regist"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.AddRecipeActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.MainActivity" />
+            android:parentActivityName=".ui.activities.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.AiChatActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.MainActivity" />
+            android:parentActivityName=".ui.activities.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activities.PasswordRecoveryActivity"
             android:label="Восстановление пароля"
-            android:parentActivityName=".ui.activities.Regist">
+            android:parentActivityName=".ui.activities.Regist"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.activities.Regist" />
         </activity>
         <activity
-            
             android:name=".ui.activities.EditRecipeActivity"
             android:exported="false"
-            android:parentActivityName=".ui.activities.RecipeDetailActivity" />
+            android:parentActivityName=".ui.activities.RecipeDetailActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
