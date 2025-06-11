@@ -9,7 +9,6 @@ import com.example.cooking.network.interceptors.RetryInterceptor;
 
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -31,7 +30,7 @@ public class NetworkService {
     
     // Параметры настройки клиента
     private static final int CONNECT_TIMEOUT = 30; // 30 секунд
-    private static final int READ_TIMEOUT = 30;    // 30 секунд
+    private static final int READ_TIMEOUT = 60;    // 60 секунд (увеличено)
     private static final int WRITE_TIMEOUT = 30;   // 30 секунд
     private static final int CACHE_SIZE = 10 * 1024 * 1024; // 10 MB
     private static final int MAX_RETRY_ATTEMPTS = 3;
@@ -65,19 +64,19 @@ public class NetworkService {
                     // Устанавливаем максимальный уровень логирования
                     loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
                     
-                    // Создаем кэш для запросов
-                    Cache cache = new Cache(context.getCacheDir(), CACHE_SIZE);
-                    
                     // Создаем и настраиваем клиент
                     OkHttpClient.Builder builder = new OkHttpClient.Builder()
                             .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
                             .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
                             .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
-                            .cache(cache)
+                            // Отключаем кэш, чтобы избежать ошибок "unexpected end of stream" на больших ответах
+                            .cache(null)
                             .retryOnConnectionFailure(true)
                             .addInterceptor(loggingInterceptor)
                             .addInterceptor(new AuthInterceptor(context))
-                            .addInterceptor(new RetryInterceptor(MAX_RETRY_ATTEMPTS, RETRY_DELAY_MILLIS));
+                            .addInterceptor(new RetryInterceptor(MAX_RETRY_ATTEMPTS, RETRY_DELAY_MILLIS))
+                            // Убираем кастомный identity interceptor, полагаемся на стандартный gzip/chunked
+                            ;
                     
                     // Добавляем кастомный интерцептор для модификации URL запросов
                     builder.addInterceptor(chain -> {
@@ -241,7 +240,7 @@ public class NetworkService {
      * @param context контекст приложения
      * @return true если кэш успешно очищен, false в случае ошибки
      */
-    public static boolean clearCache(Context context) {
+    /*public static boolean clearCache(Context context) {
         try {
             Cache cache = getHttpClient(context).cache();
             if (cache != null) {
@@ -254,7 +253,7 @@ public class NetworkService {
             Log.e(TAG, "Ошибка при очистке кэша", e);
             return false;
         }
-    }
+    }*/
     
     /**
      * Возвращает текущий размер кэша.
@@ -262,7 +261,7 @@ public class NetworkService {
      * @param context контекст приложения
      * @return размер кэша в байтах или -1 в случае ошибки
      */
-    public static long getCacheSize(Context context) {
+    /*public static long getCacheSize(Context context) {
         try {
             Cache cache = getHttpClient(context).cache();
             return cache != null ? cache.size() : 0;
@@ -270,5 +269,5 @@ public class NetworkService {
             Log.e(TAG, "Ошибка при получении размера кэша", e);
             return -1;
         }
-    }
+    }*/
 } 

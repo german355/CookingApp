@@ -163,8 +163,10 @@ public class AiChatViewModel extends AndroidViewModel {
         chatRepository.startChatSession().observeForever(response -> {
             isLoading.setValue(false);
             if (response != null && response.isSuccess()) {
-                // Очищаем список сообщений
-                messages.setValue(new ArrayList<>());
+                // После очистки показываем приветственное сообщение
+                List<Message> welcomeList = new ArrayList<>();
+                welcomeList.add(new Message(getApplication().getString(R.string.chat_welcome), false));
+                messages.setValue(welcomeList);
                 showMessage.setValue(getApplication().getString(R.string.chat_cleared));
             } else {
                 showMessage.setValue(getApplication().getString(R.string.error_clearing_chat));

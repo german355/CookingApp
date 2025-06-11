@@ -154,8 +154,14 @@ public class RecipeLocalRepository extends NetworkRepository{
                 entities.add(new RecipeEntity(recipe));
             }
         }
-        // Вызываем транзакционный метод DAO для атомарной замены
-        recipeDao.replaceAllRecipes(entities);
-        Log.d(TAG, "Все рецепты заменены в локальной БД через recipeDao.replaceAllRecipes");
+        // NEW: выполняем замену внутри runInTransaction, чтобы гарантировать атомарность и успешный коммит
+        try {
+            AppDatabase.getInstance(context).runInTransaction(() -> {
+                recipeDao.replaceAllRecipes(entities);
+            });
+            Log.d(TAG, "Все рецепты заменены, count=" + entities.size());
+        } catch (Exception e) {
+            Log.e(TAG, "Ошибка при replaceAllRecipes", e);
+        }
     }
 }

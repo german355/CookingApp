@@ -164,8 +164,12 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
     /**
      * Показывает или скрывает сообщение об отсутствии рецептов
      */
-    private void showEmptyView(boolean show) {
-        Log.d(TAG, "showEmptyView: " + (show ? "показываю пустое представление" : "показываю список рецептов"));
+    private void showEmptyView(boolean listEmpty) {
+        // Не показываем emptyView, пока идёт первоначальная или любая загрузка
+        Boolean refreshing = sharedRecipeViewModel.getIsRefreshing().getValue();
+        boolean isLoading = refreshing != null && refreshing;
+        boolean show = listEmpty && !isLoading;
+        Log.d(TAG, "showEmptyView: " + (show ? "показываю пустое представление" : "скрываю пустое представление") + ", isLoading=" + isLoading);
         
         // Устанавливаем текст для пустого представления
         emptyView.setText("Рецепты не найдены");

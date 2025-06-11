@@ -116,6 +116,16 @@ public class UnifiedRecipeRepository extends NetworkRepository{
 
                     // Атомарная замена всех записей для стабильного порядка
                     localRepository.replaceAllRecipes(remoteRecipes);
+                    
+                    // NEW: после успешной записи сразу читаем обратно, убеждаемся что данные реально в БД,
+                    // и уведомляем observers — это гарантирует, что данные будут сохранены и отобразятся
+                    List<Recipe> inserted = localRepository.getAllRecipesSync();
+                    Log.d(TAG, "syncWithRemoteData: сохранено в локальную БД " + inserted.size() + " рецептов");
+                    if (recipesLiveData != null) {
+                        mainThreadHandler.post(() -> recipesLiveData.setValue(Resource.success(inserted)));
+                    }
+
+                    Log.d(TAG, "syncWithRemoteData: получено с сервера " + remoteRecipes.size() + " рецептов");
 
                 } else {
                     // Если нет данных с сервера, проверяем доступность сети

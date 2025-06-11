@@ -111,6 +111,7 @@ public class EditRecipeActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_bar);
         recipeImageView = findViewById(R.id.recipe_image);
         textImage = findViewById(R.id.textImage);
+        textImage.setText("Изображение рецепта* (нажмите, чтобы изменить)");
         
         setupRecyclerViews();
         

@@ -11,7 +11,7 @@
         android:layout_margin="4dp"
         android:padding="8dp"
         android:background="@drawable/bg_message_bubble"
-        android:textColor="?attr/colorOnSecondaryContainer"
+        android:textColor="@color/message_ai_text_color"
         android:textSize="16sp" />
 
 </FrameLayout>
