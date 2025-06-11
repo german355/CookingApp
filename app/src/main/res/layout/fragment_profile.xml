@@ -107,14 +107,14 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_marginBottom="8dp"/>
                 
-            <Button
+            <!--<Button
                 android:id="@+id/delete_account_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Удалить аккаунт"
                 android:textColor="?attr/colorOnError"
                 android:backgroundTint="?attr/colorError"
-                android:textSize="14sp"/>
+                android:textSize="14sp"/>-->
         </LinearLayout>
         
         <!-- Кнопка выхода внизу экрана -->

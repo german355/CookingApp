@@ -114,7 +114,7 @@
 <color name="md_theme_surface_highContrast">#FFF8F7</color>
 <color name="md_theme_onSurface_highContrast">#000000</color>
 <color name="md_theme_surfaceVariant_highContrast">#F4DDDC</color>
-<color name="md_theme_onSurfaceVariant_highContrast">#2E2120</color>
+<color name="md_theme_onSurfaceVariant_highContrast">#242424</color>
 <color name="md_theme_outline_highContrast">#4E3F3F</color>
 <color name="md_theme_outlineVariant_highContrast">#4E3F3F</color>
 <color name="md_theme_scrim_highContrast">#000000</color>
@@ -140,4 +140,5 @@
 <color name="md_theme_surfaceContainer_highContrast">#FCEAE9</color>
 <color name="md_theme_surfaceContainerHigh_highContrast">#F6E4E3</color>
 <color name="md_theme_surfaceContainerHighest_highContrast">#F0DEDD</color>
+<color name="message_ai_text_color">#000000</color>
 </resources>

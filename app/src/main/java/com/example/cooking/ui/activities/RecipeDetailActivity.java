@@ -15,7 +15,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -85,7 +84,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Применяем сохраненную тему перед setContentView
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        // Используем тот же файл SharedPreferences, что и в SettingsFragment и MyApplication
+        SharedPreferences sharedPreferences = getSharedPreferences("acs", MODE_PRIVATE);
         String themeValue = sharedPreferences.getString("theme", "system"); // Используем тот же ключ и значение по умолчанию
         ThemeUtils.applyTheme(themeValue);
 

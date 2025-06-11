@@ -164,6 +164,23 @@ public class SharedRecipeViewModel extends AndroidViewModel {
         isCurrentlyRefreshing = true;
         Log.d(TAG, "Начинаем загрузку локальных данных и обновление с сервера");
         
+        // СНАЧАЛА читаем локальную БД в отдельном потоке, чтобы не блокировать главный
+        executor.execute(() -> {
+            List<Recipe> cachedRecipes = repository.getAllRecipesSync();
+            int count = cachedRecipes != null ? cachedRecipes.size() : -1;
+            Log.d(TAG, "Получено из БД " + count + " рецептов (до сетевого запроса)");
+
+            // Обновляем UI только в главном потоке
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if (cachedRecipes != null && !cachedRecipes.isEmpty()) {
+                    Log.d(TAG, "Отображаю " + cachedRecipes.size() + " кэшированных рецептов до сетевого запроса");
+                    recipes.setValue(Resource.success(cachedRecipes));
+                } else {
+                    Log.d(TAG, "Локальная БД пуста — отображать пока нечего");
+                }
+            });
+        });
+
         // Показ локальных данных через initLocalDataObserver, затем синхронизация через UseCase
         isRefreshing.setValue(true);
         recipeUseCases.refreshRecipes(isRefreshing, errorMessage, recipes,

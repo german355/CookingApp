@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
@@ -39,7 +40,12 @@ public class AiChatActivity extends AppCompatActivity {
         int id = item.getItemId();
         
         if (id == R.id.action_clear_chat) {
-            viewModel.clearChat();
+            new AlertDialog.Builder(this)
+                .setTitle("Очистить чат?")
+                .setMessage("Вы уверены, что хотите очистить чат?")
+                .setPositiveButton("Да", (dialog, which) -> viewModel.clearChat())
+                .setNegativeButton("Отмена", null)
+                .show();
             return true;
         } else if (id == android.R.id.home) {
             onBackPressed();

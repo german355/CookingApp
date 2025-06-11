@@ -59,7 +59,7 @@ public class ProfileFragment extends Fragment {
         editNameButton = view.findViewById(R.id.edit_name_button);
         changePasswordButton = view.findViewById(R.id.change_password_button);
         logoutButton = view.findViewById(R.id.logout_button);
-        deleteAccountButton = view.findViewById(R.id.delete_account_button);
+        //deleteAccountButton = view.findViewById(R.id.delete_account_button);
         progressBar = view.findViewById(R.id.progress_bar);
 
         // Настраиваем наблюдателей LiveData
@@ -149,9 +149,9 @@ public class ProfileFragment extends Fragment {
         // Обработчик кнопки выхода
         logoutButton.setOnClickListener(v -> confirmLogout());
 
-        // Обработчик кнопки удаления аккаунта (если есть)
+        // Обработчик кнопки удаления аккаунта (Пока не реализованно)
         if (deleteAccountButton != null) {
-            deleteAccountButton.setOnClickListener(v -> showDeleteAccountConfirmation());
+           // deleteAccountButton.setOnClickListener(v -> showDeleteAccountConfirmation());
         }
     }
 
@@ -233,7 +233,7 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
-     * Показывает диалог подтверждения удаления аккаунта
+     * Показывает диалог подтверждения удаления аккаунта(пока не используется)
      */
     private void showDeleteAccountConfirmation() {
         View viewInflated = LayoutInflater.from(requireContext())
