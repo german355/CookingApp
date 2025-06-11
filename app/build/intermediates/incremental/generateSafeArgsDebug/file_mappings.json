@@ -1,0 +1,1 @@
+[{"navFile":"src\\main\\res\\navigation\\nav_graph.xml","javaFiles":["com.example.cooking.ui.fragments.SharedProfileFragmentDirections","com.example.cooking.ui.fragments.ProfileFragmentDirections","com.example.cooking.ui.fragments.CatalogFragmentDirections","com.example.cooking.ui.fragments.FilteredRecipesFragmentArgs"]}]

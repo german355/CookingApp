@@ -1,0 +1,1178 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:2:1-75:12
+INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:2:1-75:12
+INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:2:1-75:12
+INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:2:1-75:12
+MERGED from [androidx.databinding:viewbinding:8.7.3] C:\Users\xerma\.gradle\caches\8.9\transforms\8d130a172a26a79c1c4e08188aad4bfb\transformed\viewbinding-8.7.3\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.navigation:navigation-common:2.7.7] C:\Users\xerma\.gradle\caches\8.9\transforms\bf2f6d14622758af3f46982f93b8f9c5\transformed\navigation-common-2.7.7\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.navigation:navigation-runtime:2.7.7] C:\Users\xerma\.gradle\caches\8.9\transforms\db4e339d529738d4aa67a0399397db0a\transformed\navigation-runtime-2.7.7\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.navigation:navigation-fragment:2.7.7] C:\Users\xerma\.gradle\caches\8.9\transforms\a7b954c7e038363b38f5f560561fbb33\transformed\navigation-fragment-2.7.7\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.navigation:navigation-ui:2.7.7] C:\Users\xerma\.gradle\caches\8.9\transforms\6a87e93cdfdf02dd303f674fc0714ef8\transformed\navigation-ui-2.7.7\AndroidManifest.xml:17:1-22:12
+MERGED from [com.google.android.material:material:1.12.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d065566cf243344153b23354f55189c1\transformed\material-1.12.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.constraintlayout:constraintlayout:2.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a4d564fe1b62dc86e1a415463bd7c5b6\transformed\constraintlayout-2.2.0\AndroidManifest.xml:2:1-9:12
+MERGED from [androidx.preference:preference:1.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4249262301ab3680afe76d1a28059a6a\transformed\preference-1.2.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.appcompat:appcompat-resources:1.7.0] C:\Users\xerma\.gradle\caches\8.9\transforms\90316a94b41e73c348551cb76789e0e5\transformed\appcompat-resources-1.7.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.appcompat:appcompat:1.7.0] C:\Users\xerma\.gradle\caches\8.9\transforms\0185aa0b03ce82533fd3c3f33ceab927\transformed\appcompat-1.7.0\AndroidManifest.xml:2:1-7:12
+MERGED from [com.github.bumptech.glide:glide:4.16.0] C:\Users\xerma\.gradle\caches\8.9\transforms\f03385008cadc607ac8b94d042ccac68\transformed\glide-4.16.0\AndroidManifest.xml:2:1-9:12
+MERGED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:17:1-75:12
+MERGED from [androidx.credentials:credentials:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\666003baeb62368d960b3838a1cb3e02\transformed\credentials-1.2.0-rc01\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:17:1-44:12
+MERGED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443bf5e6028d3fb9f8dfa9edabfacaf1\transformed\play-services-auth-21.0.0\AndroidManifest.xml:17:1-40:12
+MERGED from [androidx.viewpager2:viewpager2:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\650f66cbecedc617c63b357e2f59b9c1\transformed\viewpager2-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.fragment:fragment-ktx:1.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\cdeab8e5dafc324fe920dc632e738fea\transformed\fragment-ktx-1.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [com.google.android.gms:play-services-auth-api-phone:18.0.2] C:\Users\xerma\.gradle\caches\8.9\transforms\a26c228b2ed330ef2d74225d4d12bb79\transformed\play-services-auth-api-phone-18.0.2\AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.android.gms:play-services-auth-base:18.0.10] C:\Users\xerma\.gradle\caches\8.9\transforms\5b71d878035a1103c408192a198e3280\transformed\play-services-auth-base-18.0.10\AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.firebase:firebase-analytics:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4f0624206e18529639e0298afc129603\transformed\firebase-analytics-22.4.0\AndroidManifest.xml:2:1-9:12
+MERGED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:17:1-46:12
+MERGED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:17:1-39:12
+MERGED from [com.google.android.gms:play-services-measurement-sdk:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a6c1d4dad3e1df1a58cff3ef00d215a8\transformed\play-services-measurement-sdk-22.4.0\AndroidManifest.xml:17:1-25:12
+MERGED from [com.google.android.recaptcha:recaptcha:18.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\2a9fcdfd55af893dd90a14f642502b37\transformed\recaptcha-18.6.1\AndroidManifest.xml:2:1-11:12
+MERGED from [com.google.android.play:integrity:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a9d2f450a6d1960ddfa4b05f62aac1a6\transformed\integrity-1.3.0\AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.firebase:firebase-appcheck-interop:17.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\0dbeb28315d66be20a312d725d478d16\transformed\firebase-appcheck-interop-17.0.0\AndroidManifest.xml:15:1-25:12
+MERGED from [com.google.firebase:firebase-auth-interop:20.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\31b378e865fffb95444d46b83e7aa92c\transformed\firebase-auth-interop-20.0.0\AndroidManifest.xml:2:1-10:12
+MERGED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:2:1-24:12
+MERGED from [com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\ccb197b4a00df3b24de85054598776fd\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:2:1-18:12
+MERGED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:15:1-41:12
+MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e74e781e96bf3b32200fbf1001d1fc65\transformed\play-services-measurement-impl-22.4.0\AndroidManifest.xml:17:1-32:12
+MERGED from [com.google.android.gms:play-services-fido:20.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8e2a953c66e1b477ec63a67e794ff8ae\transformed\play-services-fido-20.1.0\AndroidManifest.xml:2:1-10:12
+MERGED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:17:1-145:12
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d21b3e6c2d551db582edb0deff26ef86\transformed\swiperefreshlayout-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6be6e2e0c8d160dbc775e5775526d572\transformed\coordinatorlayout-1.2.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d6e61d7f29dd7a16623a7ca4209823a6\transformed\slidingpanelayout-1.2.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.transition:transition:1.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\eee6f3ee11658c4dc5350a7adbb36446\transformed\transition-1.5.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.dynamicanimation:dynamicanimation:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\1cfcf49470e7a03f4892819d601e7056\transformed\dynamicanimation-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [com.google.android.gms:play-services-stats:17.0.2] C:\Users\xerma\.gradle\caches\8.9\transforms\eb6803b0de022fd9dfe9862c5d2814d2\transformed\play-services-stats-17.0.2\AndroidManifest.xml:2:1-9:12
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c20742a00f9fc5244289e393fbdb52b5\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.loader:loader:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\05c502ea11d065b9ef38a0f18bef3659\transformed\loader-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.emoji2:emoji2-views-helper:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\039f0acbeeefc7fa77675d32a5592632\transformed\emoji2-views-helper-1.3.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\5b4baea76624144309f021bbf04b6673\transformed\emoji2-1.3.0\AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.activity:activity-ktx:1.10.0] C:\Users\xerma\.gradle\caches\8.9\transforms\1d57444a7fabb55286fa4547b608d562\transformed\activity-ktx-1.10.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\78e808f1f38b68c1445b40973c28534b\transformed\lifecycle-runtime-ktx-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\2445b8e015c8cf09eb008814aa83b050\transformed\lifecycle-viewmodel-ktx-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\c5e3419e397dc98d6f569644d7aa1ccf\transformed\lifecycle-livedata-core-ktx-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\01c56cb317beee2fe2d3daa67230c275\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.lifecycle:lifecycle-service:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\62ee2bf7c8ecd8f753e2e755a25d7a48\transformed\lifecycle-service-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\f92dc6c12a8b31f0aac72c183334c195\transformed\lifecycle-livedata-core-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\1a57bf83a820622f5857495b38fa38bb\transformed\lifecycle-viewmodel-savedstate-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.privacysandbox.ads:ads-adservices-java:1.1.0-beta11] C:\Users\xerma\.gradle\caches\8.9\transforms\48c4b1ce6a8fd30cdd6b07dc189c8b61\transformed\ads-adservices-java-1.1.0-beta11\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] C:\Users\xerma\.gradle\caches\8.9\transforms\b6c096f1d89f8bd853e1d1496a4c35ba\transformed\ads-adservices-1.1.0-beta11\AndroidManifest.xml:17:1-28:12
+MERGED from [androidx.core:core-ktx:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c86e3eb60fe12e7a0ac0272f698e6b14\transformed\core-ktx-1.13.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.drawerlayout:drawerlayout:1.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\7e9842594c4a5025bc4ed4b94b8d43cf\transformed\drawerlayout-1.1.1\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\52f1d8a2cfc9176e030cf2eb4657cadb\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e256d93f16fd86192d216ab661f86742\transformed\vectordrawable-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.recyclerview:recyclerview:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\0db2a1908fc71a8f51c0d482a8aa94ab\transformed\recyclerview-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d6577fd720116b981cd3d0b54e849d2e\transformed\viewpager-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.customview:customview:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\bd8a66be991702c31e38dd5535aa0509\transformed\customview-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.browser:browser:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\bfa5143f355061e0154a161cfdf69f58\transformed\browser-1.4.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.window:window:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c1ba2e0e578bdd4974384d7debdbbe1d\transformed\window-1.0.0\AndroidManifest.xml:17:1-33:12
+MERGED from [com.google.android.gms:play-services-base:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\fa9c9203182d86ca3918b30c659a1aa2\transformed\play-services-base-18.5.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:17:1-30:12
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\bbaa7688718818375ecc6c15b446ef76\transformed\lifecycle-runtime-2.6.2\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\06a3114cfed36c844fd951cd43651fbc\transformed\lifecycle-livedata-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\b7ecbdc4e9aeff9300dc2388b6a8797f\transformed\lifecycle-viewmodel-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] C:\Users\xerma\.gradle\caches\8.9\transforms\aa29812bf0adaf60f997076444e87a04\transformed\savedstate-ktx-1.2.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\xerma\.gradle\caches\8.9\transforms\afdee578427e66b0fa9c4523c1a2d9de\transformed\savedstate-1.2.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\07f10fbab470018d0bd1565bbac88329\transformed\room-runtime-2.6.1\AndroidManifest.xml:17:1-31:12
+MERGED from [androidx.room:room-ktx:2.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\a3f6233b1a4b58b3af63b6f5499ca0f3\transformed\room-ktx-2.6.1\AndroidManifest.xml:17:1-22:12
+MERGED from [com.google.firebase:firebase-installations-interop:17.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\5507665a47a50f90c591601b7b273357\transformed\firebase-installations-interop-17.1.1\AndroidManifest.xml:15:1-19:12
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\f0e113f502ed2d0ade10eed7b0462b03\transformed\play-services-tasks-18.2.0\AndroidManifest.xml:2:1-5:12
+MERGED from [com.google.android.gms:play-services-ads-identifier:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c440c875b29ea9313044aca77fde92ee\transformed\play-services-ads-identifier-18.0.0\AndroidManifest.xml:17:1-27:12
+MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:17:1-30:12
+MERGED from [com.google.android.gms:play-services-measurement-base:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\9798b0d8f2d5bb9c7702398a0f070eed\transformed\play-services-measurement-base-22.4.0\AndroidManifest.xml:2:1-9:12
+MERGED from [com.google.firebase:firebase-measurement-connector:19.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2631e5c4337a7d20c66767f942bf8c77\transformed\firebase-measurement-connector-19.0.0\AndroidManifest.xml:17:1-25:12
+MERGED from [com.google.android.gms:play-services-basement:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\713aef1ee0ddb0431a90b689a5d9cd01\transformed\play-services-basement-18.5.0\AndroidManifest.xml:16:1-26:12
+MERGED from [androidx.fragment:fragment:1.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\da153c2b0efc88aa5d6946a19918caf7\transformed\fragment-1.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.activity:activity:1.10.0] C:\Users\xerma\.gradle\caches\8.9\transforms\62986cd8621b8ef7c76c9cc93dc295bb\transformed\activity-1.10.0\AndroidManifest.xml:17:1-22:12
+MERGED from [com.squareup.picasso:picasso:2.8] C:\Users\xerma\.gradle\caches\8.9\transforms\45cfba89be5639acedc3a68bf1375c94\transformed\picasso-2.8\AndroidManifest.xml:2:1-14:12
+MERGED from [de.hdodenhof:circleimageview:3.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c0550f3dddf23ed41c28566b8f9b590d\transformed\circleimageview-3.1.0\AndroidManifest.xml:2:1-11:12
+MERGED from [androidx.security:security-crypto:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\51e67e8b9a3052f2c08a3163b31b7da5\transformed\security-crypto-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [io.reactivex.rxjava3:rxandroid:3.0.2] C:\Users\xerma\.gradle\caches\8.9\transforms\f3c4d9f42579e404e1598696b849b68b\transformed\rxandroid-3.0.2\AndroidManifest.xml:15:1-20:12
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\f4841cfbc23ba5484fa72c07e2bf6085\transformed\cursoradapter-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.cardview:cardview:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\27b34a5d2f3576b9985b0c87aeec2816\transformed\cardview-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:17:1-55:12
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\555de1871d0792f202f78b9438a5a57f\transformed\startup-runtime-1.1.1\AndroidManifest.xml:17:1-33:12
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\883387fc98f064bb2daaa589bce91e61\transformed\tracing-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d4596a8895b9a2119949cd1c87a0801b\transformed\interpolator-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [com.github.bumptech.glide:gifdecoder:4.16.0] C:\Users\xerma\.gradle\caches\8.9\transforms\3851565d3fe2c6f24fc68c0ed96c1790\transformed\gifdecoder-4.16.0\AndroidManifest.xml:2:1-9:12
+MERGED from [androidx.exifinterface:exifinterface:1.3.6] C:\Users\xerma\.gradle\caches\8.9\transforms\570ce08add333caa4dd3fd3b7a5eb386\transformed\exifinterface-1.3.6\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a1da30f4ac77c1ce39cfc3026b25b4d9\transformed\core-runtime-2.2.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.sqlite:sqlite-framework:2.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\857b7d9a087cd73fd2ff8bc523dd1b92\transformed\sqlite-framework-2.4.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.sqlite:sqlite:2.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\ed3cb746b2d73b70e8eff7520120df1b\transformed\sqlite-2.4.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d1428e542d8a1e493c4f38f8b3bf06dd\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [com.google.firebase:firebase-components:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\db9de83b2cdd11a0d3640a5206c5b5ba\transformed\firebase-components-18.0.0\AndroidManifest.xml:15:1-20:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\54066d894d5a2a1890ad6a1cc4a82ad0\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\fa3308fddb6afe70a8c5687317ff1aba\transformed\documentfile-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.print:print:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2132864bd83d25bc44d247157770376f\transformed\print-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.annotation:annotation-experimental:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4a45154f6e25eea55447c3ed0e421ae5\transformed\annotation-experimental-1.4.0\AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.android.libraries.identity.googleid:googleid:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\09d86f7967aae5ce1a02cc34795a4232\transformed\googleid-1.1.0\AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.android.play:core-common:2.0.3] C:\Users\xerma\.gradle\caches\8.9\transforms\26bdbac4fe9069ff0379ce89017f6ad9\transformed\core-common-2.0.3\AndroidManifest.xml:2:1-21:12
+	package
+		INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
+	android:versionName
+		INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
+	xmlns:tools
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:3:5-51
+	android:versionCode
+		INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:2:11-69
+uses-permission#android.permission.INTERNET
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:5:5-67
+MERGED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:25:5-67
+MERGED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:25:5-67
+MERGED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:23:5-67
+MERGED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:23:5-67
+MERGED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:22:5-67
+MERGED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:22:5-67
+MERGED from [com.google.android.recaptcha:recaptcha:18.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\2a9fcdfd55af893dd90a14f642502b37\transformed\recaptcha-18.6.1\AndroidManifest.xml:7:5-67
+MERGED from [com.google.android.recaptcha:recaptcha:18.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\2a9fcdfd55af893dd90a14f642502b37\transformed\recaptcha-18.6.1\AndroidManifest.xml:7:5-67
+MERGED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:8:5-67
+MERGED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:8:5-67
+MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e74e781e96bf3b32200fbf1001d1fc65\transformed\play-services-measurement-impl-22.4.0\AndroidManifest.xml:23:5-67
+MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e74e781e96bf3b32200fbf1001d1fc65\transformed\play-services-measurement-impl-22.4.0\AndroidManifest.xml:23:5-67
+MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:23:5-67
+MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:23:5-67
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:5:22-64
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:6:5-79
+MERGED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:26:5-79
+MERGED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:26:5-79
+MERGED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:24:5-79
+MERGED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:24:5-79
+MERGED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:23:5-79
+MERGED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:23:5-79
+MERGED from [com.google.android.recaptcha:recaptcha:18.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\2a9fcdfd55af893dd90a14f642502b37\transformed\recaptcha-18.6.1\AndroidManifest.xml:8:5-79
+MERGED from [com.google.android.recaptcha:recaptcha:18.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\2a9fcdfd55af893dd90a14f642502b37\transformed\recaptcha-18.6.1\AndroidManifest.xml:8:5-79
+MERGED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:7:5-79
+MERGED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:7:5-79
+MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e74e781e96bf3b32200fbf1001d1fc65\transformed\play-services-measurement-impl-22.4.0\AndroidManifest.xml:24:5-79
+MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e74e781e96bf3b32200fbf1001d1fc65\transformed\play-services-measurement-impl-22.4.0\AndroidManifest.xml:24:5-79
+MERGED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:24:5-79
+MERGED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:24:5-79
+MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:24:5-79
+MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:24:5-79
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:6:22-76
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:7:5-107
+	android:maxSdkVersion
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:7:78-104
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:7:22-77
+uses-permission#android.permission.READ_MEDIA_IMAGES
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:9:5-76
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:9:22-73
+application
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:11:5-73:19
+INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:11:5-73:19
+MERGED from [com.google.android.material:material:1.12.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d065566cf243344153b23354f55189c1\transformed\material-1.12.0\AndroidManifest.xml:22:5-20
+MERGED from [com.google.android.material:material:1.12.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d065566cf243344153b23354f55189c1\transformed\material-1.12.0\AndroidManifest.xml:22:5-20
+MERGED from [androidx.constraintlayout:constraintlayout:2.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a4d564fe1b62dc86e1a415463bd7c5b6\transformed\constraintlayout-2.2.0\AndroidManifest.xml:7:5-20
+MERGED from [androidx.constraintlayout:constraintlayout:2.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a4d564fe1b62dc86e1a415463bd7c5b6\transformed\constraintlayout-2.2.0\AndroidManifest.xml:7:5-20
+MERGED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:28:5-73:19
+MERGED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:28:5-73:19
+MERGED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:23:5-42:19
+MERGED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:23:5-42:19
+MERGED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443bf5e6028d3fb9f8dfa9edabfacaf1\transformed\play-services-auth-21.0.0\AndroidManifest.xml:22:5-38:19
+MERGED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443bf5e6028d3fb9f8dfa9edabfacaf1\transformed\play-services-auth-21.0.0\AndroidManifest.xml:22:5-38:19
+MERGED from [com.google.firebase:firebase-analytics:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4f0624206e18529639e0298afc129603\transformed\firebase-analytics-22.4.0\AndroidManifest.xml:7:5-20
+MERGED from [com.google.firebase:firebase-analytics:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4f0624206e18529639e0298afc129603\transformed\firebase-analytics-22.4.0\AndroidManifest.xml:7:5-20
+MERGED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:28:5-44:19
+MERGED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:28:5-44:19
+MERGED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:29:5-37:19
+MERGED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:29:5-37:19
+MERGED from [com.google.android.gms:play-services-measurement-sdk:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a6c1d4dad3e1df1a58cff3ef00d215a8\transformed\play-services-measurement-sdk-22.4.0\AndroidManifest.xml:22:5-23:19
+MERGED from [com.google.android.gms:play-services-measurement-sdk:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a6c1d4dad3e1df1a58cff3ef00d215a8\transformed\play-services-measurement-sdk-22.4.0\AndroidManifest.xml:22:5-23:19
+MERGED from [com.google.android.play:integrity:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a9d2f450a6d1960ddfa4b05f62aac1a6\transformed\integrity-1.3.0\AndroidManifest.xml:5:5-6:19
+MERGED from [com.google.android.play:integrity:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a9d2f450a6d1960ddfa4b05f62aac1a6\transformed\integrity-1.3.0\AndroidManifest.xml:5:5-6:19
+MERGED from [com.google.firebase:firebase-appcheck-interop:17.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\0dbeb28315d66be20a312d725d478d16\transformed\firebase-appcheck-interop-17.0.0\AndroidManifest.xml:23:5-20
+MERGED from [com.google.firebase:firebase-appcheck-interop:17.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\0dbeb28315d66be20a312d725d478d16\transformed\firebase-appcheck-interop-17.0.0\AndroidManifest.xml:23:5-20
+MERGED from [com.google.firebase:firebase-auth-interop:20.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\31b378e865fffb95444d46b83e7aa92c\transformed\firebase-auth-interop-20.0.0\AndroidManifest.xml:7:5-8:19
+MERGED from [com.google.firebase:firebase-auth-interop:20.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\31b378e865fffb95444d46b83e7aa92c\transformed\firebase-auth-interop-20.0.0\AndroidManifest.xml:7:5-8:19
+MERGED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:11:5-22:19
+MERGED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:11:5-22:19
+MERGED from [com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\ccb197b4a00df3b24de85054598776fd\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:8:5-16:19
+MERGED from [com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\ccb197b4a00df3b24de85054598776fd\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:8:5-16:19
+MERGED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:22:5-39:19
+MERGED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:22:5-39:19
+MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e74e781e96bf3b32200fbf1001d1fc65\transformed\play-services-measurement-impl-22.4.0\AndroidManifest.xml:29:5-30:19
+MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e74e781e96bf3b32200fbf1001d1fc65\transformed\play-services-measurement-impl-22.4.0\AndroidManifest.xml:29:5-30:19
+MERGED from [com.google.android.gms:play-services-fido:20.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8e2a953c66e1b477ec63a67e794ff8ae\transformed\play-services-fido-20.1.0\AndroidManifest.xml:7:5-8:19
+MERGED from [com.google.android.gms:play-services-fido:20.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8e2a953c66e1b477ec63a67e794ff8ae\transformed\play-services-fido-20.1.0\AndroidManifest.xml:7:5-8:19
+MERGED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:28:5-143:19
+MERGED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:28:5-143:19
+MERGED from [com.google.android.gms:play-services-stats:17.0.2] C:\Users\xerma\.gradle\caches\8.9\transforms\eb6803b0de022fd9dfe9862c5d2814d2\transformed\play-services-stats-17.0.2\AndroidManifest.xml:7:5-20
+MERGED from [com.google.android.gms:play-services-stats:17.0.2] C:\Users\xerma\.gradle\caches\8.9\transforms\eb6803b0de022fd9dfe9862c5d2814d2\transformed\play-services-stats-17.0.2\AndroidManifest.xml:7:5-20
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\5b4baea76624144309f021bbf04b6673\transformed\emoji2-1.3.0\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\5b4baea76624144309f021bbf04b6673\transformed\emoji2-1.3.0\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\01c56cb317beee2fe2d3daa67230c275\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\01c56cb317beee2fe2d3daa67230c275\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] C:\Users\xerma\.gradle\caches\8.9\transforms\b6c096f1d89f8bd853e1d1496a4c35ba\transformed\ads-adservices-1.1.0-beta11\AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] C:\Users\xerma\.gradle\caches\8.9\transforms\b6c096f1d89f8bd853e1d1496a4c35ba\transformed\ads-adservices-1.1.0-beta11\AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.window:window:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c1ba2e0e578bdd4974384d7debdbbe1d\transformed\window-1.0.0\AndroidManifest.xml:24:5-31:19
+MERGED from [androidx.window:window:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c1ba2e0e578bdd4974384d7debdbbe1d\transformed\window-1.0.0\AndroidManifest.xml:24:5-31:19
+MERGED from [com.google.android.gms:play-services-base:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\fa9c9203182d86ca3918b30c659a1aa2\transformed\play-services-base-18.5.0\AndroidManifest.xml:4:5-6:19
+MERGED from [com.google.android.gms:play-services-base:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\fa9c9203182d86ca3918b30c659a1aa2\transformed\play-services-base-18.5.0\AndroidManifest.xml:4:5-6:19
+MERGED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:28:5-89
+MERGED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:28:5-89
+MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\07f10fbab470018d0bd1565bbac88329\transformed\room-runtime-2.6.1\AndroidManifest.xml:23:5-29:19
+MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\07f10fbab470018d0bd1565bbac88329\transformed\room-runtime-2.6.1\AndroidManifest.xml:23:5-29:19
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\f0e113f502ed2d0ade10eed7b0462b03\transformed\play-services-tasks-18.2.0\AndroidManifest.xml:4:5-20
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\f0e113f502ed2d0ade10eed7b0462b03\transformed\play-services-tasks-18.2.0\AndroidManifest.xml:4:5-20
+MERGED from [com.google.android.gms:play-services-ads-identifier:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c440c875b29ea9313044aca77fde92ee\transformed\play-services-ads-identifier-18.0.0\AndroidManifest.xml:25:5-20
+MERGED from [com.google.android.gms:play-services-ads-identifier:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c440c875b29ea9313044aca77fde92ee\transformed\play-services-ads-identifier-18.0.0\AndroidManifest.xml:25:5-20
+MERGED from [com.google.android.gms:play-services-measurement-base:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\9798b0d8f2d5bb9c7702398a0f070eed\transformed\play-services-measurement-base-22.4.0\AndroidManifest.xml:7:5-20
+MERGED from [com.google.android.gms:play-services-measurement-base:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\9798b0d8f2d5bb9c7702398a0f070eed\transformed\play-services-measurement-base-22.4.0\AndroidManifest.xml:7:5-20
+MERGED from [com.google.firebase:firebase-measurement-connector:19.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2631e5c4337a7d20c66767f942bf8c77\transformed\firebase-measurement-connector-19.0.0\AndroidManifest.xml:22:5-23:19
+MERGED from [com.google.firebase:firebase-measurement-connector:19.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2631e5c4337a7d20c66767f942bf8c77\transformed\firebase-measurement-connector-19.0.0\AndroidManifest.xml:22:5-23:19
+MERGED from [com.google.android.gms:play-services-basement:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\713aef1ee0ddb0431a90b689a5d9cd01\transformed\play-services-basement-18.5.0\AndroidManifest.xml:20:5-24:19
+MERGED from [com.google.android.gms:play-services-basement:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\713aef1ee0ddb0431a90b689a5d9cd01\transformed\play-services-basement-18.5.0\AndroidManifest.xml:20:5-24:19
+MERGED from [com.squareup.picasso:picasso:2.8] C:\Users\xerma\.gradle\caches\8.9\transforms\45cfba89be5639acedc3a68bf1375c94\transformed\picasso-2.8\AndroidManifest.xml:7:5-12:19
+MERGED from [com.squareup.picasso:picasso:2.8] C:\Users\xerma\.gradle\caches\8.9\transforms\45cfba89be5639acedc3a68bf1375c94\transformed\picasso-2.8\AndroidManifest.xml:7:5-12:19
+MERGED from [de.hdodenhof:circleimageview:3.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c0550f3dddf23ed41c28566b8f9b590d\transformed\circleimageview-3.1.0\AndroidManifest.xml:9:5-20
+MERGED from [de.hdodenhof:circleimageview:3.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c0550f3dddf23ed41c28566b8f9b590d\transformed\circleimageview-3.1.0\AndroidManifest.xml:9:5-20
+MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\555de1871d0792f202f78b9438a5a57f\transformed\startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\555de1871d0792f202f78b9438a5a57f\transformed\startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\54066d894d5a2a1890ad6a1cc4a82ad0\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\54066d894d5a2a1890ad6a1cc4a82ad0\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+MERGED from [com.google.android.play:core-common:2.0.3] C:\Users\xerma\.gradle\caches\8.9\transforms\26bdbac4fe9069ff0379ce89017f6ad9\transformed\core-common-2.0.3\AndroidManifest.xml:11:5-19:19
+MERGED from [com.google.android.play:core-common:2.0.3] C:\Users\xerma\.gradle\caches\8.9\transforms\26bdbac4fe9069ff0379ce89017f6ad9\transformed\core-common-2.0.3\AndroidManifest.xml:11:5-19:19
+	android:extractNativeLibs
+		INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
+	android:roundIcon
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:18:9-54
+	android:icon
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:16:9-43
+	android:networkSecurityConfig
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:22:9-69
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:28:18-86
+	android:supportsRtl
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:19:9-35
+	android:label
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:17:9-41
+	android:fullBackupContent
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:15:9-54
+	tools:targetApi
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:23:9-29
+	android:allowBackup
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:13:9-35
+	android:theme
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:20:9-45
+	android:dataExtractionRules
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:14:9-65
+	android:usesCleartextTraffic
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:21:9-44
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:12:9-38
+meta-data#preloaded_fonts
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:26:9-28:57
+	android:resource
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:28:13-54
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:27:13-43
+activity#com.example.cooking.ui.activities.MainActivity
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:30:9-39:20
+	android:screenOrientation
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:33:13-49
+	android:exported
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:32:13-36
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:31:13-55
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:34:13-38:29
+action#android.intent.action.MAIN
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:35:17-69
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:35:25-66
+category#android.intent.category.LAUNCHER
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:37:17-77
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:37:27-74
+activity#com.example.cooking.ui.activities.RecipeDetailActivity
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:40:9-44:52
+	android:screenOrientation
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:44:13-49
+	android:parentActivityName
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:43:13-69
+	android:exported
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:42:13-37
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:41:13-63
+activity#com.example.cooking.ui.activities.Regist
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:45:9-48:52
+	android:screenOrientation
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:48:13-49
+	android:exported
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:47:13-37
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:46:13-49
+activity#com.example.cooking.ui.activities.AddRecipeActivity
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:49:9-53:52
+	android:screenOrientation
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:53:13-49
+	android:parentActivityName
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:52:13-69
+	android:exported
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:51:13-37
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:50:13-60
+activity#com.example.cooking.ui.activities.AiChatActivity
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:54:9-58:52
+	android:screenOrientation
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:58:13-49
+	android:parentActivityName
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:57:13-69
+	android:exported
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:56:13-37
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:55:13-57
+activity#com.example.cooking.ui.activities.PasswordRecoveryActivity
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:59:9-67:20
+	android:screenOrientation
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:63:13-49
+	android:parentActivityName
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:62:13-63
+	android:label
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:61:13-50
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:60:13-67
+meta-data#android.support.PARENT_ACTIVITY
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:64:13-66:57
+	android:value
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:66:17-54
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:65:17-63
+activity#com.example.cooking.ui.activities.EditRecipeActivity
+ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:68:9-72:52
+	android:screenOrientation
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:72:13-49
+	android:parentActivityName
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:71:13-77
+	android:exported
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:70:13-37
+	android:name
+		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:69:13-61
+uses-sdk
+INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
+INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
+MERGED from [androidx.databinding:viewbinding:8.7.3] C:\Users\xerma\.gradle\caches\8.9\transforms\8d130a172a26a79c1c4e08188aad4bfb\transformed\viewbinding-8.7.3\AndroidManifest.xml:5:5-44
+MERGED from [androidx.databinding:viewbinding:8.7.3] C:\Users\xerma\.gradle\caches\8.9\transforms\8d130a172a26a79c1c4e08188aad4bfb\transformed\viewbinding-8.7.3\AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-common:2.7.7] C:\Users\xerma\.gradle\caches\8.9\transforms\bf2f6d14622758af3f46982f93b8f9c5\transformed\navigation-common-2.7.7\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-common:2.7.7] C:\Users\xerma\.gradle\caches\8.9\transforms\bf2f6d14622758af3f46982f93b8f9c5\transformed\navigation-common-2.7.7\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-runtime:2.7.7] C:\Users\xerma\.gradle\caches\8.9\transforms\db4e339d529738d4aa67a0399397db0a\transformed\navigation-runtime-2.7.7\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-runtime:2.7.7] C:\Users\xerma\.gradle\caches\8.9\transforms\db4e339d529738d4aa67a0399397db0a\transformed\navigation-runtime-2.7.7\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-fragment:2.7.7] C:\Users\xerma\.gradle\caches\8.9\transforms\a7b954c7e038363b38f5f560561fbb33\transformed\navigation-fragment-2.7.7\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-fragment:2.7.7] C:\Users\xerma\.gradle\caches\8.9\transforms\a7b954c7e038363b38f5f560561fbb33\transformed\navigation-fragment-2.7.7\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-ui:2.7.7] C:\Users\xerma\.gradle\caches\8.9\transforms\6a87e93cdfdf02dd303f674fc0714ef8\transformed\navigation-ui-2.7.7\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-ui:2.7.7] C:\Users\xerma\.gradle\caches\8.9\transforms\6a87e93cdfdf02dd303f674fc0714ef8\transformed\navigation-ui-2.7.7\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.material:material:1.12.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d065566cf243344153b23354f55189c1\transformed\material-1.12.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.material:material:1.12.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d065566cf243344153b23354f55189c1\transformed\material-1.12.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.constraintlayout:constraintlayout:2.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a4d564fe1b62dc86e1a415463bd7c5b6\transformed\constraintlayout-2.2.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.constraintlayout:constraintlayout:2.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a4d564fe1b62dc86e1a415463bd7c5b6\transformed\constraintlayout-2.2.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.preference:preference:1.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4249262301ab3680afe76d1a28059a6a\transformed\preference-1.2.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.preference:preference:1.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4249262301ab3680afe76d1a28059a6a\transformed\preference-1.2.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.appcompat:appcompat-resources:1.7.0] C:\Users\xerma\.gradle\caches\8.9\transforms\90316a94b41e73c348551cb76789e0e5\transformed\appcompat-resources-1.7.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.7.0] C:\Users\xerma\.gradle\caches\8.9\transforms\90316a94b41e73c348551cb76789e0e5\transformed\appcompat-resources-1.7.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.appcompat:appcompat:1.7.0] C:\Users\xerma\.gradle\caches\8.9\transforms\0185aa0b03ce82533fd3c3f33ceab927\transformed\appcompat-1.7.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.appcompat:appcompat:1.7.0] C:\Users\xerma\.gradle\caches\8.9\transforms\0185aa0b03ce82533fd3c3f33ceab927\transformed\appcompat-1.7.0\AndroidManifest.xml:5:5-44
+MERGED from [com.github.bumptech.glide:glide:4.16.0] C:\Users\xerma\.gradle\caches\8.9\transforms\f03385008cadc607ac8b94d042ccac68\transformed\glide-4.16.0\AndroidManifest.xml:5:5-7:41
+MERGED from [com.github.bumptech.glide:glide:4.16.0] C:\Users\xerma\.gradle\caches\8.9\transforms\f03385008cadc607ac8b94d042ccac68\transformed\glide-4.16.0\AndroidManifest.xml:5:5-7:41
+MERGED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:21:5-23:151
+MERGED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:21:5-23:151
+MERGED from [androidx.credentials:credentials:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\666003baeb62368d960b3838a1cb3e02\transformed\credentials-1.2.0-rc01\AndroidManifest.xml:5:5-44
+MERGED from [androidx.credentials:credentials:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\666003baeb62368d960b3838a1cb3e02\transformed\credentials-1.2.0-rc01\AndroidManifest.xml:5:5-44
+MERGED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:21:5-44
+MERGED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:21:5-44
+MERGED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443bf5e6028d3fb9f8dfa9edabfacaf1\transformed\play-services-auth-21.0.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443bf5e6028d3fb9f8dfa9edabfacaf1\transformed\play-services-auth-21.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager2:viewpager2:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\650f66cbecedc617c63b357e2f59b9c1\transformed\viewpager2-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.viewpager2:viewpager2:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\650f66cbecedc617c63b357e2f59b9c1\transformed\viewpager2-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment-ktx:1.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\cdeab8e5dafc324fe920dc632e738fea\transformed\fragment-ktx-1.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.fragment:fragment-ktx:1.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\cdeab8e5dafc324fe920dc632e738fea\transformed\fragment-ktx-1.6.2\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-auth-api-phone:18.0.2] C:\Users\xerma\.gradle\caches\8.9\transforms\a26c228b2ed330ef2d74225d4d12bb79\transformed\play-services-auth-api-phone-18.0.2\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-auth-api-phone:18.0.2] C:\Users\xerma\.gradle\caches\8.9\transforms\a26c228b2ed330ef2d74225d4d12bb79\transformed\play-services-auth-api-phone-18.0.2\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-auth-base:18.0.10] C:\Users\xerma\.gradle\caches\8.9\transforms\5b71d878035a1103c408192a198e3280\transformed\play-services-auth-base-18.0.10\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-auth-base:18.0.10] C:\Users\xerma\.gradle\caches\8.9\transforms\5b71d878035a1103c408192a198e3280\transformed\play-services-auth-base-18.0.10\AndroidManifest.xml:5:5-44
+MERGED from [com.google.firebase:firebase-analytics:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4f0624206e18529639e0298afc129603\transformed\firebase-analytics-22.4.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.firebase:firebase-analytics:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4f0624206e18529639e0298afc129603\transformed\firebase-analytics-22.4.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-measurement-sdk:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a6c1d4dad3e1df1a58cff3ef00d215a8\transformed\play-services-measurement-sdk-22.4.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-measurement-sdk:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a6c1d4dad3e1df1a58cff3ef00d215a8\transformed\play-services-measurement-sdk-22.4.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.recaptcha:recaptcha:18.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\2a9fcdfd55af893dd90a14f642502b37\transformed\recaptcha-18.6.1\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.recaptcha:recaptcha:18.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\2a9fcdfd55af893dd90a14f642502b37\transformed\recaptcha-18.6.1\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.play:integrity:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a9d2f450a6d1960ddfa4b05f62aac1a6\transformed\integrity-1.3.0\AndroidManifest.xml:4:5-44
+MERGED from [com.google.android.play:integrity:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a9d2f450a6d1960ddfa4b05f62aac1a6\transformed\integrity-1.3.0\AndroidManifest.xml:4:5-44
+MERGED from [com.google.firebase:firebase-appcheck-interop:17.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\0dbeb28315d66be20a312d725d478d16\transformed\firebase-appcheck-interop-17.0.0\AndroidManifest.xml:18:5-20:41
+MERGED from [com.google.firebase:firebase-appcheck-interop:17.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\0dbeb28315d66be20a312d725d478d16\transformed\firebase-appcheck-interop-17.0.0\AndroidManifest.xml:18:5-20:41
+MERGED from [com.google.firebase:firebase-auth-interop:20.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\31b378e865fffb95444d46b83e7aa92c\transformed\firebase-auth-interop-20.0.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.firebase:firebase-auth-interop:20.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\31b378e865fffb95444d46b83e7aa92c\transformed\firebase-auth-interop-20.0.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\ccb197b4a00df3b24de85054598776fd\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\ccb197b4a00df3b24de85054598776fd\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:19:5-44
+MERGED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:19:5-44
+MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e74e781e96bf3b32200fbf1001d1fc65\transformed\play-services-measurement-impl-22.4.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e74e781e96bf3b32200fbf1001d1fc65\transformed\play-services-measurement-impl-22.4.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-fido:20.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8e2a953c66e1b477ec63a67e794ff8ae\transformed\play-services-fido-20.1.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-fido:20.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8e2a953c66e1b477ec63a67e794ff8ae\transformed\play-services-fido-20.1.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d21b3e6c2d551db582edb0deff26ef86\transformed\swiperefreshlayout-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.swiperefreshlayout:swiperefreshlayout:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d21b3e6c2d551db582edb0deff26ef86\transformed\swiperefreshlayout-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6be6e2e0c8d160dbc775e5775526d572\transformed\coordinatorlayout-1.2.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6be6e2e0c8d160dbc775e5775526d572\transformed\coordinatorlayout-1.2.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d6e61d7f29dd7a16623a7ca4209823a6\transformed\slidingpanelayout-1.2.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.slidingpanelayout:slidingpanelayout:1.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d6e61d7f29dd7a16623a7ca4209823a6\transformed\slidingpanelayout-1.2.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.transition:transition:1.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\eee6f3ee11658c4dc5350a7adbb36446\transformed\transition-1.5.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.transition:transition:1.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\eee6f3ee11658c4dc5350a7adbb36446\transformed\transition-1.5.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.dynamicanimation:dynamicanimation:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\1cfcf49470e7a03f4892819d601e7056\transformed\dynamicanimation-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.dynamicanimation:dynamicanimation:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\1cfcf49470e7a03f4892819d601e7056\transformed\dynamicanimation-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-stats:17.0.2] C:\Users\xerma\.gradle\caches\8.9\transforms\eb6803b0de022fd9dfe9862c5d2814d2\transformed\play-services-stats-17.0.2\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-stats:17.0.2] C:\Users\xerma\.gradle\caches\8.9\transforms\eb6803b0de022fd9dfe9862c5d2814d2\transformed\play-services-stats-17.0.2\AndroidManifest.xml:5:5-44
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c20742a00f9fc5244289e393fbdb52b5\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c20742a00f9fc5244289e393fbdb52b5\transformed\legacy-support-core-utils-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\05c502ea11d065b9ef38a0f18bef3659\transformed\loader-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.loader:loader:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\05c502ea11d065b9ef38a0f18bef3659\transformed\loader-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.emoji2:emoji2-views-helper:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\039f0acbeeefc7fa77675d32a5592632\transformed\emoji2-views-helper-1.3.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.emoji2:emoji2-views-helper:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\039f0acbeeefc7fa77675d32a5592632\transformed\emoji2-views-helper-1.3.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\5b4baea76624144309f021bbf04b6673\transformed\emoji2-1.3.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\5b4baea76624144309f021bbf04b6673\transformed\emoji2-1.3.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.activity:activity-ktx:1.10.0] C:\Users\xerma\.gradle\caches\8.9\transforms\1d57444a7fabb55286fa4547b608d562\transformed\activity-ktx-1.10.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-ktx:1.10.0] C:\Users\xerma\.gradle\caches\8.9\transforms\1d57444a7fabb55286fa4547b608d562\transformed\activity-ktx-1.10.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\78e808f1f38b68c1445b40973c28534b\transformed\lifecycle-runtime-ktx-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\78e808f1f38b68c1445b40973c28534b\transformed\lifecycle-runtime-ktx-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\2445b8e015c8cf09eb008814aa83b050\transformed\lifecycle-viewmodel-ktx-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\2445b8e015c8cf09eb008814aa83b050\transformed\lifecycle-viewmodel-ktx-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\c5e3419e397dc98d6f569644d7aa1ccf\transformed\lifecycle-livedata-core-ktx-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\c5e3419e397dc98d6f569644d7aa1ccf\transformed\lifecycle-livedata-core-ktx-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\01c56cb317beee2fe2d3daa67230c275\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\01c56cb317beee2fe2d3daa67230c275\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-service:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\62ee2bf7c8ecd8f753e2e755a25d7a48\transformed\lifecycle-service-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-service:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\62ee2bf7c8ecd8f753e2e755a25d7a48\transformed\lifecycle-service-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\f92dc6c12a8b31f0aac72c183334c195\transformed\lifecycle-livedata-core-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\f92dc6c12a8b31f0aac72c183334c195\transformed\lifecycle-livedata-core-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\1a57bf83a820622f5857495b38fa38bb\transformed\lifecycle-viewmodel-savedstate-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\1a57bf83a820622f5857495b38fa38bb\transformed\lifecycle-viewmodel-savedstate-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.privacysandbox.ads:ads-adservices-java:1.1.0-beta11] C:\Users\xerma\.gradle\caches\8.9\transforms\48c4b1ce6a8fd30cdd6b07dc189c8b61\transformed\ads-adservices-java-1.1.0-beta11\AndroidManifest.xml:5:5-44
+MERGED from [androidx.privacysandbox.ads:ads-adservices-java:1.1.0-beta11] C:\Users\xerma\.gradle\caches\8.9\transforms\48c4b1ce6a8fd30cdd6b07dc189c8b61\transformed\ads-adservices-java-1.1.0-beta11\AndroidManifest.xml:5:5-44
+MERGED from [androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] C:\Users\xerma\.gradle\caches\8.9\transforms\b6c096f1d89f8bd853e1d1496a4c35ba\transformed\ads-adservices-1.1.0-beta11\AndroidManifest.xml:20:5-44
+MERGED from [androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] C:\Users\xerma\.gradle\caches\8.9\transforms\b6c096f1d89f8bd853e1d1496a4c35ba\transformed\ads-adservices-1.1.0-beta11\AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core-ktx:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c86e3eb60fe12e7a0ac0272f698e6b14\transformed\core-ktx-1.13.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core-ktx:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c86e3eb60fe12e7a0ac0272f698e6b14\transformed\core-ktx-1.13.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.drawerlayout:drawerlayout:1.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\7e9842594c4a5025bc4ed4b94b8d43cf\transformed\drawerlayout-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.drawerlayout:drawerlayout:1.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\7e9842594c4a5025bc4ed4b94b8d43cf\transformed\drawerlayout-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\52f1d8a2cfc9176e030cf2eb4657cadb\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\52f1d8a2cfc9176e030cf2eb4657cadb\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e256d93f16fd86192d216ab661f86742\transformed\vectordrawable-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e256d93f16fd86192d216ab661f86742\transformed\vectordrawable-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.recyclerview:recyclerview:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\0db2a1908fc71a8f51c0d482a8aa94ab\transformed\recyclerview-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.recyclerview:recyclerview:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\0db2a1908fc71a8f51c0d482a8aa94ab\transformed\recyclerview-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d6577fd720116b981cd3d0b54e849d2e\transformed\viewpager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d6577fd720116b981cd3d0b54e849d2e\transformed\viewpager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\bd8a66be991702c31e38dd5535aa0509\transformed\customview-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.customview:customview:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\bd8a66be991702c31e38dd5535aa0509\transformed\customview-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.browser:browser:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\bfa5143f355061e0154a161cfdf69f58\transformed\browser-1.4.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.browser:browser:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\bfa5143f355061e0154a161cfdf69f58\transformed\browser-1.4.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.window:window:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c1ba2e0e578bdd4974384d7debdbbe1d\transformed\window-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.window:window:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c1ba2e0e578bdd4974384d7debdbbe1d\transformed\window-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.gms:play-services-base:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\fa9c9203182d86ca3918b30c659a1aa2\transformed\play-services-base-18.5.0\AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-base:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\fa9c9203182d86ca3918b30c659a1aa2\transformed\play-services-base-18.5.0\AndroidManifest.xml:3:5-44
+MERGED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\bbaa7688718818375ecc6c15b446ef76\transformed\lifecycle-runtime-2.6.2\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\bbaa7688718818375ecc6c15b446ef76\transformed\lifecycle-runtime-2.6.2\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\06a3114cfed36c844fd951cd43651fbc\transformed\lifecycle-livedata-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\06a3114cfed36c844fd951cd43651fbc\transformed\lifecycle-livedata-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\b7ecbdc4e9aeff9300dc2388b6a8797f\transformed\lifecycle-viewmodel-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\b7ecbdc4e9aeff9300dc2388b6a8797f\transformed\lifecycle-viewmodel-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] C:\Users\xerma\.gradle\caches\8.9\transforms\aa29812bf0adaf60f997076444e87a04\transformed\savedstate-ktx-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] C:\Users\xerma\.gradle\caches\8.9\transforms\aa29812bf0adaf60f997076444e87a04\transformed\savedstate-ktx-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\xerma\.gradle\caches\8.9\transforms\afdee578427e66b0fa9c4523c1a2d9de\transformed\savedstate-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\xerma\.gradle\caches\8.9\transforms\afdee578427e66b0fa9c4523c1a2d9de\transformed\savedstate-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\07f10fbab470018d0bd1565bbac88329\transformed\room-runtime-2.6.1\AndroidManifest.xml:21:5-44
+MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\07f10fbab470018d0bd1565bbac88329\transformed\room-runtime-2.6.1\AndroidManifest.xml:21:5-44
+MERGED from [androidx.room:room-ktx:2.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\a3f6233b1a4b58b3af63b6f5499ca0f3\transformed\room-ktx-2.6.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.room:room-ktx:2.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\a3f6233b1a4b58b3af63b6f5499ca0f3\transformed\room-ktx-2.6.1\AndroidManifest.xml:20:5-44
+MERGED from [com.google.firebase:firebase-installations-interop:17.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\5507665a47a50f90c591601b7b273357\transformed\firebase-installations-interop-17.1.1\AndroidManifest.xml:17:5-44
+MERGED from [com.google.firebase:firebase-installations-interop:17.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\5507665a47a50f90c591601b7b273357\transformed\firebase-installations-interop-17.1.1\AndroidManifest.xml:17:5-44
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\f0e113f502ed2d0ade10eed7b0462b03\transformed\play-services-tasks-18.2.0\AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-tasks:18.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\f0e113f502ed2d0ade10eed7b0462b03\transformed\play-services-tasks-18.2.0\AndroidManifest.xml:3:5-44
+MERGED from [com.google.android.gms:play-services-ads-identifier:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c440c875b29ea9313044aca77fde92ee\transformed\play-services-ads-identifier-18.0.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-ads-identifier:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c440c875b29ea9313044aca77fde92ee\transformed\play-services-ads-identifier-18.0.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-measurement-base:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\9798b0d8f2d5bb9c7702398a0f070eed\transformed\play-services-measurement-base-22.4.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-measurement-base:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\9798b0d8f2d5bb9c7702398a0f070eed\transformed\play-services-measurement-base-22.4.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.firebase:firebase-measurement-connector:19.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2631e5c4337a7d20c66767f942bf8c77\transformed\firebase-measurement-connector-19.0.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.firebase:firebase-measurement-connector:19.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2631e5c4337a7d20c66767f942bf8c77\transformed\firebase-measurement-connector-19.0.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-basement:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\713aef1ee0ddb0431a90b689a5d9cd01\transformed\play-services-basement-18.5.0\AndroidManifest.xml:18:5-43
+MERGED from [com.google.android.gms:play-services-basement:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\713aef1ee0ddb0431a90b689a5d9cd01\transformed\play-services-basement-18.5.0\AndroidManifest.xml:18:5-43
+MERGED from [androidx.fragment:fragment:1.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\da153c2b0efc88aa5d6946a19918caf7\transformed\fragment-1.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.fragment:fragment:1.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\da153c2b0efc88aa5d6946a19918caf7\transformed\fragment-1.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.10.0] C:\Users\xerma\.gradle\caches\8.9\transforms\62986cd8621b8ef7c76c9cc93dc295bb\transformed\activity-1.10.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.10.0] C:\Users\xerma\.gradle\caches\8.9\transforms\62986cd8621b8ef7c76c9cc93dc295bb\transformed\activity-1.10.0\AndroidManifest.xml:20:5-44
+MERGED from [com.squareup.picasso:picasso:2.8] C:\Users\xerma\.gradle\caches\8.9\transforms\45cfba89be5639acedc3a68bf1375c94\transformed\picasso-2.8\AndroidManifest.xml:5:5-44
+MERGED from [com.squareup.picasso:picasso:2.8] C:\Users\xerma\.gradle\caches\8.9\transforms\45cfba89be5639acedc3a68bf1375c94\transformed\picasso-2.8\AndroidManifest.xml:5:5-44
+MERGED from [de.hdodenhof:circleimageview:3.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c0550f3dddf23ed41c28566b8f9b590d\transformed\circleimageview-3.1.0\AndroidManifest.xml:5:5-7:41
+MERGED from [de.hdodenhof:circleimageview:3.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c0550f3dddf23ed41c28566b8f9b590d\transformed\circleimageview-3.1.0\AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.security:security-crypto:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\51e67e8b9a3052f2c08a3163b31b7da5\transformed\security-crypto-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.security:security-crypto:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\51e67e8b9a3052f2c08a3163b31b7da5\transformed\security-crypto-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [io.reactivex.rxjava3:rxandroid:3.0.2] C:\Users\xerma\.gradle\caches\8.9\transforms\f3c4d9f42579e404e1598696b849b68b\transformed\rxandroid-3.0.2\AndroidManifest.xml:18:5-43
+MERGED from [io.reactivex.rxjava3:rxandroid:3.0.2] C:\Users\xerma\.gradle\caches\8.9\transforms\f3c4d9f42579e404e1598696b849b68b\transformed\rxandroid-3.0.2\AndroidManifest.xml:18:5-43
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\f4841cfbc23ba5484fa72c07e2bf6085\transformed\cursoradapter-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.cursoradapter:cursoradapter:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\f4841cfbc23ba5484fa72c07e2bf6085\transformed\cursoradapter-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.cardview:cardview:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\27b34a5d2f3576b9985b0c87aeec2816\transformed\cardview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.cardview:cardview:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\27b34a5d2f3576b9985b0c87aeec2816\transformed\cardview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\555de1871d0792f202f78b9438a5a57f\transformed\startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\555de1871d0792f202f78b9438a5a57f\transformed\startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\883387fc98f064bb2daaa589bce91e61\transformed\tracing-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\883387fc98f064bb2daaa589bce91e61\transformed\tracing-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d4596a8895b9a2119949cd1c87a0801b\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d4596a8895b9a2119949cd1c87a0801b\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [com.github.bumptech.glide:gifdecoder:4.16.0] C:\Users\xerma\.gradle\caches\8.9\transforms\3851565d3fe2c6f24fc68c0ed96c1790\transformed\gifdecoder-4.16.0\AndroidManifest.xml:5:5-7:41
+MERGED from [com.github.bumptech.glide:gifdecoder:4.16.0] C:\Users\xerma\.gradle\caches\8.9\transforms\3851565d3fe2c6f24fc68c0ed96c1790\transformed\gifdecoder-4.16.0\AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.exifinterface:exifinterface:1.3.6] C:\Users\xerma\.gradle\caches\8.9\transforms\570ce08add333caa4dd3fd3b7a5eb386\transformed\exifinterface-1.3.6\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.exifinterface:exifinterface:1.3.6] C:\Users\xerma\.gradle\caches\8.9\transforms\570ce08add333caa4dd3fd3b7a5eb386\transformed\exifinterface-1.3.6\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a1da30f4ac77c1ce39cfc3026b25b4d9\transformed\core-runtime-2.2.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a1da30f4ac77c1ce39cfc3026b25b4d9\transformed\core-runtime-2.2.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite-framework:2.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\857b7d9a087cd73fd2ff8bc523dd1b92\transformed\sqlite-framework-2.4.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite-framework:2.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\857b7d9a087cd73fd2ff8bc523dd1b92\transformed\sqlite-framework-2.4.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite:2.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\ed3cb746b2d73b70e8eff7520120df1b\transformed\sqlite-2.4.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite:2.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\ed3cb746b2d73b70e8eff7520120df1b\transformed\sqlite-2.4.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d1428e542d8a1e493c4f38f8b3bf06dd\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.localbroadcastmanager:localbroadcastmanager:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d1428e542d8a1e493c4f38f8b3bf06dd\transformed\localbroadcastmanager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.firebase:firebase-components:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\db9de83b2cdd11a0d3640a5206c5b5ba\transformed\firebase-components-18.0.0\AndroidManifest.xml:18:5-44
+MERGED from [com.google.firebase:firebase-components:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\db9de83b2cdd11a0d3640a5206c5b5ba\transformed\firebase-components-18.0.0\AndroidManifest.xml:18:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\54066d894d5a2a1890ad6a1cc4a82ad0\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\54066d894d5a2a1890ad6a1cc4a82ad0\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\fa3308fddb6afe70a8c5687317ff1aba\transformed\documentfile-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\fa3308fddb6afe70a8c5687317ff1aba\transformed\documentfile-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.print:print:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2132864bd83d25bc44d247157770376f\transformed\print-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.print:print:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2132864bd83d25bc44d247157770376f\transformed\print-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4a45154f6e25eea55447c3ed0e421ae5\transformed\annotation-experimental-1.4.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4a45154f6e25eea55447c3ed0e421ae5\transformed\annotation-experimental-1.4.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.libraries.identity.googleid:googleid:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\09d86f7967aae5ce1a02cc34795a4232\transformed\googleid-1.1.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.libraries.identity.googleid:googleid:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\09d86f7967aae5ce1a02cc34795a4232\transformed\googleid-1.1.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.play:core-common:2.0.3] C:\Users\xerma\.gradle\caches\8.9\transforms\26bdbac4fe9069ff0379ce89017f6ad9\transformed\core-common-2.0.3\AndroidManifest.xml:7:5-9:41
+MERGED from [com.google.android.play:core-common:2.0.3] C:\Users\xerma\.gradle\caches\8.9\transforms\26bdbac4fe9069ff0379ce89017f6ad9\transformed\core-common-2.0.3\AndroidManifest.xml:7:5-9:41
+	tools:overrideLibrary
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:23:9-148
+	android:targetSdkVersion
+		INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
+activity#com.google.firebase.auth.internal.GenericIdpActivity
+ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:29:9-46:20
+	android:excludeFromRecents
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:31:13-46
+	android:launchMode
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:33:13-44
+	android:exported
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:32:13-36
+	android:theme
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:34:13-72
+	android:name
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:30:13-80
+intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:host:firebase.auth+data:path:/+data:scheme:genericidp
+ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:35:13-45:29
+action#android.intent.action.VIEW
+ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:36:17-69
+	android:name
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:36:25-66
+category#android.intent.category.DEFAULT
+ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:38:17-76
+	android:name
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:38:27-73
+category#android.intent.category.BROWSABLE
+ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:39:17-78
+	android:name
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:39:27-75
+data
+ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:41:17-44:51
+	android:path
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:43:21-37
+	android:host
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:42:21-49
+	android:scheme
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:44:21-48
+activity#com.google.firebase.auth.internal.RecaptchaActivity
+ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:47:9-64:20
+	android:excludeFromRecents
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:49:13-46
+	android:launchMode
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:51:13-44
+	android:exported
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:50:13-36
+	android:theme
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:52:13-72
+	android:name
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:48:13-79
+intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:host:firebase.auth+data:path:/+data:scheme:recaptcha
+ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:53:13-63:29
+service#com.google.firebase.components.ComponentDiscoveryService
+ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:66:9-72:19
+MERGED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:30:9-36:19
+MERGED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:30:9-36:19
+MERGED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:12:9-21:19
+MERGED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:12:9-21:19
+MERGED from [com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\ccb197b4a00df3b24de85054598776fd\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:9:9-15:19
+MERGED from [com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\ccb197b4a00df3b24de85054598776fd\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:9:9-15:19
+MERGED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:30:9-38:19
+MERGED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:30:9-38:19
+	android:exported
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:68:13-37
+	tools:targetApi
+		ADDED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:34:13-32
+	android:directBootAware
+		ADDED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:32:13-43
+	android:name
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:67:13-84
+meta-data#com.google.firebase.components:com.google.firebase.auth.FirebaseAuthRegistrar
+ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:69:13-71:85
+	android:value
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:71:17-82
+	android:name
+		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:70:17-109
+service#androidx.credentials.playservices.CredentialProviderMetadataHolder
+ADDED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:24:9-32:19
+	android:enabled
+		ADDED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:26:13-35
+	android:exported
+		ADDED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:27:13-37
+	tools:ignore
+		ADDED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:28:13-60
+	android:name
+		ADDED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:25:13-94
+meta-data#androidx.credentials.CREDENTIAL_PROVIDER_KEY
+ADDED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:29:13-31:104
+	android:value
+		ADDED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:31:17-101
+	android:name
+		ADDED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:30:17-76
+activity#androidx.credentials.playservices.HiddenActivity
+ADDED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:34:9-41:20
+	android:fitsSystemWindows
+		ADDED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:39:13-45
+	android:enabled
+		ADDED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:37:13-35
+	android:exported
+		ADDED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:38:13-37
+	android:configChanges
+		ADDED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:36:13-87
+	android:theme
+		ADDED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:40:13-48
+	android:name
+		ADDED from [androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\xerma\.gradle\caches\8.9\transforms\c67491947a5a5660584fa31ced9db32f\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:35:13-76
+activity#com.google.android.gms.auth.api.signin.internal.SignInHubActivity
+ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443bf5e6028d3fb9f8dfa9edabfacaf1\transformed\play-services-auth-21.0.0\AndroidManifest.xml:23:9-27:75
+	android:excludeFromRecents
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443bf5e6028d3fb9f8dfa9edabfacaf1\transformed\play-services-auth-21.0.0\AndroidManifest.xml:25:13-46
+	android:exported
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443bf5e6028d3fb9f8dfa9edabfacaf1\transformed\play-services-auth-21.0.0\AndroidManifest.xml:26:13-37
+	android:theme
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443bf5e6028d3fb9f8dfa9edabfacaf1\transformed\play-services-auth-21.0.0\AndroidManifest.xml:27:13-72
+	android:name
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443bf5e6028d3fb9f8dfa9edabfacaf1\transformed\play-services-auth-21.0.0\AndroidManifest.xml:24:13-93
+service#com.google.android.gms.auth.api.signin.RevocationBoundService
+ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443bf5e6028d3fb9f8dfa9edabfacaf1\transformed\play-services-auth-21.0.0\AndroidManifest.xml:33:9-37:51
+	android:exported
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443bf5e6028d3fb9f8dfa9edabfacaf1\transformed\play-services-auth-21.0.0\AndroidManifest.xml:35:13-36
+	android:visibleToInstantApps
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443bf5e6028d3fb9f8dfa9edabfacaf1\transformed\play-services-auth-21.0.0\AndroidManifest.xml:37:13-48
+	android:permission
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443bf5e6028d3fb9f8dfa9edabfacaf1\transformed\play-services-auth-21.0.0\AndroidManifest.xml:36:13-107
+	android:name
+		ADDED from [com.google.android.gms:play-services-auth:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443bf5e6028d3fb9f8dfa9edabfacaf1\transformed\play-services-auth-21.0.0\AndroidManifest.xml:34:13-89
+uses-permission#android.permission.WAKE_LOCK
+ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:25:5-68
+MERGED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:24:5-68
+MERGED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:24:5-68
+MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e74e781e96bf3b32200fbf1001d1fc65\transformed\play-services-measurement-impl-22.4.0\AndroidManifest.xml:25:5-68
+MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e74e781e96bf3b32200fbf1001d1fc65\transformed\play-services-measurement-impl-22.4.0\AndroidManifest.xml:25:5-68
+MERGED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:23:5-68
+MERGED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:23:5-68
+MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:25:5-68
+MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:25:5-68
+	android:name
+		ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:25:22-65
+uses-permission#com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE
+ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:26:5-110
+MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e74e781e96bf3b32200fbf1001d1fc65\transformed\play-services-measurement-impl-22.4.0\AndroidManifest.xml:26:5-110
+MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e74e781e96bf3b32200fbf1001d1fc65\transformed\play-services-measurement-impl-22.4.0\AndroidManifest.xml:26:5-110
+	android:name
+		ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:26:22-107
+receiver#com.google.android.gms.measurement.AppMeasurementReceiver
+ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:29:9-33:20
+	android:enabled
+		ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:31:13-35
+	android:exported
+		ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:32:13-37
+	android:name
+		ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:30:13-85
+service#com.google.android.gms.measurement.AppMeasurementService
+ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:35:9-38:40
+	android:enabled
+		ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:37:13-35
+	android:exported
+		ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:38:13-37
+	android:name
+		ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:36:13-84
+service#com.google.android.gms.measurement.AppMeasurementJobService
+ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:39:9-43:72
+	android:enabled
+		ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:41:13-35
+	android:exported
+		ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:42:13-37
+	android:permission
+		ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:43:13-69
+	android:name
+		ADDED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:40:13-87
+uses-permission#com.google.android.gms.permission.AD_ID
+ADDED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:25:5-79
+MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e74e781e96bf3b32200fbf1001d1fc65\transformed\play-services-measurement-impl-22.4.0\AndroidManifest.xml:27:5-79
+MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\e74e781e96bf3b32200fbf1001d1fc65\transformed\play-services-measurement-impl-22.4.0\AndroidManifest.xml:27:5-79
+MERGED from [com.google.android.gms:play-services-ads-identifier:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c440c875b29ea9313044aca77fde92ee\transformed\play-services-ads-identifier-18.0.0\AndroidManifest.xml:23:5-79
+MERGED from [com.google.android.gms:play-services-ads-identifier:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c440c875b29ea9313044aca77fde92ee\transformed\play-services-ads-identifier-18.0.0\AndroidManifest.xml:23:5-79
+MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:26:5-79
+MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:26:5-79
+	android:name
+		ADDED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:25:22-76
+uses-permission#android.permission.ACCESS_ADSERVICES_ATTRIBUTION
+ADDED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:26:5-88
+MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:27:5-88
+MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:27:5-88
+	android:name
+		ADDED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:26:22-85
+uses-permission#android.permission.ACCESS_ADSERVICES_AD_ID
+ADDED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:27:5-82
+MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:28:5-82
+MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:28:5-82
+	android:name
+		ADDED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:27:22-79
+meta-data#com.google.firebase.components:com.google.firebase.analytics.connector.internal.AnalyticsConnectorRegistrar
+ADDED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:33:13-35:85
+	android:value
+		ADDED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:35:17-82
+	android:name
+		ADDED from [com.google.android.gms:play-services-measurement-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\2df5bc18e0dd4621cfb4bea8764cb4d4\transformed\play-services-measurement-api-22.4.0\AndroidManifest.xml:34:17-139
+uses-permission#com.google.android.providers.gsf.permission.READ_GSERVICES
+ADDED from [com.google.android.recaptcha:recaptcha:18.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\2a9fcdfd55af893dd90a14f642502b37\transformed\recaptcha-18.6.1\AndroidManifest.xml:9:5-98
+	android:name
+		ADDED from [com.google.android.recaptcha:recaptcha:18.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\2a9fcdfd55af893dd90a14f642502b37\transformed\recaptcha-18.6.1\AndroidManifest.xml:9:22-95
+meta-data#com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsKtxRegistrar
+ADDED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:15:13-17:85
+	android:value
+		ADDED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:17:17-82
+	android:name
+		ADDED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:16:17-130
+meta-data#com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar
+ADDED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:18:13-20:85
+	android:value
+		ADDED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:20:17-82
+	android:name
+		ADDED from [com.google.firebase:firebase-installations:18.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\8694cb13b2336980990a2a978ce303e3\transformed\firebase-installations-18.0.0\AndroidManifest.xml:19:17-127
+meta-data#com.google.firebase.components:com.google.firebase.ktx.FirebaseCommonLegacyRegistrar
+ADDED from [com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\ccb197b4a00df3b24de85054598776fd\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:12:13-14:85
+	android:value
+		ADDED from [com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\ccb197b4a00df3b24de85054598776fd\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:14:17-82
+	android:name
+		ADDED from [com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\ccb197b4a00df3b24de85054598776fd\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:13:17-116
+provider#com.google.firebase.provider.FirebaseInitProvider
+ADDED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:23:9-28:39
+	android:authorities
+		ADDED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:25:13-72
+	android:exported
+		ADDED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:27:13-37
+	android:directBootAware
+		ADDED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:26:13-43
+	android:initOrder
+		ADDED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:28:13-36
+	android:name
+		ADDED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:24:13-77
+meta-data#com.google.firebase.components:com.google.firebase.FirebaseCommonKtxRegistrar
+ADDED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:35:13-37:85
+	android:value
+		ADDED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:37:17-82
+	android:name
+		ADDED from [com.google.firebase:firebase-common:21.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\443b3d3f7018846f8c3d8e63c79c09b1\transformed\firebase-common-21.0.0\AndroidManifest.xml:36:17-109
+uses-permission#android.permission.RECEIVE_BOOT_COMPLETED
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:25:5-81
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:25:22-78
+uses-permission#android.permission.FOREGROUND_SERVICE
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:26:5-77
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:26:22-74
+provider#androidx.startup.InitializationProvider
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:29:9-37:20
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\5b4baea76624144309f021bbf04b6673\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\5b4baea76624144309f021bbf04b6673\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\01c56cb317beee2fe2d3daa67230c275\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\01c56cb317beee2fe2d3daa67230c275\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\555de1871d0792f202f78b9438a5a57f\transformed\startup-runtime-1.1.1\AndroidManifest.xml:26:9-30:34
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\xerma\.gradle\caches\8.9\transforms\555de1871d0792f202f78b9438a5a57f\transformed\startup-runtime-1.1.1\AndroidManifest.xml:26:9-30:34
+	tools:node
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:33:13-31
+	android:authorities
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:31:13-68
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:32:13-37
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:30:13-67
+meta-data#androidx.work.WorkManagerInitializer
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:34:13-36:52
+	android:value
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:36:17-49
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:35:17-68
+service#androidx.work.impl.background.systemalarm.SystemAlarmService
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:39:9-45:35
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:42:13-72
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:43:13-37
+	tools:ignore
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:44:13-60
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:45:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:41:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:40:13-88
+service#androidx.work.impl.background.systemjob.SystemJobService
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:46:9-52:35
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:49:13-70
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:50:13-36
+	android:permission
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:51:13-69
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:52:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:48:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:47:13-84
+service#androidx.work.impl.foreground.SystemForegroundService
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:53:9-59:35
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:56:13-77
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:57:13-37
+	tools:ignore
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:58:13-60
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:59:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:55:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:54:13-81
+receiver#androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:61:9-66:35
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:64:13-35
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:65:13-37
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:66:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:63:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:62:13-88
+receiver#androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:67:9-77:20
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:70:13-36
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:71:13-37
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:72:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:69:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:68:13-106
+intent-filter#action:name:android.intent.action.ACTION_POWER_CONNECTED+action:name:android.intent.action.ACTION_POWER_DISCONNECTED
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:73:13-76:29
+action#android.intent.action.ACTION_POWER_CONNECTED
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:74:17-87
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:74:25-84
+action#android.intent.action.ACTION_POWER_DISCONNECTED
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:75:17-90
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:75:25-87
+receiver#androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:78:9-88:20
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:81:13-36
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:82:13-37
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:83:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:80:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:79:13-104
+intent-filter#action:name:android.intent.action.BATTERY_LOW+action:name:android.intent.action.BATTERY_OKAY
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:84:13-87:29
+action#android.intent.action.BATTERY_OKAY
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:85:17-77
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:85:25-74
+action#android.intent.action.BATTERY_LOW
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:86:17-76
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:86:25-73
+receiver#androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:89:9-99:20
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:92:13-36
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:93:13-37
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:94:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:91:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:90:13-104
+intent-filter#action:name:android.intent.action.DEVICE_STORAGE_LOW+action:name:android.intent.action.DEVICE_STORAGE_OK
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:95:13-98:29
+action#android.intent.action.DEVICE_STORAGE_LOW
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:96:17-83
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:96:25-80
+action#android.intent.action.DEVICE_STORAGE_OK
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:97:17-82
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:97:25-79
+receiver#androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:100:9-109:20
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:103:13-36
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:104:13-37
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:105:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:102:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:101:13-103
+intent-filter#action:name:android.net.conn.CONNECTIVITY_CHANGE
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:106:13-108:29
+action#android.net.conn.CONNECTIVITY_CHANGE
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:107:17-79
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:107:25-76
+receiver#androidx.work.impl.background.systemalarm.RescheduleReceiver
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:110:9-121:20
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:113:13-36
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:114:13-37
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:115:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:112:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:111:13-88
+intent-filter#action:name:android.intent.action.BOOT_COMPLETED+action:name:android.intent.action.TIMEZONE_CHANGED+action:name:android.intent.action.TIME_SET
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:116:13-120:29
+action#android.intent.action.BOOT_COMPLETED
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:117:17-79
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:117:25-76
+action#android.intent.action.TIME_SET
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:118:17-73
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:118:25-70
+action#android.intent.action.TIMEZONE_CHANGED
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:119:17-81
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:119:25-78
+receiver#androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:122:9-131:20
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:125:13-72
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:126:13-37
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:127:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:124:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:123:13-99
+intent-filter#action:name:androidx.work.impl.background.systemalarm.UpdateProxies
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:128:13-130:29
+action#androidx.work.impl.background.systemalarm.UpdateProxies
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:129:17-98
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:129:25-95
+receiver#androidx.work.impl.diagnostics.DiagnosticsReceiver
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:132:9-142:20
+	android:enabled
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:135:13-35
+	android:exported
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:136:13-36
+	android:permission
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:137:13-57
+	tools:targetApi
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:138:13-32
+	android:directBootAware
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:134:13-44
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:133:13-78
+intent-filter#action:name:androidx.work.diagnostics.REQUEST_DIAGNOSTICS
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:139:13-141:29
+action#androidx.work.diagnostics.REQUEST_DIAGNOSTICS
+ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:140:17-88
+	android:name
+		ADDED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9\transforms\108495965f6440ec4e2381d32dab30cb\transformed\work-runtime-2.9.0\AndroidManifest.xml:140:25-85
+meta-data#androidx.emoji2.text.EmojiCompatInitializer
+ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\5b4baea76624144309f021bbf04b6673\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\5b4baea76624144309f021bbf04b6673\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.3.0] C:\Users\xerma\.gradle\caches\8.9\transforms\5b4baea76624144309f021bbf04b6673\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+meta-data#androidx.lifecycle.ProcessLifecycleInitializer
+ADDED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\01c56cb317beee2fe2d3daa67230c275\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\01c56cb317beee2fe2d3daa67230c275\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\xerma\.gradle\caches\8.9\transforms\01c56cb317beee2fe2d3daa67230c275\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:30:17-78
+uses-library#android.ext.adservices
+ADDED from [androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] C:\Users\xerma\.gradle\caches\8.9\transforms\b6c096f1d89f8bd853e1d1496a4c35ba\transformed\ads-adservices-1.1.0-beta11\AndroidManifest.xml:23:9-25:40
+	android:required
+		ADDED from [androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] C:\Users\xerma\.gradle\caches\8.9\transforms\b6c096f1d89f8bd853e1d1496a4c35ba\transformed\ads-adservices-1.1.0-beta11\AndroidManifest.xml:25:13-37
+	android:name
+		ADDED from [androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] C:\Users\xerma\.gradle\caches\8.9\transforms\b6c096f1d89f8bd853e1d1496a4c35ba\transformed\ads-adservices-1.1.0-beta11\AndroidManifest.xml:24:13-50
+uses-library#androidx.window.extensions
+ADDED from [androidx.window:window:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c1ba2e0e578bdd4974384d7debdbbe1d\transformed\window-1.0.0\AndroidManifest.xml:25:9-27:40
+	android:required
+		ADDED from [androidx.window:window:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c1ba2e0e578bdd4974384d7debdbbe1d\transformed\window-1.0.0\AndroidManifest.xml:27:13-37
+	android:name
+		ADDED from [androidx.window:window:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c1ba2e0e578bdd4974384d7debdbbe1d\transformed\window-1.0.0\AndroidManifest.xml:26:13-54
+uses-library#androidx.window.sidecar
+ADDED from [androidx.window:window:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c1ba2e0e578bdd4974384d7debdbbe1d\transformed\window-1.0.0\AndroidManifest.xml:28:9-30:40
+	android:required
+		ADDED from [androidx.window:window:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c1ba2e0e578bdd4974384d7debdbbe1d\transformed\window-1.0.0\AndroidManifest.xml:30:13-37
+	android:name
+		ADDED from [androidx.window:window:1.0.0] C:\Users\xerma\.gradle\caches\8.9\transforms\c1ba2e0e578bdd4974384d7debdbbe1d\transformed\window-1.0.0\AndroidManifest.xml:29:13-51
+activity#com.google.android.gms.common.api.GoogleApiActivity
+ADDED from [com.google.android.gms:play-services-base:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\fa9c9203182d86ca3918b30c659a1aa2\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:9-173
+	android:exported
+		ADDED from [com.google.android.gms:play-services-base:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\fa9c9203182d86ca3918b30c659a1aa2\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:146-170
+	android:theme
+		ADDED from [com.google.android.gms:play-services-base:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\fa9c9203182d86ca3918b30c659a1aa2\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:86-145
+	android:name
+		ADDED from [com.google.android.gms:play-services-base:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\fa9c9203182d86ca3918b30c659a1aa2\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:19-85
+permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:23:9-81
+permission#com.example.cooking.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:23:9-81
+uses-permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:26:22-94
+uses-permission#com.example.cooking.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:26:22-94
+service#androidx.room.MultiInstanceInvalidationService
+ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\07f10fbab470018d0bd1565bbac88329\transformed\room-runtime-2.6.1\AndroidManifest.xml:24:9-28:63
+	android:exported
+		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\07f10fbab470018d0bd1565bbac88329\transformed\room-runtime-2.6.1\AndroidManifest.xml:27:13-37
+	tools:ignore
+		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\07f10fbab470018d0bd1565bbac88329\transformed\room-runtime-2.6.1\AndroidManifest.xml:28:13-60
+	android:directBootAware
+		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\07f10fbab470018d0bd1565bbac88329\transformed\room-runtime-2.6.1\AndroidManifest.xml:26:13-43
+	android:name
+		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\xerma\.gradle\caches\8.9\transforms\07f10fbab470018d0bd1565bbac88329\transformed\room-runtime-2.6.1\AndroidManifest.xml:25:13-74
+meta-data#com.google.android.gms.version
+ADDED from [com.google.android.gms:play-services-basement:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\713aef1ee0ddb0431a90b689a5d9cd01\transformed\play-services-basement-18.5.0\AndroidManifest.xml:21:9-23:69
+	android:value
+		ADDED from [com.google.android.gms:play-services-basement:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\713aef1ee0ddb0431a90b689a5d9cd01\transformed\play-services-basement-18.5.0\AndroidManifest.xml:23:13-66
+	android:name
+		ADDED from [com.google.android.gms:play-services-basement:18.5.0] C:\Users\xerma\.gradle\caches\8.9\transforms\713aef1ee0ddb0431a90b689a5d9cd01\transformed\play-services-basement-18.5.0\AndroidManifest.xml:22:13-58
+provider#com.squareup.picasso.PicassoProvider
+ADDED from [com.squareup.picasso:picasso:2.8] C:\Users\xerma\.gradle\caches\8.9\transforms\45cfba89be5639acedc3a68bf1375c94\transformed\picasso-2.8\AndroidManifest.xml:8:9-11:40
+	android:authorities
+		ADDED from [com.squareup.picasso:picasso:2.8] C:\Users\xerma\.gradle\caches\8.9\transforms\45cfba89be5639acedc3a68bf1375c94\transformed\picasso-2.8\AndroidManifest.xml:10:13-72
+	android:exported
+		ADDED from [com.squareup.picasso:picasso:2.8] C:\Users\xerma\.gradle\caches\8.9\transforms\45cfba89be5639acedc3a68bf1375c94\transformed\picasso-2.8\AndroidManifest.xml:11:13-37
+	android:name
+		ADDED from [com.squareup.picasso:picasso:2.8] C:\Users\xerma\.gradle\caches\8.9\transforms\45cfba89be5639acedc3a68bf1375c94\transformed\picasso-2.8\AndroidManifest.xml:9:13-64
+meta-data#androidx.profileinstaller.ProfileInstallerInitializer
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:30:17-85
+receiver#androidx.profileinstaller.ProfileInstallReceiver
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:34:9-52:20
+	android:enabled
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:37:13-35
+	android:exported
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:38:13-36
+	android:permission
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:39:13-57
+	android:directBootAware
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:36:13-44
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:35:13-76
+intent-filter#action:name:androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:40:13-42:29
+action#androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:17-91
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:25-88
+intent-filter#action:name:androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:43:13-45:29
+action#androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:17-85
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:25-82
+intent-filter#action:name:androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:46:13-48:29
+action#androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:17-88
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:25-85
+intent-filter#action:name:androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:49:13-51:29
+action#androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:17-95
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d2f052d47e6dba2bde3ec303a3c047ae\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:25-92
+activity#com.google.android.play.core.common.PlayCoreDialogWrapperActivity
+ADDED from [com.google.android.play:core-common:2.0.3] C:\Users\xerma\.gradle\caches\8.9\transforms\26bdbac4fe9069ff0379ce89017f6ad9\transformed\core-common-2.0.3\AndroidManifest.xml:14:9-18:65
+	android:stateNotNeeded
+		ADDED from [com.google.android.play:core-common:2.0.3] C:\Users\xerma\.gradle\caches\8.9\transforms\26bdbac4fe9069ff0379ce89017f6ad9\transformed\core-common-2.0.3\AndroidManifest.xml:17:13-42
+	android:exported
+		ADDED from [com.google.android.play:core-common:2.0.3] C:\Users\xerma\.gradle\caches\8.9\transforms\26bdbac4fe9069ff0379ce89017f6ad9\transformed\core-common-2.0.3\AndroidManifest.xml:16:13-37
+	android:theme
+		ADDED from [com.google.android.play:core-common:2.0.3] C:\Users\xerma\.gradle\caches\8.9\transforms\26bdbac4fe9069ff0379ce89017f6ad9\transformed\core-common-2.0.3\AndroidManifest.xml:18:13-62
+	android:name
+		ADDED from [com.google.android.play:core-common:2.0.3] C:\Users\xerma\.gradle\caches\8.9\transforms\26bdbac4fe9069ff0379ce89017f6ad9\transformed\core-common-2.0.3\AndroidManifest.xml:15:13-93

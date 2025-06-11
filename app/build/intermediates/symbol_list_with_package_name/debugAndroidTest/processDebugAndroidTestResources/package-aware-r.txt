@@ -1,0 +1,3 @@
+com.example.cooking.test
+style WhiteBackgroundDialogTheme
+style WhiteBackgroundTheme

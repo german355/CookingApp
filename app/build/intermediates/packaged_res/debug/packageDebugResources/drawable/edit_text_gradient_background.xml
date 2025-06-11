@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    
+    <!-- Градиентный фон -->
+    <gradient
+        android:startColor="#F8F8F8"
+        android:endColor="#FFFFFF"
+        android:angle="270" />
+    
+    <!-- Закругленные углы -->
+    <corners android:radius="8dp" />
+    
+    <!-- Рамка с цветом как у кнопок -->
+    <!-- <stroke
+         android:width="2dp"
+         android:color="?attr/colorPrimary" />-->
+
+     <!-- Внутренние отступы -->
+    <padding
+        android:left="12dp"
+        android:top="8dp"
+        android:right="12dp"
+        android:bottom="8dp" />
+</shape> 
