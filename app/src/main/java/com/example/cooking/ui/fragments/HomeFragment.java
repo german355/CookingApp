@@ -4,35 +4,25 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import java.util.ArrayList;
-import java.util.List;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import android.content.Intent;
-import android.widget.Toast;
-
-import com.example.cooking.ui.activities.MainActivity;
-import com.example.cooking.utils.MySharedPreferences;
 import com.example.cooking.R;
 import com.example.cooking.Recipe.Recipe;
-import com.example.cooking.ui.adapters.RecipeListAdapter;
-import com.example.cooking.ui.activities.AddRecipeActivity;
-import com.example.cooking.utils.RecipeSearchService;
-import com.example.cooking.ui.viewmodels.HomeViewModel;
 import com.example.cooking.network.utils.Resource;
+import com.example.cooking.ui.adapters.RecipeListAdapter;
+import com.example.cooking.ui.viewmodels.SharedRecipeViewModel;
+import com.example.cooking.utils.MySharedPreferences;
 
-import android.widget.SearchView;
+import java.util.List;
 
 /**
  * Фрагмент главного экрана.
@@ -49,7 +39,7 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
     private MySharedPreferences preferences;
     private String userId;
     
-    private HomeViewModel homeViewModel;
+    private SharedRecipeViewModel sharedRecipeViewModel;
     private RecyclerView.LayoutManager layoutManager;
     private Parcelable recyclerViewState;
     // Флаг, что происходит восстановление состояния списка
@@ -70,8 +60,8 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         preferences = new MySharedPreferences(requireContext());
         userId = preferences.getString("userId", "0");
         
-        // Инициализация HomeViewModel
-        homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        // Инициализация SharedRecipeViewModel
+        sharedRecipeViewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
         
         // Инициализация views
         recyclerView = view.findViewById(R.id.recycler_view);
@@ -97,10 +87,55 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         }
         
         // Настраиваем swipe-to-refresh
-        swipeRefreshLayout.setOnRefreshListener(() -> homeViewModel.refreshRecipes());
+        swipeRefreshLayout.setOnRefreshListener(() -> sharedRecipeViewModel.refreshRecipes());
         
-        // Подписываемся на LiveData из HomeViewModel
-        observeHomeViewModel(homeViewModel);
+        // Подписываемся на LiveData из SharedRecipeViewModel
+        
+        // Наблюдение за режимом поиска для определения, какие данные показывать
+        sharedRecipeViewModel.getIsInSearchMode().observe(getViewLifecycleOwner(), isInSearchMode -> {
+            if (isInSearchMode != null && isInSearchMode) {
+                // В режиме поиска - показываем результаты поиска
+                // Логика обновления будет в наблюдателе searchResults
+            } else {
+                // Не в режиме поиска - показываем основной список рецептов
+                // Обновляем данные из основного списка
+                if (sharedRecipeViewModel.getRecipes().getValue() != null && 
+                    sharedRecipeViewModel.getRecipes().getValue().getData() != null) {
+                    adapter.submitList(sharedRecipeViewModel.getRecipes().getValue().getData());
+                    showEmptyView(sharedRecipeViewModel.getRecipes().getValue().getData().isEmpty());
+                }
+            }
+        });
+        
+        // Наблюдение за основным списком рецептов
+        sharedRecipeViewModel.getRecipes().observe(getViewLifecycleOwner(), resource -> {
+            // Отображаем данные только если НЕ в режиме поиска
+            Boolean isInSearchMode = sharedRecipeViewModel.getIsInSearchMode().getValue();
+            if ((isInSearchMode == null || !isInSearchMode) && resource.getData() != null) {
+                adapter.submitList(resource.getData());
+                showEmptyView(resource.getData().isEmpty());
+            }
+        });
+        
+        // Наблюдение за результатами поиска
+        sharedRecipeViewModel.getSearchResults().observe(getViewLifecycleOwner(), searchResults -> {
+            // Отображаем результаты поиска только если В режиме поиска
+            Boolean isInSearchMode = sharedRecipeViewModel.getIsInSearchMode().getValue();
+            if (isInSearchMode != null && isInSearchMode && searchResults != null) {
+                adapter.submitList(searchResults);
+                showEmptyView(searchResults.isEmpty());
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        
+        // Наблюдение за состоянием загрузки
+        sharedRecipeViewModel.getIsRefreshing().observe(getViewLifecycleOwner(), isRefreshing -> 
+            swipeRefreshLayout.setRefreshing(isRefreshing));
+            
+        // Наблюдение за ошибками
+        sharedRecipeViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) showErrorMessage(error);
+        });
         
         return view;
     }
@@ -117,54 +152,12 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
     }
     
     /**
-     * Настраиваем наблюдение за LiveData из HomeViewModel
-     */
-    private void observeHomeViewModel(HomeViewModel viewModel) {
-        viewModel.getRecipes().observe(getViewLifecycleOwner(), recipes -> {
-            if (!viewModel.isInSearchMode()) {
-                adapter.submitList(recipes);
-                showEmptyView(recipes == null || recipes.isEmpty());
-            }
-        });
-        viewModel.getIsRefreshing().observe(getViewLifecycleOwner(), isRefreshing -> {
-            swipeRefreshLayout.setRefreshing(isRefreshing);
-        });
-        viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
-            if (error != null && !error.isEmpty()) {
-                showErrorMessage(error);
-            }
-        });
-        
-        // Наблюдаем за результатами поиска
-        viewModel.getSearchResults().observe(getViewLifecycleOwner(), searchResults -> {
-            swipeRefreshLayout.setRefreshing(false);
-            if (searchResults != null && !searchResults.isEmpty()) {
-                Toast.makeText(requireContext(), "Найдено " + searchResults.size() + " рецептов", Toast.LENGTH_SHORT).show();
-
-                // При обычном поиске прокручиваем в начало после обновления списка
-                if (!isRestoring) {
-                    adapter.submitList(searchResults, () -> {
-                        recyclerView.scrollToPosition(0);
-                    });
-                } else {
-                    adapter.submitList(searchResults);
-                    isRestoring = false;
-                }
-                showEmptyView(false);
-            } else {
-                showEmptyView(true);
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-    }
-    
-    /**
      * Обработка нажатия на кнопку лайка
      */
     @Override
     public void onRecipeLike(Recipe recipe, boolean isLiked) {
         if (recipe != null) {
-            homeViewModel.updateLikedRepositoryStatus(recipe.getId(), isLiked);
+            sharedRecipeViewModel.updateLikeStatus(recipe, isLiked);
         }
     }
     
@@ -211,11 +204,7 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
     @Override
     public void onResume() {
         super.onResume();
-        // Обновление списка рецептов при возврате к фрагменту,
-        // но только если мы не в режиме поиска
-        if (!homeViewModel.isInSearchMode()) {
-            homeViewModel.refreshRecipes();
-        }
+        // Убрали автоматическое обновление, чтобы не было запроса на сервер
     }
     
     @Override
@@ -242,9 +231,14 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         // Показываем индикатор загрузки
         swipeRefreshLayout.setRefreshing(true);
         
-        // Вызываем поиск в HomeViewModel
-        homeViewModel.searchRecipes(query);
+        // Если пустой запрос — выходим из режима поиска и показываем все рецепты
+        if (query == null || query.trim().isEmpty()) {
+            sharedRecipeViewModel.exitSearchMode();
+            return;
+        }
         
+        // Вызываем поиск в SharedRecipeViewModel
+        sharedRecipeViewModel.searchRecipes(query);
     }
     
     /**
@@ -253,8 +247,8 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
     public void restoreLastSearch() {
         isRestoring = true;
          
-        if (homeViewModel.isInSearchMode() && homeViewModel.getLastSearchQuery() != null) {
-            List<Recipe> lastResults = homeViewModel.getSearchResults().getValue();
+        if (sharedRecipeViewModel.getSearchResults().getValue() != null) {
+            List<Recipe> lastResults = sharedRecipeViewModel.getSearchResults().getValue();
             if (lastResults != null) {
                 adapter.submitList(lastResults, () -> {
                     // Восстанавливаем позицию через сохранённые значения

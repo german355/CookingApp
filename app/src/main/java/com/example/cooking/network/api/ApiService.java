@@ -32,6 +32,8 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
+import io.reactivex.rxjava3.core.Single;
+
 /**
  * Единый интерфейс API для взаимодействия с сервером
  */
@@ -45,14 +47,14 @@ public interface ApiService {
      * @return ответ сервера
      */
     @POST("auth/register")
-    Call<ApiResponse> registerUser(@Body UserRegisterRequest request);
+    Single<ApiResponse> registerUser(@Body UserRegisterRequest request);
     
     /**
      * Вход пользователя
      * @return ответ сервера
      */
     @POST("auth/login")
-    Call<ApiResponse> loginUser();
+    Single<ApiResponse> loginUser();
     
     /**
      * Запрос на сброс пароля
@@ -60,7 +62,7 @@ public interface ApiService {
      * @return ответ сервера
      */
     @POST("auth/password-reset-request")
-    Call<ApiResponse> requestPasswordReset(@Body PasswordResetRequest request);
+    Single<ApiResponse> requestPasswordReset(@Body PasswordResetRequest request);
     
     // =============== Рецепты - получение и поиск ===============
     
@@ -95,7 +97,7 @@ public interface ApiService {
      */
     @Multipart
     @POST("recipes/add")
-    Call<GeneralServerResponse> addRecipe(
+    Single<GeneralServerResponse> addRecipe(
             @Part("title") RequestBody title,
             @Part("ingredients") RequestBody ingredients,
             @Part("instructions") RequestBody instructions,
@@ -107,7 +109,7 @@ public interface ApiService {
      */
     @Multipart
     @POST("recipes/add")
-    Call<GeneralServerResponse> addRecipeWithoutPhoto(
+    Single<GeneralServerResponse> addRecipeWithoutPhoto(
             @Part("title") RequestBody title,
             @Part("ingredients") RequestBody ingredients,
             @Part("instructions") RequestBody instructions
@@ -118,7 +120,7 @@ public interface ApiService {
      */
     @Multipart
     @PUT("recipes/update/{id}")
-    Call<GeneralServerResponse> updateRecipe(
+    Single<GeneralServerResponse> updateRecipe(
             @Path("id") int recipeId,
             @Header("X-User-Permission") String permissionHeader,
             @Part("title") RequestBody title,

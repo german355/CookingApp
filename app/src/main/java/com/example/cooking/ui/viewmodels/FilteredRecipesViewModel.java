@@ -29,19 +29,40 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
     private String lastFilterType;
     
     // Ссылка на общую модель
-    private final SharedRecipeViewModel sharedViewModel;
+    private SharedRecipeViewModel sharedViewModel;
 
     public FilteredRecipesViewModel(@NonNull Application application) {
         super(application);
-        sharedViewModel = new SharedRecipeViewModel(application);
+        // НЕ создаем новый экземпляр, так как это приводит к дублированию запросов!
+        // SharedRecipeViewModel должен передаваться извне или использоваться общий экземпляр
+        sharedViewModel = null; // Временно устанавливаем null
+    }
+    
+    /**
+     * Устанавливает SharedRecipeViewModel (должен вызываться из Activity/Fragment)
+     */
+    public void setSharedRecipeViewModel(SharedRecipeViewModel sharedRecipeViewModel) {
+        if (this.sharedViewModel != null) {
+            // Удаляем старый наблюдатель если был
+            this.sharedViewModel.getRecipes().removeObserver(this::handleRecipesUpdate);
+        }
         
-        // Отслеживаем изменения в общем списке рецептов для автоматической перефильтрации
-        sharedViewModel.getRecipes().observeForever(resource -> {
-            if (resource != null && resource.isSuccess() && lastFilterKey != null && lastFilterType != null) {
-                // Если основной список рецептов обновился, повторно применяем фильтры
-                applyFilters(lastFilterKey, lastFilterType, resource);
-            }
-        });
+        this.sharedViewModel = sharedRecipeViewModel;
+        
+        if (sharedRecipeViewModel != null) {
+            // Отслеживаем изменения в общем списке рецептов для автоматической перефильтрации
+            sharedRecipeViewModel.getRecipes().observeForever(this::handleRecipesUpdate);
+        }
+    }
+    
+    /**
+     * Обработчик обновлений рецептов
+     */
+    private void handleRecipesUpdate(Resource<List<Recipe>> resource) {
+        if (resource != null && resource.isSuccess() && lastFilterKey != null && lastFilterType != null) {
+            // Если основной список рецептов обновился, повторно применяем фильтры
+            applyFilters(lastFilterKey, lastFilterType, resource);
+        }
     }
 
     /**
@@ -62,6 +83,10 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
      * Возвращает LiveData со статусом загрузки из SharedViewModel.
      */
     public LiveData<Boolean> getIsRefreshing() {
+        if (sharedViewModel == null) {
+            MutableLiveData<Boolean> dummy = new MutableLiveData<>(false);
+            return dummy;
+        }
         return sharedViewModel.getIsRefreshing();
     }
 
@@ -73,6 +98,11 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
      * @param filterType Тип фильтра (например, "meal_type", "food_type").
      */
     public void loadFilteredRecipes(String filterKey, String filterType) {
+        if (sharedViewModel == null) {
+            errorMessage.setValue("SharedRecipeViewModel не установлен");
+            return;
+        }
+        
         // Сохраняем параметры для возможного повторного применения фильтров
         this.lastFilterKey = filterKey;
         this.lastFilterType = filterType;
@@ -84,9 +114,7 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
         if (resource != null && resource.isSuccess()) {
             applyFilters(filterKey, filterType, resource);
         } else {
-            // Если данных еще нет, запускаем загрузку, а фильтрация произойдет 
-            // автоматически через observeForever при получении данных
-            sharedViewModel.refreshIfNeeded();
+
         }
     }
     
@@ -134,6 +162,10 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
      * @param isLiked Новое состояние лайка (true - лайкнут, false - дизлайкнут).
      */
     public void toggleLikeStatus(Recipe recipe, boolean isLiked) {
+        if (sharedViewModel == null) {
+            errorMessage.setValue("SharedRecipeViewModel не установлен");
+            return;
+        }
         sharedViewModel.updateLikeStatus(recipe, isLiked);
     }
     
@@ -141,6 +173,10 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
      * Выполняет принудительное обновление данных с сервера
      */
     public void refreshData() {
+        if (sharedViewModel == null) {
+            errorMessage.setValue("SharedRecipeViewModel не установлен");
+            return;
+        }
         sharedViewModel.refreshRecipes();
     }
 

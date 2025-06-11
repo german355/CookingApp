@@ -7,11 +7,13 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.cooking.Recipe.Recipe;
-import com.example.cooking.data.repositories.LikedRecipesRepository;
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.utils.MySharedPreferences;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import java.util.List;
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * ViewModel для экрана детальной информации о рецепте
@@ -19,9 +21,8 @@ import java.util.List;
 public class RecipeDetailViewModel extends AndroidViewModel {
     private static final String TAG = "RecipeDetailViewModel";
     
-    private final SharedRecipeViewModel sharedRecipeViewModel;
-    private final LikedRecipesRepository likedRecipesRepository;
-    
+    private SharedRecipeViewModel sharedRecipeViewModel;
+
     private final MutableLiveData<Recipe> recipe = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLikedLiveData = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
@@ -30,22 +31,31 @@ public class RecipeDetailViewModel extends AndroidViewModel {
     
     private int recipeId;
     private int userPermission;
-    private String userId;
     
-    private final java.util.concurrent.ExecutorService executor = 
-            java.util.concurrent.Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     
     /**
      * Конструктор
      */
     public RecipeDetailViewModel(@NonNull Application application) {
         super(application);
-        this.likedRecipesRepository = new LikedRecipesRepository(application);
-        this.sharedRecipeViewModel = new SharedRecipeViewModel(application);
+        // НЕ создаем новый экземпляр, так как это приводит к дублированию запросов!
+        // SharedRecipeViewModel должен передаваться извне или создаваться через ViewModelProvider
+        this.sharedRecipeViewModel = null; // Временно устанавливаем null
+    }
+    
+    /**
+     * Устанавливает SharedRecipeViewModel (должен вызываться из Activity/Fragment)
+     */
+    public void setSharedRecipeViewModel(SharedRecipeViewModel sharedRecipeViewModel) {
+        this.sharedRecipeViewModel = sharedRecipeViewModel;
         
-        // Получаем userId текущего пользователя
-        MySharedPreferences preferences = new MySharedPreferences(application);
-        this.userId = preferences.getString("userId", "0");
+        // Propagate errors from SharedRecipeViewModel to this ViewModel
+        if (sharedRecipeViewModel != null) {
+            sharedRecipeViewModel.getErrorMessage().observeForever(err -> {
+                if (err != null && !err.isEmpty()) errorMessage.postValue(err);
+            });
+        }
     }
     
     /**
@@ -62,6 +72,11 @@ public class RecipeDetailViewModel extends AndroidViewModel {
      * Загружает рецепт из SharedRecipeViewModel
      */
     private void loadRecipe() {
+        if (sharedRecipeViewModel == null) {
+            errorMessage.setValue("SharedRecipeViewModel не установлен");
+            return;
+        }
+        
         isLoading.setValue(true);
         
         // Подписываемся на обновления рецептов
@@ -81,22 +96,20 @@ public class RecipeDetailViewModel extends AndroidViewModel {
                     errorMessage.postValue(resource.getMessage());
                 }
                 isLoading.postValue(false);
-                // Удаляем наблюдателя после получения данных
-                sharedRecipeViewModel.getRecipes().removeObserver(this);
+                // Не удаляем наблюдателя: разрешаем обновление после изменений
             }
         });
         
-        // Запрашиваем обновление данных, если нужно
-        sharedRecipeViewModel.loadInitialRecipesIfNeeded();
+        // Убираем дополнительный вызов, который может вызывать дублирование запросов
+        // sharedRecipeViewModel.loadInitialRecipesIfNeeded();
     }
     
     /**
      * Обновляет статус лайка для текущего рецепта
      */
     private void updateLikeStatus(Recipe recipe) {
-        if (userId.equals("0")) {
-            return;
-        }
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
         
         // Проверяем, лайкнут ли рецепт
         boolean isLiked = recipe != null && recipe.isLiked();
@@ -107,26 +120,24 @@ public class RecipeDetailViewModel extends AndroidViewModel {
      * Переключает лайк для текущего рецепта
      */
     public void toggleLike() {
-        if (userId.equals("0")) {
+        if (sharedRecipeViewModel == null) {
+            errorMessage.setValue("SharedRecipeViewModel не установлен");
+            return;
+        }
+        
+        // Проверяем, вошел ли пользователь через Firebase
+        FirebaseUser userToggle = FirebaseAuth.getInstance().getCurrentUser();
+        if (userToggle == null) {
             errorMessage.setValue("Чтобы поставить лайк, необходимо войти в аккаунт");
             return;
         }
-        
+        String uid = userToggle.getUid();
         Recipe currentRecipe = recipe.getValue();
-        if (currentRecipe == null) {
-            return;
-        }
-        
-        // Получаем текущее состояние
+        if (currentRecipe == null) return;
         Boolean currentLiked = isLikedLiveData.getValue();
-        if (currentLiked == null) {
-            return;
-        }
-        
-        // Обновляем через SharedRecipeViewModel
-        sharedRecipeViewModel.updateLikeStatus(currentRecipe, !currentLiked, userId);
-        
-        // Обновляем локальное состояние
+        if (currentLiked == null) return;
+        sharedRecipeViewModel.updateLikeStatus(currentRecipe, !currentLiked, uid);
+        // Обновляем локальное состояние сразу
         currentRecipe.setLiked(!currentLiked);
         recipe.postValue(currentRecipe);
         isLikedLiveData.setValue(!currentLiked);
@@ -135,10 +146,12 @@ public class RecipeDetailViewModel extends AndroidViewModel {
     /**
      * Удаляет рецепт
      */
-    /**
-     * Удаляет рецепт
-     */
     public void deleteRecipe() {
+        if (sharedRecipeViewModel == null) {
+            errorMessage.setValue("SharedRecipeViewModel не установлен");
+            return;
+        }
+        
         if (!sharedRecipeViewModel.isNetworkAvailable()) {
             errorMessage.setValue("Отсутствует подключение к интернету");
             return;
@@ -146,8 +159,14 @@ public class RecipeDetailViewModel extends AndroidViewModel {
         
         isLoading.setValue(true);
         
-        // Используем SharedRecipeViewModel для удаления рецепта
-        sharedRecipeViewModel.deleteRecipe(recipeId, userId, userPermission, new SharedRecipeViewModel.DeleteRecipeCallback() {
+        // Проверяем авторизацию через Firebase перед удалением
+        FirebaseUser userDel = FirebaseAuth.getInstance().getCurrentUser();
+        if (userDel == null) {
+            errorMessage.setValue("Чтобы удалить рецепт, войдите в аккаунт");
+            return;
+        }
+        String uidDel = userDel.getUid();
+        sharedRecipeViewModel.deleteRecipe(recipeId, uidDel, userPermission, new SharedRecipeViewModel.DeleteRecipeCallback() {
             @Override
             public void onDeleteSuccess() {
                 isLoading.postValue(false);
@@ -166,14 +185,9 @@ public class RecipeDetailViewModel extends AndroidViewModel {
      * Проверяет подключение к интернету
      */
     private boolean isNetworkAvailable() {
-        return sharedRecipeViewModel.isNetworkAvailable();
+        return sharedRecipeViewModel != null && sharedRecipeViewModel.isNetworkAvailable();
     }
     
-    /**
-     * Наблюдает за статусом лайка для текущего рецепта
-     *
-     * @param lifecycleOwner владелец жизненного цикла для наблюдения
-     */
     /**
      * Наблюдает за статусом лайка для текущего рецепта
      *
@@ -202,10 +216,6 @@ public class RecipeDetailViewModel extends AndroidViewModel {
     }
     
     /**
-     * Возвращает LiveData с информацией о загрузке
-     */
-    
-    /**
      * Возвращает LiveData с информацией о том, лайкнут ли рецепт
      */
     public LiveData<Boolean> getIsLiked() {
@@ -231,5 +241,12 @@ public class RecipeDetailViewModel extends AndroidViewModel {
      */
     public LiveData<Boolean> getDeleteSuccess() {
         return deleteSuccess;
+    }
+    
+    /**
+     * Очищает сообщение об ошибке после его показа
+     */
+    public void clearErrorMessage() {
+        errorMessage.setValue(null);
     }
 }

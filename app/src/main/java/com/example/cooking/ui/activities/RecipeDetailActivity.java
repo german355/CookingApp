@@ -152,6 +152,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
         // Инициализируем и настраиваем ViewModel
         viewModel = new ViewModelProvider(this).get(RecipeDetailViewModel.class);
         
+        // Получаем общий экземпляр SharedRecipeViewModel и устанавливаем его в RecipeDetailViewModel
+        com.example.cooking.ui.viewmodels.SharedRecipeViewModel sharedRecipeViewModel = 
+            new ViewModelProvider(this).get(com.example.cooking.ui.viewmodels.SharedRecipeViewModel.class);
+        viewModel.setSharedRecipeViewModel(sharedRecipeViewModel);
+        
         // Получаем уровень доступа пользователя
         com.example.cooking.utils.MySharedPreferences preferences = new com.example.cooking.utils.MySharedPreferences(this);
         int permissionLevel = preferences.getInt("permission", 1);
@@ -222,7 +227,13 @@ public class RecipeDetailActivity extends AppCompatActivity {
      */
     private void setupEventListeners() {
         // Настраиваем клик по кнопке "лайк"
-        fabLike.setOnClickListener(v -> viewModel.toggleLike());
+        fabLike.setOnClickListener(v -> {
+            if (!com.example.cooking.network.services.UserService.isUserLoggedIn()) {
+                Toast.makeText(this, "Войдите в аккаунт, чтобы поставить лайк", Toast.LENGTH_LONG).show();
+            } else {
+                viewModel.toggleLike();
+            }
+        });
         
         // Настраиваем кнопки изменения порции
         decreasePortionButton.setOnClickListener(v -> {
@@ -277,7 +288,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
         // Наблюдаем за ошибками
         viewModel.getErrorMessage().observe(this, error -> {
             if (error != null && !error.isEmpty()) {
-                Toast.makeText(this, "Ой что-то пошло не так", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+                viewModel.clearErrorMessage();
             }
         });
         

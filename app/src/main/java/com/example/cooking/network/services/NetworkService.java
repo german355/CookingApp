@@ -14,6 +14,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
@@ -166,6 +167,7 @@ public class NetworkService {
                     retrofit = new Retrofit.Builder()
                             .baseUrl(BASE_API_URL)
                             .client(getHttpClient(context))
+                            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                             .addConverterFactory(ScalarsConverterFactory.create()) // Для строковых ответов
                             .addConverterFactory(GsonConverterFactory.create())    // Для JSON ответов
                             .build();
@@ -193,6 +195,7 @@ public class NetworkService {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(getHttpClient(context))
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

@@ -76,6 +76,12 @@ public class FilteredRecipesFragment extends Fragment implements RecipeListAdapt
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(this).get(FilteredRecipesViewModel.class);
+        
+        // Получаем общий экземпляр SharedRecipeViewModel из Activity и устанавливаем его в FilteredRecipesViewModel
+        com.example.cooking.ui.viewmodels.SharedRecipeViewModel sharedRecipeViewModel = 
+            new ViewModelProvider(requireActivity()).get(com.example.cooking.ui.viewmodels.SharedRecipeViewModel.class);
+        viewModel.setSharedRecipeViewModel(sharedRecipeViewModel);
+        
         // Набор наблюдателей
         setUpObservers(viewModel);
         // Pull-to-refresh

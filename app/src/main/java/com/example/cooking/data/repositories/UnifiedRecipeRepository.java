@@ -1,8 +1,6 @@
 package com.example.cooking.data.repositories;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
-import com.google.firebase.auth.FirebaseAuth;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -21,7 +19,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import java.io.IOException;
 import okhttp3.MediaType;
@@ -42,6 +45,9 @@ public class UnifiedRecipeRepository extends NetworkRepository{
     private final Context context;
     private static final Gson gson = new Gson();
     private final ConnectivityManager connectivityManager;
+    private final CompositeDisposable disposables = new CompositeDisposable();
+    private final Set<Integer> pendingLikeRequests = new HashSet<>();
+    private final MySharedPreferences prefs;
 
     // Объект Recipe, который был отправлен на обновление, чтобы использовать его для обновления в локальной БД
     private Recipe recipeBeingUpdated;
@@ -64,12 +70,13 @@ public class UnifiedRecipeRepository extends NetworkRepository{
         void onDeleteFailure(String error);
     }
 
-    public UnifiedRecipeRepository(Application application, ExecutorService executor) {
+    public UnifiedRecipeRepository(Application application) {
         super(application);
         this.context = application.getApplicationContext();
         this.localRepository = new RecipeLocalRepository(application);
         this.remoteRepository = new RecipeRemoteRepository(application);
         this.likedRecipesRepository = new LikedRecipesRepository(application);
+        this.prefs = new MySharedPreferences(context);
         this.connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
@@ -89,12 +96,12 @@ public class UnifiedRecipeRepository extends NetworkRepository{
      * Если remoteRecipes равен null и сеть недоступна, загружает данные из локального хранилища.
      */
     public void syncWithRemoteData(List<Recipe> remoteRecipes, MutableLiveData<String> errorMessage, MutableLiveData<Resource<List<Recipe>>> recipesLiveData) {
-        executeInBackground(() -> {
+        Disposable d = Completable.fromAction(() -> {
             try {
                 if (remoteRecipes != null) {
                     Set<Integer> likedRecipeIds = new HashSet<>();
-                    // Проверяем авторизацию через Firebase
-                    if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    // Проверяем авторизацию через MySharedPreferences
+                    if (!prefs.getUserId().equals("0")) {
                         List<Integer> likedIdsList = likedRecipesRepository.getLikedRecipeIdsSync(); // Вызов к БД
                         if (likedIdsList != null) {
                             likedRecipeIds.addAll(likedIdsList);
@@ -147,7 +154,14 @@ public class UnifiedRecipeRepository extends NetworkRepository{
                     mainThreadHandler.post(() -> recipesLiveData.setValue(Resource.error("Ошибка синхронизации", null)));
                 }
             }
-        });
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(
+            () -> {},
+            throwable -> Log.e(TAG, "Ошибка syncWithRemoteData", throwable)
+        );
+        disposables.add(d);
     }
 
     /**
@@ -181,51 +195,61 @@ public class UnifiedRecipeRepository extends NetworkRepository{
         }
     }
 
-    public void updateLikeStatus(int recipeId, boolean isLiked) {
-        executeInBackground(() -> localRepository.updateLikeStatus(recipeId, isLiked));
-    }
-
     public void toggleLike(int recipeId) {
-        executeInBackground(() -> {
-            // Проверяем наличие сети перед установкой лайка
-            if (!isNetworkAvailable()) {
-                Log.d(TAG, "Офлайн режим: установка лайков невозможна для recipeId=" + recipeId);
-                // Уведомление для UI о невозможности поставить лайк в офлайн режиме будет
-                // обрабатываться на уровне ViewModel или Fragment
-                return;
-            }
-            
+        Disposable d = Completable.fromAction(() -> {
             boolean isCurrentlyLiked = likedRecipesRepository.isRecipeLikedLocalSync(recipeId);
             boolean newLikeStatus = !isCurrentlyLiked;
-            
-            // Обновляем локальную базу данных только если есть сеть
             localRepository.updateLikeStatus(recipeId, newLikeStatus);
-            
             if (newLikeStatus) {
                 likedRecipesRepository.addLikedRecipe(recipeId);
             } else {
                 likedRecipesRepository.removeLikedRecipe(recipeId);
             }
-        });
+        })
+        .subscribeOn(Schedulers.io())
+        .subscribe(
+            () -> {},
+            throwable -> Log.e(TAG, "Ошибка toggleLike", throwable)
+        );
+        disposables.add(d);
     }
 
     public void setLikeStatus(int recipeId, boolean newLikeStatus) {
-        executeInBackground(() -> {
-            // Проверяем наличие сети перед установкой лайка
-            if (!isNetworkAvailable()) {
-                Log.d(TAG, "Офлайн режим: установка статуса лайка невозможна для recipeId=" + recipeId);
-                // В офлайн режиме не разрешаем изменять статус лайка
-                return;
-            }
-            
-            // Обновляем данные только если есть сеть
+        if (!pendingLikeRequests.add(recipeId)) {
+            Log.d(TAG, "Like request already in progress for recipeId=" + recipeId);
+            return;
+        }
+        Disposable d = Completable.fromAction(() -> {
+            // Обновляем локально статус лайка
             localRepository.updateLikeStatus(recipeId, newLikeStatus);
-            if (newLikeStatus) {
-                likedRecipesRepository.addLikedRecipe(recipeId);
-            } else {
-                likedRecipesRepository.removeLikedRecipe(recipeId);
+        })
+        .subscribeOn(Schedulers.io())
+        .subscribe(
+            () -> {
+                Log.d(TAG, "Local like status updated, отправляем запрос на сервер");
+                // Единичный серверный запрос для установки статуса лайка
+                Call<GeneralServerResponse> apiCall = apiService.toggleLikeRecipe(recipeId);
+                apiCall.enqueue(new Callback<GeneralServerResponse>() {
+                    @Override
+                    public void onResponse(Call<GeneralServerResponse> call, Response<GeneralServerResponse> response) {
+                        if (!response.isSuccessful()) {
+                            Log.e(TAG, "Ошибка при отправке статуса лайка: " + (response.errorBody() != null ? response.errorBody().toString() : response.message()));
+                        }
+                        pendingLikeRequests.remove(recipeId);
+                    }
+                    @Override
+                    public void onFailure(Call<GeneralServerResponse> call, Throwable t) {
+                        Log.e(TAG, "Сбой сети при установке статуса лайка", t);
+                        pendingLikeRequests.remove(recipeId);
+                    }
+                });
+            },
+            throwable -> {
+                Log.e(TAG, "Ошибка setLikeStatus", throwable);
+                pendingLikeRequests.remove(recipeId);
             }
-        });
+        );
+        disposables.add(d);
     }
 
     /**
@@ -234,33 +258,16 @@ public class UnifiedRecipeRepository extends NetworkRepository{
      * В офлайн режиме добавляет соответствующее уведомление.
      */
     public void searchInLocalData(String query, MutableLiveData<List<Recipe>> searchResultsLiveData, MutableLiveData<String> errorMessageLiveData) {
-        executeInBackground(() -> {
-            try {
-                List<Recipe> allRecipes = getAllRecipesSync(); // Этот метод теперь вызывается в executor
-                if (allRecipes == null) {
-                    mainThreadHandler.post(() -> searchResultsLiveData.setValue(Collections.emptyList()));
-                    return;
-                }
-                String lowerQuery = query.toLowerCase();
-                List<Recipe> filteredResults = allRecipes.stream()
-                        .filter(recipe -> matchesSearchQuery(recipe, lowerQuery))
-                        .collect(Collectors.toList());
-                mainThreadHandler.post(() -> {
-                    searchResultsLiveData.setValue(filteredResults);
-
-                    // Если приложение в офлайн режиме, добавляем уведомление
-                    if (!isNetworkAvailable() && errorMessageLiveData != null) {
-                        errorMessageLiveData.setValue("Поиск выполнен в офлайн режиме. Результаты могут быть неполными.");
-                    }
-                });
-            } catch (Exception e) {
-                Log.e(TAG, "(BG Thread) Ошибка при локальном поиске: " + e.getMessage(), e);
-                if (errorMessageLiveData != null) {
-                    mainThreadHandler.post(() -> errorMessageLiveData.setValue("Ошибка локального поиска: " + e.getMessage()));
-                }
-                mainThreadHandler.post(() -> searchResultsLiveData.setValue(Collections.emptyList()));
-            }
-        });
+        List<Recipe> allRecipes = getAllRecipesSync();
+        if (allRecipes == null) allRecipes = Collections.emptyList();
+        String lowerQuery = query.toLowerCase();
+        List<Recipe> filteredResults = allRecipes.stream()
+                .filter(recipe -> matchesSearchQuery(recipe, lowerQuery))
+                .collect(Collectors.toList());
+        searchResultsLiveData.setValue(filteredResults);
+        if (!isNetworkAvailable() && errorMessageLiveData != null) {
+            errorMessageLiveData.setValue("Поиск выполнен в офлайн режиме. Результаты могут быть неполными.");
+        }
     }
 
     private boolean matchesSearchQuery(Recipe recipe, String query) {
@@ -298,186 +305,90 @@ public class UnifiedRecipeRepository extends NetworkRepository{
      * Сохраняет новый рецепт
      */
     public void saveRecipe(Recipe recipe, byte[] imageBytes, RecipeSaveCallback callback) {
-        // Проверяем доступность сети перед сохранением рецепта
-        if (!isNetworkAvailable()) {
-            if (callback != null) {
-                callback.onFailure("Невозможно сохранить рецепт в офлайн режиме", null);
+        // Отправляем на сервер
+        Disposable d = Single.defer(() -> {
+            // Подготовка данных запроса
+            RequestBody title = RequestBody.create(MediaType.parse("text/plain"), recipe.getTitle());
+            RequestBody ingredients = RequestBody.create(MediaType.parse("text/plain"), gson.toJson(recipe.getIngredients()));
+            RequestBody instructions = RequestBody.create(MediaType.parse("text/plain"), gson.toJson(recipe.getSteps()));
+            MultipartBody.Part imagePart = null;
+            if (imageBytes != null && imageBytes.length > 0) {
+                RequestBody file = RequestBody.create(MediaType.parse("image/*"), imageBytes);
+                imagePart = MultipartBody.Part.createFormData("photo", "image.jpg", file);
             }
-            return;
-        }
-
-        // Создаем RequestBody для каждого поля
-        RequestBody title = RequestBody.create(MediaType.parse("text/plain"), recipe.getTitle());
-        RequestBody ingredients = RequestBody.create(MediaType.parse("text/plain"), new Gson().toJson(recipe.getIngredients()));
-        RequestBody instructions = RequestBody.create(MediaType.parse("text/plain"), new Gson().toJson(recipe.getSteps()));
-
-        // Создаем часть для загрузки изображения, если оно есть
-        MultipartBody.Part imagePart = null;
-        if (imageBytes != null && imageBytes.length > 0) {
-            RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageBytes);
-            imagePart = MultipartBody.Part.createFormData("photo", "recipe_image.jpg", requestFile);
-        }
-
-
-        // Вызываем соответствующий метод API в зависимости от наличия изображения
-        Call<GeneralServerResponse> call;
-        if (imagePart != null) {
-            call = apiService.addRecipe(title, ingredients, instructions, imagePart);
-        } else {
-            call = apiService.addRecipeWithoutPhoto(title, ingredients, instructions);
-        }
-
-        call.enqueue(new Callback<GeneralServerResponse>() {
-            @Override
-            public void onResponse(Call<GeneralServerResponse> call, Response<GeneralServerResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-
-                    Recipe savedRecipe = new Recipe();
-
-                    // Безопасное получение ID с проверкой на null
-                    Integer responseId = response.body() != null && response.body().getId() != null ? response.body().getId() : 0;
-                    savedRecipe.setId(responseId);
-                    savedRecipe.setTitle(recipe.getTitle());
-                    savedRecipe.setIngredients(recipe.getIngredients());
-                    savedRecipe.setSteps(recipe.getSteps());
-                    savedRecipe.setUserId(recipe.getUserId());
-
-                    // Сохраняем рецепт локально
-                    Completable.fromAction(() -> localRepository.insert(savedRecipe))
-                            .subscribeOn(Schedulers.io())
-                            .subscribe();
-
-                    if (callback != null) {
-                        callback.onSuccess(response.body(), savedRecipe);
-                    }
-                } else {
-                    String error = "Ошибка при сохранении рецепта";
-                    if (response.errorBody() != null) {
-                        try {
-                            error = response.errorBody().string();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (callback != null) {
-                        callback.onFailure(error, response.body());
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GeneralServerResponse> call, Throwable t) {
-                if (callback != null) {
-                    callback.onFailure(t.getMessage(), null);
-                }
-            }
+            // Вызываем API
+            return imagePart != null
+                ? apiService.addRecipe(title, ingredients, instructions, imagePart)
+                : apiService.addRecipeWithoutPhoto(title, ingredients, instructions);
+        })
+        .subscribeOn(Schedulers.io())
+        // После получения ответа сохраняем локально
+        .flatMap(response -> {
+            Recipe saved = new Recipe();
+            Integer id = response.getId() != null ? response.getId() : 0;
+            saved.setId(id);
+            saved.setTitle(recipe.getTitle());
+            saved.setIngredients(recipe.getIngredients());
+            saved.setSteps(recipe.getSteps());
+            saved.setUserId(recipe.getUserId());
+            return Completable.fromAction(() -> localRepository.insert(saved))
+                .andThen(Single.just(new Object[]{response, saved}));
+        })
+        .observeOn(Schedulers.io())
+        .subscribe(arr -> {
+            Object[] r = (Object[]) arr;
+            if (callback != null) callback.onSuccess((GeneralServerResponse) r[0], (Recipe) r[1]);
+        }, err -> {
+            if (callback != null) callback.onFailure(err.getMessage(), null);
         });
+        disposables.add(d);
     }
 
     /**
      * Обновляет существующий рецепт
      */
     public void updateRecipe(Recipe recipe, byte[] imageBytes, RecipeSaveCallback callback) {
-        // Получаем текущий локальный рецепт для обновления полей, если он существует
-        recipeBeingUpdated = localRepository.getRecipeByIdSync(recipe.getId());
-        if (recipe == null) {
-            if (callback != null) {
-                callback.onFailure("Рецепт не может быть null", null);
+        Disposable d = Single.defer(() -> {
+            recipeBeingUpdated = localRepository.getRecipeByIdSync(recipe.getId());
+            if (recipe == null) {
+                return Single.<GeneralServerResponse>error(new IllegalArgumentException("Рецепт не может быть null"));
             }
-            return;
-        }
-
-        // Получаем ID и права текущего пользователя из SharedPreferences
-        MySharedPreferences preferences = new MySharedPreferences(context);
-        String currentUserId = preferences.getUserId();
-        int userPermission = preferences.getUserPermission();
-        
-        if (currentUserId == null || currentUserId.isEmpty()) {
-            if (callback != null) {
-                callback.onFailure("Пользователь не авторизован", null);
+            RequestBody title = RequestBody.create(MediaType.parse("text/plain"), recipe.getTitle());
+            RequestBody ingredients = RequestBody.create(MediaType.parse("text/plain"), gson.toJson(recipe.getIngredients()));
+            RequestBody instructions = RequestBody.create(MediaType.parse("text/plain"), gson.toJson(recipe.getSteps()));
+            MultipartBody.Part imagePart = null;
+            if (imageBytes != null && imageBytes.length > 0) {
+                RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), imageBytes);
+                imagePart = MultipartBody.Part.createFormData("photo", "recipe_image.jpg", reqFile);
             }
-            return;
-        }
-
-        // Создаем RequestBody для каждого поля
-        RequestBody title = RequestBody.create(MediaType.parse("text/plain"), recipe.getTitle());
-        RequestBody ingredients = RequestBody.create(MediaType.parse("text/plain"), new Gson().toJson(recipe.getIngredients()));
-        RequestBody instructions = RequestBody.create(MediaType.parse("text/plain"), new Gson().toJson(recipe.getSteps()));
-
-        // Создаем часть для загрузки изображения, если оно есть
-        MultipartBody.Part imagePart = null;
-        if (imageBytes != null && imageBytes.length > 0) {
-            RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageBytes);
-            imagePart = MultipartBody.Part.createFormData("photo", "recipe_image.jpg", requestFile);
-        }
-
-        // Вызываем метод API для обновления рецепта
-        Call<GeneralServerResponse> call = apiService.updateRecipe(
-                recipe.getId(),
-                String.valueOf(userPermission), // X-User-Permission заголовок
-                title,
-                ingredients,
-                instructions,
-                imagePart
-        );
-
-        call.enqueue(new Callback<GeneralServerResponse>() {
-            @SuppressLint("CheckResult")
-            @Override
-            public void onResponse(Call<GeneralServerResponse> call, Response<GeneralServerResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    // Обновляем локальный объект рецепта, сохраняя неизменяемые поля
-                    Recipe toUpdate = recipeBeingUpdated != null ? recipeBeingUpdated : recipe;
-                    toUpdate.setTitle(recipe.getTitle());
-                    toUpdate.setIngredients(recipe.getIngredients());
-                    toUpdate.setSteps(recipe.getSteps());
-                    if (imageBytes != null && response.body().getPhotoUrl() != null) {
-                        toUpdate.setPhoto_url(response.body().getPhotoUrl());
-                    }
-                    // Сохраняем изменения локально
-                    Completable.fromAction(() -> localRepository.update(toUpdate))
-                            .subscribeOn(Schedulers.io())
-                            .subscribe(
-                                    () -> {
-                                        if (callback != null) {
-                                            callback.onSuccess(response.body(), toUpdate);
-                                        }
-                                    },
-                                    throwable -> {
-                                        Log.e(TAG, "Ошибка при обновлении локального рецепта", throwable);
-                                        if (callback != null) {
-                                            callback.onFailure("Ошибка при обновлении локального рецепта: " + throwable.getMessage(), response.body());
-                                        }
-                                    }
-                            );
-                } else {
-                    String error = "Ошибка при обновлении рецепта";
-                    if (response.errorBody() != null) {
-                        try {
-                            error = response.errorBody().string();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (callback != null) {
-                        callback.onFailure(error, response.body());
-                    }
-                }
+            int userPermission = prefs.getUserPermission();
+            return apiService.updateRecipe(recipe.getId(), String.valueOf(userPermission), title, ingredients, instructions, imagePart);
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(Schedulers.io())
+        .flatMap(response -> {
+            Recipe toUpdate = recipeBeingUpdated != null ? recipeBeingUpdated : recipe;
+            toUpdate.setTitle(recipe.getTitle());
+            toUpdate.setIngredients(recipe.getIngredients());
+            toUpdate.setSteps(recipe.getSteps());
+            if (imageBytes != null && response.getPhotoUrl() != null) {
+                toUpdate.setPhoto_url(response.getPhotoUrl());
             }
-
-            @Override
-            public void onFailure(Call<GeneralServerResponse> call, Throwable t) {
-                if (callback != null) {
-                    callback.onFailure(t.getMessage(), null);
-                }
-            }
-        });
+            return Completable.fromAction(() -> localRepository.update(toUpdate))
+                .andThen(Single.just(new Object[]{response, toUpdate}));
+        })
+        .subscribe(arr -> {
+            Object[] r = (Object[]) arr;
+            callback.onSuccess((GeneralServerResponse) r[0], (Recipe) r[1]);
+        }, err -> callback.onFailure(err.getMessage(), null));
+        disposables.add(d);
     }
+
     /**
      * Вставляет рецепт в локальное хранилище
      *
      * @param recipe   рецепт для вставки
-     * @param callback колбек для обработки результата
+     * @param callback колбэк для обработки результата
      */
     public void insert(Recipe recipe, RecipeSaveCallback callback) {
         if (recipe == null) {
@@ -488,7 +399,7 @@ public class UnifiedRecipeRepository extends NetworkRepository{
         }
 
         // Вставляем рецепт в локальное хранилище
-        Completable.fromAction(() -> localRepository.insert(recipe))
+        Disposable d = Completable.fromAction(() -> localRepository.insert(recipe))
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                         () -> {
@@ -500,14 +411,17 @@ public class UnifiedRecipeRepository extends NetworkRepository{
                                 callback.onSuccess(response, recipe);
                             }
                         },
-                        throwable -> {
-                            if (callback != null) {
-                                callback.onFailure("Ошибка при сохранении рецепта: " + throwable.getMessage(), null);
-                            }
-                        }
+                        throwable -> Log.e(TAG, "Ошибка saveRecipe local insert", throwable)
                 );
+        disposables.add(d);
     }
 
+    /**
+     * Очищает все подписки
+     */
+    public void clearDisposables() {
+        disposables.clear();
+    }
 
     public void deleteRecipe(int recipeId, DeleteRecipeCallback callback) {
         // Проверяем доступность сети
@@ -529,10 +443,13 @@ public class UnifiedRecipeRepository extends NetworkRepository{
             public void onResponse(Call<GeneralServerResponse> call, Response<GeneralServerResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     // Удаляем рецепт из локальной базы данных
-                    Completable.fromAction(() -> localRepository.deleteRecipe(recipeId))
+                    Disposable d = Completable.fromAction(() -> localRepository.deleteRecipe(recipeId))
                             .subscribeOn(Schedulers.io())
-                            .subscribe();
-                    callback.onDeleteSuccess();
+                            .subscribe(
+                                () -> callback.onDeleteSuccess(),
+                                throwable -> Log.e(TAG, "Ошибка удаления локального рецепта", throwable)
+                            );
+                    disposables.add(d);
                 } else {
                     String error = "Ошибка при удалении рецепта";
                     if (response.errorBody() != null) {

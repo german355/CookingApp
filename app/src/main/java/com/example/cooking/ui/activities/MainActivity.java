@@ -99,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
         // Обновление меню при смене фрагмента
         navController.addOnDestinationChangedListener((controller, destination, args) -> invalidateOptionsMenu());
 
-        // Загрузка данных о рецептах при старте приложения
-        sharedRecipeViewModel.loadInitialRecipes();
+        // Загрузка данных о рецептах уже происходит в MainViewModel
+        // sharedRecipeViewModel.loadInitialRecipes(); // Убираем дублирование
 
         // Устанавливаем цвет статус-бара программно
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -200,11 +200,19 @@ public class MainActivity extends AppCompatActivity {
         // Настраиваем кнопку добавления рецепта
         addButton.setOnClickListener(v -> viewModel.toggleFabMenu());
         fabAddRecipe.setOnClickListener(v -> {
-            startActivity(new Intent(this, AddRecipeActivity.class));
+            if (viewModel.isUserLoggedIn()) {
+                startActivity(new Intent(this, AddRecipeActivity.class));
+            } else {
+                Toast.makeText(this, R.string.please_login_to_continue, Toast.LENGTH_SHORT).show();
+            }
             viewModel.toggleFabMenu();
         });
         fabChat.setOnClickListener(v -> {
-            startActivity(new Intent(this, AiChatActivity.class));
+            if (viewModel.isUserLoggedIn()) {
+                startActivity(new Intent(this, AiChatActivity.class));
+            } else {
+                Toast.makeText(this, R.string.please_login_to_continue, Toast.LENGTH_SHORT).show();
+            }
             viewModel.toggleFabMenu();
         });
     }
@@ -491,7 +499,7 @@ if (current == null || current.getId() != R.id.nav_home) {
         MenuItem searchItem = menu.findItem(R.id.action_search);
         int id = navController.getCurrentDestination() != null
             ? navController.getCurrentDestination().getId() : -1;
-        boolean visible = id == R.id.nav_home || id == R.id.nav_favorites;
+        boolean visible = id == R.id.nav_home;
         searchItem.setVisible(visible);
         if (!visible && searchItem.isActionViewExpanded()) {
             searchItem.collapseActionView();

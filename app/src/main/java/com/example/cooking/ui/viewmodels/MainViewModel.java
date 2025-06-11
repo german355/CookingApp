@@ -58,8 +58,8 @@ public class MainViewModel extends AndroidViewModel {
         checkAuthState();
         // Инициализация Google Sign In перенесена во ViewModel
         initGoogleSignIn(getApplication().getString(R.string.default_web_client_id));
-        // Первичная загрузка рецептов
-        sharedRecipeViewModel.loadInitialRecipes();
+        // Первичная загрузка рецептов происходит автоматически при первом обращении к getRecipes()
+        // sharedRecipeViewModel.loadInitialRecipes(); // Убираем дублирование запросов
         // Обработка событий поиска и добавления рецепта
         searchQueryEvent.observeForever(sharedRecipeViewModel::searchRecipes);
         recipeAddedEvent.observeForever(ignored -> sharedRecipeViewModel.refreshRecipes());
@@ -69,8 +69,8 @@ public class MainViewModel extends AndroidViewModel {
      * Проверяет состояние авторизации пользователя
      */
     public void checkAuthState() {
-        String userId = preferences.getString("userId", "0");
-        isUserLoggedIn.setValue(!userId.equals("0"));
+        // Используем проверку FirebaseAuth вместо SharedPreferences
+        isUserLoggedIn.setValue(authManager.isUserSignedIn());
     }
 
     /**
@@ -168,7 +168,9 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void triggerLoginEvent() {
+        // Событие успешного входа и обновление статуса авторизации
         loginEvent.setValue(null);
+        isUserLoggedIn.setValue(true);
     }
 
     public LiveData<Void> getLogoutEvent() {

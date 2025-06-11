@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">735196544943-8nha6idmte73q0orur9m37taklrglv9g.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">735196544943</string>
+    <string name="google_api_key" translatable="false">AIzaSyCcGRJxv4sgJgtvaGGy0bFl007JI1cc8Zw</string>
+    <string name="google_app_id" translatable="false">1:735196544943:android:ddcb6c43e54b678fcd795a</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyCcGRJxv4sgJgtvaGGy0bFl007JI1cc8Zw</string>
+    <string name="google_storage_bucket" translatable="false">cooking-81977.firebasestorage.app</string>
+    <string name="project_id" translatable="false">cooking-81977</string>
+</resources>

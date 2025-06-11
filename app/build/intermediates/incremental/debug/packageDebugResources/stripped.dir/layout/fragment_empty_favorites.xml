@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="@color/md_theme_background">
+
+    <!-- Изображение для пустого состояния -->
+    <FrameLayout
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginBottom="24dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardCornerRadius="100dp"
+            app:cardElevation="4dp"
+            android:layout_margin="8dp">
+
+            <ImageView
+                android:id="@+id/image_empty_favorites"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/empty"
+                android:contentDescription="Нет избранных рецептов" />
+        </androidx.cardview.widget.CardView>
+    </FrameLayout>
+
+    <!-- Заголовок пустого состояния -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="В избранном пусто"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/md_theme_onBackground"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Текст-описание -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Добавляйте рецепты в избранное, чтобы они всегда были под рукой"
+        android:textSize="16sp"
+        android:textColor="@color/md_theme_onSurfaceVariant"
+        android:gravity="center"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Кнопка перехода к каталогу рецептов -->
+    <Button
+        android:id="@+id/btn_go_to_recipes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="К рецептам"
+        android:padding="16dp" />
+
+</LinearLayout> 

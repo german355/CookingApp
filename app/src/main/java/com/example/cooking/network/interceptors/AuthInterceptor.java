@@ -53,9 +53,6 @@ public class AuthInterceptor implements Interceptor {
         }
 
         try {
-            // Получаем ID токен синхронно (с таймаутом)
-            // В реальном приложении лучше делать это асинхронно или кэшировать токен
-            // Но для простоты примера используем синхронный вызов с таймаутом
             GetTokenResult tokenResult = Tasks.await(currentUser.getIdToken(false), TOKEN_TIMEOUT_SECONDS,
                     TimeUnit.SECONDS);
             String idToken = tokenResult.getToken();
@@ -72,11 +69,7 @@ public class AuthInterceptor implements Interceptor {
 
         } catch (ExecutionException | InterruptedException | TimeoutException e) {
             Log.e(TAG, "Ошибка при получении Firebase ID токена: " + e.getMessage(), e);
-            // В случае ошибки получения токена, отправляем оригинальный запрос
-            // Можно добавить обработку ошибок, например, выбросить исключение или вернуть
-            // ошибку
             Thread.currentThread().interrupt(); // Восстанавливаем флаг прерывания, если это было InterruptedException
-            // Пробрасываем IOException, чтобы соответствовать сигнатуре метода
             throw new IOException("Ошибка получения токена аутентификации", e);
         }
     }

@@ -71,18 +71,7 @@ public class RecipeLocalRepository extends NetworkRepository{
             return new ArrayList<>();
         }
     }
-    
-    /**
-     * Вставить список рецептов в базу данных
-     * @param recipes список рецептов
-     */
-    public void insertAll(List<Recipe> recipes) {
-        List<RecipeEntity> entities = new ArrayList<>();
-        for (Recipe recipe : recipes) {
-            entities.add(new RecipeEntity(recipe));
-        }
-        executeInBackground(() -> recipeDao.insertAll(entities));
-    }
+
     
     /**
      * Вставить рецепт в базу данных
@@ -113,37 +102,7 @@ public class RecipeLocalRepository extends NetworkRepository{
             Log.e(TAG, "Ошибка обновления статуса лайка: " + e.getMessage(), e);
         }
     }
-    
-    /**
-     * Получить лайкнутые рецепты
-     * @return LiveData список лайкнутых рецептов
-     */
-    public LiveData<List<Recipe>> getLikedRecipes() {
-        return Transformations.map(
-            recipeDao.getLikedRecipes(),
-            entities -> {
-                List<Recipe> recipes = new ArrayList<>();
-                for (RecipeEntity entity : entities) {
-                    recipes.add(entity.toRecipe());
-                }
-                return recipes;
-            }
-        );
-    }
-    
-    /**
-     * Получить рецепт по идентификатору
-     * @param recipeId идентификатор рецепта
-     * @return LiveData рецепта
-     */
-    public LiveData<Recipe> getRecipeById(int recipeId) {
-        return Transformations.map(recipeDao.getRecipeEntityByIdLiveData(recipeId), entity -> {
-            if (entity != null) {
-                return entity.toRecipe();
-            }
-            return null;
-        });
-    }
+
     
     /**
      * Синхронно получить рецепт по идентификатору
@@ -158,24 +117,7 @@ public class RecipeLocalRepository extends NetworkRepository{
         return null;
     }
     
-    /**
-     * Очистить все рецепты из базы данных
-     */
-    public void clearAll() {
-        executeInBackground(recipeDao::deleteAll);
-    }
-    
-    /**
-     * Очистить все рецепты из базы данных синхронно (для использования в транзакциях)
-     */
-    public void clearAllSync() {
-        try {
-            recipeDao.deleteAll();
-            Log.d(TAG, "База данных рецептов очищена синхронно");
-        } catch (Exception e) {
-            Log.e(TAG, "Ошибка при очистке базы данных синхронно", e);
-        }
-    }
+
     
     /**
      * Удалить рецепт из базы данных по идентификатору

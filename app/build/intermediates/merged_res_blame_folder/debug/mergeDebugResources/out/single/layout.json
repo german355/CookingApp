@@ -1,0 +1,126 @@
+[
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/recipe_card.xml",
+        "source": "com.example.cooking.app-main-66:/layout/recipe_card.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/fragment_profile.xml",
+        "source": "com.example.cooking.app-main-66:/layout/fragment_profile.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/fragment_auth_block.xml",
+        "source": "com.example.cooking.app-main-66:/layout/fragment_auth_block.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/item_message_bot.xml",
+        "source": "com.example.cooking.app-main-66:/layout/item_message_bot.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/activity_main.xml",
+        "source": "com.example.cooking.app-main-66:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/preference_widget_chevron.xml",
+        "source": "com.example.cooking.app-main-66:/layout/preference_widget_chevron.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/item_recipe.xml",
+        "source": "com.example.cooking.app-main-66:/layout/item_recipe.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/activity_password_recovery.xml",
+        "source": "com.example.cooking.app-main-66:/layout/activity_password_recovery.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/dialog_password_confirm.xml",
+        "source": "com.example.cooking.app-main-66:/layout/dialog_password_confirm.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/item_ingredient.xml",
+        "source": "com.example.cooking.app-main-66:/layout/item_ingredient.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/item_loading.xml",
+        "source": "com.example.cooking.app-main-66:/layout/item_loading.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/start__activity.xml",
+        "source": "com.example.cooking.app-main-66:/layout/start__activity.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/dialog_change_password.xml",
+        "source": "com.example.cooking.app-main-66:/layout/dialog_change_password.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/activity_add_recipe.xml",
+        "source": "com.example.cooking.app-main-66:/layout/activity_add_recipe.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/activity_recipe_detail.xml",
+        "source": "com.example.cooking.app-main-66:/layout/activity_recipe_detail.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/item_message.xml",
+        "source": "com.example.cooking.app-main-66:/layout/item_message.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/activity_register.xml",
+        "source": "com.example.cooking.app-main-66:/layout/activity_register.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/fragment_auth.xml",
+        "source": "com.example.cooking.app-main-66:/layout/fragment_auth.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/recipe_card_item.xml",
+        "source": "com.example.cooking.app-main-66:/layout/recipe_card_item.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/item_step.xml",
+        "source": "com.example.cooking.app-main-66:/layout/item_step.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/item_step_edit.xml",
+        "source": "com.example.cooking.app-main-66:/layout/item_step_edit.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/fragment_home.xml",
+        "source": "com.example.cooking.app-main-66:/layout/fragment_home.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/fragment_filtered_recipes.xml",
+        "source": "com.example.cooking.app-main-66:/layout/fragment_filtered_recipes.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/fragment_favorites.xml",
+        "source": "com.example.cooking.app-main-66:/layout/fragment_favorites.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/item_chat_recipes.xml",
+        "source": "com.example.cooking.app-main-66:/layout/item_chat_recipes.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/fragment_catalog.xml",
+        "source": "com.example.cooking.app-main-66:/layout/fragment_catalog.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/item_category_card.xml",
+        "source": "com.example.cooking.app-main-66:/layout/item_category_card.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/fragment_shared_profile.xml",
+        "source": "com.example.cooking.app-main-66:/layout/fragment_shared_profile.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/activity_ai_chat.xml",
+        "source": "com.example.cooking.app-main-66:/layout/activity_ai_chat.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/fragment_empty_favorites.xml",
+        "source": "com.example.cooking.app-main-66:/layout/fragment_empty_favorites.xml"
+    },
+    {
+        "merged": "com.example.cooking.app-mergeDebugResources-63:/layout/item_ingredient_edit.xml",
+        "source": "com.example.cooking.app-main-66:/layout/item_ingredient_edit.xml"
+    }
+]

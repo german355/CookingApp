@@ -1,0 +1,34 @@
+# IDE specific files
+.idea/
+.vscode/
+.cursor/
+
+# API keys and secrets
+*.properties
+apikey.txt
+secrets.json
+.env
+
+# Log files
+*.log
+
+# Android specific
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+/.windsurf
+# Mac OS
+.DS_Store
+.windsurf/rules/autonomus.md

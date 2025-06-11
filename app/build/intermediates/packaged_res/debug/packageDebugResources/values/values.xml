@@ -1,0 +1,729 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="com_google_android_gms_fonts_certs">
+        <item>@array/com_google_android_gms_fonts_certs_dev</item>
+        <item>@array/com_google_android_gms_fonts_certs_prod</item>
+    </array>
+    <string-array name="com_google_android_gms_fonts_certs_dev">
+        <item>
+            MIIEqDCCA5CgAwIBAgIJANWFuGx90071MA0GCSqGSIb3DQEBBAUAMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEQMA4GA1UEChMHQW5kcm9pZDEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDEiMCAGCSqGSIb3DQEJARYTYW5kcm9pZEBhbmRyb2lkLmNvbTAeFw0wODA0MTUyMzM2NTZaFw0zNTA5MDEyMzM2NTZaMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEQMA4GA1UEChMHQW5kcm9pZDEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDEiMCAGCSqGSIb3DQEJARYTYW5kcm9pZEBhbmRyb2lkLmNvbTCCASAwDQYJKoZIhvcNAQEBBQADggENADCCAQgCggEBANbOLggKv+IxTdGNs8/TGFy0PTP6DHThvbbR24kT9ixcOd9W+EaBPWW+wPPKQmsHxajtWjmQwWfna8mZuSeJS48LIgAZlKkpFeVyxW0qMBujb8X8ETrWy550NaFtI6t9+u7hZeTfHwqNvacKhp1RbE6dBRGWynwMVX8XW8N1+UjFaq6GCJukT4qmpN2afb8sCjUigq0GuMwYXrFVee74bQgMl1BRiBcuHhzHOJIUvbLlLhABgevrPZMi80nQmxnGEca8RU8sO01X8IqCZRXcBJCrTkLwceBXBg6urD74wkCIlZYd/D5SlYxl5GgfhFbLHv1RlsS/1LEBN0MIdaHKcIJAUPpQCHDjrOXkJQ80HVOfEk3ZnOE= 
+        </item>
+    </string-array>
+    <string-array name="com_google_android_gms_fonts_certs_prod">
+        <item>
+            MIIEQzCCAyugAwIBAgIJAMLgh0ZkSjCNMA0GCSqGSIb3DQEBBAUAMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDAeFw0wODA4MjEyMzEzMzRaFw0zNjAxMDcyMzEzMzRaMHQxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtHb29nbGUgSW5jLjEQMA4GA1UECxMHQW5kcm9pZDEQMA4GA1UEAxMHQW5kcm9pZDCCASAwDQYJKoZIhvcNAQEBBQADggENADCCAQgCggEBAKtWLgDYO6IIrgqWbxJOKdoR8qtW0I9Y4sypEwPpt1TTcvZApxsdyxMJZ2JORland2qSGT2y5b+3JKkedxiLDmpHpDsz2WCbdxgxRczfey5YZnTJ4VZbH0xqWVW/8lGmPav5xVwnIiJS6HXk+BVKZF+JcWjAsb/GEuq/eFdpuzSqeYTcfi6idkyugwfYwXFU1+5fZKUaRKYCwkkFQVfcAs1fXA5V+++FGfvjJ/CxURaSxaBvGdGDhfXE28LWuT9ozCl5xw4Yq5OGazvV24mZVSoOO0yZ31j7kYvtwYK6NeADwbSxDdJEqO4k//0zOHKrUiGYXtqw/A0LFFtqoZKFjnkCAQOjgdkwgdYwHQYDVR0OBBYEFMd9jMIhF1Ylmn/Tgt9r45jk14alMIGmBgNVHSMEgZ4wgZuAFMd9jMIhF1Ylmn/Tgt9r45jk14aloXikdjB0MQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEUMBIGA1UEChMLR29vZ2xlIEluYy4xEDAOBgNVBAsTB0FuZHJvaWQxEDAOBgNVBAMTB0FuZHJvaWSCCQDC4IdGZEowjTAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBAUAA4IBAQBt0lLO74UwLDYKqs6Tm8/yzKkEu116FmH4rkaymUIE0P9KaMftGlMexFlaYjzmB2OxZyl6euNXEsQH8gjwyxCUKRJNexBiGcCEyj6z+a1fuHHvkiaai+KL8W1EyNmgjmyy8AW7P+LLlkR+ho5zEHatRbM/YAnqGcFh5iZBqpknHf1SKMXFh4dd239FJ1jWYfbMDMy3NS5CTMQ2XFI1MvcyUTdZPErjQfTbQe3aDQsQcafEQPD+nqActifKZ0Np0IS9L9kR/wbNvyz6ENwPiTrjV2KRkEjH78ZMcUQXg0L3BYHJ3lc69Vs5Ddf9uUGGMYldX3WfMBEmh/9iFBDAaTCK
+        </item>
+    </string-array>
+    <string-array name="ingredient_types">
+        <item>шт.</item>
+        <item>г</item>
+        <item>кг</item>
+        <item>мл</item>
+        <item>л</item>
+        <item>ст.л.</item>
+        <item>ч.л.</item>
+        <item>стакан</item>
+        <item>по вкусу</item>
+    </string-array>
+    <string-array name="ingredients_list">
+        
+        <item>Авокадо</item>
+        <item>Артишок</item>
+        <item>Баклажан</item>
+        <item>Брокколи</item>
+        <item>Брюссельская капуста</item>
+        <item>Горох</item>
+        <item>Дайкон</item>
+        <item>Кабачок</item>
+        <item>Капуста белокочанная</item>
+        <item>Капуста краснокочанная</item>
+        <item>Картофель</item>
+        <item>Кейл</item>
+        <item>Кольраби</item>
+        <item>Кресс-салат</item>
+        <item>Лук-порей</item>
+        <item>Лук репчатый</item>
+        <item>Мангольд</item>
+        <item>Морковь</item>
+        <item>Огурец</item>
+        <item>Паприка</item>
+        <item>Патиссон</item>
+        <item>Петрушка</item>
+        <item>Редис</item>
+        <item>Редька</item>
+        <item>Репа</item>
+        <item>Руккола</item>
+        <item>Салат айсберг</item>
+        <item>Свекла</item>
+        <item>Сельдерей</item>
+        <item>Спаржа</item>
+        <item>Томаты</item>
+        <item>Топинамбур</item>
+        <item>Тыква</item>
+        <item>Укроп</item>
+        <item>Хрен</item>
+        <item>Цветная капуста</item>
+        <item>Цуккини</item>
+        <item>Чеснок</item>
+        <item>Шпинат</item>
+        <item>Щавель</item>
+
+        
+        <item>Абрикос</item>
+        <item>Айва</item>
+        <item>Алыча</item>
+        <item>Ананас</item>
+        <item>Апельсин</item>
+        <item>Банан</item>
+        <item>Виноград</item>
+        <item>Гранат</item>
+        <item>Грейпфрут</item>
+        <item>Груша</item>
+        <item>Дуриан</item>
+        <item>Инжир</item>
+        <item>Киви</item>
+        <item>Кокос</item>
+        <item>Лимон</item>
+        <item>Лайм</item>
+        <item>Манго</item>
+        <item>Маракуйя</item>
+        <item>Нектарин</item>
+        <item>Папайя</item>
+        <item>Персик</item>
+        <item>Помело</item>
+        <item>Рамбутан</item>
+        <item>Слива</item>
+        <item>Фейхоа</item>
+        <item>Хурма</item>
+        <item>Черешня</item>
+        <item>Черника</item>
+        <item>Шелковица</item>
+        <item>Яблоко</item>
+
+        
+        <item>Баранина</item>
+        <item>Ветчина</item>
+        <item>Говядина</item>
+        <item>Гусь</item>
+        <item>Индейка</item>
+        <item>Колбаса</item>
+        <item>Кролик</item>
+        <item>Курица</item>
+        <item>Оленина</item>
+        <item>Перепелка</item>
+        <item>Свинина</item>
+        <item>Сало</item>
+        <item>Утка</item>
+        <item>Фарш мясной</item>
+        <item>Цыпленок</item>
+        <item>Язык говяжий</item>
+
+        
+        <item>Анчоусы</item>
+        <item>Кальмар</item>
+        <item>Камбала</item>
+        <item>Каракатица</item>
+        <item>Карп</item>
+        <item>Кета</item>
+        <item>Креветки</item>
+        <item>Лосось</item>
+        <item>Мидии</item>
+        <item>Мойва</item>
+        <item>Окунь</item>
+        <item>Осетр</item>
+        <item>Палтус</item>
+        <item>Раки</item>
+        <item>Сельдь</item>
+        <item>Семга</item>
+        <item>Скумбрия</item>
+        <item>Судак</item>
+        <item>Треска</item>
+        <item>Тунец</item>
+        <item>Угорь</item>
+        <item>Форель</item>
+        <item>Щука</item>
+
+        
+        <item>Булгур</item>
+        <item>Горох нут</item>
+        <item>Гречка</item>
+        <item>Киноа</item>
+        <item>Кукурузная крупа</item>
+        <item>Маш</item>
+        <item>Перловка</item>
+        <item>Пшено</item>
+        <item>Рис басмати</item>
+        <item>Рис дикий</item>
+        <item>Рис жасмин</item>
+        <item>Соя</item>
+        <item>Фасоль белая</item>
+        <item>Фасоль красная</item>
+        <item>Чечевица</item>
+        <item>Ячневая крупа</item>
+
+        
+        <item>Айран</item>
+        <item>Йогурт</item>
+        <item>Камамбер</item>
+        <item>Кефир</item>
+        <item>Масло сливочное</item>
+        <item>Моцарелла</item>
+        <item>Пармезан</item>
+        <item>Рикотта</item>
+        <item>Сливки</item>
+        <item>Сметана</item>
+        <item>Сыр фета</item>
+        <item>Творог</item>
+        <item>Тофу</item>
+        <item>Молоко</item>
+
+        
+        <item>Асафетида</item>
+        <item>Базилик</item>
+        <item>Ваниль</item>
+        <item>Гвоздика</item>
+        <item>Имбирь</item>
+        <item>Кардамон</item>
+        <item>Кайенский перец</item>
+        <item>Кунжут</item>
+        <item>Куркума</item>
+        <item>Майоран</item>
+        <item>Мята</item>
+        <item>Паприка копченая</item>
+        <item>Прованские травы</item>
+        <item>Розмарин</item>
+        <item>Тимьян</item>
+        <item>Чабер</item>
+        <item>Шафран</item>
+        <item>Эстрагон</item>
+
+        
+        <item>Арахисовое масло</item>
+        <item>Кокосовое масло</item>
+        <item>Кунжутное масло</item>
+        <item>Оливковое масло</item>
+        <item>Подсолнечное масло</item>
+        <item>Трюфельное масло</item>
+        <item>Яблочный уксус</item>
+        <item>Бальзамический уксус</item>
+
+        
+        <item>Арахис</item>
+        <item>Грецкий орех</item>
+        <item>Изюм</item>
+        <item>Кешью</item>
+        <item>Курага</item>
+        <item>Миндаль</item>
+        <item>Финик</item>
+        <item>Фисташки</item>
+        <item>Чернослив</item>
+
+        
+        <item>Агар-агар</item>
+        <item>Желатин</item>
+        <item>Каперсы</item>
+        <item>Кокосовая стружка</item>
+        <item>Крахмал</item>
+        <item>Мисо-паста</item>
+        <item>Морская соль</item>
+        <item>Нори</item>
+        <item>Пивные дрожжи</item>
+        <item>Соевый соус</item>
+        <item>Томатная паста</item>
+        <item>Хлопья чили</item>
+        <item>Хмели-сунели</item>
+        <item>Чатни</item>
+        <item>Шоколад горький</item>
+        <item>Экстракт ванили</item>
+    </string-array>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/montserrat</item>
+        <item>@font/montserrat_bold</item>
+        <item>@font/roboto</item>
+        <item>@font/roboto_medium</item>
+        <item>@font/roboto_bold</item>
+    </array>
+    <string-array name="reply_entries">
+        <item>Reply</item>
+        <item>Reply to all</item>
+    </string-array>
+    <string-array name="reply_values">
+        <item>reply</item>
+        <item>reply_all</item>
+    </string-array>
+    <string-array name="theme_entries">
+        <item>Светлая</item>
+        <item>Тёмная</item>
+        <item>Системная</item>        
+    </string-array>
+    <string-array name="theme_value">
+        <item>light</item>
+        <item>dark</item>
+        <item>system</item>
+    </string-array>
+    <color name="md_theme_background">#f8f8f8</color>
+    <color name="md_theme_background_highContrast">#FFF8F7</color>
+    <color name="md_theme_background_mediumContrast">#FFF8F7</color>
+    <color name="md_theme_error">#BA1A1A</color>
+    <color name="md_theme_errorContainer">#FFDAD6</color>
+    <color name="md_theme_errorContainer_highContrast">#8C0009</color>
+    <color name="md_theme_errorContainer_mediumContrast">#DA342E</color>
+    <color name="md_theme_error_highContrast">#4E0002</color>
+    <color name="md_theme_error_mediumContrast">#8C0009</color>
+    <color name="md_theme_inverseOnSurface">#F4EFF4</color>
+    <color name="md_theme_inverseOnSurface_highContrast">#FFFFFF</color>
+    <color name="md_theme_inverseOnSurface_mediumContrast">#FFEDEB</color>
+    <color name="md_theme_inversePrimary">#FFB74D</color>
+    <color name="md_theme_inversePrimary_highContrast">#FFE6E5</color>
+    <color name="md_theme_inversePrimary_mediumContrast">#FFB3B1</color>
+    <color name="md_theme_inverseSurface">#313033</color>
+    <color name="md_theme_inverseSurface_highContrast">#382E2D</color>
+    <color name="md_theme_inverseSurface_mediumContrast">#382E2D</color>
+    <color name="md_theme_onBackground">#1C1B1F</color>
+    <color name="md_theme_onBackground_highContrast">#231919</color>
+    <color name="md_theme_onBackground_mediumContrast">#231919</color>
+    <color name="md_theme_onError">#FFFFFF</color>
+    <color name="md_theme_onErrorContainer">#410002</color>
+    <color name="md_theme_onErrorContainer_highContrast">#FFFFFF</color>
+    <color name="md_theme_onErrorContainer_mediumContrast">#FFFFFF</color>
+    <color name="md_theme_onError_highContrast">#FFFFFF</color>
+    <color name="md_theme_onError_mediumContrast">#FFFFFF</color>
+    <color name="md_theme_onPrimary">#FFFFFF</color>
+    <color name="md_theme_onPrimaryContainer">#452700</color>
+    <color name="md_theme_onPrimaryContainer_highContrast">#FFFFFF</color>
+    <color name="md_theme_onPrimaryContainer_mediumContrast">#FFFFFF</color>
+    <color name="md_theme_onPrimaryFixed">#2A1800</color>
+    <color name="md_theme_onPrimaryFixedVariant">#5D4000</color>
+    <color name="md_theme_onPrimaryFixedVariant_highContrast">#FFFFFF</color>
+    <color name="md_theme_onPrimaryFixedVariant_mediumContrast">#FFFFFF</color>
+    <color name="md_theme_onPrimaryFixed_highContrast">#FFFFFF</color>
+    <color name="md_theme_onPrimaryFixed_mediumContrast">#FFFFFF</color>
+    <color name="md_theme_onPrimary_highContrast">#FFFFFF</color>
+    <color name="md_theme_onPrimary_mediumContrast">#FFFFFF</color>
+    <color name="md_theme_onSecondary">#FFFFFF</color>
+    <color name="md_theme_onSecondaryContainer">#1C1B1F</color>
+    <color name="md_theme_onSecondaryContainer_highContrast">#FFFFFF</color>
+    <color name="md_theme_onSecondaryContainer_mediumContrast">#FFFFFF</color>
+    <color name="md_theme_onSecondaryFixed">#1E192B</color>
+    <color name="md_theme_onSecondaryFixedVariant">#4A4458</color>
+    <color name="md_theme_onSecondaryFixedVariant_highContrast">#FFFFFF</color>
+    <color name="md_theme_onSecondaryFixedVariant_mediumContrast">#FFFFFF</color>
+    <color name="md_theme_onSecondaryFixed_highContrast">#FFFFFF</color>
+    <color name="md_theme_onSecondaryFixed_mediumContrast">#FFFFFF</color>
+    <color name="md_theme_onSecondary_highContrast">#FFFFFF</color>
+    <color name="md_theme_onSecondary_mediumContrast">#FFFFFF</color>
+    <color name="md_theme_onSurface">#1C1B1F</color>
+    <color name="md_theme_onSurfaceVariant">#616161</color>
+    <color name="md_theme_onSurfaceVariant_highContrast">#2E2120</color>
+    <color name="md_theme_onSurfaceVariant_mediumContrast">#4E3F3F</color>
+    <color name="md_theme_onSurface_highContrast">#000000</color>
+    <color name="md_theme_onSurface_mediumContrast">#231919</color>
+    <color name="md_theme_onTertiary">#FFFFFF</color>
+    <color name="md_theme_onTertiaryContainer">#FFFFFF</color>
+    <color name="md_theme_onTertiaryContainer_highContrast">#FFFFFF</color>
+    <color name="md_theme_onTertiaryContainer_mediumContrast">#FFFFFF</color>
+    <color name="md_theme_onTertiaryFixed">#370B1E</color>
+    <color name="md_theme_onTertiaryFixedVariant">#6A3B52</color>
+    <color name="md_theme_onTertiaryFixedVariant_highContrast">#FFFFFF</color>
+    <color name="md_theme_onTertiaryFixedVariant_mediumContrast">#FFFFFF</color>
+    <color name="md_theme_onTertiaryFixed_highContrast">#FFFFFF</color>
+    <color name="md_theme_onTertiaryFixed_mediumContrast">#FFFFFF</color>
+    <color name="md_theme_onTertiary_highContrast">#FFFFFF</color>
+    <color name="md_theme_onTertiary_mediumContrast">#FFFFFF</color>
+    <color name="md_theme_outline">#E0E0E0</color>
+    <color name="md_theme_outlineVariant">#BDBDBD</color>
+    <color name="md_theme_outlineVariant_highContrast">#4E3F3F</color>
+    <color name="md_theme_outlineVariant_mediumContrast">#897676</color>
+    <color name="md_theme_outline_highContrast">#4E3F3F</color>
+    <color name="md_theme_outline_mediumContrast">#6C5B5A</color>
+    <color name="md_theme_primary">#ee9724</color>
+    <color name="md_theme_primaryContainer">#FFDEAD</color>
+    <color name="md_theme_primaryContainer_highContrast">#6E2F30</color>
+    <color name="md_theme_primaryContainer_mediumContrast">#AA5F5E</color>
+    <color name="md_theme_primaryFixed">#FFDAB9</color>
+    <color name="md_theme_primaryFixedDim">#FFB74D</color>
+    <color name="md_theme_primaryFixedDim_highContrast">#521A1B</color>
+    <color name="md_theme_primaryFixedDim_mediumContrast">#8D4747</color>
+    <color name="md_theme_primaryFixed_highContrast">#6E2F30</color>
+    <color name="md_theme_primaryFixed_mediumContrast">#AA5F5E</color>
+    <color name="md_theme_primary_highContrast">#440F12</color>
+    <color name="md_theme_primary_mediumContrast">#6E2F30</color>
+    <color name="md_theme_scrim">#000000</color>
+    <color name="md_theme_scrim_highContrast">#000000</color>
+    <color name="md_theme_scrim_mediumContrast">#000000</color>
+    <color name="md_theme_secondary">#757575</color>
+    <color name="md_theme_secondaryContainer">#E0E0E0</color>
+    <color name="md_theme_secondaryContainer_highContrast">#593B3A</color>
+    <color name="md_theme_secondaryContainer_mediumContrast">#8F6C6B</color>
+    <color name="md_theme_secondaryFixed">#E7E0EC</color>
+    <color name="md_theme_secondaryFixedDim">#CBC4D6</color>
+    <color name="md_theme_secondaryFixedDim_highContrast">#402625</color>
+    <color name="md_theme_secondaryFixedDim_mediumContrast">#745453</color>
+    <color name="md_theme_secondaryFixed_highContrast">#593B3A</color>
+    <color name="md_theme_secondaryFixed_mediumContrast">#8F6C6B</color>
+    <color name="md_theme_secondary_highContrast">#341B1B</color>
+    <color name="md_theme_secondary_mediumContrast">#593B3A</color>
+    <color name="md_theme_surface">#f8f8f8</color>
+    <color name="md_theme_surfaceBright">#f8f8f8</color>
+    <color name="md_theme_surfaceBright_highContrast">#FFF8F7</color>
+    <color name="md_theme_surfaceBright_mediumContrast">#FFF8F7</color>
+    <color name="md_theme_surfaceContainer">#FFFFFF</color>
+    <color name="md_theme_surfaceContainerHigh">#F3F3F3</color>
+    <color name="md_theme_surfaceContainerHigh_highContrast">#F6E4E3</color>
+    <color name="md_theme_surfaceContainerHigh_mediumContrast">#F6E4E3</color>
+    <color name="md_theme_surfaceContainerHighest">#EEEEEE</color>
+    <color name="md_theme_surfaceContainerHighest_highContrast">#F0DEDD</color>
+    <color name="md_theme_surfaceContainerHighest_mediumContrast">#F0DEDD</color>
+    <color name="md_theme_surfaceContainerLow">#FDFDFD</color>
+    <color name="md_theme_surfaceContainerLow_highContrast">#FFF0EF</color>
+    <color name="md_theme_surfaceContainerLow_mediumContrast">#FFF0EF</color>
+    <color name="md_theme_surfaceContainerLowest">#FFFFFF</color>
+    <color name="md_theme_surfaceContainerLowest_highContrast">#FFFFFF</color>
+    <color name="md_theme_surfaceContainerLowest_mediumContrast">#FFFFFF</color>
+    <color name="md_theme_surfaceContainer_highContrast">#FCEAE9</color>
+    <color name="md_theme_surfaceContainer_mediumContrast">#FCEAE9</color>
+    <color name="md_theme_surfaceDim">#DADADA</color>
+    <color name="md_theme_surfaceDim_highContrast">#E8D6D5</color>
+    <color name="md_theme_surfaceDim_mediumContrast">#E8D6D5</color>
+    <color name="md_theme_surfaceVariant">#EEEEEE</color>
+    <color name="md_theme_surfaceVariant_highContrast">#F4DDDC</color>
+    <color name="md_theme_surfaceVariant_mediumContrast">#F4DDDC</color>
+    <color name="md_theme_surface_highContrast">#FFF8F7</color>
+    <color name="md_theme_surface_mediumContrast">#FFF8F7</color>
+    <color name="md_theme_tertiary">#EC407A</color>
+    <color name="md_theme_tertiaryContainer">#F48FB1</color>
+    <color name="md_theme_tertiaryContainer_highContrast">#563F16</color>
+    <color name="md_theme_tertiaryContainer_mediumContrast">#8C7042</color>
+    <color name="md_theme_tertiaryFixed">#FFD8E4</color>
+    <color name="md_theme_tertiaryFixedDim">#FFAFD0</color>
+    <color name="md_theme_tertiaryFixedDim_highContrast">#3D2902</color>
+    <color name="md_theme_tertiaryFixedDim_mediumContrast">#71582C</color>
+    <color name="md_theme_tertiaryFixed_highContrast">#563F16</color>
+    <color name="md_theme_tertiaryFixed_mediumContrast">#8C7042</color>
+    <color name="md_theme_tertiary_highContrast">#301F00</color>
+    <color name="md_theme_tertiary_mediumContrast">#563F16</color>
+    <dimen name="chat_input_size">48dp</dimen>
+    <dimen name="chat_input_size_button">38dp</dimen>
+    <dimen name="chat_recipe_card_width">160dp</dimen>
+    <string name="app_name">Cooking</string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="auth_required_message">Чтобы добавить рецепт в избранное, войдите в свой аккаунт</string>
+    <string name="auth_required_title">Требуется вход</string>
+    <string name="cancel">Отмена</string>
+    <string name="chat_cleared">Чат очищен</string>
+    <string name="chat_welcome">Здравствуйте! Я ваш виртуальный помощник. Чем могу помочь?</string>
+    <string name="default_web_client_id" translatable="false">735196544943-8nha6idmte73q0orur9m37taklrglv9g.apps.googleusercontent.com</string>
+    <string name="empty_list_description">Пустой список</string>
+    <string name="error_clearing_chat">Не удалось очистить чат</string>
+    <string name="error_description">Ошибка</string>
+    <string name="error_loading_recipes">Ошибка при загрузке рецептов.</string>
+    <string name="error_loading_recipes_title">Ошибка загрузки рецептов</string>
+    <string name="error_need_auth">Для отправки сообщений войдите в аккаунт</string>
+    <string name="error_sending_message">Ошибка отправки сообщения</string>
+    <string name="gcm_defaultSenderId" translatable="false">735196544943</string>
+    <string name="google_api_key" translatable="false">AIzaSyCcGRJxv4sgJgtvaGGy0bFl007JI1cc8Zw</string>
+    <string name="google_app_id" translatable="false">1:735196544943:android:ddcb6c43e54b678fcd795a</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyCcGRJxv4sgJgtvaGGy0bFl007JI1cc8Zw</string>
+    <string name="google_storage_bucket" translatable="false">cooking-81977.firebasestorage.app</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login">Войти</string>
+    <string name="messages_header">Messages</string>
+    <string name="no_favorites_yet">У вас пока нет избранных рецептов. Самое время добавить!</string>
+    <string name="no_recipes_available">Нет доступных рецептов. Попробуйте обновить позже.</string>
+    <string name="no_recipes_description">Попробуйте изменить параметры поиска или обновить список</string>
+    <string name="no_recipes_found">Рецептов не найдено</string>
+    <string name="no_search_results">По запросу \"%1$s\" ничего не найдено</string>
+    <string name="please_login_to_continue">Пожалуйста, войдите в аккаунт, чтобы продолжить</string>
+    <string name="project_id" translatable="false">cooking-81977</string>
+    <string name="recipe_image_description">Изображение рецепта</string>
+    <string name="reply_title">Default reply action</string>
+    <string name="search">Найти рецепт...</string>
+    <string name="search_error">Ошибка при поиске: %1$s</string>
+    <string name="signature_title">Your signature</string>
+    <string name="step_description_error">Ошибка загрузки описания шага</string>
+    <string name="step_label_format">Шаг %d</string>
+    <string name="step_no_description">Нет описания для этого шага</string>
+    <string name="sync_header">Sync</string>
+    <string name="sync_title">Sync email periodically</string>
+    <style name="FavoriteButtonStyle">
+        <item name="colorControlNormal">?attr/colorOnSurfaceVariant</item>
+        <item name="colorControlActivated">?attr/colorPrimary</item>
+        <item name="android:colorControlActivated">?attr/colorPrimary</item>
+        <item name="android:colorControlNormal">?attr/colorOnSurfaceVariant</item>
+        <item name="android:background">?attr/colorSurfaceContainerHighest</item>
+        <item name="android:padding">8dp</item>
+    </style>
+    <style name="RoundedButton" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+    <style name="RoundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+    <style name="ShapeAppearance.App.CornerTop" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+    <style name="TextAppearance.App.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:fontFamily">@font/roboto</item>
+    </style>
+    <style name="TextAppearance.App.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/roboto</item>
+    </style>
+    <style name="TextAppearance.App.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:fontFamily">@font/roboto</item>
+    </style>
+    <style name="TextAppearance.App.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+    </style>
+    <style name="TextAppearance.App.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+    </style>
+    <style name="TextAppearance.App.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+    </style>
+    <style name="TextAppearance.App.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+    </style>
+    <style name="TextAppearance.App.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+    </style>
+    <style name="TextAppearance.App.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+    </style>
+    <style name="TextAppearance.App.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+    </style>
+    <style name="TextAppearance.App.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textColor">?attr/colorTertiary</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+    </style>
+    <style name="TextAppearance.App.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+    </style>
+    <style name="TextAppearance.App.SearchView" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textColorHint">?attr/colorOnSurfaceVariant</item>
+        <item name="android:backgroundTint">@android:color/transparent</item>
+    </style>
+    <style name="TextAppearance.App.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+    </style>
+    <style name="TextAppearance.App.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+    </style>
+    <style name="TextAppearance.App.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+    </style>
+    <style name="Theme.Cooking" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/md_theme_primary</item>
+        <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_theme_secondary</item>
+        <item name="colorOnSecondary">@color/md_theme_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_theme_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_theme_tertiary</item>
+        <item name="colorOnTertiary">@color/md_theme_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_theme_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_onTertiaryContainer</item>
+        <item name="colorError">@color/md_theme_error</item>
+        <item name="colorOnError">@color/md_theme_onError</item>
+        <item name="colorErrorContainer">@color/md_theme_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/md_theme_onErrorContainer</item>
+        <item name="android:colorBackground">@color/md_theme_background</item>
+        <item name="colorOnBackground">@color/md_theme_onBackground</item>
+        <item name="colorSurface">@color/md_theme_surface</item>
+        <item name="colorOnSurface">@color/md_theme_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_theme_outline</item>
+        <item name="colorOutlineVariant">@color/md_theme_outlineVariant</item>
+        <item name="colorSurfaceInverse">@color/md_theme_inverseSurface</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_inverseOnSurface</item>
+        <item name="colorPrimaryInverse">@color/md_theme_inversePrimary</item>
+        <item name="colorPrimaryFixed">@color/md_theme_primaryFixed</item>
+        <item name="colorOnPrimaryFixed">@color/md_theme_onPrimaryFixed</item>
+        <item name="colorPrimaryFixedDim">@color/md_theme_primaryFixedDim</item>
+        <item name="colorOnPrimaryFixedVariant">@color/md_theme_onPrimaryFixedVariant</item>
+        <item name="colorSecondaryFixed">@color/md_theme_secondaryFixed</item>
+        <item name="colorOnSecondaryFixed">@color/md_theme_onSecondaryFixed</item>
+        <item name="colorSecondaryFixedDim">@color/md_theme_secondaryFixedDim</item>
+        <item name="colorOnSecondaryFixedVariant">@color/md_theme_onSecondaryFixedVariant</item>
+        <item name="colorTertiaryFixed">@color/md_theme_tertiaryFixed</item>
+        <item name="colorOnTertiaryFixed">@color/md_theme_onTertiaryFixed</item>
+        <item name="colorTertiaryFixedDim">@color/md_theme_tertiaryFixedDim</item>
+        <item name="colorOnTertiaryFixedVariant">@color/md_theme_onTertiaryFixedVariant</item>
+        <item name="colorSurfaceDim">@color/md_theme_surfaceDim</item>
+        <item name="colorSurfaceBright">@color/md_theme_surfaceBright</item>
+        <item name="colorSurfaceContainerLowest">@color/md_theme_surfaceContainerLowest</item>
+        <item name="colorSurfaceContainerLow">@color/md_theme_surfaceContainerLow</item>
+        <item name="colorSurfaceContainer">@color/md_theme_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
+        <item name="android:statusBarColor">@color/md_theme_background</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+    <style name="ThemeOverlay.AppTheme.HighContrast" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/md_theme_primary_highContrast</item>
+        <item name="colorOnPrimary">@color/md_theme_onPrimary_highContrast</item>
+        <item name="colorPrimaryContainer">@color/md_theme_primaryContainer_highContrast</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_onPrimaryContainer_highContrast</item>
+        <item name="colorSecondary">@color/md_theme_secondary_highContrast</item>
+        <item name="colorOnSecondary">@color/md_theme_onSecondary_highContrast</item>
+        <item name="colorSecondaryContainer">@color/md_theme_secondaryContainer_highContrast</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_onSecondaryContainer_highContrast</item>
+        <item name="colorTertiary">@color/md_theme_tertiary_highContrast</item>
+        <item name="colorOnTertiary">@color/md_theme_onTertiary_highContrast</item>
+        <item name="colorTertiaryContainer">@color/md_theme_tertiaryContainer_highContrast</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_onTertiaryContainer_highContrast</item>
+        <item name="colorError">@color/md_theme_error_highContrast</item>
+        <item name="colorOnError">@color/md_theme_onError_highContrast</item>
+        <item name="colorErrorContainer">@color/md_theme_errorContainer_highContrast</item>
+        <item name="colorOnErrorContainer">@color/md_theme_onErrorContainer_highContrast</item>
+        <item name="android:colorBackground">@color/md_theme_background_highContrast</item>
+        <item name="colorOnBackground">@color/md_theme_onBackground_highContrast</item>
+        <item name="colorSurface">@color/md_theme_surface_highContrast</item>
+        <item name="colorOnSurface">@color/md_theme_onSurface_highContrast</item>
+        <item name="colorSurfaceVariant">@color/md_theme_surfaceVariant_highContrast</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_onSurfaceVariant_highContrast</item>
+        <item name="colorOutline">@color/md_theme_outline_highContrast</item>
+        <item name="colorOutlineVariant">@color/md_theme_outlineVariant_highContrast</item>
+        <item name="colorSurfaceInverse">@color/md_theme_inverseSurface_highContrast</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_inverseOnSurface_highContrast</item>
+        <item name="colorPrimaryInverse">@color/md_theme_inversePrimary_highContrast</item>
+        <item name="colorPrimaryFixed">@color/md_theme_primaryFixed_highContrast</item>
+        <item name="colorOnPrimaryFixed">@color/md_theme_onPrimaryFixed_highContrast</item>
+        <item name="colorPrimaryFixedDim">@color/md_theme_primaryFixedDim_highContrast</item>
+        <item name="colorOnPrimaryFixedVariant">@color/md_theme_onPrimaryFixedVariant_highContrast</item>
+        <item name="colorSecondaryFixed">@color/md_theme_secondaryFixed_highContrast</item>
+        <item name="colorOnSecondaryFixed">@color/md_theme_onSecondaryFixed_highContrast</item>
+        <item name="colorSecondaryFixedDim">@color/md_theme_secondaryFixedDim_highContrast</item>
+        <item name="colorOnSecondaryFixedVariant">@color/md_theme_onSecondaryFixedVariant_highContrast</item>
+        <item name="colorTertiaryFixed">@color/md_theme_tertiaryFixed_highContrast</item>
+        <item name="colorOnTertiaryFixed">@color/md_theme_onTertiaryFixed_highContrast</item>
+        <item name="colorTertiaryFixedDim">@color/md_theme_tertiaryFixedDim_highContrast</item>
+        <item name="colorOnTertiaryFixedVariant">@color/md_theme_onTertiaryFixedVariant_highContrast</item>
+        <item name="colorSurfaceDim">@color/md_theme_surfaceDim_highContrast</item>
+        <item name="colorSurfaceBright">@color/md_theme_surfaceBright_highContrast</item>
+        <item name="colorSurfaceContainerLowest">@color/md_theme_surfaceContainerLowest_highContrast</item>
+        <item name="colorSurfaceContainerLow">@color/md_theme_surfaceContainerLow_highContrast</item>
+        <item name="colorSurfaceContainer">@color/md_theme_surfaceContainer_highContrast</item>
+        <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh_highContrast</item>
+        <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest_highContrast</item>
+    </style>
+    <style name="ThemeOverlay.AppTheme.MediumContrast" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/md_theme_primary_mediumContrast</item>
+        <item name="colorOnPrimary">@color/md_theme_onPrimary_mediumContrast</item>
+        <item name="colorPrimaryContainer">@color/md_theme_primaryContainer_mediumContrast</item>
+        <item name="colorOnPrimaryContainer">@color/md_theme_onPrimaryContainer_mediumContrast</item>
+        <item name="colorSecondary">@color/md_theme_secondary_mediumContrast</item>
+        <item name="colorOnSecondary">@color/md_theme_onSecondary_mediumContrast</item>
+        <item name="colorSecondaryContainer">@color/md_theme_secondaryContainer_mediumContrast</item>
+        <item name="colorOnSecondaryContainer">@color/md_theme_onSecondaryContainer_mediumContrast</item>
+        <item name="colorTertiary">@color/md_theme_tertiary_mediumContrast</item>
+        <item name="colorOnTertiary">@color/md_theme_onTertiary_mediumContrast</item>
+        <item name="colorTertiaryContainer">@color/md_theme_tertiaryContainer_mediumContrast</item>
+        <item name="colorOnTertiaryContainer">@color/md_theme_onTertiaryContainer_mediumContrast</item>
+        <item name="colorError">@color/md_theme_error_mediumContrast</item>
+        <item name="colorOnError">@color/md_theme_onError_mediumContrast</item>
+        <item name="colorErrorContainer">@color/md_theme_errorContainer_mediumContrast</item>
+        <item name="colorOnErrorContainer">@color/md_theme_onErrorContainer_mediumContrast</item>
+        <item name="android:colorBackground">@color/md_theme_background_mediumContrast</item>
+        <item name="colorOnBackground">@color/md_theme_onBackground_mediumContrast</item>
+        <item name="colorSurface">@color/md_theme_surface_mediumContrast</item>
+        <item name="colorOnSurface">@color/md_theme_onSurface_mediumContrast</item>
+        <item name="colorSurfaceVariant">@color/md_theme_surfaceVariant_mediumContrast</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_onSurfaceVariant_mediumContrast</item>
+        <item name="colorOutline">@color/md_theme_outline_mediumContrast</item>
+        <item name="colorOutlineVariant">@color/md_theme_outlineVariant_mediumContrast</item>
+        <item name="colorSurfaceInverse">@color/md_theme_inverseSurface_mediumContrast</item>
+        <item name="colorOnSurfaceInverse">@color/md_theme_inverseOnSurface_mediumContrast</item>
+        <item name="colorPrimaryInverse">@color/md_theme_inversePrimary_mediumContrast</item>
+        <item name="colorPrimaryFixed">@color/md_theme_primaryFixed_mediumContrast</item>
+        <item name="colorOnPrimaryFixed">@color/md_theme_onPrimaryFixed_mediumContrast</item>
+        <item name="colorPrimaryFixedDim">@color/md_theme_primaryFixedDim_mediumContrast</item>
+        <item name="colorOnPrimaryFixedVariant">@color/md_theme_onPrimaryFixedVariant_mediumContrast</item>
+        <item name="colorSecondaryFixed">@color/md_theme_secondaryFixed_mediumContrast</item>
+        <item name="colorOnSecondaryFixed">@color/md_theme_onSecondaryFixed_mediumContrast</item>
+        <item name="colorSecondaryFixedDim">@color/md_theme_secondaryFixedDim_mediumContrast</item>
+        <item name="colorOnSecondaryFixedVariant">@color/md_theme_onSecondaryFixedVariant_mediumContrast</item>
+        <item name="colorTertiaryFixed">@color/md_theme_tertiaryFixed_mediumContrast</item>
+        <item name="colorOnTertiaryFixed">@color/md_theme_onTertiaryFixed_mediumContrast</item>
+        <item name="colorTertiaryFixedDim">@color/md_theme_tertiaryFixedDim_mediumContrast</item>
+        <item name="colorOnTertiaryFixedVariant">@color/md_theme_onTertiaryFixedVariant_mediumContrast</item>
+        <item name="colorSurfaceDim">@color/md_theme_surfaceDim_mediumContrast</item>
+        <item name="colorSurfaceBright">@color/md_theme_surfaceBright_mediumContrast</item>
+        <item name="colorSurfaceContainerLowest">@color/md_theme_surfaceContainerLowest_mediumContrast</item>
+        <item name="colorSurfaceContainerLow">@color/md_theme_surfaceContainerLow_mediumContrast</item>
+        <item name="colorSurfaceContainer">@color/md_theme_surfaceContainer_mediumContrast</item>
+        <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh_mediumContrast</item>
+        <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest_mediumContrast</item>
+    </style>
+    <style name="Widget.App.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="backgroundTint">?attr/colorSurfaceContainerLow</item>
+        <item name="itemIconTint">@color/bottom_nav_item_color</item>
+        <item name="itemTextColor">@color/bottom_nav_item_color</item>
+        <item name="itemRippleColor">@android:color/transparent</item>
+        <item name="elevation">8dp</item>
+        <item name="itemActiveIndicatorStyle">@null</item>
+    </style>
+    <style name="Widget.App.Button" parent="Widget.Material3.Button">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="cornerRadius">24dp</item>
+        <item name="elevation">2dp</item>
+    </style>
+    <style name="Widget.App.CardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">3dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainer</item>
+        <item name="rippleColor">?attr/colorOnSurfaceVariant</item>
+        <item name="strokeColor">?attr/colorOutlineVariant</item>
+        <item name="strokeWidth">0.5dp</item>
+    </style>
+    <style name="Widget.App.FloatingActionButton" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="tint">?attr/colorOnPrimary</item>
+        <item name="elevation">6dp</item>
+        <item name="rippleColor">?attr/colorTertiaryContainer</item>
+    </style>
+    <style name="Widget.App.SearchView" parent="Widget.AppCompat.SearchView">
+        <item name="android:background">@drawable/search_view_background</item>
+        <item name="queryBackground">@android:color/transparent</item>
+        <item name="submitBackground">@android:color/transparent</item>
+        <item name="iconifiedByDefault">false</item>
+        <item name="queryHint">@string/search</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:editTextColor">?attr/colorOnSurface</item>
+        <item name="android:textColorHint">?attr/colorOnSurfaceVariant</item>
+        <item name="android:textAppearance">@style/TextAppearance.App.SearchView</item>
+        <item name="android:backgroundTint">?attr/colorSurface</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+</resources>

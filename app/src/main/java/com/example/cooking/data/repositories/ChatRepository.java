@@ -23,15 +23,8 @@ public class ChatRepository extends NetworkRepository {
     public LiveData<ChatSessionResponse> startChatSession() {
         MutableLiveData<ChatSessionResponse> result = new MutableLiveData<>();
         apiService.startChatSession().enqueue(new Callback<ChatSessionResponse>() {
-            @Override
-            public void onResponse(Call<ChatSessionResponse> call, Response<ChatSessionResponse> response) {
-                result.setValue(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<ChatSessionResponse> call, Throwable t) {
-                result.setValue(null);
-            }
+            @Override public void onResponse(Call<ChatSessionResponse> call, Response<ChatSessionResponse> response) { result.setValue(response.body()); }
+            @Override public void onFailure(Call<ChatSessionResponse> call, Throwable t) { result.setValue(null); }
         });
         return result;
     }
@@ -40,15 +33,8 @@ public class ChatRepository extends NetworkRepository {
         MutableLiveData<ChatMessageResponse> result = new MutableLiveData<>();
         ChatMessageRequest request = new ChatMessageRequest(message);
         apiService.sendChatMessage(request).enqueue(new Callback<ChatMessageResponse>() {
-            @Override
-            public void onResponse(Call<ChatMessageResponse> call, Response<ChatMessageResponse> response) {
-                result.setValue(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<ChatMessageResponse> call, Throwable t) {
-                result.setValue(null);
-            }
+            @Override public void onResponse(Call<ChatMessageResponse> call, Response<ChatMessageResponse> response) { result.setValue(response.body()); }
+            @Override public void onFailure(Call<ChatMessageResponse> call, Throwable t) { result.setValue(null); }
         });
         return result;
     }
@@ -56,15 +42,8 @@ public class ChatRepository extends NetworkRepository {
     public LiveData<ChatHistoryResponse> getChatHistory() {
         MutableLiveData<ChatHistoryResponse> result = new MutableLiveData<>();
         apiService.getChatHistory().enqueue(new Callback<ChatHistoryResponse>() {
-            @Override
-            public void onResponse(Call<ChatHistoryResponse> call, Response<ChatHistoryResponse> response) {
-                result.setValue(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<ChatHistoryResponse> call, Throwable t) {
-                result.setValue(null);
-            }
+            @Override public void onResponse(Call<ChatHistoryResponse> call, Response<ChatHistoryResponse> response) { result.setValue(response.body()); }
+            @Override public void onFailure(Call<ChatHistoryResponse> call, Throwable t) { result.setValue(null); }
         });
         return result;
     }

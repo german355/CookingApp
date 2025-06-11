@@ -56,7 +56,7 @@ public class AddRecipeViewModel extends AndroidViewModel {
     public AddRecipeViewModel(@NonNull Application application) {
         super(application);
         preferences = new MySharedPreferences(application);
-        unifiedRecipeRepository = new UnifiedRecipeRepository(application, java.util.concurrent.Executors.newSingleThreadExecutor());
+        unifiedRecipeRepository = new UnifiedRecipeRepository(application);
 
         // Инициализируем списки с одним пустым элементом
         ArrayList<Ingredient> initialIngredients = new ArrayList<>();
@@ -93,7 +93,7 @@ public class AddRecipeViewModel extends AndroidViewModel {
         
         // Получаем ID пользователя
         String userId = preferences.getString("userId", "99");
-        
+        Log.d(TAG, userId);
         // Подготавливаем данные
         String titleText = title.getValue();
         List<Ingredient> ingredientsList = ingredients.getValue();
