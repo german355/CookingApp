@@ -181,7 +181,7 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
                     .into(holder.imageView);
         } else {
             // Если URL фото отсутствует, устанавливаем изображение по умолчанию
-            holder.imageView.setImageResource(R.drawable.white_card_background); // TODO: Рассмотреть использование более информативной заглушки
+            holder.imageView.setImageResource(R.drawable.white_card_background);
         }
         
 
@@ -189,9 +189,9 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
         
         // Динамическое изменение цвета иконки "Нравится"
         if (recipe.isLiked()) {
-            holder.favoriteButton.setButtonTintList(ColorStateList.valueOf(Color.parseColor("#FF0031"))); // Красный цвет для "лайка"
+            holder.favoriteButton.setButtonTintList(ColorStateList.valueOf(Color.parseColor("#FF0031")));
         } else {
-            holder.favoriteButton.setButtonTintList(null); // Сброс на цвет по умолчанию (из темы)
+            holder.favoriteButton.setButtonTintList(null);
         }
         
         // Убедимся, что кнопка избранного всегда поверх других элементов в CardView
@@ -205,7 +205,7 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
             // Проверяем авторизацию пользователя
             if (!FirebaseAuthManager.getInstance().isUserSignedIn()) {
                 // Пользователь не авторизован, показываем уведомление и навигацию
-                showLoginRequiredDialog(v);
+                Toast.makeText(v.getContext(), "Пожалуйста, авторизуйтесь для лайка", Toast.LENGTH_SHORT).show();
                 // Возвращаем кнопку в исходное состояние
                 holder.favoriteButton.setChecked(!isChecked);
                 return;
@@ -277,26 +277,5 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
             }
         }
     }
-    
-    /**
-     * Показывает диалоговое окно и навигацию к AuthFragment
-     * @param anchorView View для навигации и получения контекста
-     */
-    private void showLoginRequiredDialog(View anchorView) {
-        Context context = anchorView.getContext();
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.auth_required_title)
-               .setMessage(R.string.auth_required_message)
-               .setPositiveButton(R.string.login, (dialog, which) -> {
-                   // Навигация к AuthFragment через NavController на переданном view
-                   try {
-                       NavController navController = Navigation.findNavController(anchorView);
-                       navController.navigate(R.id.destination_auth);
-                   } catch (Exception e) {
-                       Toast.makeText(context, R.string.please_login_to_continue, Toast.LENGTH_SHORT).show();
-                   }
-               })
-               .setNegativeButton(R.string.cancel, null)
-               .show();
-    }
+
 } 
