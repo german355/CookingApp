@@ -50,8 +50,8 @@ graph TD;
         Repository -- получает данные из --> LocalDataSource;
     end
 
-    RemoteDataSource[Network API<br>(Retrofit)]
-    LocalDataSource[Database<br>(Room)]
+    RemoteDataSource[Network API /n (Retrofit)]
+    LocalDataSource[Database /n(Room)]
 ```
 
 ### Диаграмма последовательности: Загрузка рецептов
