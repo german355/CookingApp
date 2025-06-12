@@ -116,12 +116,66 @@ public class AuthFragment extends Fragment {
                 // Сброс предыдущих ошибок
                 emailInputLayout.setError(null);
                 passwordInputLayout.setError(null);
-                // Устанавливаем ошибку в зависимости от типа сообщения
-                String msgLower = errorMessage.toLowerCase();
-                if (msgLower.contains("пароль")) {
-                    passwordInputLayout.setError(errorMessage);
-                } else {
-                    emailInputLayout.setError(errorMessage);
+                // Обработка ошибок
+                switch (errorMessage) {
+                    case "Email не может быть пустым":
+                    case "Неверный формат email":
+                        emailInputLayout.setError(errorMessage);
+                        break;
+                    case "Пароль не может быть пустым":
+                    case "Пароль должен содержать не менее 6 символов":
+                        passwordInputLayout.setError(errorMessage);
+                        break;
+                    default: {
+                        // Преобразуем Firebase-сообщения и технические тексты в понятный формат
+                        String msg = errorMessage != null ? errorMessage.trim() : "";
+                        if (msg.startsWith("Ошибка авторизации:")) {
+                            msg = msg.substring("Ошибка авторизации:".length()).trim();
+                        }
+
+                        String low = msg.toLowerCase();
+
+                        // 1) Ошибки формата e-mail
+                        if (low.contains("badly formatted")) {
+                            emailInputLayout.setError("Неверный формат email");
+                            break;
+                        }
+
+                        // 2) Ошибки пароля / учётных данных
+                        if (low.contains("wrong password") || low.contains("wrong-password") || low.contains("invalid password") || low.contains("invalid-credentials") || low.contains("auth credential") || low.contains("supplied auth credential")) {
+                            passwordInputLayout.setError("Неверная почта или пароль");
+                            break;
+                        }
+
+                        // 3) Пользователь не найден
+                        if (low.contains("user not found") || low.contains("no user record")) {
+                            Toast.makeText(requireContext(), "Пользователь с такой почтой не найден", Toast.LENGTH_LONG).show();
+                            break;
+                        }
+
+                        // 4) Сетевые проблемы
+                        if (low.contains("network") || low.contains("unable to resolve host") || low.contains("failed to connect") || low.contains("timeout") || low.contains(" 7:") || low.contains("status code 7")) {
+                            Toast.makeText(requireContext(), "Проблемы с соединением. Проверьте интернет и попробуйте снова", Toast.LENGTH_LONG).show();
+                            break;
+                        }
+
+                        // 5) Блокировка из-за большого количества попыток
+                        if (low.contains("blocked") || low.contains("too many requests")) {
+                            Toast.makeText(requireContext(), "Слишком много попыток. Попробуйте позже", Toast.LENGTH_LONG).show();
+                            break;
+                        }
+
+                        // 6) Остальные случаи – универсальное сообщение
+                        Toast.makeText(requireContext(), "Не удалось войти. Попробуйте позже", Toast.LENGTH_LONG).show();
+
+                        // Иногда сообщение может быть пустым при статусе 7, обрабатываем как сетевую ошибку
+                        if (msg.isEmpty()) {
+                            Toast.makeText(requireContext(), "Проблемы с соединением. Проверьте интернет и попробуйте снова", Toast.LENGTH_LONG).show();
+                            break;
+                        }
+
+                        break;
+                    }
                 }
                 viewModel.clearErrorMessage();
             }

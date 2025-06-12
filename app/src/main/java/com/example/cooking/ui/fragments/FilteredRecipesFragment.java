@@ -84,6 +84,15 @@ public class FilteredRecipesFragment extends Fragment implements RecipeListAdapt
         
         // Набор наблюдателей
         setUpObservers(viewModel);
+
+        // Устанавливаем заголовок ActionBar в название категории, если оно передано
+        if (categoryName != null && !categoryName.isEmpty()) {
+            androidx.appcompat.app.AppCompatActivity act = (androidx.appcompat.app.AppCompatActivity) requireActivity();
+            if (act.getSupportActionBar() != null) {
+                act.getSupportActionBar().setTitle(categoryName);
+            }
+        }
+
         // Pull-to-refresh
         swipeRefreshLayout.setOnRefreshListener(() -> viewModel.onRefreshRequested());
         // Инициация фильтрации
