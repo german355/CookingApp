@@ -100,15 +100,17 @@ public class FavoritesViewModel extends AndroidViewModel {
             
             List<Recipe> allRecipes = resource.getData();
             
+            // Захватываем текущий поисковый запрос на главном потоке, чтобы не обращаться к LiveData из фоновой нити
+            final String currentQuery = searchQuery.getValue();
+
             // Делаем тяжёлую работу в ioExecutor, чтобы не лочить главный поток
             ioExecutor.execute(() -> {
                 List<Recipe> likedRecipesLocal = allRecipes.stream()
                         .filter(Recipe::isLiked)
                         .collect(Collectors.toList());
 
-                String query = searchQuery.getValue();
-                if (query != null && !query.isEmpty()) {
-                    likedRecipesLocal = filterRecipesByQuery(likedRecipesLocal, query);
+                if (currentQuery != null && !currentQuery.isEmpty()) {
+                    likedRecipesLocal = filterRecipesByQuery(likedRecipesLocal, currentQuery);
                 }
 
                 Log.d(TAG, "Получено " + likedRecipesLocal.size() + " понравившихся рецептов из общего списка " + allRecipes.size());
@@ -133,14 +135,17 @@ public class FavoritesViewModel extends AndroidViewModel {
             
             List<Recipe> allRecipes = resource.getData();
             
+            // Захватываем текущий поисковый запрос на главном потоке, чтобы не обращаться к LiveData из фоновой нити
+            final String currentQuery = searchQuery.getValue();
+
             // Делаем тяжёлую работу в ioExecutor, чтобы не лочить главный поток
             ioExecutor.execute(() -> {
                 List<Recipe> likedRecipesLocal = allRecipes.stream()
                         .filter(Recipe::isLiked)
                         .collect(Collectors.toList());
 
-                if (query != null && !query.isEmpty()) {
-                    likedRecipesLocal = filterRecipesByQuery(likedRecipesLocal, query);
+                if (currentQuery != null && !currentQuery.isEmpty()) {
+                    likedRecipesLocal = filterRecipesByQuery(likedRecipesLocal, currentQuery);
                 }
 
                 filteredLikedRecipes.postValue(likedRecipesLocal);

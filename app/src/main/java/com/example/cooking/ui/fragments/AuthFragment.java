@@ -154,7 +154,7 @@ public class AuthFragment extends Fragment {
                         }
 
                         // 4) Сетевые проблемы
-                        if (low.contains("network") || low.contains("unable to resolve host") || low.contains("failed to connect") || low.contains("timeout")) {
+                        if (low.contains("network") || low.contains("unable to resolve host") || low.contains("failed to connect") || low.contains("timeout") || low.contains(" 7:") || low.contains("status code 7")) {
                             Toast.makeText(requireContext(), "Проблемы с соединением. Проверьте интернет и попробуйте снова", Toast.LENGTH_LONG).show();
                             break;
                         }
@@ -167,6 +167,13 @@ public class AuthFragment extends Fragment {
 
                         // 6) Остальные случаи – универсальное сообщение
                         Toast.makeText(requireContext(), "Не удалось войти. Попробуйте позже", Toast.LENGTH_LONG).show();
+
+                        // Иногда сообщение может быть пустым при статусе 7, обрабатываем как сетевую ошибку
+                        if (msg.isEmpty()) {
+                            Toast.makeText(requireContext(), "Проблемы с соединением. Проверьте интернет и попробуйте снова", Toast.LENGTH_LONG).show();
+                            break;
+                        }
+
                         break;
                     }
                 }

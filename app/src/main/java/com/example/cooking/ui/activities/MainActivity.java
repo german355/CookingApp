@@ -501,8 +501,17 @@ if (current == null || current.getId() != R.id.nav_home) {
             ? navController.getCurrentDestination().getId() : -1;
         boolean visible = id == R.id.nav_home;
         searchItem.setVisible(visible);
+
         if (!visible && searchItem.isActionViewExpanded()) {
+            // Уходим с главного фрагмента — сворачиваем строку поиска
             searchItem.collapseActionView();
+        }
+
+        // Если вернулись на Home и строка поиска свернута, сбрасываем режим поиска и показываем все рецепты
+        if (visible && !searchItem.isActionViewExpanded()) {
+            if (sharedRecipeViewModel != null) {
+                sharedRecipeViewModel.exitSearchMode();
+            }
         }
         return super.onPrepareOptionsMenu(menu);
     }
