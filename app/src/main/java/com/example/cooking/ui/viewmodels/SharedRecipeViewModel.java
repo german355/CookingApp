@@ -281,6 +281,17 @@ public class SharedRecipeViewModel extends AndroidViewModel {
         Log.d(TAG, "SharedRecipeViewModel: invoking recipeUseCases.setLikeStatus");
         // Используем UseCase для установки статуса лайка
         recipeUseCases.setLikeStatus(userId, recipeId, isLiked, errorMessage);
+
+        // Обновляем локальное состояние
+        recipe.setLiked(isLiked);
+
+        // Явно уведомляем наблюдателей о том, что список рецептов изменился, чтобы UI обновился
+        Resource<List<Recipe>> currentResource = recipes.getValue();
+        if (currentResource != null && currentResource.getData() != null) {
+            // Создаём новый объект списка, чтобы LiveData заметила изменение
+            java.util.List<Recipe> updatedList = new java.util.ArrayList<>(currentResource.getData());
+            recipes.setValue(Resource.success(updatedList));
+        }
     }
 
 
@@ -411,6 +422,14 @@ public class SharedRecipeViewModel extends AndroidViewModel {
 
         // Не вызываем refreshRecipes, так как данные обновляются через LiveData
         Log.d(TAG, "Статус лайка для рецепта " + recipe.getId() + " обновлен на " + isLiked);
+
+        // Явно уведомляем наблюдателей о том, что список рецептов изменился, чтобы UI обновился
+        Resource<List<Recipe>> currentResource = recipes.getValue();
+        if (currentResource != null && currentResource.getData() != null) {
+            // Создаём новый объект списка, чтобы LiveData заметила изменение
+            java.util.List<Recipe> updatedList = new java.util.ArrayList<>(currentResource.getData());
+            recipes.setValue(Resource.success(updatedList));
+        }
     }
 
     /**

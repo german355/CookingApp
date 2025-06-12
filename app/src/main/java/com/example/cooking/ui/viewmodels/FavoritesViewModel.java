@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.cooking.Recipe.Ingredient;
 import com.example.cooking.Recipe.Recipe;
+import com.example.cooking.data.repositories.LikedRecipesRepository;
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.utils.MySharedPreferences;
 
@@ -49,6 +50,12 @@ public class FavoritesViewModel extends AndroidViewModel {
     // Флаг, что источник searchQuery уже добавлен
     private boolean isSearchQueryObserverSet = false;
     
+    // Репозиторий для получение фактического списка лайков из БД
+    private final LikedRecipesRepository likedRecipesRepository;
+    
+    // Исполнитель для фоновых запросов к БД (избегаем IllegalStateException)
+    private final java.util.concurrent.ExecutorService ioExecutor = java.util.concurrent.Executors.newSingleThreadExecutor();
+    
     public FavoritesViewModel(@NonNull Application application) {
         super(application);
 
@@ -56,6 +63,9 @@ public class FavoritesViewModel extends AndroidViewModel {
         MySharedPreferences preferences = new MySharedPreferences(application);
         userId = preferences.getString("userId", "0");
         isUserLoggedIn = !userId.equals("0");
+        
+        // Репозиторий лайков
+        likedRecipesRepository = new LikedRecipesRepository(application);
         
         // Устанавливаем начальное значение
         filteredLikedRecipes.setValue(new ArrayList<>());
@@ -90,20 +100,21 @@ public class FavoritesViewModel extends AndroidViewModel {
             
             List<Recipe> allRecipes = resource.getData();
             
-            // Фильтруем только понравившиеся рецепты
-            List<Recipe> likedRecipes = allRecipes.stream()
-                .filter(Recipe::isLiked)
-                .collect(Collectors.toList());
-            
-            Log.d(TAG, "Получено " + likedRecipes.size() + " понравившихся рецептов из общего списка " + allRecipes.size());
-            
-            // Применяем текущий поисковый запрос
-            String query = searchQuery.getValue();
-            if (query != null && !query.isEmpty()) {
-                likedRecipes = filterRecipesByQuery(likedRecipes, query);
-            }
-            
-            filteredLikedRecipes.setValue(likedRecipes);
+            // Делаем тяжёлую работу в ioExecutor, чтобы не лочить главный поток
+            ioExecutor.execute(() -> {
+                List<Recipe> likedRecipesLocal = allRecipes.stream()
+                        .filter(Recipe::isLiked)
+                        .collect(Collectors.toList());
+
+                String query = searchQuery.getValue();
+                if (query != null && !query.isEmpty()) {
+                    likedRecipesLocal = filterRecipesByQuery(likedRecipesLocal, query);
+                }
+
+                Log.d(TAG, "Получено " + likedRecipesLocal.size() + " понравившихся рецептов из общего списка " + allRecipes.size());
+
+                filteredLikedRecipes.postValue(likedRecipesLocal);
+            });
         });
     }
     
@@ -122,17 +133,18 @@ public class FavoritesViewModel extends AndroidViewModel {
             
             List<Recipe> allRecipes = resource.getData();
             
-            // Фильтруем только понравившиеся рецепты
-            List<Recipe> likedRecipes = allRecipes.stream()
-                .filter(Recipe::isLiked)
-                .collect(Collectors.toList());
-            
-            // Применяем поисковый запрос
-            if (query != null && !query.isEmpty()) {
-                likedRecipes = filterRecipesByQuery(likedRecipes, query);
-            }
-            
-            filteredLikedRecipes.setValue(likedRecipes);
+            // Делаем тяжёлую работу в ioExecutor, чтобы не лочить главный поток
+            ioExecutor.execute(() -> {
+                List<Recipe> likedRecipesLocal = allRecipes.stream()
+                        .filter(Recipe::isLiked)
+                        .collect(Collectors.toList());
+
+                if (query != null && !query.isEmpty()) {
+                    likedRecipesLocal = filterRecipesByQuery(likedRecipesLocal, query);
+                }
+
+                filteredLikedRecipes.postValue(likedRecipesLocal);
+            });
         });
     }
     
@@ -243,5 +255,9 @@ public class FavoritesViewModel extends AndroidViewModel {
         refreshLikedRecipes();
     }
     
-
+    @Override
+    public void onCleared() {
+        super.onCleared();
+        ioExecutor.shutdown();
+    }
 }

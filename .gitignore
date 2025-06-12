@@ -15,6 +15,7 @@ secrets.json
 # Android specific
 *.iml
 .gradle
+/app/build
 /local.properties
 /.idea/caches
 /.idea/libraries
