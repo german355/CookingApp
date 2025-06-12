@@ -34,6 +34,7 @@
 
 ## Диаграмма архитектуры
 
+
 ```mermaid
 graph TD;
     subgraph UI Layer
@@ -50,8 +51,8 @@ graph TD;
         Repository -- получает данные из --> LocalDataSource;
     end
 
-    RemoteDataSource[Network API (Retrofit)]
-    LocalDataSource[Database (Room)]
+    RemoteDataSource["Network API<br>(Retrofit)"]
+    LocalDataSource["Database<br>(Room)"]
 ```
 
 ### Диаграмма последовательности: Загрузка рецептов
