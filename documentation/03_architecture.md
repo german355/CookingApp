@@ -50,7 +50,7 @@ graph TD;
         Repository -- получает данные из --> LocalDataSource;
     end
 
-    RemoteDataSource[Network API<br/>Retrofit)]
+    RemoteDataSource[Network API<br/>(Retrofit)]
     LocalDataSource[Database<br/>(Room)]
 ```
 
