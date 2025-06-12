@@ -142,7 +142,7 @@ public class AuthFragment extends Fragment {
                         }
 
                         // 2) Ошибки пароля / учётных данных
-                        if (low.contains("wrong password") || low.contains("wrong-password") || low.contains("invalid password") || low.contains("invalid-credentials")) {
+                        if (low.contains("wrong password") || low.contains("wrong-password") || low.contains("invalid password") || low.contains("invalid-credentials") || low.contains("auth credential") || low.contains("supplied auth credential")) {
                             passwordInputLayout.setError("Неверная почта или пароль");
                             break;
                         }

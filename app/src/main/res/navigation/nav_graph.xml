@@ -97,7 +97,7 @@
     <fragment
         android:id="@+id/nav_filtered_recipes"
         android:name="com.example.cooking.ui.fragments.FilteredRecipesFragment"
-        android:label="Filtered Recipes"
+        android:label=""
         tools:layout="@layout/fragment_filtered_recipes">
 
         <argument

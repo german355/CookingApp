@@ -159,8 +159,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                // Показываем кнопку назад только в экране авторизации
-                if (id == R.id.destination_auth || id == R.id.destination_settings ||   id == R.id.destination_profile) {
+                // Показываем кнопку назад для некоторых экранов (авторизация, настройки, профиль, фильтрованные рецепты)
+                if (id == R.id.destination_auth || id == R.id.destination_settings || id == R.id.destination_profile || id == R.id.nav_filtered_recipes) {
                     if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 } else {
                     if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(false);

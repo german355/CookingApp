@@ -269,31 +269,39 @@ public class SharedRecipeViewModel extends AndroidViewModel {
      * Обновление статуса лайка рецепта
      */
     public void updateLikeStatus(Recipe recipe, boolean isLiked) {
-        Log.d(TAG, "SharedRecipeViewModel.updateLikeStatus: recipeId=" + (recipe != null ? recipe.getId() : null) + ", isLiked=" + isLiked);
+        // Получаем текущий userId из SharedPreferences и делегируем расширенной версии метода.
+        String userId = new MySharedPreferences(getApplication()).getString("userId", "0");
+        updateLikeStatus(recipe, isLiked, userId);
+    }
+
+    /**
+     * Обновляет статус лайка для рецепта
+     * @param recipe рецепт для обновления
+     * @param isLiked новый статус лайка
+     * @param userId ID пользователя
+     */
+    public void updateLikeStatus(Recipe recipe, boolean isLiked, String userId) {
+        Log.d(TAG, "updateLikeStatus called: id=" + recipe.getId() + " liked=" + isLiked);
         if (recipe == null) {
             Log.e(TAG, "updateLikeStatus: рецепт равен null");
             return;
         }
 
-        int recipeId = recipe.getId();
-        String userId = new MySharedPreferences(getApplication()).getString("userId", "0");
+        if (userId == null || userId.equals("0") || userId.isEmpty()) {
+            Log.w(TAG, "updateLikeStatus: невалидный userId");
+            errorMessage.setValue("Войдите, чтобы изменить статус лайка");
+            return;
+        }
 
-        Log.d(TAG, "SharedRecipeViewModel: invoking recipeUseCases.setLikeStatus");
-        // Используем UseCase для установки статуса лайка
-        recipeUseCases.setLikeStatus(userId, recipeId, isLiked, errorMessage);
-
-        // Обновляем локальное состояние
+        // 1. Обновляем локальное состояние, чтобы дать немедленную обратную связь UI
         recipe.setLiked(isLiked);
 
-        // Явно уведомляем наблюдателей о том, что список рецептов изменился, чтобы UI обновился
-        Resource<List<Recipe>> currentResource = recipes.getValue();
-        if (currentResource != null && currentResource.getData() != null) {
-            // Создаём новый объект списка, чтобы LiveData заметила изменение
-            java.util.List<Recipe> updatedList = new java.util.ArrayList<>(currentResource.getData());
-            recipes.setValue(Resource.success(updatedList));
-        }
-    }
+        // 2. Просим UseCase проставить лайк (обновит БД и при необходимости сделает сетевой вызов)
+        recipeUseCases.setLikeStatus(userId, recipe.getId(), isLiked, errorMessage);
 
+        // 3. Не трогаем recipes LiveData — initLocalDataObserver отслеживает изменения БД
+        Log.d(TAG, "Статус лайка для рецепта " + recipe.getId() + " обновлен на " + isLiked);
+    }
 
     /**
      * Выполнить поиск среди рецептов
@@ -392,43 +400,6 @@ public class SharedRecipeViewModel extends AndroidViewModel {
     public void loadInitialRecipesIfNeeded() {
         if (!isInitialLoadDone) {
             loadInitialRecipes();
-        }
-    }
-
-    /**
-     * Обновляет статус лайка для рецепта
-     * @param recipe рецепт для обновления
-     * @param isLiked новый статус лайка
-     * @param userId ID пользователя
-     */
-    public void updateLikeStatus(Recipe recipe, boolean isLiked, String userId) {
-        Log.d(TAG, "updateLikeStatus called: id=" + recipe.getId() + " liked=" + isLiked);
-        if (recipe == null) {
-            Log.e(TAG, "updateLikeStatus: рецепт равен null");
-            return;
-        }
-
-        if (userId == null || userId.equals("0") || userId.isEmpty()) {
-            Log.w(TAG, "updateLikeStatus: невалидный userId");
-            errorMessage.setValue("Войдите, чтобы изменить статус лайка");
-            return;
-        }
-
-        // Обновляем локальное состояние
-        recipe.setLiked(isLiked);
-
-        // Обновляем в репозитории, используя setLikeStatus для явного указания статуса
-        recipeUseCases.setLikeStatus(userId, recipe.getId(), isLiked, errorMessage);
-
-        // Не вызываем refreshRecipes, так как данные обновляются через LiveData
-        Log.d(TAG, "Статус лайка для рецепта " + recipe.getId() + " обновлен на " + isLiked);
-
-        // Явно уведомляем наблюдателей о том, что список рецептов изменился, чтобы UI обновился
-        Resource<List<Recipe>> currentResource = recipes.getValue();
-        if (currentResource != null && currentResource.getData() != null) {
-            // Создаём новый объект списка, чтобы LiveData заметила изменение
-            java.util.List<Recipe> updatedList = new java.util.ArrayList<>(currentResource.getData());
-            recipes.setValue(Resource.success(updatedList));
         }
     }
 
