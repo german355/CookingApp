@@ -18,22 +18,22 @@
 ```mermaid
 sequenceDiagram
     participant User
-    participant View as Login Screen
+    participant View as "Login Screen"
     participant FirebaseAuth
-    participant Backend as Backend API
+    participant Backend as "Backend API"
 
-    User->>View: Вводит email/пароль
-    User->>View: Нажимает "Войти"
-    View->>FirebaseAuth: signInWithEmailAndPassword()
-    FirebaseAuth-->>View: onComplete (успех/ошибка)
+    User->>View: "Вводит email/пароль"
+    User->>View: "Нажимает 'Войти'"
+    View->>FirebaseAuth: "signInWithEmailAndPassword()"
+    FirebaseAuth-->>View: "onComplete (успех/ошибка)"
     alt Успешный вход
-        View->>FirebaseAuth: currentUser.getIdToken()
-        FirebaseAuth-->>View: Firebase Token
-        View->>Backend: POST /auth/login (с Firebase Token в заголовке)
-        Backend-->>View: Успешный ответ (сессия создана)
-        View->>User: Показать главный экран
+        View->>FirebaseAuth: "currentUser.getIdToken()"
+        FirebaseAuth-->>View: "Firebase Token"
+        View->>Backend: "POST /auth/login (с Firebase Token в заголовке)"
+        Backend-->>View: "Успешный ответ (сессия создана)"
+        View->>User: "Показать главный экран"
     else Ошибка входа
-        View->>User: Показать сообщение об ошибке
+        View->>User: "Показать сообщение об ошибке"
     end
 ```
 

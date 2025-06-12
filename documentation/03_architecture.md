@@ -50,8 +50,8 @@ graph TD;
         Repository -- получает данные из --> LocalDataSource;
     end
 
-    RemoteDataSource[Network API<br/>Retrofit)]
-    LocalDataSource[Database<br/>(Room)]
+    RemoteDataSource["Network API<br>(Retrofit)"]
+    LocalDataSource["Database<br>(Room)"]
 ```
 
 ### Диаграмма последовательности: Загрузка рецептов
@@ -60,26 +60,26 @@ graph TD;
 
 ```mermaid
 sequenceDiagram
-    participant View as Activity/Fragment
+    participant View as "Activity/Fragment"
     participant ViewModel
     participant Repository
-    participant ApiService as Network API (Retrofit)
-    participant RecipeDao as Local DB (Room)
+    participant ApiService as "Network API (Retrofit)"
+    participant RecipeDao as "Local DB (Room)"
 
-    View->>ViewModel: Запросить список рецептов
-    ViewModel->>Repository: getRecipes()
-    Repository->>RecipeDao: getAllRecipes()
-    RecipeDao-->>Repository: кэшированные рецепты
-    Repository-->>ViewModel: onNext(кэшированные рецепты)
-    ViewModel-->>View: Обновить UI (показать кэш)
+    View->>ViewModel: "Запросить список рецептов"
+    ViewModel->>Repository: "getRecipes()"
+    Repository->>RecipeDao: "getAllRecipes()"
+    RecipeDao-->>Repository: "кэшированные рецепты"
+    Repository-->>ViewModel: "onNext(кэшированные рецепты)"
+    ViewModel-->>View: "Обновить UI (показать кэш)"
 
-    Repository->>ApiService: getRecipes()
-    ApiService-->>Repository: новые рецепты
-    Repository->>RecipeDao: insertAll(новые рецепты)
-    Repository->>RecipeDao: getAllRecipes()
-    RecipeDao-->>Repository: обновленные рецепты
-    Repository-->>ViewModel: onNext(обновленные рецепты)
-    ViewModel-->>View: Обновить UI (показать свежие данные)
+    Repository->>ApiService: "getRecipes()"
+    ApiService-->>Repository: "новые рецепты"
+    Repository->>RecipeDao: "insertAll(новые рецепты)"
+    Repository->>RecipeDao: "getAllRecipes()"
+    RecipeDao-->>Repository: "обновленные рецепты"
+    Repository-->>ViewModel: "onNext(обновленные рецепты)"
+    ViewModel-->>View: "Обновить UI (показать свежие данные)"
 ```
 ***
 [**⬆ К оглавлению**](./README.md) 

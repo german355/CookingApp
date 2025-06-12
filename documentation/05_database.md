@@ -64,7 +64,7 @@ erDiagram
     liked_recipes {
         int recipeId PK
     }
-    recipes ||--o{ liked_recipes : "likes"
+    recipes ||--o{ liked_recipes : "likes" 
 ```
 ***
 [**⬆ К оглавлению**](./README.md) 
