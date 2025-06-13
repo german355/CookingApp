@@ -4,7 +4,7 @@
             "outputFile": "com.example.cooking.test.app-mergeDebugAndroidTestResources-2:/values-v21/values-v21.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\xerma\\.gradle\\caches\\8.9\\transforms\\57f7df557b46f27c1ab534e1affacdb8\\transformed\\core-1.6.1\\res\\values-v21\\values.xml",
+                    "source": "C:\\Users\\xerma\\.gradle\\caches\\8.9\\transforms\\7bdb8c9ce780e69a1c7fad04dc605552\\transformed\\core-1.6.1\\res\\values-v21\\values.xml",
                     "from": {
                         "startLines": "4,13",
                         "startColumns": "0,0",

@@ -314,7 +314,7 @@
     <color name="md_theme_onSecondary_mediumContrast">#FFFFFF</color>
     <color name="md_theme_onSurface">#1C1B1F</color>
     <color name="md_theme_onSurfaceVariant">#616161</color>
-    <color name="md_theme_onSurfaceVariant_highContrast">#2E2120</color>
+    <color name="md_theme_onSurfaceVariant_highContrast">#242424</color>
     <color name="md_theme_onSurfaceVariant_mediumContrast">#4E3F3F</color>
     <color name="md_theme_onSurface_highContrast">#000000</color>
     <color name="md_theme_onSurface_mediumContrast">#231919</color>
@@ -402,6 +402,8 @@
     <color name="md_theme_tertiaryFixed_mediumContrast">#8C7042</color>
     <color name="md_theme_tertiary_highContrast">#301F00</color>
     <color name="md_theme_tertiary_mediumContrast">#563F16</color>
+    <color name="message_ai_text_color">#000000</color>
+    <color name="search_view_background_dark">#FFFFFF</color>
     <dimen name="chat_input_size">48dp</dimen>
     <dimen name="chat_input_size_button">38dp</dimen>
     <dimen name="chat_recipe_card_width">160dp</dimen>

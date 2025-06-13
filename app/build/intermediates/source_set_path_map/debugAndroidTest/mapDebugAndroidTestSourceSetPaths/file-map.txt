@@ -1,5 +1,5 @@
-com.example.cooking.test.app-core-1.6.1-0 C:\Users\xerma\.gradle\caches\8.9\transforms\57f7df557b46f27c1ab534e1affacdb8\transformed\core-1.6.1\res
-com.example.cooking.test.app-androidTest-1 C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\build\generated\res\resValues\androidTest\debug
-com.example.cooking.test.app-mergeDebugAndroidTestResources-2 C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
-com.example.cooking.test.app-mergeDebugAndroidTestResources-3 C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
-com.example.cooking.test.app-debugAndroidTest-4 C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources
+com.example.cooking.test.app-core-1.6.1-0 C:\Users\xerma\.gradle\caches\8.9\transforms\7bdb8c9ce780e69a1c7fad04dc605552\transformed\core-1.6.1\res
+com.example.cooking.test.app-androidTest-1 C:\Users\xerma\IdeaProjects\CookingApp\app\build\generated\res\resValues\androidTest\debug
+com.example.cooking.test.app-mergeDebugAndroidTestResources-2 C:\Users\xerma\IdeaProjects\CookingApp\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+com.example.cooking.test.app-mergeDebugAndroidTestResources-3 C:\Users\xerma\IdeaProjects\CookingApp\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+com.example.cooking.test.app-debugAndroidTest-4 C:\Users\xerma\IdeaProjects\CookingApp\app\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources

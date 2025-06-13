@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:2:1-75:12
-INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:2:1-75:12
-INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:2:1-75:12
-INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:2:1-75:12
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:2:1-75:12
+INJECTED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:2:1-75:12
+INJECTED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:2:1-75:12
+INJECTED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:2:1-75:12
 MERGED from [androidx.databinding:viewbinding:8.7.3] C:\Users\xerma\.gradle\caches\8.9\transforms\8d130a172a26a79c1c4e08188aad4bfb\transformed\viewbinding-8.7.3\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.navigation:navigation-common:2.7.7] C:\Users\xerma\.gradle\caches\8.9\transforms\bf2f6d14622758af3f46982f93b8f9c5\transformed\navigation-common-2.7.7\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.navigation:navigation-runtime:2.7.7] C:\Users\xerma\.gradle\caches\8.9\transforms\db4e339d529738d4aa67a0399397db0a\transformed\navigation-runtime-2.7.7\AndroidManifest.xml:17:1-22:12
@@ -108,17 +108,17 @@ MERGED from [androidx.annotation:annotation-experimental:1.4.0] C:\Users\xerma\.
 MERGED from [com.google.android.libraries.identity.googleid:googleid:1.1.0] C:\Users\xerma\.gradle\caches\8.9\transforms\09d86f7967aae5ce1a02cc34795a4232\transformed\googleid-1.1.0\AndroidManifest.xml:2:1-7:12
 MERGED from [com.google.android.play:core-common:2.0.3] C:\Users\xerma\.gradle\caches\8.9\transforms\26bdbac4fe9069ff0379ce89017f6ad9\transformed\core-common-2.0.3\AndroidManifest.xml:2:1-21:12
 	package
-		INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml
 	android:versionName
-		INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml
 	xmlns:tools
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:3:5-51
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:3:5-51
 	android:versionCode
-		INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml
 	xmlns:android
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:2:11-69
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:2:11-69
 uses-permission#android.permission.INTERNET
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:5:5-67
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:5:5-67
 MERGED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:25:5-67
 MERGED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:25:5-67
 MERGED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:23:5-67
@@ -134,9 +134,9 @@ MERGED from [com.google.android.gms:play-services-measurement-impl:22.4.0] C:\Us
 MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:23:5-67
 MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:23:5-67
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:5:22-64
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:5:22-64
 uses-permission#android.permission.ACCESS_NETWORK_STATE
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:6:5-79
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:6:5-79
 MERGED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:26:5-79
 MERGED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:26:5-79
 MERGED from [com.google.android.gms:play-services-measurement:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\4d88fd73fad157193467f8b83b824144\transformed\play-services-measurement-22.4.0\AndroidManifest.xml:24:5-79
@@ -154,20 +154,20 @@ MERGED from [androidx.work:work-runtime:2.9.0] C:\Users\xerma\.gradle\caches\8.9
 MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:24:5-79
 MERGED from [com.google.android.gms:play-services-measurement-sdk-api:22.4.0] C:\Users\xerma\.gradle\caches\8.9\transforms\6b2e1f3b65b541fa32cb2b98ff22261e\transformed\play-services-measurement-sdk-api-22.4.0\AndroidManifest.xml:24:5-79
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:6:22-76
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:6:22-76
 uses-permission#android.permission.READ_EXTERNAL_STORAGE
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:7:5-107
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:7:5-107
 	android:maxSdkVersion
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:7:78-104
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:7:78-104
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:7:22-77
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:7:22-77
 uses-permission#android.permission.READ_MEDIA_IMAGES
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:9:5-76
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:9:5-76
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:9:22-73
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:9:22-73
 application
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:11:5-73:19
-INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:11:5-73:19
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:11:5-73:19
+INJECTED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:11:5-73:19
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d065566cf243344153b23354f55189c1\transformed\material-1.12.0\AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\xerma\.gradle\caches\8.9\transforms\d065566cf243344153b23354f55189c1\transformed\material-1.12.0\AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\a4d564fe1b62dc86e1a415463bd7c5b6\transformed\constraintlayout-2.2.0\AndroidManifest.xml:7:5-20
@@ -243,125 +243,125 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\xe
 MERGED from [com.google.android.play:core-common:2.0.3] C:\Users\xerma\.gradle\caches\8.9\transforms\26bdbac4fe9069ff0379ce89017f6ad9\transformed\core-common-2.0.3\AndroidManifest.xml:11:5-19:19
 MERGED from [com.google.android.play:core-common:2.0.3] C:\Users\xerma\.gradle\caches\8.9\transforms\26bdbac4fe9069ff0379ce89017f6ad9\transformed\core-common-2.0.3\AndroidManifest.xml:11:5-19:19
 	android:extractNativeLibs
-		INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml
 	android:roundIcon
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:18:9-54
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:18:9-54
 	android:icon
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:16:9-43
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:16:9-43
 	android:networkSecurityConfig
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:22:9-69
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:22:9-69
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.13.0] C:\Users\xerma\.gradle\caches\8.9\transforms\66d58053a32ce5b3116600acecd82954\transformed\core-1.13.0\AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:19:9-35
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:19:9-35
 	android:label
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:17:9-41
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:17:9-41
 	android:fullBackupContent
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:15:9-54
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:15:9-54
 	tools:targetApi
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:23:9-29
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:23:9-29
 	android:allowBackup
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:13:9-35
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:13:9-35
 	android:theme
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:20:9-45
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:20:9-45
 	android:dataExtractionRules
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:14:9-65
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:14:9-65
 	android:usesCleartextTraffic
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:21:9-44
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:21:9-44
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:12:9-38
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:12:9-38
 meta-data#preloaded_fonts
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:26:9-28:57
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:26:9-28:57
 	android:resource
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:28:13-54
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:28:13-54
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:27:13-43
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:27:13-43
 activity#com.example.cooking.ui.activities.MainActivity
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:30:9-39:20
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:30:9-39:20
 	android:screenOrientation
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:33:13-49
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:33:13-49
 	android:exported
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:32:13-36
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:32:13-36
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:31:13-55
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:31:13-55
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:34:13-38:29
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:34:13-38:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:35:17-69
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:35:17-69
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:35:25-66
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:35:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:37:17-77
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:37:17-77
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:37:27-74
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:37:27-74
 activity#com.example.cooking.ui.activities.RecipeDetailActivity
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:40:9-44:52
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:40:9-44:52
 	android:screenOrientation
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:44:13-49
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:44:13-49
 	android:parentActivityName
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:43:13-69
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:43:13-69
 	android:exported
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:42:13-37
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:42:13-37
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:41:13-63
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:41:13-63
 activity#com.example.cooking.ui.activities.Regist
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:45:9-48:52
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:45:9-48:52
 	android:screenOrientation
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:48:13-49
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:48:13-49
 	android:exported
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:47:13-37
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:47:13-37
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:46:13-49
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:46:13-49
 activity#com.example.cooking.ui.activities.AddRecipeActivity
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:49:9-53:52
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:49:9-53:52
 	android:screenOrientation
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:53:13-49
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:53:13-49
 	android:parentActivityName
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:52:13-69
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:52:13-69
 	android:exported
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:51:13-37
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:51:13-37
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:50:13-60
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:50:13-60
 activity#com.example.cooking.ui.activities.AiChatActivity
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:54:9-58:52
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:54:9-58:52
 	android:screenOrientation
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:58:13-49
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:58:13-49
 	android:parentActivityName
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:57:13-69
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:57:13-69
 	android:exported
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:56:13-37
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:56:13-37
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:55:13-57
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:55:13-57
 activity#com.example.cooking.ui.activities.PasswordRecoveryActivity
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:59:9-67:20
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:59:9-67:20
 	android:screenOrientation
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:63:13-49
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:63:13-49
 	android:parentActivityName
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:62:13-63
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:62:13-63
 	android:label
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:61:13-50
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:61:13-50
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:60:13-67
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:60:13-67
 meta-data#android.support.PARENT_ACTIVITY
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:64:13-66:57
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:64:13-66:57
 	android:value
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:66:17-54
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:66:17-54
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:65:17-63
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:65:17-63
 activity#com.example.cooking.ui.activities.EditRecipeActivity
-ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:68:9-72:52
+ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:68:9-72:52
 	android:screenOrientation
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:72:13-49
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:72:13-49
 	android:parentActivityName
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:71:13-77
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:71:13-77
 	android:exported
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:70:13-37
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:70:13-37
 	android:name
-		ADDED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml:69:13-61
+		ADDED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml:69:13-61
 uses-sdk
-INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
-INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
+INJECTED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml
+INJECTED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml
 MERGED from [androidx.databinding:viewbinding:8.7.3] C:\Users\xerma\.gradle\caches\8.9\transforms\8d130a172a26a79c1c4e08188aad4bfb\transformed\viewbinding-8.7.3\AndroidManifest.xml:5:5-44
 MERGED from [androidx.databinding:viewbinding:8.7.3] C:\Users\xerma\.gradle\caches\8.9\transforms\8d130a172a26a79c1c4e08188aad4bfb\transformed\viewbinding-8.7.3\AndroidManifest.xml:5:5-44
 MERGED from [androidx.navigation:navigation-common:2.7.7] C:\Users\xerma\.gradle\caches\8.9\transforms\bf2f6d14622758af3f46982f93b8f9c5\transformed\navigation-common-2.7.7\AndroidManifest.xml:20:5-44
@@ -571,9 +571,9 @@ MERGED from [com.google.android.play:core-common:2.0.3] C:\Users\xerma\.gradle\c
 	tools:overrideLibrary
 		ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:23:9-148
 	android:targetSdkVersion
-		INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from C:\Users\xerma\OneDrive\Desktop\CookingApp-Aichat(1)\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\xerma\IdeaProjects\CookingApp\app\src\main\AndroidManifest.xml
 activity#com.google.firebase.auth.internal.GenericIdpActivity
 ADDED from [com.google.firebase:firebase-auth:23.2.0] C:\Users\xerma\.gradle\caches\8.9\transforms\194df1aeb3120a18a6ef4b23ce7c00cd\transformed\firebase-auth-23.2.0\AndroidManifest.xml:29:9-46:20
 	android:excludeFromRecents

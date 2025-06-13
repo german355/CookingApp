@@ -2324,6 +2324,7 @@ color md_theme_tertiaryFixed_highContrast
 color md_theme_tertiaryFixed_mediumContrast
 color md_theme_tertiary_highContrast
 color md_theme_tertiary_mediumContrast
+color message_ai_text_color
 color mtrl_btn_bg_color_selector
 color mtrl_btn_ripple_color
 color mtrl_btn_stroke_color_selector
@@ -3315,6 +3316,7 @@ drawable btn_radio_off_mtrl
 drawable btn_radio_off_to_on_mtrl_animation
 drawable btn_radio_on_mtrl
 drawable btn_radio_on_to_off_mtrl_animation
+drawable chat_bubble
 drawable common_full_open_on_phone
 drawable common_google_signin_btn_icon_dark
 drawable common_google_signin_btn_icon_dark_focused
@@ -3692,7 +3694,6 @@ id decelerateAndComplete
 id decor_content_parent
 id decrease_portion
 id default_activity_button
-id delete_account_button
 id deltaRelative
 id dependency_ordering
 id design_bottom_sheet

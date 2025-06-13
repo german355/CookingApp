@@ -25,9 +25,9 @@
                 android:id="@+id/image_empty_favorites"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="16dp"
+                android:padding="30dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/empty"
+                android:src="@drawable/emptyfavorite2"
                 android:contentDescription="Нет избранных рецептов" />
         </androidx.cardview.widget.CardView>
     </FrameLayout>

@@ -25,9 +25,6 @@ public final class FragmentProfileBinding implements ViewBinding {
   public final Button changePasswordButton;
 
   @NonNull
-  public final Button deleteAccountButton;
-
-  @NonNull
   public final Button editNameButton;
 
   @NonNull
@@ -43,12 +40,11 @@ public final class FragmentProfileBinding implements ViewBinding {
   public final CircularProgressIndicator progressBar;
 
   private FragmentProfileBinding(@NonNull FrameLayout rootView,
-      @NonNull Button changePasswordButton, @NonNull Button deleteAccountButton,
-      @NonNull Button editNameButton, @NonNull Button logoutButton, @NonNull TextView profileEmail,
-      @NonNull TextView profileName, @NonNull CircularProgressIndicator progressBar) {
+      @NonNull Button changePasswordButton, @NonNull Button editNameButton,
+      @NonNull Button logoutButton, @NonNull TextView profileEmail, @NonNull TextView profileName,
+      @NonNull CircularProgressIndicator progressBar) {
     this.rootView = rootView;
     this.changePasswordButton = changePasswordButton;
-    this.deleteAccountButton = deleteAccountButton;
     this.editNameButton = editNameButton;
     this.logoutButton = logoutButton;
     this.profileEmail = profileEmail;
@@ -89,12 +85,6 @@ public final class FragmentProfileBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.delete_account_button;
-      Button deleteAccountButton = ViewBindings.findChildViewById(rootView, id);
-      if (deleteAccountButton == null) {
-        break missingId;
-      }
-
       id = R.id.edit_name_button;
       Button editNameButton = ViewBindings.findChildViewById(rootView, id);
       if (editNameButton == null) {
@@ -126,8 +116,7 @@ public final class FragmentProfileBinding implements ViewBinding {
       }
 
       return new FragmentProfileBinding((FrameLayout) rootView, changePasswordButton,
-          deleteAccountButton, editNameButton, logoutButton, profileEmail, profileName,
-          progressBar);
+          editNameButton, logoutButton, profileEmail, profileName, progressBar);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

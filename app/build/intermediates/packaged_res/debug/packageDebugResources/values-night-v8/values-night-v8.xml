@@ -39,7 +39,7 @@
     <color name="md_theme_onSecondary_mediumContrast">#261010</color>
     <color name="md_theme_onSurface">#EAEAEA</color>
     <color name="md_theme_onSurfaceVariant">#AAAAAA</color>
-    <color name="md_theme_onSurfaceVariant_highContrast">#FFF9F9</color>
+    <color name="md_theme_onSurfaceVariant_highContrast">#F9F9F9</color>
     <color name="md_theme_onSurfaceVariant_mediumContrast">#DCC6C4</color>
     <color name="md_theme_onSurface_highContrast">#FFFFFF</color>
     <color name="md_theme_onSurface_mediumContrast">#FFF9F9</color>
@@ -95,6 +95,7 @@
     <color name="md_theme_tertiaryFixedDim">#E4C18D</color>
     <color name="md_theme_tertiary_highContrast">#FFFAF7</color>
     <color name="md_theme_tertiary_mediumContrast">#E8C690</color>
+    <color name="message_ai_text_color">#FFFFFF</color>
     <color name="search_view_background_dark">#000000</color>
     <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/md_theme_primary</item>
