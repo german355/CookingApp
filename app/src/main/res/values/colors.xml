@@ -141,4 +141,5 @@
 <color name="md_theme_surfaceContainerHigh_highContrast">#F6E4E3</color>
 <color name="md_theme_surfaceContainerHighest_highContrast">#F0DEDD</color>
 <color name="message_ai_text_color">#000000</color>
+<color name="search_view_background_dark">#FFFFFF</color>
 </resources>
