@@ -34,6 +34,7 @@
 
 ## Диаграмма архитектуры
 
+
 ```mermaid
 graph TD;
     subgraph UI Layer
