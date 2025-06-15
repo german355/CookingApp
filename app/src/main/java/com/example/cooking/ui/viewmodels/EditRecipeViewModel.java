@@ -498,12 +498,8 @@ public class EditRecipeViewModel extends AndroidViewModel {
                         @Override
                         public void onFailure(String error, com.example.cooking.network.models.GeneralServerResponse errorResponse) {
                             isSaving.postValue(false);
-                            String errorMsg = "Ошибка при обновлении рецепта: " + error;
-                            if (errorResponse != null && errorResponse.getMessage() != null) {
-                                errorMsg += " (" + errorResponse.getMessage() + ")";
-                            }
-                            errorMessage.postValue(errorMsg);
-                            Log.e(TAG, errorMsg);
+                            errorMessage.postValue(error);
+                            Log.e(TAG, "Ошибка при обновлении рецепта: " + error);
                         }
                     });
         } else {
@@ -523,7 +519,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
                 @Override
                 public void onFailure(String error, com.example.cooking.network.models.GeneralServerResponse errorResponse) {
                     isSaving.postValue(false);
-                    errorMessage.postValue("Ошибка при сохранении рецепта: " + error);
+                    errorMessage.postValue(error);
                     saveResult.postValue(false);
                 }
             });
@@ -740,7 +736,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
                 @Override
                 public void onFailure(String error, GeneralServerResponse errorResponse) {
                     isSaving.postValue(false);
-                    errorMessage.postValue("Ошибка при сохранении рецепта: " + error);
+                    errorMessage.postValue(error);
                     saveResult.postValue(false);
                 }
             });

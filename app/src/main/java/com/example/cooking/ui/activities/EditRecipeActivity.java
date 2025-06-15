@@ -220,7 +220,7 @@ public class EditRecipeActivity extends AppCompatActivity {
 
         viewModel.getErrorMessage().observe(this, error -> {
             if (error != null && !error.isEmpty()) {
-                Toast.makeText(this, "Ой что-то пошло не так", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, error, Toast.LENGTH_LONG).show();
                 viewModel.clearErrorMessage();
             }
         });

@@ -349,7 +349,16 @@ public class UnifiedRecipeRepository extends NetworkRepository{
             Object[] r = (Object[]) arr;
             if (callback != null) callback.onSuccess((GeneralServerResponse) r[0], (Recipe) r[1]);
         }, err -> {
-            if (callback != null) callback.onFailure(err.getMessage(), null);
+            String errorMessage;
+            if (err instanceof retrofit2.HttpException) {
+                retrofit2.HttpException httpException = (retrofit2.HttpException) err;
+                errorMessage = getHumanReadableErrorMessage(httpException.code(), "Не удалось создать рецепт");
+            } else if (err instanceof java.net.UnknownHostException || err instanceof java.net.ConnectException) {
+                errorMessage = "Ошибка соединения с сервером. Проверьте подключение к интернету";
+            } else {
+                errorMessage = "Произошла ошибка при создании рецепта";
+            }
+            if (callback != null) callback.onFailure(errorMessage, null);
         });
         disposables.add(d);
     }
@@ -390,7 +399,18 @@ public class UnifiedRecipeRepository extends NetworkRepository{
         .subscribe(arr -> {
             Object[] r = (Object[]) arr;
             callback.onSuccess((GeneralServerResponse) r[0], (Recipe) r[1]);
-        }, err -> callback.onFailure(err.getMessage(), null));
+        }, err -> {
+            String errorMessage;
+            if (err instanceof retrofit2.HttpException) {
+                retrofit2.HttpException httpException = (retrofit2.HttpException) err;
+                errorMessage = getHumanReadableErrorMessage(httpException.code(), "Не удалось обновить рецепт");
+            } else if (err instanceof java.net.UnknownHostException || err instanceof java.net.ConnectException) {
+                errorMessage = "Ошибка соединения с сервером. Проверьте подключение к интернету";
+            } else {
+                errorMessage = "Произошла ошибка при обновлении рецепта";
+            }
+            callback.onFailure(errorMessage, null);
+        });
         disposables.add(d);
     }
 
@@ -433,6 +453,28 @@ public class UnifiedRecipeRepository extends NetworkRepository{
         disposables.clear();
     }
 
+    /**
+     * Преобразует код ошибки HTTP в понятное для пользователя сообщение
+     */
+    private String getHumanReadableErrorMessage(int statusCode, String defaultMessage) {
+        switch (statusCode) {
+            case 403:
+                return "У вас нет прав для выполнения этой операции";
+            case 401:
+                return "Необходима авторизация. Пожалуйста, войдите в аккаунт";
+            case 404:
+                return "Рецепт не найден";
+            case 400:
+                return "Некорректные данные запроса";
+            case 500:
+            case 502:
+            case 503:
+                return "Ошибка сервера. Попробуйте позже";
+            default:
+                return defaultMessage;
+        }
+    }
+
     public void deleteRecipe(int recipeId, DeleteRecipeCallback callback) {
         // Проверяем доступность сети
         if (!isNetworkAvailable()) {
@@ -461,14 +503,8 @@ public class UnifiedRecipeRepository extends NetworkRepository{
                             );
                     disposables.add(d);
                 } else {
-                    String error = "Ошибка при удалении рецепта";
-                    if (response.errorBody() != null) {
-                        try {
-                            error = response.errorBody().string();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    // Получаем понятное сообщение об ошибке на основе кода статуса
+                    String error = getHumanReadableErrorMessage(response.code(), "Не удалось удалить рецепт");
                     callback.onDeleteFailure(error);
                 }
             }
@@ -476,7 +512,7 @@ public class UnifiedRecipeRepository extends NetworkRepository{
             @Override
             public void onFailure(Call<GeneralServerResponse> call, Throwable t) {
                 if (callback != null) {
-                    callback.onDeleteFailure(t.getMessage());
+                    callback.onDeleteFailure("Ошибка соединения с сервером. Проверьте подключение к интернету");
                 }
             }
         });
