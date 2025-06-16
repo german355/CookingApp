@@ -230,8 +230,11 @@ public class UnifiedRecipeRepository extends NetworkRepository{
             return;
         }
         Disposable d = Completable.fromAction(() -> {
-            // Обновляем локально статус лайка
+            // Обновляем локально статус лайка в основной таблице рецептов
             localRepository.updateLikeStatus(recipeId, newLikeStatus);
+            // Также синхронно обновляем вспомогательную таблицу liked_recipes,
+            // чтобы данные были консистентны для всех частей приложения
+            likedRecipesRepository.updateLikeStatusLocal(recipeId, newLikeStatus);
         })
         .subscribeOn(Schedulers.io())
         .subscribe(

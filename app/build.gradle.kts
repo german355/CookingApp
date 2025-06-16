@@ -18,6 +18,17 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            // Путь к файлу keystore
+            storeFile = rootDir.resolve("app/keystore/cooking-release.jks")
+            // Значения берём из gradle.properties (или системных переменных)
+            storePassword = project.findProperty("RELEASE_STORE_PASSWORD") as String? ?: ""
+            keyAlias = project.findProperty("RELEASE_KEY_ALIAS") as String? ?: ""
+            keyPassword = (project.findProperty("RELEASE_KEY_PASSWORD") ?: project.findProperty("RELEASE_STORE_PASSWORD")) as String? ?: ""
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -25,6 +36,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

@@ -11,6 +11,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.cooking.Recipe.Recipe;
+import com.example.cooking.auth.FirebaseAuthManager;
 import com.example.cooking.data.repositories.UnifiedRecipeRepository;
 import com.example.cooking.domain.usecases.RecipeUseCases;
 import com.example.cooking.network.utils.Resource;
@@ -287,7 +288,7 @@ public class SharedRecipeViewModel extends AndroidViewModel {
             return;
         }
 
-        if (userId == null || userId.equals("0") || userId.isEmpty()) {
+        if (!FirebaseAuthManager.getInstance().isUserSignedIn()) {
             Log.w(TAG, "updateLikeStatus: невалидный userId");
             errorMessage.setValue("Войдите, чтобы изменить статус лайка");
             return;

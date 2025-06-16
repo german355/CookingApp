@@ -47,6 +47,9 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
     // Сохранённая позиция и смещение прокрутки
     private int savedScrollPosition = -1;
     private int savedScrollOffset = 0;
+    // Флаг, указывающий, что хотя бы одна попытка загрузки рецептов завершилась
+    private boolean hasAttemptedLoad = false;
+    private boolean hasSeenRefreshingTrue = false;
     
     /**
      * Создает и настраивает представление фрагмента.
@@ -56,9 +59,16 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         
-        // Получаем ID пользователя
+        // Получаем ID пользователя и SharedPreferences
         preferences = new MySharedPreferences(requireContext());
         userId = preferences.getString("userId", "0");
+
+        // Показ Toast с подсказкой при первом запуске приложения
+        boolean hintShown = preferences.getBoolean("swipe_hint_shown", false);
+        if (!hintShown) {
+            Toast.makeText(requireContext(), "Сделайте свайп вверх для получения рецептов", Toast.LENGTH_LONG).show();
+            preferences.putBoolean("swipe_hint_shown", true);
+        }
         
         // Инициализация SharedRecipeViewModel
         sharedRecipeViewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
@@ -129,8 +139,18 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         });
         
         // Наблюдение за состоянием загрузки
-        sharedRecipeViewModel.getIsRefreshing().observe(getViewLifecycleOwner(), isRefreshing -> 
-            swipeRefreshLayout.setRefreshing(isRefreshing));
+        sharedRecipeViewModel.getIsRefreshing().observe(getViewLifecycleOwner(), isRefreshing -> {
+            swipeRefreshLayout.setRefreshing(isRefreshing);
+            if (isRefreshing != null) {
+                if (isRefreshing) {
+                    hasSeenRefreshingTrue = true;
+                } else {
+                    if (hasSeenRefreshingTrue) {
+                        hasAttemptedLoad = true;
+                    }
+                }
+            }
+        });
             
         // Наблюдение за ошибками
         sharedRecipeViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
@@ -167,8 +187,9 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
     private void showEmptyView(boolean listEmpty) {
         // Не показываем emptyView, пока идёт первоначальная или любая загрузка
         Boolean refreshing = sharedRecipeViewModel.getIsRefreshing().getValue();
-        boolean isLoading = refreshing != null && refreshing;
-        boolean show = listEmpty && !isLoading;
+        // Считаем, что null == идёт начальная загрузка
+        boolean isLoading = refreshing == null || refreshing;
+        boolean show = listEmpty && !isLoading && hasAttemptedLoad;
         Log.d(TAG, "showEmptyView: " + (show ? "показываю пустое представление" : "скрываю пустое представление") + ", isLoading=" + isLoading);
         
         // Устанавливаем текст для пустого представления

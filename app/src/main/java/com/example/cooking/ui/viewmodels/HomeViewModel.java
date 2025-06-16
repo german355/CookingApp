@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import java.lang.reflect.Field;
 
 import com.example.cooking.BuildConfig;
+import com.example.cooking.domain.usecases.RecipeUseCases;
 
 /**
  * ViewModel для HomeFragment
@@ -31,6 +32,7 @@ public class HomeViewModel extends AndroidViewModel {
     private static final String TAG = "HomeViewModel";
     
     private final ExecutorService executor;
+    private final RecipeUseCases recipeUseCases;
     
     // LiveData для состояния загрузки и ошибок
     private final MutableLiveData<Boolean> isRefreshing = new MutableLiveData<>(false);
@@ -55,6 +57,7 @@ public class HomeViewModel extends AndroidViewModel {
     public HomeViewModel(@NonNull Application application) {
         super(application);
         this.executor = Executors.newFixedThreadPool(2);
+        this.recipeUseCases = new RecipeUseCases(application, executor);
         
         // init observer fields
         this.recipesObserver = resource -> {
@@ -127,6 +130,9 @@ public class HomeViewModel extends AndroidViewModel {
         // Обновляем локальное состояние
         recipe.setLiked(isLiked);
         updateLocalRecipeLikeStatus(recipe.getId(), isLiked);
+
+        // Отправляем изменение статуса лайка на сервер через UseCase
+        recipeUseCases.setLikeStatus(userId, recipe.getId(), isLiked, errorMessage);
     }
 
     
