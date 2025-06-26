@@ -15,12 +15,11 @@ import com.example.cooking.network.models.chat.ChatHistoryResponse;
 import com.example.cooking.network.models.chat.ChatSessionResponse;
 
 import com.example.cooking.Recipe.Recipe;
+import com.example.cooking.utils.AppExecutors;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -56,8 +55,7 @@ public class AiChatViewModel extends AndroidViewModel {
                 messages.setValue(welcome);
             } else if (response != null && response.getMessages() != null) {
                 // Загрузка истории с рецептами: формируем список сообщений и прикрепляем рецепты сразу после каждого ответа
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                executor.execute(() -> {
+                AppExecutors.getInstance().diskIO().execute(() -> {
                     RecipeLocalRepository localRepo = new RecipeLocalRepository(getApplication());
                     List<Message> fullList = new ArrayList<>();
                     for (ChatMessage chatMsg : response.getMessages()) {
@@ -136,8 +134,7 @@ public class AiChatViewModel extends AndroidViewModel {
                 messages.setValue(listWithoutRecipes);
 
                 if (response.getHasRecipes() && response.getRecipesIds() != null && !response.getRecipesIds().isEmpty()) {
-                    ExecutorService executor = Executors.newSingleThreadExecutor();
-                    executor.execute(() -> {
+                    AppExecutors.getInstance().diskIO().execute(() -> {
                         RecipeLocalRepository localRepo = new RecipeLocalRepository(getApplication());
                         List<Recipe> recipes = new ArrayList<>();
                         for (int id : response.getRecipesIds()) {

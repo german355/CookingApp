@@ -310,9 +310,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        if (sharedRecipeViewModel != null) {
-            sharedRecipeViewModel.refreshRecipes();
-        }
+        //Временно заментировано. ПРОверить работу потом удалить!!!
+        // if (sharedRecipeViewModel != null) {
+        //    sharedRecipeViewModel.refreshRecipes();
+        // }
     }
 
     /**

@@ -16,6 +16,7 @@ import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.data.repositories.LikedRecipesRepository;
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.utils.MySharedPreferences;
+import com.example.cooking.utils.AppExecutors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,9 +53,6 @@ public class FavoritesViewModel extends AndroidViewModel {
     
     // Репозиторий для получение фактического списка лайков из БД
     private final LikedRecipesRepository likedRecipesRepository;
-    
-    // Исполнитель для фоновых запросов к БД (избегаем IllegalStateException)
-    private final java.util.concurrent.ExecutorService ioExecutor = java.util.concurrent.Executors.newSingleThreadExecutor();
     
     public FavoritesViewModel(@NonNull Application application) {
         super(application);
@@ -104,7 +102,7 @@ public class FavoritesViewModel extends AndroidViewModel {
             final String currentQuery = searchQuery.getValue();
 
             // Делаем тяжёлую работу в ioExecutor, чтобы не лочить главный поток
-            ioExecutor.execute(() -> {
+            AppExecutors.getInstance().diskIO().execute(() -> {
                 List<Recipe> likedRecipesLocal = allRecipes.stream()
                         .filter(Recipe::isLiked)
                         .collect(Collectors.toList());
@@ -139,7 +137,7 @@ public class FavoritesViewModel extends AndroidViewModel {
             final String currentQuery = searchQuery.getValue();
 
             // Делаем тяжёлую работу в ioExecutor, чтобы не лочить главный поток
-            ioExecutor.execute(() -> {
+            AppExecutors.getInstance().diskIO().execute(() -> {
                 List<Recipe> likedRecipesLocal = allRecipes.stream()
                         .filter(Recipe::isLiked)
                         .collect(Collectors.toList());
@@ -261,8 +259,5 @@ public class FavoritesViewModel extends AndroidViewModel {
     }
     
     @Override
-    public void onCleared() {
-        super.onCleared();
-        ioExecutor.shutdown();
-    }
+    public void onCleared() { super.onCleared(); }
 }

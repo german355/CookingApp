@@ -18,9 +18,6 @@ import com.example.cooking.auth.FirebaseAuthManager;
 import com.example.cooking.data.models.ApiResponse;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -37,7 +34,6 @@ public class ProfileUseCase {
     private final UserService userService;
     private final LikedRecipeDao likedDao;
     private final RecipeDao recipeDao;
-    private final ExecutorService dbExecutor;
     private final CompositeDisposable disposables;
 
     public ProfileUseCase(Application application) {
@@ -48,7 +44,6 @@ public class ProfileUseCase {
         userService = new UserService(application);
         likedDao = AppDatabase.getInstance(ctx).likedRecipeDao();
         recipeDao = AppDatabase.getInstance(ctx).recipeDao();
-        dbExecutor = Executors.newSingleThreadExecutor();
         disposables = new CompositeDisposable();
     }
 
@@ -255,6 +250,5 @@ public class ProfileUseCase {
 
     public void clear() {
         disposables.clear();
-        dbExecutor.shutdown();
     }
 }

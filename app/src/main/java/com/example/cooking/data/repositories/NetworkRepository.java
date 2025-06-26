@@ -7,9 +7,6 @@ import android.net.NetworkInfo;
 import com.example.cooking.network.api.ApiService;
 import com.example.cooking.network.services.NetworkService;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
 /**
  * Базовый класс для репозиториев, работающих с сетью
  * Предоставляет общую функциональность для всех сетевых репозиториев
@@ -17,7 +14,6 @@ import java.util.concurrent.Executors;
 public abstract class NetworkRepository {
     protected final Context context;
     protected final ApiService apiService;
-    protected final Executor executor;
     
     /**
      * Конструктор базового репозитория
@@ -26,7 +22,6 @@ public abstract class NetworkRepository {
     protected NetworkRepository(Context context) {
         this.context = context.getApplicationContext();
         this.apiService = NetworkService.getApiService(context);
-        this.executor = Executors.newFixedThreadPool(3);
     }
     
     /**
@@ -41,13 +36,5 @@ public abstract class NetworkRepository {
             return activeNetworkInfo != null && activeNetworkInfo.isConnected();
         }
         return false;
-    }
-    
-    /**
-     * Выполняет операцию в фоновом потоке
-     * @param runnable операция для выполнения
-     */
-    protected void executeInBackground(Runnable runnable) {
-        executor.execute(runnable);
     }
 } 

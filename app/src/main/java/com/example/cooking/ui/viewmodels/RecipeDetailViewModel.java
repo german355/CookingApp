@@ -12,8 +12,6 @@ import com.example.cooking.utils.MySharedPreferences;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * ViewModel для экрана детальной информации о рецепте
@@ -32,7 +30,6 @@ public class RecipeDetailViewModel extends AndroidViewModel {
     private int recipeId;
     private int userPermission;
     
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private androidx.lifecycle.Observer<Resource<List<Recipe>>> recipesObserver;
     private androidx.lifecycle.Observer<String> errorObserver;
     

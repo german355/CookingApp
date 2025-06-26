@@ -9,20 +9,18 @@ import com.example.cooking.data.repositories.RecipeRemoteRepository;
 import com.example.cooking.data.repositories.UnifiedRecipeRepository;
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.utils.RecipeSearchService;
+import com.example.cooking.utils.AppExecutors;
 
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 
 public class RecipeUseCases {
     private final UnifiedRecipeRepository repository;
     private final Application application;
-    private final ExecutorService executor;
     private final android.net.ConnectivityManager connectivityManager;
     
-    public RecipeUseCases(Application application, ExecutorService executor) {
+    public RecipeUseCases(Application application) {
         this.application = application;
-        this.executor = executor;
         this.repository = new UnifiedRecipeRepository(application);
         this.connectivityManager = (android.net.ConnectivityManager) application.getSystemService(android.content.Context.CONNECTIVITY_SERVICE);
     }
@@ -85,8 +83,7 @@ public class RecipeUseCases {
         // Проверяем доступность сети перед загрузкой данных
         if (!isNetworkAvailable()) {
             // Если сеть недоступна, загружаем данные из локального кэша
-            if (!executor.isShutdown()) {
-                executor.execute(() -> {
+            AppExecutors.getInstance().diskIO().execute(() -> {
                 try {
                     // Получаем все рецепты из локальной базы данных
                     List<Recipe> localRecipes = repository.getAllRecipesSync();
@@ -131,15 +128,7 @@ public class RecipeUseCases {
                         onComplete.run();
                     }
                 }
-                });
-            } else {
-                Log.w("RecipeUseCases", "ExecutorService закрыт, выходим из метода без выполнения задач");
-                isRefreshingLiveData.postValue(false);
-                if (onComplete != null) {
-                    onComplete.run();
-                }
-                return;
-            }
+            });
             return;
         }
         
@@ -159,38 +148,26 @@ public class RecipeUseCases {
                 // Если при загрузке с сервера произошла ошибка, но это офлайн-режим,
                 // то загружаем данные из кэша
                 if (error.contains("офлайн режиме")) {
-                    if (!executor.isShutdown()) {
-                        executor.execute(() -> {
-                            List<Recipe> localRecipes = repository.getAllRecipesSync();
-                            if (localRecipes != null && !localRecipes.isEmpty()) {
-                                if (recipesLiveData != null) {
-                                    recipesLiveData.postValue(Resource.success(localRecipes));
-                                }
-                            } else {
-                                if (recipesLiveData != null) {
-                                    recipesLiveData.postValue(Resource.error("Нет сохраненных рецептов для отображения в офлайн режиме", null));
-                                }
+                    AppExecutors.getInstance().diskIO().execute(() -> {
+                        List<Recipe> localRecipes = repository.getAllRecipesSync();
+                        if (localRecipes != null && !localRecipes.isEmpty()) {
+                            if (recipesLiveData != null) {
+                                recipesLiveData.postValue(Resource.success(localRecipes));
                             }
-                        });
-                    } else {
-                        Log.w("RecipeUseCases", "ExecutorService закрыт, пропускаем выполнение задачи");
-                        if (recipesLiveData != null) {
-                            recipesLiveData.postValue(Resource.error("ExecutorService закрыт", null));
+                        } else {
+                            if (recipesLiveData != null) {
+                                recipesLiveData.postValue(Resource.error("Нет сохраненных рецептов для отображения в офлайн режиме", null));
+                            }
                         }
-                    }
+                    });
                 } else {
                     // Это обычная ошибка загрузки
                     errorMessageLiveData.postValue(error);
                     if (recipesLiveData != null) {
-                        if (!executor.isShutdown()) {
-                            executor.execute(() -> {
-                                List<Recipe> localRecipes = repository.getAllRecipesSync();
-                                recipesLiveData.postValue(Resource.error(error, localRecipes));
-                            });
-                        } else {
-                            Log.w("RecipeUseCases", "ExecutorService закрыт, пропускаем выполнение задачи для обычной ошибки");
-                            recipesLiveData.postValue(Resource.error(error, null));
-                        }
+                        AppExecutors.getInstance().diskIO().execute(() -> {
+                            List<Recipe> localRecipes = repository.getAllRecipesSync();
+                            recipesLiveData.postValue(Resource.error(error, localRecipes));
+                        });
                     }
                 }
                 

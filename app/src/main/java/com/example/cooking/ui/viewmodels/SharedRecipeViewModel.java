@@ -16,12 +16,10 @@ import com.example.cooking.data.repositories.UnifiedRecipeRepository;
 import com.example.cooking.domain.usecases.RecipeUseCases;
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.utils.MySharedPreferences;
+import com.example.cooking.utils.AppExecutors;
 
 
 import java.util.List;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 
@@ -39,7 +37,6 @@ public class SharedRecipeViewModel extends AndroidViewModel {
     // Use Cases и репозиторий
     private final RecipeUseCases recipeUseCases;
     private final UnifiedRecipeRepository repository;
-    private final ExecutorService executor;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
     // LiveData для рецептов с обернутым статусом
@@ -77,8 +74,7 @@ public class SharedRecipeViewModel extends AndroidViewModel {
 
     public SharedRecipeViewModel(@NonNull Application application) {
         super(application);
-        this.executor = Executors.newFixedThreadPool(2);
-        this.recipeUseCases = new RecipeUseCases(application, executor);
+        this.recipeUseCases = new RecipeUseCases(application);
         this.repository = new UnifiedRecipeRepository(application);
 
         // Инициализация наблюдения за данными из локального репозитория
@@ -166,7 +162,7 @@ public class SharedRecipeViewModel extends AndroidViewModel {
         Log.d(TAG, "Начинаем загрузку локальных данных и обновление с сервера");
         
         // СНАЧАЛА читаем локальную БД в отдельном потоке, чтобы не блокировать главный
-        executor.execute(() -> {
+        AppExecutors.getInstance().diskIO().execute(() -> {
             List<Recipe> cachedRecipes = repository.getAllRecipesSync();
             int count = cachedRecipes != null ? cachedRecipes.size() : -1;
             Log.d(TAG, "Получено из БД " + count + " рецептов (до сетевого запроса)");
@@ -406,24 +402,5 @@ public class SharedRecipeViewModel extends AndroidViewModel {
         
         // Очищаем disposables
         disposables.clear();
-        
-        // Безопасно закрываем executor
-        if (!executor.isShutdown()) {
-            Log.d(TAG, "Закрываем ExecutorService");
-            executor.shutdown();
-            try {
-                // Ждем завершения выполняющихся задач максимум 2 секунды
-                if (!executor.awaitTermination(2, java.util.concurrent.TimeUnit.SECONDS)) {
-                    Log.w(TAG, "ExecutorService не завершился за 2 секунды, принудительно останавливаем");
-                    executor.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                Log.w(TAG, "Прерывание при ожидании завершения ExecutorService", e);
-                executor.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
-        } else {
-            Log.d(TAG, "ExecutorService уже закрыт");
-        }
     }
 }

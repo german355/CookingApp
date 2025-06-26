@@ -21,13 +21,12 @@ import com.example.cooking.Recipe.Step;
 import com.example.cooking.data.repositories.UnifiedRecipeRepository;
 import com.example.cooking.network.models.GeneralServerResponse;
 import com.example.cooking.utils.MySharedPreferences;
+import com.example.cooking.utils.AppExecutors;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 /**
@@ -38,7 +37,6 @@ public class EditRecipeViewModel extends AndroidViewModel {
 
     private final UnifiedRecipeRepository unifiedRecipeRepository;
     private final MySharedPreferences preferences;
-    private final ExecutorService executor;
 
     // LiveData для состояний UI
     private final MutableLiveData<Boolean> isSaving = new MutableLiveData<>(false);
@@ -60,7 +58,6 @@ public class EditRecipeViewModel extends AndroidViewModel {
         super(application);
         unifiedRecipeRepository = new UnifiedRecipeRepository(application);
         preferences = new MySharedPreferences(application);
-        executor = Executors.newSingleThreadExecutor();
     }
 
     /**
@@ -240,7 +237,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
             return;
         }
         //isLoading.setValue(true); // Возможно, индикатор загрузки не нужен здесь
-        executeIfActive(() -> {
+        AppExecutors.getInstance().diskIO().execute(() -> {
             try {
                 java.net.URL imageUrl = new java.net.URL(url);
                 Bitmap bitmap = BitmapFactory.decodeStream(imageUrl.openConnection().getInputStream());
@@ -276,7 +273,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
             return;
         }
         isSaving.setValue(true);
-        executeIfActive(() -> {
+        AppExecutors.getInstance().diskIO().execute(() -> {
             try {
                 InputStream inputStream = getApplication().getContentResolver().openInputStream(imageUri);
                 if (inputStream != null) {
@@ -529,7 +526,6 @@ public class EditRecipeViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        executor.shutdown();
     }
     
     /**
@@ -638,15 +634,6 @@ public class EditRecipeViewModel extends AndroidViewModel {
             }
         }
         return Bitmap.createScaledBitmap(bitmap, width, height, true);
-    }
-    
-    /**
-     * Выполняет задачу в фоновом потоке, если executor активен
-     */
-    private void executeIfActive(Runnable task) {
-        if (!executor.isShutdown()) {
-            executor.execute(task);
-        }
     }
 
     // Новый метод для установки Uri

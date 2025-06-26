@@ -15,10 +15,9 @@ import com.example.cooking.Recipe.Recipe;
 
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.utils.MySharedPreferences;
+import com.example.cooking.utils.AppExecutors;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.lang.reflect.Field;
 
 import com.example.cooking.BuildConfig;
@@ -31,7 +30,6 @@ public class HomeViewModel extends AndroidViewModel {
     
     private static final String TAG = "HomeViewModel";
     
-    private final ExecutorService executor;
     private final RecipeUseCases recipeUseCases;
     
     // LiveData для состояния загрузки и ошибок
@@ -56,8 +54,7 @@ public class HomeViewModel extends AndroidViewModel {
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
-        this.executor = Executors.newFixedThreadPool(2);
-        this.recipeUseCases = new RecipeUseCases(application, executor);
+        this.recipeUseCases = new RecipeUseCases(application);
         
         // init observer fields
         this.recipesObserver = resource -> {
@@ -180,9 +177,6 @@ public class HomeViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        if (executor != null && !executor.isShutdown()) {
-            executor.shutdown();
-        }
     }
 
 

@@ -10,6 +10,7 @@ import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.data.database.AppDatabase;
 import com.example.cooking.data.database.RecipeDao;
 import com.example.cooking.data.database.RecipeEntity;
+import com.example.cooking.utils.AppExecutors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +79,7 @@ public class RecipeLocalRepository extends NetworkRepository{
      * @param recipe рецепт для вставки
      */
     public void insert(Recipe recipe) {
-        executeInBackground(() -> recipeDao.insert(new RecipeEntity(recipe)));
+        AppExecutors.getInstance().diskIO().execute(() -> recipeDao.insert(new RecipeEntity(recipe)));
     }
     
     /**
@@ -86,7 +87,7 @@ public class RecipeLocalRepository extends NetworkRepository{
      * @param recipe рецепт для обновления
      */
     public void update(Recipe recipe) {
-        executeInBackground(() -> recipeDao.update(new RecipeEntity(recipe)));
+        AppExecutors.getInstance().diskIO().execute(() -> recipeDao.update(new RecipeEntity(recipe)));
     }
     
     /**
@@ -125,7 +126,7 @@ public class RecipeLocalRepository extends NetworkRepository{
      */
     public void deleteRecipe(int recipeId) {
         try {
-            executeInBackground(() -> {
+            AppExecutors.getInstance().diskIO().execute(() -> {
                 try {
                     RecipeEntity recipe = recipeDao.getRecipeById(recipeId);
                     if (recipe != null) {

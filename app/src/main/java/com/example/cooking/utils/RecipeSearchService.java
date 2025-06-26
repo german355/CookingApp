@@ -16,8 +16,7 @@ import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 import com.example.cooking.data.repositories.RecipeLocalRepository;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import com.example.cooking.utils.AppExecutors;
 
 public class RecipeSearchService {
     
@@ -30,7 +29,6 @@ public class RecipeSearchService {
     
     private final Context context;
     private final ApiService apiService;
-    private final ExecutorService dbExecutor = Executors.newSingleThreadExecutor();
     private final Handler uiHandler = new Handler(Looper.getMainLooper());
     
     public RecipeSearchService(Context context) {
@@ -104,7 +102,7 @@ public class RecipeSearchService {
                 List<String> ids = response != null && response.getData() != null
                     ? response.getData().getResults() : Collections.emptyList();
                 Log.d(TAG, "fallbackToSimpleSearch onSuccess ids size: " + ids.size());
-                dbExecutor.execute(() -> {
+                AppExecutors.getInstance().diskIO().execute(() -> {
                     RecipeLocalRepository localRepo = new RecipeLocalRepository(context);
                     List<Recipe> fullRecipes = new ArrayList<>();
                     for (String idStr : ids) {
@@ -160,7 +158,7 @@ public class RecipeSearchService {
 
                 if (!ids.isEmpty()) {
                     showToast("Найдено " + ids.size() + " рецептов");
-                    dbExecutor.execute(() -> {
+                    AppExecutors.getInstance().diskIO().execute(() -> {
                         RecipeLocalRepository localRepo = new RecipeLocalRepository(context);
                         List<Recipe> fullRecipes = new ArrayList<>();
                         int foundCount = 0;
