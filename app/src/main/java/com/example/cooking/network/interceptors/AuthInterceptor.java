@@ -3,20 +3,18 @@ package com.example.cooking.network.interceptors;
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import com.example.cooking.utils.MySharedPreferences;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
-import com.google.android.gms.tasks.Tasks; // Импорт для Tasks
-
-import java.io.IOException;
-import java.util.concurrent.ExecutionException; // Импорт для ExecutionException
-import java.util.concurrent.TimeUnit; // Импорт для TimeUnit
-import java.util.concurrent.TimeoutException; // Импорт для TimeoutException
-
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * OkHttp Interceptor для добавления Firebase ID токена в заголовок Authorization.
@@ -26,7 +24,7 @@ public class AuthInterceptor implements Interceptor {
     private static final String TAG = "AuthInterceptor";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final long TOKEN_TIMEOUT_SECONDS = 10; // Таймаут для ожидания токена
+    private static final long TOKEN_TIMEOUT_SECONDS = 10;
     
     private final Context context;
     
@@ -69,7 +67,7 @@ public class AuthInterceptor implements Interceptor {
 
         } catch (ExecutionException | InterruptedException | TimeoutException e) {
             Log.e(TAG, "Ошибка при получении Firebase ID токена: " + e.getMessage(), e);
-            Thread.currentThread().interrupt(); // Восстанавливаем флаг прерывания, если это было InterruptedException
+            Thread.currentThread().interrupt();
             throw new IOException("Ошибка получения токена аутентификации", e);
         }
     }

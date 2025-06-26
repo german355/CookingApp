@@ -17,7 +17,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Утилитный класс для обработки API-запросов(Не трогать, работает)
+ * Утилитарный класс для обработки API-запросов
  */
 public class ApiCallHandler {
     private static final String TAG = "ApiCallHandler";
@@ -42,30 +42,11 @@ public class ApiCallHandler {
         call.enqueue(new Callback<T>() {
             @Override
             public void onResponse(@NonNull Call<T> call, @NonNull Response<T> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    T body = response.body();
-                    
-                    // Проверяем, является ли ответ наследником BaseApiResponse
-                    if (body instanceof BaseApiResponse) {
-                        BaseApiResponse apiResponse = (BaseApiResponse) body;
-                        if (apiResponse.isSuccess()) {
-                            callback.onSuccess(body);
-                        } else {
-                            String errorMessage = apiResponse.getMessage();
-                            if (errorMessage == null || errorMessage.isEmpty()) {
-                                errorMessage = "Неизвестная ошибка от сервера";
-                            }
-                            Log.w(TAG, "API вернул ошибку: " + errorMessage);
-                            callback.onError(errorMessage);
-                        }
-                    } else {
-                        // Если ответ не является BaseApiResponse, просто возвращаем его
-                        callback.onSuccess(body);
-                    }
+                Resource<T> resource = handleResponse(response);
+                if (resource.isSuccess()) {
+                    callback.onSuccess(resource.getData());
                 } else {
-                    String errorMessage = parseErrorResponse(response);
-                    Log.e(TAG, "Ошибка API: " + errorMessage);
-                    callback.onError(errorMessage);
+                    callback.onError(resource.getMessage());
                 }
             }
             
@@ -112,34 +93,36 @@ public class ApiCallHandler {
     public static <T> Resource<T> executeSync(Call<T> call) {
         try {
             Response<T> response = call.execute();
-            if (response.isSuccessful() && response.body() != null) {
-                T body = response.body();
-                
-                // Проверяем, является ли ответ наследником BaseApiResponse
-                if (body instanceof BaseApiResponse) {
-                    BaseApiResponse apiResponse = (BaseApiResponse) body;
-                    if (apiResponse.isSuccess()) {
-                        return Resource.success(body);
-                    } else {
-                        String errorMessage = apiResponse.getMessage();
-                        if (errorMessage == null || errorMessage.isEmpty()) {
-                            errorMessage = "Неизвестная ошибка от сервера";
-                        }
-                        Log.w(TAG, "API вернул ошибку: " + errorMessage);
-                        return Resource.error(errorMessage, null);
-                    }
-                } else {
-                    // Если ответ не является BaseApiResponse, просто возвращаем его
-                    return Resource.success(body);
-                }
-            } else {
-                String errorMessage = parseErrorResponse(response);
-                Log.e(TAG, "Ошибка API: " + errorMessage);
-                return Resource.error(errorMessage, null);
-            }
+            return handleResponse(response);
         } catch (IOException e) {
             String errorMessage = parseThrowable(e);
             Log.e(TAG, "Ошибка сети: " + errorMessage, e);
+            return Resource.error(errorMessage, null);
+        }
+    }
+    
+    private static <T> Resource<T> handleResponse(Response<T> response) {
+        if (response.isSuccessful() && response.body() != null) {
+            T body = response.body();
+            
+            if (body instanceof BaseApiResponse) {
+                BaseApiResponse apiResponse = (BaseApiResponse) body;
+                if (apiResponse.isSuccess()) {
+                    return Resource.success(body);
+                } else {
+                    String errorMessage = apiResponse.getMessage();
+                    if (errorMessage == null || errorMessage.isEmpty()) {
+                        errorMessage = "Неизвестная ошибка от сервера";
+                    }
+                    Log.w(TAG, "API вернул ошибку: " + errorMessage);
+                    return Resource.error(errorMessage, null);
+                }
+            } else {
+                return Resource.success(body);
+            }
+        } else {
+            String errorMessage = parseErrorResponse(response);
+            Log.e(TAG, "Ошибка API: " + errorMessage);
             return Resource.error(errorMessage, null);
         }
     }
@@ -157,21 +140,15 @@ public class ApiCallHandler {
         try {
             String errorBody = response.errorBody().string();
             try {
-                // Пытаемся распарсить ошибку как BaseApiResponse
                 BaseApiResponse errorResponse = gson.fromJson(errorBody, BaseApiResponse.class);
                 if (errorResponse != null && errorResponse.getMessage() != null && !errorResponse.getMessage().isEmpty()) {
                     return errorResponse.getMessage();
                 }
             } catch (Exception ignored) {
-                // Если не удалось распарсить как BaseApiResponse, возвращаем тело ошибки
+                // Если не удалось распарсить как BaseApiResponse, возвращаем тело ошибки как есть
             }
             
-            // Если тело ошибки слишком длинное, обрезаем его
-            if (errorBody.length() > 100) {
-                return "Ошибка сервера: " + response.code() + " - " + errorBody.substring(0, 97) + "...";
-            } else {
-                return "Ошибка сервера: " + response.code() + " - " + errorBody;
-            }
+            return "Ошибка сервера: " + response.code() + " - " + errorBody;
         } catch (IOException e) {
             return "Ошибка сервера: " + response.code() + " (не удалось прочитать тело ответа)";
         }

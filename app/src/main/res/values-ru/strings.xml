@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">Cooking</string>
+    <string name="no_recipes_available">Нет доступных рецептов. Попробуйте обновить позже.</string>
+    <string name="search">Найти рецепт...</string>
+    <string name="no_search_results">По запросу \"%1$s\" ничего не найдено</string>
+    <string name="search_error">Ошибка при поиске: %1$s</string>
+
+    <!-- Favorites Fragment -->
+    <string name="no_favorites_yet">У вас пока нет избранных рецептов. Самое время добавить!</string>
+    <string name="error_loading_recipes">Ошибка при загрузке рецептов.</string>
+
+    <string name="recipe_image_description">Изображение рецепта</string>
+    <string name="empty_list_description">Пустой список</string>
+    <string name="no_recipes_found">Рецептов не найдено</string>
+    <string name="no_recipes_description">Попробуйте изменить параметры поиска или обновить список</string>
+    <string name="error_description">Ошибка</string>
+    <string name="error_loading_recipes_title">Ошибка загрузки рецептов</string>
+
+    <!-- Step Adapter Strings -->
+    <string name="step_label_format">Шаг %d</string>
+    <string name="step_description_error">Ошибка загрузки описания шага</string>
+    <string name="step_no_description">Нет описания для этого шага</string>
+
+    <!-- Chat Error Messages -->
+    <string name="error_need_auth">Для отправки сообщений войдите в аккаунт</string>
+    <string name="error_sending_message">Ошибка отправки сообщения</string>
+    <string name="chat_cleared">Чат очищен</string>
+    <string name="error_clearing_chat">Не удалось очистить чат</string>
+    <string name="chat_welcome">Здравствуйте! Я ваш виртуальный помощник. Чем могу помочь?</string>
+
+    <!-- Auth Dialog Strings -->
+    <string name="auth_required_title">Требуется вход</string>
+    <string name="auth_required_message">Чтобы добавить рецепт в избранное, войдите в свой аккаунт</string>
+    <string name="login">Войти</string>
+    <string name="cancel">Отмена</string>
+    <string name="please_login_to_continue">Пожалуйста, войдите в аккаунт, чтобы продолжить</string>
+
+    <!-- MainActivity hardcoded strings -->
+    <string name="recipe_added_successfully">Рецепт успешно добавлен</string>
+    <string name="search_recipes_hint">Поиск по рецептам</string>
+    <string name="catalog_title">Каталог</string>
+</resources> 

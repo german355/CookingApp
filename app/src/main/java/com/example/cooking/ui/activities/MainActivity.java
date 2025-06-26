@@ -326,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_ADD_RECIPE && resultCode == RESULT_OK) {
             if (data != null && data.hasExtra("recipeAdded") && data.getBooleanExtra("recipeAdded", false)) {
                 refreshHomeFragment();
-                Toast.makeText(this, "Рецепт успешно добавлен", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.recipe_added_successfully, Toast.LENGTH_SHORT).show();
             }
         } else if (requestCode == 200) {
             if (resultCode == Activity.RESULT_OK) {
@@ -369,7 +369,7 @@ public class MainActivity extends AppCompatActivity {
             searchItem.getIcon().setTint(ContextCompat.getColor(this, android.R.color.black));
         }
         SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setQueryHint("Поиск по рецептам");
+        searchView.setQueryHint(getString(R.string.search_recipes_hint));
         int searchPlateId = searchView.getContext().getResources().getIdentifier(
                 "android:id/search_plate", null, null);
         View searchPlate = searchView.findViewById(searchPlateId);
@@ -448,7 +448,7 @@ public class MainActivity extends AppCompatActivity {
                 if (getSupportActionBar() != null) {
                     int id = navController.getCurrentDestination().getId();
                     if (id == R.id.nav_catalog) {
-                        getSupportActionBar().setTitle("Каталог");
+                        getSupportActionBar().setTitle(R.string.catalog_title);
                     } else if (navController.getCurrentDestination().getLabel() != null) {
                         getSupportActionBar().setTitle(navController.getCurrentDestination().getLabel());
                     } else {

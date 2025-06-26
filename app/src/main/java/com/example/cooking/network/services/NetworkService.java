@@ -3,6 +3,7 @@ package com.example.cooking.network.services;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.cooking.config.ServerConfig;
 import com.example.cooking.network.api.ApiService;
 import com.example.cooking.network.interceptors.AuthInterceptor;
 import com.example.cooking.network.interceptors.RetryInterceptor;
@@ -24,15 +25,10 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class NetworkService {
     private static final String TAG = "NetworkService";
     
-    // Базовый URL для API
-    // Лучше хранить в BuildConfig или аналоге для разных окружений
-    private static final String BASE_API_URL = "http://89.35.130.107/";
-    
     // Параметры настройки клиента
     private static final int CONNECT_TIMEOUT = 30; // 30 секунд
     private static final int READ_TIMEOUT = 60;    // 60 секунд (увеличено)
     private static final int WRITE_TIMEOUT = 30;   // 30 секунд
-    private static final int CACHE_SIZE = 10 * 1024 * 1024; // 10 MB
     private static final int MAX_RETRY_ATTEMPTS = 3;
     private static final long RETRY_DELAY_MILLIS = 1000; // 1 секунда
     
@@ -74,69 +70,7 @@ public class NetworkService {
                             .retryOnConnectionFailure(true)
                             .addInterceptor(loggingInterceptor)
                             .addInterceptor(new AuthInterceptor(context))
-                            .addInterceptor(new RetryInterceptor(MAX_RETRY_ATTEMPTS, RETRY_DELAY_MILLIS))
-                            // Убираем кастомный identity interceptor, полагаемся на стандартный gzip/chunked
-                            ;
-                    
-                    // Добавляем кастомный интерцептор для модификации URL запросов
-                    builder.addInterceptor(chain -> {
-                        Request original = chain.request();
-                        String url = original.url().toString();
-                        
-                        Log.d(TAG, "Интерцептор: проверяю URL: " + url);
-                        
-                        // Проверяем, является ли это запросом к endpoint search
-                        if (url.contains("/search") && url.contains("q=")) {
-                            Log.d(TAG, "Обнаружен запрос к /search. Исходный URL: " + url);
-                            
-                            // Пробуем быстрое решение: заменяем весь URL на нужный формат
-                            // Используем хардкод для умного поиска для быстрого исправления
-                            String query = "";
-                            
-                            // Получаем значение параметра q
-                            String[] parts = url.split("q=");
-                            if (parts.length >= 2) {
-                                query = parts[1];
-                                // Отрезаем все, что идет после параметра q, если есть другие параметры
-                                if (query.contains("&")) {
-                                    query = query.substring(0, query.indexOf("&"));
-                                }
-                                
-                                Log.d(TAG, "Оригинальный запрос: " + query);
-                                
-                                try {
-                                    // Кодируем запрос, если нужно
-                                    query = java.net.URLDecoder.decode(query, "UTF-8");
-                                    Log.d(TAG, "Декодированный запрос: " + query);
-                                } catch (Exception e) {
-                                    Log.e(TAG, "Ошибка при декодировании запроса", e);
-                                }
-                                
-                                // Формируем новый URL с правильным форматированием
-                                String baseUrl = "http://89.35.130.107/search?q=\"" + query.replace("\"", "").trim() + "\"";
-                                
-                                // Добавляем остальные параметры
-                                if (url.contains("&")) {
-                                    baseUrl += url.substring(url.indexOf("&"));
-                                }
-                                
-                                Log.d(TAG, "Новый прямой URL: " + baseUrl);
-                                
-                                // Создаем новый запрос
-                                Request newRequest = original.newBuilder()
-                                        .url(baseUrl)
-                                        .build();
-                                
-                                // Логируем заголовки для отладки
-                                Log.d(TAG, "Заголовки запроса: " + newRequest.headers());
-                                
-                                return chain.proceed(newRequest);
-                            }
-                        }
-                        
-                        // Для остальных запросов не меняем URL
-                        return chain.proceed(original);
-                    });
+                            .addInterceptor(new RetryInterceptor(MAX_RETRY_ATTEMPTS, RETRY_DELAY_MILLIS));
                     
                     httpClient = builder.build();
                     
@@ -158,46 +92,21 @@ public class NetworkService {
         if (retrofit == null) {
             synchronized (NetworkService.class) {
                 if (retrofit == null) {
-                    Log.d(TAG, "Создаю Retrofit с базовым URL: " + BASE_API_URL);
-                    
-                    // Удаляем все кэшированные данные
-                    reset();
+                    Log.d(TAG, "Создаю Retrofit с базовым URL: " + ServerConfig.BASE_API_URL);
                     
                     retrofit = new Retrofit.Builder()
-                            .baseUrl(BASE_API_URL)
+                            .baseUrl(ServerConfig.BASE_API_URL)
                             .client(getHttpClient(context))
                             .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                             .addConverterFactory(ScalarsConverterFactory.create()) // Для строковых ответов
                             .addConverterFactory(GsonConverterFactory.create())    // Для JSON ответов
                             .build();
                     
-                    Log.d(TAG, "Retrofit создан с базовым URL " + BASE_API_URL);
+                    Log.d(TAG, "Retrofit создан с базовым URL " + ServerConfig.BASE_API_URL);
                 }
             }
         }
         return retrofit;
-    }
-    
-    /**
-     * Получает Retrofit клиент с указанным базовым URL
-     *
-     * @param context контекст приложения
-     * @param baseUrl базовый URL для API
-     * @return экземпляр Retrofit с указанным URL
-     */
-    public static Retrofit getRetrofit(Context context, String baseUrl) {
-        // Нормализуем URL, добавляя слеш в конце если его нет
-        if (!baseUrl.endsWith("/")) {
-            baseUrl += "/";
-        }
-        
-        return new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(getHttpClient(context))
-                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
     }
     
     /**

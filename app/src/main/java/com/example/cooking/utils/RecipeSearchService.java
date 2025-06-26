@@ -61,23 +61,15 @@ public class RecipeSearchService {
             int perPage = 20;
 
             try {
-                // Сбрасываем закэшированные сетевые клиенты
-                NetworkService.reset();
+                String formattedQuery = "\"" + query.trim() + "\"";
                 
-                // Получаем новый экземпляр ApiService
-                ApiService freshApiService = NetworkService.getApiService(context);
-                
-                // Форматируем запрос в соответствии с ожиданиями сервера
-                String formattedQuery = query.trim();
-                
-                // Используем правильный вызов API для умного поиска
-                final Call<SearchResponse> smartCall = freshApiService.searchRecipes(formattedQuery, page, perPage);
+                final Call<SearchResponse> smartCall = apiService.searchRecipes(formattedQuery, page, perPage);
                 
                 String fullUrl = smartCall.request().url().toString();
 
                 useAsyncCall(smartCall, query, callback);
                 
-            } catch (Exception e) { // Этот блок catch теперь будет ловить ошибки, возникшие при подготовке вызова (например, в getApiService или searchRecipes)
+            } catch (Exception e) { 
                 Log.e(TAG, "Ошибка подготовки умного поиска, exception:", e);
                 showToast("Ошибка умного поиска");
                 fallbackToSimpleSearch(query, callback);
