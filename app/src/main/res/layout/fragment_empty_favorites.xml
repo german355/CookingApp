@@ -28,7 +28,7 @@
                 android:padding="30dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/emptyfavorite2"
-                android:contentDescription="Нет избранных рецептов" />
+                android:contentDescription="@string/empty_favorites_image_description" />
         </androidx.cardview.widget.CardView>
     </FrameLayout>
 
@@ -36,7 +36,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="В избранном пусто"
+        android:text="@string/empty_favorites_title"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="@color/md_theme_onBackground"
@@ -47,7 +47,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Добавляйте рецепты в избранное, чтобы они всегда были под рукой"
+        android:text="@string/empty_favorites_subtitle"
         android:textSize="16sp"
         android:textColor="@color/md_theme_onSurfaceVariant"
         android:gravity="center"
@@ -58,7 +58,7 @@
         android:id="@+id/btn_go_to_recipes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="К рецептам"
+        android:text="@string/empty_favorites_to_recipes_button"
         android:padding="16dp" />
 
 </LinearLayout> 

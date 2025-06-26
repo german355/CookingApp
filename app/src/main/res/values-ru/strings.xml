@@ -39,4 +39,179 @@
     <string name="recipe_added_successfully">Рецепт успешно добавлен</string>
     <string name="search_recipes_hint">Поиск по рецептам</string>
     <string name="catalog_title">Каталог</string>
+
+    <!-- Start Activity -->
+    <string name="start_activity_title">Вход в аккаунт</string>
+    <string name="start_activity_email_hint">Электронная почта</string>
+    <string name="start_activity_password_hint">Пароль</string>
+    <string name="start_activity_or_divider">или</string>
+    <string name="start_activity_google_login_button">Войти через Google</string>
+    <string name="start_activity_no_account_register_link">Нет аккаунта? Зарегистрироваться</string>
+
+    <!-- Edit Step -->
+    <string name="edit_step_description_hint">Описание шага</string>
+    <string name="edit_step_delete_step_description">Удалить шаг</string>
+    <string name="edit_step_step_image_description">Изображение шага</string>
+
+    <!-- Step Item -->
+    <string name="step_add_to_list_button">В список</string>
+    <string name="step_add_to_cart_button">В корзину</string>
+
+    <!-- Edit Ingredient -->
+    <string name="edit_ingredient_name_hint">Название</string>
+    <string name="edit_ingredient_quantity_hint">Кол-во</string>
+    <string name="edit_ingredient_unit_hint">Ед. изм.</string>
+    <string name="edit_ingredient_delete_description">Удалить ингредиент</string>
+
+    <!-- Shared Profile -->
+    <string name="shared_profile_settings">Настройки</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Профиль</string>
+    <string name="profile_username_label">Имя пользователя</string>
+    <string name="profile_edit_button">Изменить</string>
+    <string name="profile_email_label">Email</string>
+    <string name="profile_placeholder_email">user@example.com</string>
+    <string name="profile_security_section_title">Безопасность</string>
+    <string name="profile_change_password_button">Сменить пароль</string>
+    <string name="profile_logout_button">Выход из аккаунта</string>
+
+    <!-- Filtered Recipes -->
+    <string name="filtered_recipes_not_found">Рецепты не найдены</string>
+
+    <!-- Empty Favorites -->
+    <string name="empty_favorites_title">В избранном пусто</string>
+    <string name="empty_favorites_subtitle">Добавляйте рецепты в избранное, чтобы они всегда были под рукой</string>
+    <string name="empty_favorites_to_recipes_button">К рецептам</string>
+    <string name="empty_favorites_image_description">Нет избранных рецептов</string>
+
+    <!-- Auth Fragment -->
+    <string name="auth_fragment_title">Войдите для использования всех функций приложения</string>
+    <string name="auth_fragment_forgot_password">Забыли пароль?</string>
+    <string name="auth_fragment_guest_mode_info">Вы можете продолжить использование приложения без авторизации, но некоторые функции будут недоступны</string>
+
+    <!-- Auth Block Fragment -->
+    <string name="auth_block_message">Избранное доступно только авторизованным пользователям</string>
+
+    <!-- Register Activity -->
+    <string name="register_title">Регистрация</string>
+    <string name="register_email_hint">Почта</string>
+    <string name="register_confirm_password_hint">Подтвердите пароль</string>
+    <string name="register_button">Зарегистрироваться</string>
+    <string name="register_already_have_account">Уже есть аккаунт? Войти</string>
+    <string name="register_resend_email_button">Отправить письмо повторно</string>
+    <string name="register_check_verification_button">Проверить верификацию</string>
+
+    <!-- Change Password Dialog -->
+    <string name="change_password_dialog_title">Смена пароля</string>
+    <string name="change_password_dialog_current_password_hint">Текущий пароль</string>
+    <string name="change_password_dialog_new_password_hint">Новый пароль</string>
+    <string name="change_password_dialog_rule">Пароль должен содержать не менее 6 символов</string>
+
+    <!-- Password Recovery Activity -->
+    <string name="password_recovery_title">Восстановление пароля</string>
+    <string name="password_recovery_instructions">Введите ваш email, связанный с аккаунтом, и мы отправим вам инструкции по восстановлению.</string>
+    <string name="password_recovery_button">Восстановить пароль</string>
+
+    <!-- Recipe Detail Activity -->
+    <string name="recipe_detail_products_title">Продукты</string>
+    <string name="recipe_detail_servings_label">Порция</string>
+    <string name="recipe_detail_decrease_servings_button">−</string>
+    <string name="recipe_detail_increase_servings_button">+</string>
+    <string name="recipe_detail_ingredients_title">Ингредиенты</string>
+    <string name="recipe_detail_start_cooking_button">Начать готовить</string>
+    <string name="recipe_detail_decrease_servings_description">Уменьшить количество порций</string>
+    <string name="recipe_detail_increase_servings_description">Увеличить количество порций</string>
+    <string name="recipe_detail_like_button_description">лайкнуть рецепт</string>
+
+    <!-- AI Chat Activity -->
+    <string name="ai_chat_message_hint">Введите сообщение</string>
+    <string name="ai_chat_title">Кулинарный ассистент</string>
+    <string name="ai_chat_send_button_description">Отправка сообщения</string>
+
+    <!-- Add Recipe Activity -->
+    <string name="add_recipe_image_label">Изображение рецепта*</string>
+    <string name="add_recipe_name_hint">Название рецепта*</string>
+    <string name="add_recipe_ingredients_label">Ингредиенты*</string>
+    <string name="add_recipe_add_ingredient_button">+ Добавить ингредиент</string>
+    <string name="add_recipe_steps_label">Шаги приготовления*</string>
+    <string name="add_recipe_add_step_button">+ Добавить шаг</string>
+    <string name="add_recipe_save_button">Сохранить рецепт</string>
+    <string name="add_recipe_photo_description">Фото рецепта</string>
+
+    <!-- Edit/Add Recipe View Model Errors -->
+    <string name="error_image_selection_uri_null">Ошибка при выборе изображения: Uri = null</string>
+    <string name="error_decoding_image">Не удалось декодировать изображение</string>
+    <string name="error_opening_image_stream">Не удалось открыть поток данных для изображения</string>
+    <string name="error_processing_image">Ошибка обработки изображения: %s</string>
+    <string name="error_no_internet_connection">Отсутствует подключение к интернету</string>
+    <string name="error_missing_data">Ошибка: отсутствуют необходимые данные</string>
+    <string name="error_add_ingredient_and_step">Добавьте хотя бы один ингредиент и один шаг</string>
+    <string name="error_saving_recipe">Ошибка при сохранении рецепта</string>
+    <string name="error_enter_recipe_name">Введите название рецепта</string>
+    <string name="error_add_at_least_one_ingredient">Добавьте хотя бы один ингредиент</string>
+    <string name="error_fill_all_ingredient_names">Заполните название для всех ингредиентов</string>
+    <string name="error_add_at_least_one_step">Добавьте хотя бы один шаг приготовления</string>
+    <string name="error_fill_all_step_descriptions">Заполните описание для всех шагов</string>
+    <string name="error_add_recipe_image">Добавьте изображение рецепта</string>
+    <string name="error_no_permission_to_save">У вас нет прав для сохранения изменений</string>
+
+    <!-- Recipe Search Service -->
+    <string name="search_service_smart_search_error">Ошибка умного поиска</string>
+    <string name="search_service_generic_error">Ошибка поиска</string>
+    <string name="search_service_search_on_vacation">Извините, но наш поиск решил отдохнуть</string>
+    <plurals name="search_service_recipes_found">
+        <item quantity="one">Найден %d рецепт</item>
+        <item quantity="few">Найдено %d рецепта</item>
+        <item quantity="many">Найдено %d рецептов</item>
+        <item quantity="other">Найдено %d рецепта</item>
+    </plurals>
+
+    <!-- Filtered Recipes View Model -->
+    <string name="filtered_recipes_data_unavailable">Данные недоступны для фильтрации</string>
+    <string name="filtered_recipes_not_found_for_category">Не найдено рецептов для категории \'%s\'</string>
+    <string name="filtered_recipes_filter_error">Ошибка при фильтрации рецептов: %s</string>
+
+    <!-- Shared View Model -->
+    <string name="shared_recipe_view_model_not_set">SharedRecipeViewModel не установлен</string>
+
+    <!-- Main View Model -->
+    <string name="main_view_model_google_signin_error">Ошибка инициализации входа через Google</string>
+
+    <!-- Recipe Detail View Model -->
+    <string name="recipe_detail_login_to_like">Чтобы поставить лайк, необходимо войти в аккаунт</string>
+    <string name="recipe_detail_login_to_delete">Чтобы удалить рецепт, войдите в аккаунт</string>
+
+    <!-- Shared View Model -->
+    <string name="shared_view_model_login_to_like">Войдите, чтобы изменить статус лайка</string>
+
+    <!-- Password Recovery View Model -->
+    <string name="password_recovery_enter_correct_email">Введите корректный email</string>
+
+    <!-- Favorites View Model -->
+    <string name="favorites_login_to_view">Необходимо войти в систему для просмотра избранных рецептов</string>
+    <string name="favorites_login_to_change_like">Необходимо войти в систему для изменения статуса лайка</string>
+
+    <!-- Auth View Model -->
+    <string name="auth_email_cannot_be_empty">Email не может быть пустым</string>
+    <string name="auth_invalid_email_format">Неверный формат email</string>
+    <string name="auth_password_cannot_be_empty">Пароль не может быть пустым</string>
+    <string name="auth_password_too_short">Пароль должен содержать не менее 6 символов</string>
+    <string name="auth_name_cannot_be_empty">Имя не может быть пустым</string>
+    <string name="auth_name_too_short">Имя должно содержать не менее 2 символов</string>
+    <string name="auth_confirm_password_cannot_be_empty">Подтверждение пароля не может быть пустым</string>
+    <string name="auth_passwords_do_not_match">Пароли не совпадают</string>
+
+    <!-- Add Recipe View Model -->
+    <string name="add_recipe_error_loading_data">Ошибка: не удалось загрузить данные рецепта</string>
+
+    <!-- Add/Edit Recipe Validation -->
+    <string name="validation_recipe_name_empty">Название рецепта не может быть пустым</string>
+    <string name="validation_recipe_name_too_short">Название должно содержать минимум 3 символа</string>
+    <string name="validation_recipe_name_too_long">Название не должно превышать 100 символов</string>
+    <string name="validation_ingredients_empty">Добавьте хотя бы один ингредиент</string>
+    <string name="validation_ingredients_invalid">Заполните все поля для каждого ингредиента (название, количество > 0, тип)</string>
+    <string name="validation_steps_empty">Добавьте хотя бы один шаг приготовления</string>
+    <string name="validation_steps_invalid">Заполните описание для каждого шага</string>
+    <string name="validation_image_empty">Выберите изображение для рецепта</string>
 </resources> 

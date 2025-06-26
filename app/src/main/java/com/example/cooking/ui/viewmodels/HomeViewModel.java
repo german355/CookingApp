@@ -22,6 +22,7 @@ import java.lang.reflect.Field;
 
 import com.example.cooking.BuildConfig;
 import com.example.cooking.domain.usecases.RecipeUseCases;
+import com.example.cooking.R;
 
 /**
  * ViewModel для HomeFragment
@@ -120,7 +121,7 @@ public class HomeViewModel extends AndroidViewModel {
         Log.d(TAG, "HomeViewModel.updateLikeStatus: recipeId=" + recipe.getId() + ", isLiked=" + isLiked + ", userId=" + new MySharedPreferences(getApplication()).getString("userId", "0"));
         String userId = new MySharedPreferences(getApplication()).getString("userId", "0");
         if (userId.equals("0")) {
-            errorMessage.postValue("Войдите, чтобы добавить рецепт в избранное");
+            errorMessage.postValue(getApplication().getString(R.string.auth_required_message));
             return;
         }
         

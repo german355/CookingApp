@@ -148,7 +148,7 @@ public class MainViewModel extends AndroidViewModel {
             authManager.initGoogleSignIn(getApplication(), webClientId);
         } catch (Exception e) {
             Log.e(TAG, "Ошибка инициализации Google Sign In", e);
-            errorMessage.setValue("Ошибка инициализации входа через Google");
+            errorMessage.setValue(getApplication().getString(R.string.main_view_model_google_signin_error));
         }
     }
 

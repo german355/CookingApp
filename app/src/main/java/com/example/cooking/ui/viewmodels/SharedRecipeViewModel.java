@@ -17,6 +17,7 @@ import com.example.cooking.domain.usecases.RecipeUseCases;
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.utils.MySharedPreferences;
 import com.example.cooking.utils.AppExecutors;
+import com.example.cooking.R;
 
 
 import java.util.List;
@@ -286,7 +287,7 @@ public class SharedRecipeViewModel extends AndroidViewModel {
 
         if (!FirebaseAuthManager.getInstance().isUserSignedIn()) {
             Log.w(TAG, "updateLikeStatus: невалидный userId");
-            errorMessage.setValue("Войдите, чтобы изменить статус лайка");
+            errorMessage.setValue(getApplication().getString(R.string.shared_view_model_login_to_like));
             return;
         }
 
@@ -351,7 +352,7 @@ public class SharedRecipeViewModel extends AndroidViewModel {
     public void deleteRecipe(int recipeId, String userId, int userPermission, DeleteRecipeCallback callback) {
         if (!isNetworkAvailable()) {
             if (callback != null) {
-                callback.onDeleteFailure("Отсутствует подключение к интернету");
+                callback.onDeleteFailure(getApplication().getString(R.string.error_no_internet_connection));
             }
             return;
         }

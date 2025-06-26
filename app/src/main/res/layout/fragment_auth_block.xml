@@ -47,7 +47,7 @@
     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Избранное доступно только авторизованным пользователям"
+            android:text="@string/auth_block_message"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@color/md_theme_onBackground"
@@ -59,7 +59,7 @@
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Войти"
+            android:text="@string/login"
             android:backgroundTint="@color/md_theme_primary"
             android:textColor="@color/md_theme_onBackground"
             android:padding="16dp"

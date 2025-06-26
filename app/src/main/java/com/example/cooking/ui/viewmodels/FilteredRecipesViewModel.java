@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.ui.fragments.FilteredRecipesFragment;
+import com.example.cooking.R;
 
 import java.util.Collections;
 import java.util.List;
@@ -103,7 +104,7 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
      */
     public void loadFilteredRecipes(String filterKey, String filterType) {
         if (sharedViewModel == null) {
-            errorMessage.setValue("SharedRecipeViewModel не установлен");
+            errorMessage.setValue(getApplication().getString(R.string.shared_recipe_view_model_not_set));
             return;
         }
         
@@ -128,7 +129,7 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
     private void applyFilters(String filterKey, String filterType, Resource<List<Recipe>> resource) {
         if (resource == null || !resource.isSuccess() || resource.getData() == null) {
             filteredRecipes.postValue(Collections.emptyList());
-            errorMessage.postValue("Данные недоступны для фильтрации");
+            errorMessage.postValue(getApplication().getString(R.string.filtered_recipes_data_unavailable));
             return;
         }
 
@@ -151,10 +152,10 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
                 filteredRecipes.postValue(filtered);
 
                 if (filtered.isEmpty()) {
-                    errorMessage.postValue("Не найдено рецептов для категории '" + filterKey + "'");
+                    errorMessage.postValue(getApplication().getString(R.string.filtered_recipes_not_found_for_category, filterKey));
                 }
             } catch (Exception e) {
-                errorMessage.postValue("Ошибка при фильтрации рецептов: " + e.getMessage());
+                errorMessage.postValue(getApplication().getString(R.string.filtered_recipes_filter_error, e.getMessage()));
                 android.util.Log.e("FilteredViewModel", "Ошибка при фильтрации рецептов", e);
             }
         })
@@ -171,7 +172,7 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
      */
     public void toggleLikeStatus(Recipe recipe, boolean isLiked) {
         if (sharedViewModel == null) {
-            errorMessage.setValue("SharedRecipeViewModel не установлен");
+            errorMessage.setValue(getApplication().getString(R.string.shared_recipe_view_model_not_set));
             return;
         }
         sharedViewModel.updateLikeStatus(recipe, isLiked);
@@ -182,7 +183,7 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
      */
     public void refreshData() {
         if (sharedViewModel == null) {
-            errorMessage.setValue("SharedRecipeViewModel не установлен");
+            errorMessage.setValue(getApplication().getString(R.string.shared_recipe_view_model_not_set));
             return;
         }
         sharedViewModel.refreshRecipes();

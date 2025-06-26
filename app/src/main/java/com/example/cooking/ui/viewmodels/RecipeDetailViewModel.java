@@ -12,6 +12,7 @@ import com.example.cooking.utils.MySharedPreferences;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import java.util.List;
+import com.example.cooking.R;
 
 /**
  * ViewModel для экрана детальной информации о рецепте
@@ -73,7 +74,7 @@ public class RecipeDetailViewModel extends AndroidViewModel {
      */
     private void loadRecipe() {
         if (sharedRecipeViewModel == null) {
-            errorMessage.setValue("SharedRecipeViewModel не установлен");
+            errorMessage.setValue(getApplication().getString(R.string.shared_recipe_view_model_not_set));
             return;
         }
         
@@ -122,14 +123,14 @@ public class RecipeDetailViewModel extends AndroidViewModel {
      */
     public void toggleLike() {
         if (sharedRecipeViewModel == null) {
-            errorMessage.setValue("SharedRecipeViewModel не установлен");
+            errorMessage.setValue(getApplication().getString(R.string.shared_recipe_view_model_not_set));
             return;
         }
         
         // Проверяем, вошел ли пользователь через Firebase
         FirebaseUser userToggle = FirebaseAuth.getInstance().getCurrentUser();
         if (userToggle == null) {
-            errorMessage.setValue("Чтобы поставить лайк, необходимо войти в аккаунт");
+            errorMessage.setValue(getApplication().getString(R.string.recipe_detail_login_to_like));
             return;
         }
         String uid = userToggle.getUid();
@@ -149,12 +150,12 @@ public class RecipeDetailViewModel extends AndroidViewModel {
      */
     public void deleteRecipe() {
         if (sharedRecipeViewModel == null) {
-            errorMessage.setValue("SharedRecipeViewModel не установлен");
+            errorMessage.setValue(getApplication().getString(R.string.shared_recipe_view_model_not_set));
             return;
         }
         
         if (!sharedRecipeViewModel.isNetworkAvailable()) {
-            errorMessage.setValue("Отсутствует подключение к интернету");
+            errorMessage.setValue(getApplication().getString(R.string.error_no_internet_connection));
             return;
         }
         
@@ -163,7 +164,7 @@ public class RecipeDetailViewModel extends AndroidViewModel {
         // Проверяем авторизацию через Firebase перед удалением
         FirebaseUser userDel = FirebaseAuth.getInstance().getCurrentUser();
         if (userDel == null) {
-            errorMessage.setValue("Чтобы удалить рецепт, войдите в аккаунт");
+            errorMessage.setValue(getApplication().getString(R.string.recipe_detail_login_to_delete));
             return;
         }
         String uidDel = userDel.getUid();

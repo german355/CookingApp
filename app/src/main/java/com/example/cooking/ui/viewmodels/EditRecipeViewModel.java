@@ -15,6 +15,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.cooking.R;
 import com.example.cooking.Recipe.Ingredient;
 import com.example.cooking.Recipe.Recipe;
 import com.example.cooking.Recipe.Step;
@@ -269,7 +270,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
      */
     public void processSelectedImage(Uri imageUri) {
         if (imageUri == null) {
-            errorMessage.setValue("Ошибка при выборе изображения: Uri = null");
+            errorMessage.setValue(getApplication().getString(R.string.error_image_selection_uri_null));
             return;
         }
         isSaving.setValue(true);
@@ -289,14 +290,14 @@ public class EditRecipeViewModel extends AndroidViewModel {
                         photoUrl.postValue(null); // Сбрасываем старый URL, т.к. есть новое фото
                         Log.d(TAG, "processSelectedImage: Изображение обработано, размер: " + bytes.length + " байт");
                     } else {
-                        errorMessage.postValue("Не удалось декодировать изображение");
+                        errorMessage.postValue(getApplication().getString(R.string.error_decoding_image));
                     }
                 } else {
-                    errorMessage.postValue("Не удалось открыть поток данных для изображения");
+                    errorMessage.postValue(getApplication().getString(R.string.error_opening_image_stream));
                 }
             } catch (Exception e) {
                 Log.e(TAG, "processSelectedImage: Ошибка при обработке изображения", e);
-                errorMessage.postValue("Ошибка обработки изображения: " + e.getMessage());
+                errorMessage.postValue(getApplication().getString(R.string.error_processing_image, e.getMessage()));
                 imageBytes.postValue(null);
                 imageChanged = false;
             } finally {
@@ -343,7 +344,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
     private boolean validateTitle() {
         String currentTitle = title.getValue();
         if (currentTitle == null || currentTitle.trim().isEmpty()) {
-            // titleError.setValue("Название не может быть пустым"); // Ошибки показываются в Activity
+            errorMessage.setValue(getApplication().getString(R.string.error_enter_recipe_name));
             return false;
         } else {
             // titleError.setValue(null);
@@ -354,7 +355,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
     private boolean validateIngredientsList() {
         List<Ingredient> currentList = ingredients.getValue();
         if (currentList == null || currentList.isEmpty()) {
-            // ingredientsListError.setValue("Добавьте хотя бы один ингредиент");
+            errorMessage.setValue(getApplication().getString(R.string.error_add_at_least_one_ingredient));
             return false;
         }
         for (Ingredient ingredient : currentList) {
@@ -373,6 +374,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
         List<Step> currentList = steps.getValue();
         if (currentList == null || currentList.isEmpty()) {
              // stepsListError.setValue("Добавьте хотя бы один шаг");
+            errorMessage.setValue(getApplication().getString(R.string.error_add_at_least_one_step));
             return false;
         }
         for (Step step : currentList) {
@@ -435,7 +437,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
     public void updateRecipe() {
         // Проверяем подключение к интернету
         if (!isNetworkAvailable()) {
-            errorMessage.setValue("Отсутствует подключение к интернету");
+            errorMessage.setValue(getApplication().getString(R.string.error_no_internet_connection));
             return;
         }
 
@@ -449,13 +451,13 @@ public class EditRecipeViewModel extends AndroidViewModel {
 
         // Проверяем, что у нас есть все необходимые данные
         if (currentRecipeId == null || currentTitle == null || currentIngredients == null || currentSteps == null) {
-            errorMessage.setValue("Ошибка: отсутствуют необходимые данные");
+            errorMessage.setValue(getApplication().getString(R.string.error_missing_data));
             return;
         }
 
         // Проверяем, что есть хотя бы один ингредиент и шаг
         if (currentIngredients.isEmpty() || currentSteps.isEmpty()) {
-            errorMessage.setValue("Добавьте хотя бы один ингредиент и один шаг");
+            errorMessage.setValue(getApplication().getString(R.string.error_add_ingredient_and_step));
             return;
         }
 
@@ -508,7 +510,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
                     if (response != null && response.isSuccess()) {
                         saveResult.postValue(true);
                     } else {
-                        errorMessage.postValue("Ошибка при сохранении рецепта");
+                        errorMessage.postValue(getApplication().getString(R.string.error_saving_recipe));
                         saveResult.postValue(false);
                     }
                 }
@@ -559,7 +561,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
     private boolean validateTitle() {
         String currentTitle = title.getValue();
         if (currentTitle == null || currentTitle.trim().isEmpty()) {
-            errorMessage.setValue("Введите название рецепта");
+            errorMessage.setValue(getApplication().getString(R.string.error_enter_recipe_name));
             return false;
         }
         return true;
@@ -571,13 +573,13 @@ public class EditRecipeViewModel extends AndroidViewModel {
     private boolean validateIngredientsList() {
         List<Ingredient> currentList = ingredients.getValue();
         if (currentList == null || currentList.isEmpty()) {
-            errorMessage.setValue("Добавьте хотя бы один ингредиент");
+            errorMessage.setValue(getApplication().getString(R.string.error_add_at_least_one_ingredient));
             return false;
         }
         // Проверяем, что у всех ингредиентов заполнены обязательные поля
         for (Ingredient ingredient : currentList) {
             if (ingredient.getName() == null || ingredient.getName().trim().isEmpty()) {
-                errorMessage.setValue("Заполните название для всех ингредиентов");
+                errorMessage.setValue(getApplication().getString(R.string.error_fill_all_ingredient_names));
                 return false;
             }
         }
@@ -590,13 +592,13 @@ public class EditRecipeViewModel extends AndroidViewModel {
     private boolean validateStepsList() {
         List<Step> currentList = steps.getValue();
         if (currentList == null || currentList.isEmpty()) {
-            errorMessage.setValue("Добавьте хотя бы один шаг приготовления");
+            errorMessage.setValue(getApplication().getString(R.string.error_add_at_least_one_step));
             return false;
         }
         // Проверяем, что у всех шагов заполнено описание
         for (Step step : currentList) {
             if (step.getInstruction() == null || step.getInstruction().trim().isEmpty()) {
-                errorMessage.setValue("Заполните описание для всех шагов");
+                errorMessage.setValue(getApplication().getString(R.string.error_fill_all_step_descriptions));
                 return false;
             }
         }
@@ -608,7 +610,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
      */
     private boolean validateImage() {
         if (imageBytes.getValue() == null && (photoUrl.getValue() == null || photoUrl.getValue().isEmpty())) {
-            errorMessage.setValue("Добавьте изображение рецепта");
+            errorMessage.setValue(getApplication().getString(R.string.error_add_recipe_image));
             return false;
         }
         return true;
@@ -667,7 +669,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
             String currentUserId = preferences.getUserId();
             int permission = preferences.getUserPermission();
             if (!currentUserId.equals(recipeOwnerId.getValue()) && permission < 2) {
-                errorMessage.setValue("У вас нет прав для сохранения изменений");
+                errorMessage.setValue(getApplication().getString(R.string.error_no_permission_to_save));
                 saveResult.setValue(false);
                 return;
             }
@@ -677,17 +679,17 @@ public class EditRecipeViewModel extends AndroidViewModel {
         List<Step> recipeSteps = steps.getValue();
         
         if (recipeTitle == null || recipeTitle.trim().isEmpty()) {
-            errorMessage.setValue("Введите название рецепта");
+            errorMessage.setValue(getApplication().getString(R.string.error_enter_recipe_name));
             return;
         }
         
         if (recipeIngredients == null || recipeIngredients.isEmpty()) {
-            errorMessage.setValue("Добавьте хотя бы один ингредиент");
+            errorMessage.setValue(getApplication().getString(R.string.error_add_at_least_one_ingredient));
             return;
         }
         
         if (recipeSteps == null || recipeSteps.isEmpty()) {
-            errorMessage.setValue("Добавьте хотя бы один шаг приготовления");
+            errorMessage.setValue(getApplication().getString(R.string.error_add_at_least_one_step));
             return;
         }
         
@@ -715,7 +717,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
                     if (response != null && response.isSuccess()) {
                         saveResult.postValue(true);
                     } else {
-                        errorMessage.postValue("Ошибка при сохранении рецепта");
+                        errorMessage.postValue(getApplication().getString(R.string.error_saving_recipe));
                         saveResult.postValue(false);
                     }
                 }

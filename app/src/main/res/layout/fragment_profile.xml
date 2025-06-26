@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,7 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Профиль"
+            android:text="@string/profile_title"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="32dp"/>
@@ -30,7 +31,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Имя пользователя"
+                android:text="@string/profile_username_label"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:layout_marginBottom="8dp"/>
@@ -45,14 +46,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Имя пользователя"
+                    tools:text="@string/profile_username_label"
                     android:textSize="16sp"/>
 
                 <Button
                     android:id="@+id/edit_name_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Изменить"
+                    android:text="@string/profile_edit_button"
                     android:textSize="12sp"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
             </LinearLayout>
@@ -69,7 +70,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Email"
+                android:text="@string/profile_email_label"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:layout_marginBottom="8dp"/>
@@ -78,7 +79,7 @@
                 android:id="@+id/profile_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="user@example.com"
+                tools:text="@string/profile_placeholder_email"
                 android:textSize="16sp"/>
         </LinearLayout>
 
@@ -93,7 +94,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Безопасность"
+                android:text="@string/profile_security_section_title"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:layout_marginBottom="16dp"/>
@@ -102,7 +103,7 @@
                 android:id="@+id/change_password_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Сменить пароль"
+                android:text="@string/profile_change_password_button"
                 android:textSize="14sp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_marginBottom="8dp"/>
@@ -127,7 +128,7 @@
             android:id="@+id/logout_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Выход из аккаунта"
+            android:text="@string/profile_logout_button"
             android:textColor="?attr/colorOnError"
             android:backgroundTint="?attr/colorError"
             android:padding="12dp"

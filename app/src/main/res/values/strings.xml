@@ -6,21 +6,7 @@
     <string name="search_error">Error during search: %1$s</string>
 
     <string name="default_web_client_id" translatable="false">735196544943-8nha6idmte73q0orur9m37taklrglv9g.apps.googleusercontent.com</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
 
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 
   
     <string name="no_favorites_yet">You don\'t have any favorite recipes yet. It\'s time to add some!</string>
@@ -55,4 +41,177 @@
     <string name="recipe_added_successfully">Recipe added successfully</string>
     <string name="search_recipes_hint">Search for recipes</string>
     <string name="catalog_title">Catalog</string>
+
+    <!-- Start Activity -->
+    <string name="start_activity_title">Account Login</string>
+    <string name="start_activity_email_hint">Email</string>
+    <string name="start_activity_password_hint">Password</string>
+    <string name="start_activity_or_divider">or</string>
+    <string name="start_activity_google_login_button">Continue with Google</string>
+    <string name="start_activity_no_account_register_link">Don\'t have an account? Sign Up</string>
+
+    <!-- Edit Step -->
+    <string name="edit_step_description_hint">Step description</string>
+    <string name="edit_step_delete_step_description">Delete step</string>
+    <string name="edit_step_step_image_description">Step image</string>
+
+    <!-- Step Item -->
+    <string name="step_add_to_list_button">To list</string>
+    <string name="step_add_to_cart_button">To cart</string>
+
+    <!-- Edit Ingredient -->
+    <string name="edit_ingredient_name_hint">Name</string>
+    <string name="edit_ingredient_quantity_hint">Qty</string>
+    <string name="edit_ingredient_unit_hint">Unit</string>
+    <string name="edit_ingredient_delete_description">Delete ingredient</string>
+
+    <!-- Shared Profile -->
+    <string name="shared_profile_settings">Settings</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_username_label">Username</string>
+    <string name="profile_edit_button">Edit</string>
+    <string name="profile_email_label">Email</string>
+    <string name="profile_placeholder_email">user@example.com</string>
+    <string name="profile_security_section_title">Security</string>
+    <string name="profile_change_password_button">Change password</string>
+    <string name="profile_logout_button">Log out</string>
+
+    <!-- Filtered Recipes -->
+    <string name="filtered_recipes_not_found">Recipes not found</string>
+
+    <!-- Empty Favorites -->
+    <string name="empty_favorites_title">Favorites is empty</string>
+    <string name="empty_favorites_subtitle">Add recipes to favorites to always have them at hand</string>
+    <string name="empty_favorites_to_recipes_button">To recipes</string>
+    <string name="empty_favorites_image_description">No favorite recipes</string>
+
+    <!-- Auth Fragment -->
+    <string name="auth_fragment_title">Log in to use all app features</string>
+    <string name="auth_fragment_forgot_password">Forgot password?</string>
+    <string name="auth_fragment_guest_mode_info">You can continue to use the app without authorization, but some features will be unavailable</string>
+
+    <!-- Auth Block Fragment -->
+    <string name="auth_block_message">Favorites are available only to authorized users</string>
+
+    <!-- Register Activity -->
+    <string name="register_title">Registration</string>
+    <string name="register_email_hint">Email</string>
+    <string name="register_confirm_password_hint">Confirm password</string>
+    <string name="register_button">Sign Up</string>
+    <string name="register_already_have_account">Already have an account? Log in</string>
+    <string name="register_resend_email_button">Resend email</string>
+    <string name="register_check_verification_button">Check verification</string>
+
+    <!-- Change Password Dialog -->
+    <string name="change_password_dialog_title">Change Password</string>
+    <string name="change_password_dialog_current_password_hint">Current password</string>
+    <string name="change_password_dialog_new_password_hint">New password</string>
+    <string name="change_password_dialog_rule">Password must be at least 6 characters long</string>
+
+    <!-- Password Recovery Activity -->
+    <string name="password_recovery_title">Password Recovery</string>
+    <string name="password_recovery_instructions">Enter your account-related email and we will send you recovery instructions.</string>
+    <string name="password_recovery_button">Restore password</string>
+
+    <!-- Recipe Detail Activity -->
+    <string name="recipe_detail_products_title">Products</string>
+    <string name="recipe_detail_servings_label">Servings</string>
+    <string name="recipe_detail_decrease_servings_button">−</string>
+    <string name="recipe_detail_increase_servings_button">+</string>
+    <string name="recipe_detail_ingredients_title">Ingredients</string>
+    <string name="recipe_detail_start_cooking_button">Start cooking</string>
+    <string name="recipe_detail_decrease_servings_description">Decrease servings</string>
+    <string name="recipe_detail_increase_servings_description">Increase servings</string>
+    <string name="recipe_detail_like_button_description">Like recipe</string>
+
+    <!-- AI Chat Activity -->
+    <string name="ai_chat_message_hint">Enter a message</string>
+    <string name="ai_chat_title">Culinary Assistant</string>
+    <string name="ai_chat_send_button_description">Send message</string>
+
+    <!-- Add Recipe Activity -->
+    <string name="add_recipe_image_label">Recipe image*</string>
+    <string name="add_recipe_name_hint">Recipe name*</string>
+    <string name="add_recipe_ingredients_label">Ingredients*</string>
+    <string name="add_recipe_add_ingredient_button">+ Add ingredient</string>
+    <string name="add_recipe_steps_label">Cooking steps*</string>
+    <string name="add_recipe_add_step_button">+ Add step</string>
+    <string name="add_recipe_save_button">Save recipe</string>
+    <string name="add_recipe_photo_description">Recipe photo</string>
+
+    <!-- Edit/Add Recipe View Model Errors -->
+    <string name="error_image_selection_uri_null">Error selecting image: Uri is null</string>
+    <string name="error_decoding_image">Failed to decode image</string>
+    <string name="error_opening_image_stream">Failed to open image data stream</string>
+    <string name="error_processing_image">Error processing image: %s</string>
+    <string name="error_no_internet_connection">No internet connection</string>
+    <string name="error_missing_data">Error: required data is missing</string>
+    <string name="error_add_ingredient_and_step">Add at least one ingredient and one step</string>
+    <string name="error_saving_recipe">Error saving recipe</string>
+    <string name="error_enter_recipe_name">Enter a recipe name</string>
+    <string name="error_add_at_least_one_ingredient">Add at least one ingredient</string>
+    <string name="error_fill_all_ingredient_names">Fill in the names for all ingredients</string>
+    <string name="error_add_at_least_one_step">Add at least one cooking step</string>
+    <string name="error_fill_all_step_descriptions">Fill in the descriptions for all steps</string>
+    <string name="error_add_recipe_image">Add a recipe image</string>
+    <string name="error_no_permission_to_save">You do not have permission to save changes</string>
+
+    <!-- Recipe Search Service -->
+    <string name="search_service_smart_search_error">Smart search error</string>
+    <string name="search_service_generic_error">Search error</string>
+    <string name="search_service_search_on_vacation">Sorry, but our search decided to take a break</string>
+    <plurals name="search_service_recipes_found">
+        <item quantity="one">%d recipe found</item>
+        <item quantity="other">%d recipes found</item>
+    </plurals>
+
+    <!-- Filtered Recipes View Model -->
+    <string name="filtered_recipes_data_unavailable">Data unavailable for filtering</string>
+    <string name="filtered_recipes_not_found_for_category">No recipes found for category \'%s\'</string>
+    <string name="filtered_recipes_filter_error">Error filtering recipes: %s</string>
+
+    <!-- Shared View Model -->
+    <string name="shared_recipe_view_model_not_set">SharedRecipeViewModel is not set</string>
+
+    <!-- Main View Model -->
+    <string name="main_view_model_google_signin_error">Google Sign-In initialization error</string>
+
+    <!-- Recipe Detail View Model -->
+    <string name="recipe_detail_login_to_like">You need to log in to like a recipe</string>
+    <string name="recipe_detail_login_to_delete">You need to log in to delete a recipe</string>
+
+    <!-- Shared View Model -->
+    <string name="shared_view_model_login_to_like">Log in to change the like status</string>
+
+    <!-- Password Recovery View Model -->
+    <string name="password_recovery_enter_correct_email">Enter a correct email</string>
+
+    <!-- Favorites View Model -->
+    <string name="favorites_login_to_view">You need to log in to view favorites</string>
+    <string name="favorites_login_to_change_like">You need to log in to change the like status</string>
+
+    <!-- Auth View Model -->
+    <string name="auth_email_cannot_be_empty">Email cannot be empty</string>
+    <string name="auth_invalid_email_format">Invalid email format</string>
+    <string name="auth_password_cannot_be_empty">Password cannot be empty</string>
+    <string name="auth_password_too_short">Password must be at least 6 characters long</string>
+    <string name="auth_name_cannot_be_empty">Name cannot be empty</string>
+    <string name="auth_name_too_short">Name must be at least 2 characters long</string>
+    <string name="auth_confirm_password_cannot_be_empty">Password confirmation cannot be empty</string>
+    <string name="auth_passwords_do_not_match">Passwords do not match</string>
+
+    <!-- Add Recipe View Model -->
+    <string name="add_recipe_error_loading_data">Error: failed to load recipe data</string>
+
+    <!-- Add/Edit Recipe Validation -->
+    <string name="validation_recipe_name_empty">Recipe name cannot be empty</string>
+    <string name="validation_recipe_name_too_short">Name must be at least 3 characters long</string>
+    <string name="validation_recipe_name_too_long">Name must not exceed 100 characters</string>
+    <string name="validation_ingredients_empty">Add at least one ingredient</string>
+    <string name="validation_ingredients_invalid">Fill in all fields for each ingredient (name, quantity > 0, type)</string>
+    <string name="validation_steps_empty">Add at least one cooking step</string>
+    <string name="validation_steps_invalid">Fill in the description for each step</string>
+    <string name="validation_image_empty">Select an image for the recipe</string>
 </resources>

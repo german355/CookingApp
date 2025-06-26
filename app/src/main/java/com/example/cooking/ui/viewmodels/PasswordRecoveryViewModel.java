@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import android.util.Patterns;
 
 import com.example.cooking.domain.usecases.PasswordRecoveryUseCase;
+import com.example.cooking.R;
 
 public class PasswordRecoveryViewModel extends AndroidViewModel {
 
@@ -36,7 +37,7 @@ public class PasswordRecoveryViewModel extends AndroidViewModel {
         String currentEmail = _email.getValue();
         if (currentEmail == null || currentEmail.trim().isEmpty() ||
             !Patterns.EMAIL_ADDRESS.matcher(currentEmail).matches()) {
-            _recoveryStatus.setValue(new RecoveryStatus.Error("Введите корректный email"));
+            _recoveryStatus.setValue(new RecoveryStatus.Error(getApplication().getString(R.string.password_recovery_enter_correct_email)));
             _isLoading.setValue(false);
             return;
         }

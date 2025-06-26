@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.example.cooking.data.repositories.RecipeLocalRepository;
 import com.example.cooking.utils.AppExecutors;
+import com.example.cooking.R;
 
 public class RecipeSearchService {
     
@@ -71,7 +72,7 @@ public class RecipeSearchService {
                 
             } catch (Exception e) { 
                 Log.e(TAG, "Ошибка подготовки умного поиска, exception:", e);
-                showToast("Ошибка умного поиска");
+                showToast(context.getString(R.string.search_service_smart_search_error));
                 fallbackToSimpleSearch(query, callback);
             }
         } else {
@@ -113,7 +114,7 @@ public class RecipeSearchService {
             @Override
             public void onError(String errorMessage) {
                 Log.e(TAG, "fallbackToSimpleSearch onError: " + errorMessage);
-                callback.onSearchError("Ошибка поиска");
+                callback.onSearchError(context.getString(R.string.search_service_generic_error));
             }
         });
     }
@@ -149,7 +150,8 @@ public class RecipeSearchService {
                 Log.d(TAG, "useAsyncCall initial ids size: " + ids.size());
 
                 if (!ids.isEmpty()) {
-                    showToast("Найдено " + ids.size() + " рецептов");
+                    String foundMessage = context.getResources().getQuantityString(R.plurals.search_service_recipes_found, ids.size(), ids.size());
+                    showToast(foundMessage);
                     AppExecutors.getInstance().diskIO().execute(() -> {
                         RecipeLocalRepository localRepo = new RecipeLocalRepository(context);
                         List<Recipe> fullRecipes = new ArrayList<>();
@@ -187,7 +189,7 @@ public class RecipeSearchService {
             @Override
             public void onError(String errorMessage) {
                 Log.e(TAG, "useAsyncCall onError: " + errorMessage);
-                showToast("Извините но наш поиск решил отдохнуть");
+                showToast(context.getString(R.string.search_service_search_on_vacation));
                 fallbackToSimpleSearch(query, callback);
             }
         });

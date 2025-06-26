@@ -35,7 +35,7 @@
             android:layout_height="200dp"
             android:layout_marginBottom="8dp"
             android:scaleType="centerCrop"
-            android:contentDescription="Изображение шага"
+            android:contentDescription="@string/edit_step_step_image_description"
             android:adjustViewBounds="true"
             android:visibility="gone"
             app:shapeAppearanceOverlay="@style/RoundedImageView"/>
@@ -60,26 +60,26 @@
             android:visibility="gone">
             
             <Button
-                android:id="@+id/to_list_button"
+                android:id="@+id/button_add_to_list"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="В список"
-                android:drawableStart="@drawable/ic_list"
-                android:padding="12dp" />
+                android:text="@string/step_add_to_list_button"
+                android:layout_marginEnd="4dp"
+                style="?android:attr/buttonBarButtonStyle" />
                 
             <Space
                 android:layout_width="8dp"
                 android:layout_height="match_parent" />
                 
             <Button
-                android:id="@+id/to_cart_button"
+                android:id="@+id/button_add_to_cart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="В корзину"
-                android:drawableStart="@drawable/ic_cart"
-                android:padding="12dp" />
+                android:text="@string/step_add_to_cart_button"
+                android:layout_marginStart="4dp"
+                style="?android:attr/buttonBarButtonStyle" />
         </LinearLayout>
     </LinearLayout>
 

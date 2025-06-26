@@ -34,7 +34,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Изображение рецепта*"
+                    android:text="@string/add_recipe_image_label"
                     android:textSize="18dp"
                     android:id="@+id/textImage">
 
@@ -52,7 +52,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:contentDescription="Фото рецепта"
+                        android:contentDescription="@string/add_recipe_photo_description"
                         android:background="#F5F5F5"
                         app:shapeAppearanceOverlay="@style/RoundedImageView" />
             </com.google.android.material.card.MaterialCardView>
@@ -75,7 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:hint="Название рецепта*">
+                    android:hint="@string/add_recipe_name_hint">
 
                 <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/recipe_title"
@@ -89,7 +89,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ингредиенты*"
+                    android:text="@string/add_recipe_ingredients_label"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp"/>
@@ -114,14 +114,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
-                    android:text="+ Добавить ингредиент"
+                    android:text="@string/add_recipe_add_ingredient_button"
                     android:layout_marginBottom="16dp"/>
 
             <!-- Секция Шаги приготовления -->
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Шаги приготовления*"
+                    android:text="@string/add_recipe_steps_label"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp"/>
@@ -146,7 +146,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
-                    android:text="+ Добавить шаг"
+                    android:text="@string/add_recipe_add_step_button"
                     android:layout_marginBottom="16dp"/>
 
         </LinearLayout>
@@ -161,7 +161,7 @@
                 android:id="@+id/save_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Сохранить рецепт" />
+                android:text="@string/add_recipe_save_button" />
 
         <ProgressBar
                 android:id="@+id/progress_bar"

@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="3"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-        android:hint=" Название">
+        android:hint="@string/edit_ingredient_name_hint">
 
         <AutoCompleteTextView
             android:id="@+id/edit_ingredient_name"
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1.5"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-        android:hint="Кол-во">
+        android:hint="@string/edit_ingredient_quantity_hint">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_ingredient_count"
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1.5"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-        android:hint=" Ед. изм.">
+        android:hint="@string/edit_ingredient_unit_hint">
 
         <AutoCompleteTextView
             android:id="@+id/edit_ingredient_type"
@@ -75,7 +75,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_delete"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Удалить ингредиент"
+        android:contentDescription="@string/edit_ingredient_delete_description"
         android:layout_marginStart="8dp"/>
 
 </LinearLayout> 

@@ -17,6 +17,7 @@ import com.example.cooking.data.repositories.LikedRecipesRepository;
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.utils.MySharedPreferences;
 import com.example.cooking.utils.AppExecutors;
+import com.example.cooking.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -187,7 +188,7 @@ public class FavoritesViewModel extends AndroidViewModel {
      */
     public void refreshLikedRecipes() {
         if (!isUserLoggedIn) {
-            errorMessage.setValue("Необходимо войти в систему для просмотра избранных рецептов");
+            errorMessage.setValue(getApplication().getString(R.string.favorites_login_to_view));
             return;
         }
         
@@ -238,7 +239,7 @@ public class FavoritesViewModel extends AndroidViewModel {
     public void toggleLikeStatus(Recipe recipe, boolean isLiked) {
         if (!isUserLoggedIn) {
             Log.w(TAG, "Попытка изменить статус лайка без авторизации");
-            errorMessage.setValue("Необходимо войти в систему для изменения статуса лайка");
+            errorMessage.setValue(getApplication().getString(R.string.favorites_login_to_change_like));
             return;
         }
         

@@ -14,6 +14,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.cooking.domain.usecases.AuthUseCase;
 import com.example.cooking.data.models.ApiResponse;
+import com.example.cooking.R;
 
 /**
  * ViewModel для управления аутентификацией пользователя
@@ -118,13 +119,13 @@ public class AuthViewModel extends AndroidViewModel {
      */
     public boolean validateEmail(String emailValue) {
         if (TextUtils.isEmpty(emailValue)) {
-            errorMessage.setValue("Email не может быть пустым");
+            errorMessage.setValue(getApplication().getString(R.string.auth_email_cannot_be_empty));
             isEmailValid = false;
             return false;
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(emailValue).matches()) {
-            errorMessage.setValue("Неверный формат email");
+            errorMessage.setValue(getApplication().getString(R.string.auth_invalid_email_format));
             isEmailValid = false;
             return false;
         }
@@ -138,13 +139,13 @@ public class AuthViewModel extends AndroidViewModel {
      */
     public boolean validatePassword(String passwordValue) {
         if (TextUtils.isEmpty(passwordValue)) {
-            errorMessage.setValue("Пароль не может быть пустым");
+            errorMessage.setValue(getApplication().getString(R.string.auth_password_cannot_be_empty));
             isPasswordValid = false;
             return false;
         }
 
         if (passwordValue.length() < 6) {
-            errorMessage.setValue("Пароль должен содержать не менее 6 символов");
+            errorMessage.setValue(getApplication().getString(R.string.auth_password_too_short));
             isPasswordValid = false;
             return false;
         }
@@ -158,13 +159,13 @@ public class AuthViewModel extends AndroidViewModel {
      */
     public boolean validateName(String nameValue) {
         if (TextUtils.isEmpty(nameValue)) {
-            errorMessage.setValue("Имя не может быть пустым");
+            errorMessage.setValue(getApplication().getString(R.string.auth_name_cannot_be_empty));
             isNameValid = false;
             return false;
         }
 
         if (nameValue.length() < 2) {
-            errorMessage.setValue("Имя должно содержать не менее 2 символов");
+            errorMessage.setValue(getApplication().getString(R.string.auth_name_too_short));
             isNameValid = false;
             return false;
         }
@@ -178,13 +179,13 @@ public class AuthViewModel extends AndroidViewModel {
      */
     public boolean validatePasswordConfirmation(String password, String confirmPassword) {
         if (TextUtils.isEmpty(confirmPassword)) {
-            errorMessage.setValue("Подтверждение пароля не может быть пустым");
+            errorMessage.setValue(getApplication().getString(R.string.auth_confirm_password_cannot_be_empty));
             isPasswordConfirmValid = false;
             return false;
         }
 
         if (!password.equals(confirmPassword)) {
-            errorMessage.setValue("Пароли не совпадают");
+            errorMessage.setValue(getApplication().getString(R.string.auth_passwords_do_not_match));
             isPasswordConfirmValid = false;
             return false;
         }
@@ -221,7 +222,7 @@ public class AuthViewModel extends AndroidViewModel {
      */
     public boolean doPasswordsMatch(String password, String confirmPassword) {
         if (confirmPassword == null || confirmPassword.isEmpty()) {
-            errorMessage.setValue("Подтверждение пароля не может быть пустым");
+            errorMessage.setValue(getApplication().getString(R.string.auth_confirm_password_cannot_be_empty));
             isPasswordConfirmValid = false;
             return false;
         }
@@ -229,7 +230,7 @@ public class AuthViewModel extends AndroidViewModel {
         boolean match = password.equals(confirmPassword);
 
         if (!match) {
-            errorMessage.setValue("Пароли не совпадают");
+            errorMessage.setValue(getApplication().getString(R.string.auth_passwords_do_not_match));
             isPasswordConfirmValid = false;
         } else {
             isPasswordConfirmValid = true;

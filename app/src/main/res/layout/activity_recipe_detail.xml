@@ -51,7 +51,7 @@
                     android:layout_height="200dp"
                     android:layout_marginBottom="16dp"
                     android:scaleType="centerCrop"
-                    android:contentDescription="Изображение рецепта"
+                    android:contentDescription="@string/recipe_image_description"
                     android:adjustViewBounds="true"
                     app:shapeAppearanceOverlay="@style/RoundedImageView"
                     tools:src="@drawable/white_card_background" />
@@ -81,7 +81,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Продукты"
+                            android:text="@string/recipe_detail_products_title"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:textColor="?android:attr/textColorPrimary"
@@ -103,7 +103,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Порция"
+                            android:text="@string/recipe_detail_servings_label"
                             android:textColor="?android:attr/textColorSecondary"
                             android:textSize="16sp"/>
 
@@ -118,7 +118,7 @@
                                 style="@style/Widget.Material3.Button"
                                 android:layout_width="48dp"
                                 android:layout_height="48dp"
-                                android:text="−"
+                                android:text="@string/recipe_detail_decrease_servings_button"
                                 android:textSize="24sp"
                                 android:textStyle="bold"
                                 android:textColor="?attr/colorOnPrimary"
@@ -130,7 +130,7 @@
                                 android:stateListAnimator="@null"
                                 android:focusable="true"
                                 android:clickable="true"
-                                android:contentDescription="Уменьшить количество порций"
+                                android:contentDescription="@string/recipe_detail_decrease_servings_description"
                                 android:backgroundTint="?attr/colorPrimary"
                                 app:elevation="2dp"
                                 app:iconTint="@android:color/white"
@@ -164,7 +164,7 @@
                                 style="@style/Widget.Material3.Button"
                                 android:layout_width="48dp"
                                 android:layout_height="48dp"
-                                android:text="+"
+                                android:text="@string/recipe_detail_increase_servings_button"
                                 android:textSize="24sp"
                                 android:textStyle="bold"
                                 android:textColor="?attr/colorOnPrimary"
@@ -176,7 +176,7 @@
                                 android:stateListAnimator="@null"
                                 android:focusable="true"
                                 android:clickable="true"
-                                android:contentDescription="Увеличить количество порций"
+                                android:contentDescription="@string/recipe_detail_increase_servings_description"
                                 android:backgroundTint="?attr/colorPrimary"
                                 app:elevation="2dp"
                                 app:iconTint="@android:color/white"
@@ -199,7 +199,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Ингредиенты"
+                        android:text="@string/recipe_detail_ingredients_title"
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="16sp"
                         android:layout_marginTop="16dp" />
@@ -224,7 +224,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Начать готовить"
+                    android:text="@string/recipe_detail_start_cooking_button"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="?android:attr/textColorPrimary"
@@ -260,7 +260,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:contentDescription="лайкнуть рецепт"
+        android:contentDescription="@string/recipe_detail_like_button_description"
         android:src="@drawable/ic_favorite"
         app:backgroundTint="?attr/colorError"
         app:tint="?attr/colorOnError" />

@@ -9,7 +9,7 @@
         android:id="@+id/topAppBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:title="Кулинарный ассистент"
+        app:title="@string/ai_chat_title"
         app:navigationIcon="?attr/homeAsUpIndicator" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -60,7 +60,7 @@
                     android:minLines="1"
                     android:maxLines="5"
                     android:scrollHorizontally="false"
-                    android:hint="Введите сообщение" />
+                    android:hint="@string/ai_chat_message_hint" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -72,7 +72,7 @@
                 android:layout_marginStart="8dp"
                 app:srcCompat="@drawable/send"
                 app:backgroundTint="?attr/colorPrimary"
-                android:contentDescription="Отправка сообщения" />
+                android:contentDescription="@string/ai_chat_send_button_description" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

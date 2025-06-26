@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_delete"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Удалить шаг"
+            android:contentDescription="@string/edit_step_delete_step_description"
             android:layout_marginStart="8dp"/>
 
     </LinearLayout>
@@ -53,31 +53,26 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:scaleType="centerCrop"
-        android:contentDescription="Изображение шага"
+        android:contentDescription="@string/edit_step_step_image_description"
         android:adjustViewBounds="true"
         android:visibility="gone"
         app:shapeAppearanceOverlay="@style/RoundedImageView"/>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/stepDescriptionInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:hint="Описание шага"
         android:layout_marginTop="8dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_step_instruction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/edit_step_description_hint"
             android:minHeight="100dp"
             android:gravity="top"
-            android:maxLines="10"
-            android:scrollHorizontally="false"
-            android:overScrollMode="never"
-            android:inputType="textMultiLine|textCapSentences"
-            android:importantForAutofill="no"
-            android:focusableInTouchMode="true"
-            android:isScrollContainer="false"/>
+            android:inputType="textMultiLine|textCapSentences"/>
+            
     </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

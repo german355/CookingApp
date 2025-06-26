@@ -44,7 +44,6 @@ public class AuthInterceptor implements Interceptor {
         
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        // Если пользователь не авторизован, просто пропускаем запрос дальше
         if (currentUser == null) {
             Log.d(TAG, "Пользователь не авторизован, пропускаем добавление токена.");
             return chain.proceed(requestBuilder.build());
@@ -61,7 +60,6 @@ public class AuthInterceptor implements Interceptor {
                 return chain.proceed(requestBuilder.build());
             } else {
                 Log.w(TAG, "Не удалось получить Firebase ID токен (null).");
-                // Если токен null, отправляем оригинальный запрос
                 return chain.proceed(requestBuilder.build());
             }
 
