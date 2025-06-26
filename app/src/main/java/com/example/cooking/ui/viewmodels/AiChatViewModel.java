@@ -10,6 +10,9 @@ import com.example.cooking.data.repositories.ChatRepository;
 import com.example.cooking.data.repositories.RecipeLocalRepository;
 import com.example.cooking.model.Message;
 import com.example.cooking.network.models.chat.ChatMessage;
+import com.example.cooking.network.models.chat.ChatMessageResponse;
+import com.example.cooking.network.models.chat.ChatHistoryResponse;
+import com.example.cooking.network.models.chat.ChatSessionResponse;
 
 import com.example.cooking.Recipe.Recipe;
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,12 +21,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AiChatViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Message>> messages = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<String> showMessage = new MutableLiveData<>();
     private final ChatRepository chatRepository;
+
+    private androidx.lifecycle.Observer<ChatHistoryResponse> historyObserver;
+    private androidx.lifecycle.Observer<ChatMessageResponse> messageObserver;
+    private androidx.lifecycle.Observer<ChatSessionResponse> clearChatObserver;
+
+    private LiveData<ChatHistoryResponse> historyLiveData;
+    private LiveData<ChatMessageResponse> messageLiveData;
+    private LiveData<ChatSessionResponse> clearChatLiveData;
 
     public AiChatViewModel(@NonNull Application application) {
         super(application);
@@ -33,7 +47,7 @@ public class AiChatViewModel extends AndroidViewModel {
 
     private void loadHistory() {
         isLoading.setValue(true);
-        chatRepository.getChatHistory().observeForever(response -> {
+        historyObserver = response -> {
             isLoading.setValue(false);
             if (response != null && response.getMessageCount() == 0) {
                 // Если нет сообщений — показать приветственный экран без истории
@@ -64,7 +78,9 @@ public class AiChatViewModel extends AndroidViewModel {
                     messages.postValue(fullList);
                 });
             }
-        });
+        };
+        historyLiveData = chatRepository.getChatHistory();
+        historyLiveData.observeForever(historyObserver);
     }
 
     public LiveData<List<Message>> getMessages() {
@@ -73,6 +89,10 @@ public class AiChatViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getIsLoading() {
         return isLoading;
+    }
+
+    public LiveData<String> getShowMessage() {
+        return showMessage;
     }
 
     public void sendMessage(String text) {
@@ -87,7 +107,7 @@ public class AiChatViewModel extends AndroidViewModel {
             messages.setValue(temp);
             return;
         }
-        
+
         // Добавляем сообщение пользователя
         List<Message> currentMessages = messages.getValue() != null ? new ArrayList<>(messages.getValue()) : new ArrayList<>();
         currentMessages.add(new Message(text, true));
@@ -97,10 +117,9 @@ public class AiChatViewModel extends AndroidViewModel {
         messages.setValue(currentMessages);
         
         // Отправка сообщения в AI-чат
-        // isLoading.setValue(true); // Теперь управляется через элемент списка
-        chatRepository.sendChatMessage(text).observeForever(response -> {
+        messageObserver = response -> {
             // Удаляем индикатор загрузки
-            List<Message> updatedMessages = messages.getValue() != null ? new ArrayList<>(messages.getValue()) : new ArrayList<>();
+            List<Message> updatedMessages = new ArrayList<>(messages.getValue());
             boolean removedLoading = false;
             for (int i = updatedMessages.size() - 1; i >= 0; i--) {
                 if (updatedMessages.get(i).getType() == Message.MessageType.LOADING) {
@@ -110,13 +129,12 @@ public class AiChatViewModel extends AndroidViewModel {
                 }
             }
 
-            // isLoading.setValue(false);
             if (response != null && response.isSuccess()) {
                 String aiText = response.getAiResponse();
                 List<Message> listWithoutRecipes = removedLoading ? updatedMessages : new ArrayList<>(messages.getValue());
                 listWithoutRecipes.add(new Message(aiText, false));
                 messages.setValue(listWithoutRecipes);
-                
+
                 if (response.getHasRecipes() && response.getRecipesIds() != null && !response.getRecipesIds().isEmpty()) {
                     ExecutorService executor = Executors.newSingleThreadExecutor();
                     executor.execute(() -> {
@@ -134,18 +152,14 @@ public class AiChatViewModel extends AndroidViewModel {
                     });
                 }
             } else {
-                // Если индикатор был удален, устанавливаем обновленный список без ответа AI
-                // Иначе оставляем как есть, т.к. индикатора не было
                 if(removedLoading) {
                     messages.setValue(updatedMessages);
                 }
                 showMessage.setValue(getApplication().getString(R.string.error_sending_message));
             }
-        });
-    }
-
-    public LiveData<String> getShowMessage() {
-        return showMessage;
+        };
+        messageLiveData = chatRepository.sendChatMessage(text);
+        messageLiveData.observeForever(messageObserver);
     }
 
     public void clearChat() {
@@ -160,7 +174,7 @@ public class AiChatViewModel extends AndroidViewModel {
         }
         
         isLoading.setValue(true);
-        chatRepository.startChatSession().observeForever(response -> {
+        clearChatObserver = response -> {
             isLoading.setValue(false);
             if (response != null && response.isSuccess()) {
                 // После очистки показываем приветственное сообщение
@@ -171,10 +185,26 @@ public class AiChatViewModel extends AndroidViewModel {
             } else {
                 showMessage.setValue(getApplication().getString(R.string.error_clearing_chat));
             }
-        });
+        };
+        clearChatLiveData = chatRepository.startChatSession();
+        clearChatLiveData.observeForever(clearChatObserver);
     }
     
     public void onPhotoButtonClicked() {
         // TODO: обработать выбор фото
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        if (historyLiveData != null && historyObserver != null) {
+            historyLiveData.removeObserver(historyObserver);
+        }
+        if (messageLiveData != null && messageObserver != null) {
+            messageLiveData.removeObserver(messageObserver);
+        }
+        if (clearChatLiveData != null && clearChatObserver != null) {
+            clearChatLiveData.removeObserver(clearChatObserver);
+        }
     }
 }

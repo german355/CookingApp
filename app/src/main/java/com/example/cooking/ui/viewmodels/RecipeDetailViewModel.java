@@ -33,6 +33,8 @@ public class RecipeDetailViewModel extends AndroidViewModel {
     private int userPermission;
     
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private androidx.lifecycle.Observer<Resource<List<Recipe>>> recipesObserver;
+    private androidx.lifecycle.Observer<String> errorObserver;
     
     /**
      * Конструктор
@@ -52,9 +54,10 @@ public class RecipeDetailViewModel extends AndroidViewModel {
         
         // Propagate errors from SharedRecipeViewModel to this ViewModel
         if (sharedRecipeViewModel != null) {
-            sharedRecipeViewModel.getErrorMessage().observeForever(err -> {
+            errorObserver = err -> {
                 if (err != null && !err.isEmpty()) errorMessage.postValue(err);
-            });
+            };
+            sharedRecipeViewModel.getErrorMessage().observeForever(errorObserver);
         }
     }
     
@@ -80,7 +83,7 @@ public class RecipeDetailViewModel extends AndroidViewModel {
         isLoading.setValue(true);
         
         // Подписываемся на обновления рецептов
-        sharedRecipeViewModel.getRecipes().observeForever(new androidx.lifecycle.Observer<Resource<List<Recipe>>>() {
+        recipesObserver = new androidx.lifecycle.Observer<Resource<List<Recipe>>>() {
             @Override
             public void onChanged(Resource<List<Recipe>> resource) {
                 if (resource.getStatus() == Resource.Status.SUCCESS && resource.getData() != null) {
@@ -98,7 +101,8 @@ public class RecipeDetailViewModel extends AndroidViewModel {
                 isLoading.postValue(false);
                 // Не удаляем наблюдателя: разрешаем обновление после изменений
             }
-        });
+        };
+        sharedRecipeViewModel.getRecipes().observeForever(recipesObserver);
         
         // Убираем дополнительный вызов, который может вызывать дублирование запросов
         // sharedRecipeViewModel.loadInitialRecipesIfNeeded();
@@ -248,5 +252,18 @@ public class RecipeDetailViewModel extends AndroidViewModel {
      */
     public void clearErrorMessage() {
         errorMessage.setValue(null);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        if (sharedRecipeViewModel != null) {
+            if (recipesObserver != null) {
+                sharedRecipeViewModel.getRecipes().removeObserver(recipesObserver);
+            }
+            if (errorObserver != null) {
+                sharedRecipeViewModel.getErrorMessage().removeObserver(errorObserver);
+            }
+        }
     }
 }
