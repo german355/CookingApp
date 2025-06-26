@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.reactivex.rxjava3.core.Completable;
+
 /**
  * ViewModel для {@link FilteredRecipesFragment}.
  * Отвечает за фильтрацию рецептов на основе выбранной категории,
@@ -30,12 +32,14 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
     
     // Ссылка на общую модель
     private SharedRecipeViewModel sharedViewModel;
+    private final androidx.lifecycle.Observer<Resource<List<Recipe>>> recipesObserver;
 
     public FilteredRecipesViewModel(@NonNull Application application) {
         super(application);
         // НЕ создаем новый экземпляр, так как это приводит к дублированию запросов!
         // SharedRecipeViewModel должен передаваться извне или использоваться общий экземпляр
         sharedViewModel = null; // Временно устанавливаем null
+        recipesObserver = this::handleRecipesUpdate;
     }
     
     /**
@@ -44,14 +48,14 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
     public void setSharedRecipeViewModel(SharedRecipeViewModel sharedRecipeViewModel) {
         if (this.sharedViewModel != null) {
             // Удаляем старый наблюдатель если был
-            this.sharedViewModel.getRecipes().removeObserver(this::handleRecipesUpdate);
+            this.sharedViewModel.getRecipes().removeObserver(recipesObserver);
         }
         
         this.sharedViewModel = sharedRecipeViewModel;
         
         if (sharedRecipeViewModel != null) {
             // Отслеживаем изменения в общем списке рецептов для автоматической перефильтрации
-            sharedRecipeViewModel.getRecipes().observeForever(this::handleRecipesUpdate);
+            sharedRecipeViewModel.getRecipes().observeForever(recipesObserver);
         }
     }
     
@@ -123,35 +127,39 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
      */
     private void applyFilters(String filterKey, String filterType, Resource<List<Recipe>> resource) {
         if (resource == null || !resource.isSuccess() || resource.getData() == null) {
-            filteredRecipes.setValue(Collections.emptyList());
-            errorMessage.setValue("Данные недоступны для фильтрации");
+            filteredRecipes.postValue(Collections.emptyList());
+            errorMessage.postValue("Данные недоступны для фильтрации");
             return;
         }
-        
+
         List<Recipe> allRecipes = resource.getData();
-        
-        try {
-            // Фильтруем рецепты в зависимости от типа фильтра
-            List<Recipe> filtered = allRecipes.stream()
-                .filter(recipe -> {
-                    if ("meal_type".equals(filterType)) {
-                        return filterKey.equalsIgnoreCase(recipe.getMealType());
-                    } else if ("food_type".equals(filterType)) {
-                        return filterKey.equalsIgnoreCase(recipe.getFoodType());
-                    }
-                    return false;
-                })
-                .collect(Collectors.toList());
-            
-            filteredRecipes.setValue(filtered);
-            
-            if (filtered.isEmpty()) {
-                errorMessage.setValue("Не найдено рецептов для категории '" + filterKey + "'");
+
+        io.reactivex.rxjava3.core.Completable.fromAction(() -> {
+            try {
+                // Фильтруем рецепты в зависимости от типа фильтра
+                List<Recipe> filtered = allRecipes.stream()
+                        .filter(recipe -> {
+                            if ("meal_type".equals(filterType)) {
+                                return filterKey.equalsIgnoreCase(recipe.getMealType());
+                            } else if ("food_type".equals(filterType)) {
+                                return filterKey.equalsIgnoreCase(recipe.getFoodType());
+                            }
+                            return false;
+                        })
+                        .collect(Collectors.toList());
+
+                filteredRecipes.postValue(filtered);
+
+                if (filtered.isEmpty()) {
+                    errorMessage.postValue("Не найдено рецептов для категории '" + filterKey + "'");
+                }
+            } catch (Exception e) {
+                errorMessage.postValue("Ошибка при фильтрации рецептов: " + e.getMessage());
+                android.util.Log.e("FilteredViewModel", "Ошибка при фильтрации рецептов", e);
             }
-        } catch (Exception e) {
-            errorMessage.setValue("Ошибка при фильтрации рецептов: " + e.getMessage());
-            android.util.Log.e("FilteredViewModel", "Ошибка при фильтрации рецептов", e);
-        }
+        })
+        .subscribeOn(io.reactivex.rxjava3.schedulers.Schedulers.io())
+        .subscribe();
     }
 
     /**
@@ -198,6 +206,8 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         // Удаляем наблюдателя, чтобы избежать утечек памяти
-        sharedViewModel.getRecipes().removeObserver(resource -> {});
+        if (sharedViewModel != null) {
+            sharedViewModel.getRecipes().removeObserver(recipesObserver);
+        }
     }
 } 

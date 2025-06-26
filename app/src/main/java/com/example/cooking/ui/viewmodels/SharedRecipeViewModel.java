@@ -326,17 +326,6 @@ public class SharedRecipeViewModel extends AndroidViewModel {
     }
 
     /**
-     * Загрузка рецептов из локального хранилища без обращения к серверу
-     */
-    public void loadLocalRecipes() {
-        // UI обновится через LiveData observer, индикатор сбрасываем
-        isRefreshing.setValue(false);
-        // Получаем все рецепты из локального хранилища и обновляем основной список
-        List<Recipe> all = repository.getAllRecipesSync();
-        recipes.setValue(Resource.success(all));
-    }
-
-    /**
      * Выход из режима поиска - показываем все рецепты
      */
     public void exitSearchMode() {

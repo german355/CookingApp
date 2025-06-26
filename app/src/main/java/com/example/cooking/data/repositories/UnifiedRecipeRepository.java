@@ -271,16 +271,29 @@ public class UnifiedRecipeRepository extends NetworkRepository{
      * В офлайн режиме добавляет соответствующее уведомление.
      */
     public void searchInLocalData(String query, MutableLiveData<List<Recipe>> searchResultsLiveData, MutableLiveData<String> errorMessageLiveData) {
-        List<Recipe> allRecipes = getAllRecipesSync();
-        if (allRecipes == null) allRecipes = Collections.emptyList();
-        String lowerQuery = query.toLowerCase();
-        List<Recipe> filteredResults = allRecipes.stream()
-                .filter(recipe -> matchesSearchQuery(recipe, lowerQuery))
-                .collect(Collectors.toList());
-        searchResultsLiveData.setValue(filteredResults);
-        if (!isNetworkAvailable() && errorMessageLiveData != null) {
-            errorMessageLiveData.setValue("Поиск выполнен в офлайн режиме. Результаты могут быть неполными.");
-        }
+        Disposable d = Completable.fromAction(() -> {
+            List<Recipe> allRecipes = getAllRecipesSync();
+            if (allRecipes == null) allRecipes = Collections.emptyList();
+            String lowerQuery = query.toLowerCase();
+            List<Recipe> filteredResults = allRecipes.stream()
+                    .filter(recipe -> matchesSearchQuery(recipe, lowerQuery))
+                    .collect(Collectors.toList());
+            searchResultsLiveData.postValue(filteredResults);
+            if (!isNetworkAvailable() && errorMessageLiveData != null) {
+                errorMessageLiveData.postValue("Поиск выполнен в офлайн режиме. Результаты могут быть неполными.");
+            }
+        })
+        .subscribeOn(Schedulers.io())
+        .subscribe(
+            () -> {},
+            throwable -> {
+                Log.e(TAG, "Ошибка при выполнении локального поиска", throwable);
+                if (errorMessageLiveData != null) {
+                    errorMessageLiveData.postValue("Ошибка при поиске");
+                }
+            }
+        );
+        disposables.add(d);
     }
 
     private boolean matchesSearchQuery(Recipe recipe, String query) {
