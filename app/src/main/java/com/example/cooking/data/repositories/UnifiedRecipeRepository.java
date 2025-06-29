@@ -238,8 +238,13 @@ public class UnifiedRecipeRepository {
                 // После успешного обновления на сервере, обновляем в локальной БД
                 // Используем оригинальный recipe с обновленными данными, а не updatedRecipe из коллбэка
                 Recipe recipeToSave = recipe;
+                
+                // Обновляем URL изображения если получен новый с сервера
                 if(response != null && response.getPhotoUrl() != null){
                     recipeToSave.setPhoto_url(response.getPhotoUrl());
+                    Log.d(TAG, "URL изображения обновлен от сервера: " + response.getPhotoUrl());
+                } else {
+                    Log.d(TAG, "Сервер не вернул новый URL изображения при обновлении рецепта");
                 }
                 AppExecutors.getInstance().diskIO().execute(() -> {
                     localRepository.update(recipeToSave);
