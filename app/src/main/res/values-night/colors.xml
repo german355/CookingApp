@@ -1,0 +1,125 @@
+<resources>
+    <!-- Основные цвета (Primary) -->
+    <color name="md_theme_primary">#ee9724</color>
+    <color name="md_theme_onPrimary">#000000</color>
+    <color name="md_theme_primaryContainer">#b17300</color>
+    <color name="md_theme_onPrimaryContainer">#FFDEAD</color>
+    
+    <!-- Вторичные цвета (Secondary) -->
+    <color name="md_theme_secondary">#E6BDBB</color>
+    <color name="md_theme_onSecondary">#442929</color>
+    <color name="md_theme_secondaryContainer">#5D3F3E</color>
+    <color name="md_theme_onSecondaryContainer">#FFDAD8</color>
+    
+    <!-- Третичные цвета (Tertiary) - более заметные -->
+    <color name="md_theme_tertiary">#E4C18D</color>
+    <color name="md_theme_onTertiary">#412D05</color>
+    <color name="md_theme_tertiaryContainer">#5A4319</color>
+    <color name="md_theme_onTertiaryContainer">#FFDEAC</color>
+    
+    <!-- Цвета ошибок -->
+    <color name="md_theme_error">#FFB4AB</color>
+    <color name="md_theme_onError">#690005</color>
+    <color name="md_theme_errorContainer">#93000A</color>
+    <color name="md_theme_onErrorContainer">#FFDAD6</color>
+    
+    <!-- Фон и поверхности - более правильная иерархия -->
+    <color name="md_theme_background">#232323</color>
+    <color name="md_theme_onBackground">#EAEAEA</color>
+    <color name="md_theme_surface">#232323</color>
+    <color name="md_theme_onSurface">#EAEAEA</color>
+    
+    <!-- Варианты поверхностей для визуальной иерархии -->
+    <color name="md_theme_surfaceVariant">#4A4A4A</color>
+    <color name="md_theme_onSurfaceVariant">#AAAAAA</color>
+    <color name="md_theme_outline">#505050</color>
+    <color name="md_theme_outlineVariant">#424242</color>
+    
+    <!-- Контейнеры поверхностей с визуальной иерархией -->
+    <color name="md_theme_surfaceDim">#1F1F1F</color>
+    <color name="md_theme_surfaceBright">#4A4A4A</color>
+    <color name="md_theme_surfaceContainerLowest">#1E1E1E</color>
+    <color name="md_theme_surfaceContainerLow">#353535</color>
+    <color name="md_theme_surfaceContainer">#3b3b3b</color>
+    <color name="md_theme_surfaceContainerHigh">#424242</color>
+    <color name="md_theme_surfaceContainerHighest">#4A4A4A</color>
+    
+    <!-- Цвет фона для SearchView в темной теме -->
+    <color name="search_view_background_dark">#000000</color>
+    
+    <!-- Инверсные цвета -->
+    <color name="md_theme_inverseSurface">#EAEAEA</color>
+    <color name="md_theme_inverseOnSurface">#333333</color>
+    <color name="md_theme_inversePrimary">#b17300</color>
+    
+    <!-- Фиксированные цвета -->
+    <color name="md_theme_primaryFixed">#FFDAD8</color>
+    <color name="md_theme_onPrimaryFixed">#3B080C</color>
+    <color name="md_theme_primaryFixedDim">#FFB3B1</color>
+    <color name="md_theme_onPrimaryFixedVariant">#733333</color>
+    <color name="md_theme_secondaryFixed">#FFDAD8</color>
+    <color name="md_theme_onSecondaryFixed">#2C1515</color>
+    <color name="md_theme_secondaryFixedDim">#E6BDBB</color>
+    <color name="md_theme_onSecondaryFixedVariant">#5D3F3E</color>
+    <color name="md_theme_tertiaryFixed">#FFDEAC</color>
+    <color name="md_theme_onTertiaryFixed">#281900</color>
+    <color name="md_theme_tertiaryFixedDim">#E4C18D</color>
+    <color name="md_theme_onTertiaryFixedVariant">#5A4319</color>
+    
+    <!-- Средний контраст -->
+    <color name="md_theme_primary_mediumContrast">#FFB9B7</color>
+    <color name="md_theme_onPrimary_mediumContrast">#340407</color>
+    <color name="md_theme_primaryContainer_mediumContrast">#CB7A79</color>
+    <color name="md_theme_onPrimaryContainer_mediumContrast">#000000</color>
+    <color name="md_theme_secondary_mediumContrast">#EBC1BF</color>
+    <color name="md_theme_onSecondary_mediumContrast">#261010</color>
+    <color name="md_theme_secondaryContainer_mediumContrast">#AD8886</color>
+    <color name="md_theme_onSecondaryContainer_mediumContrast">#000000</color>
+    <color name="md_theme_tertiary_mediumContrast">#E8C690</color>
+    <color name="md_theme_onTertiary_mediumContrast">#211400</color>
+    <color name="md_theme_tertiaryContainer_mediumContrast">#AA8C5C</color>
+    <color name="md_theme_onTertiaryContainer_mediumContrast">#000000</color>
+    <color name="md_theme_error_mediumContrast">#FFBAB1</color>
+    <color name="md_theme_onError_mediumContrast">#370001</color>
+    <color name="md_theme_errorContainer_mediumContrast">#FF5449</color>
+    <color name="md_theme_onErrorContainer_mediumContrast">#000000</color>
+    <color name="md_theme_background_mediumContrast">#1A1111</color>
+    <color name="md_theme_onBackground_mediumContrast">#F0DEDD</color>
+    <color name="md_theme_surface_mediumContrast">#1A1111</color>
+    <color name="md_theme_onSurface_mediumContrast">#FFF9F9</color>
+    <color name="md_theme_surfaceVariant_mediumContrast">#524342</color>
+    <color name="md_theme_onSurfaceVariant_mediumContrast">#DCC6C4</color>
+    <color name="md_theme_outline_mediumContrast">#B39E9D</color>
+    <color name="md_theme_outlineVariant_mediumContrast">#927F7E</color>
+    
+    <!-- Высокий контраст -->
+    <color name="md_theme_primary_highContrast">#FFF9F9</color>
+    <color name="md_theme_onPrimary_highContrast">#000000</color>
+    <color name="md_theme_primaryContainer_highContrast">#FFB9B7</color>
+    <color name="md_theme_onPrimaryContainer_highContrast">#000000</color>
+    <color name="md_theme_secondary_highContrast">#FFF9F9</color>
+    <color name="md_theme_onSecondary_highContrast">#000000</color>
+    <color name="md_theme_secondaryContainer_highContrast">#EBC1BF</color>
+    <color name="md_theme_onSecondaryContainer_highContrast">#000000</color>
+    <color name="md_theme_tertiary_highContrast">#FFFAF7</color>
+    <color name="md_theme_onTertiary_highContrast">#000000</color>
+    <color name="md_theme_tertiaryContainer_highContrast">#E8C690</color>
+    <color name="md_theme_onTertiaryContainer_highContrast">#000000</color>
+    
+    <!-- Прочие высококонтрастные цвета -->
+    <color name="md_theme_error_highContrast">#FFF9F9</color>
+    <color name="md_theme_onError_highContrast">#000000</color>
+    <color name="md_theme_errorContainer_highContrast">#FFBAB1</color>
+    <color name="md_theme_onErrorContainer_highContrast">#000000</color>
+    <color name="md_theme_background_highContrast">#1A1111</color>
+    <color name="md_theme_onBackground_highContrast">#F0DEDD</color>
+    <color name="md_theme_surface_highContrast">#1A1111</color>
+    <color name="md_theme_onSurface_highContrast">#FFFFFF</color>
+    <color name="md_theme_surfaceVariant_highContrast">#524342</color>
+    <color name="md_theme_onSurfaceVariant_highContrast">#F9F9F9</color>
+    <color name="md_theme_outline_highContrast">#DCC6C4</color>
+    <color name="md_theme_outlineVariant_highContrast">#DCC6C4</color>
+    <color name="md_theme_scrim_highContrast">#000000</color>
+
+    <color name="message_ai_text_color">#FFFFFF</color>
+</resources>

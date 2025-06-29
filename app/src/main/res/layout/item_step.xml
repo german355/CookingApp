@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp"
+    app:cardBackgroundColor="?attr/colorSurfaceContainer"
+    android:layout_marginBottom="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+        
+        <!-- Номер шага -->
+        <TextView
+            android:id="@+id/text_step_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp"
+            android:padding="4dp"
+            android:background="@drawable/step_number_background"
+            tools:text="Шаг 1" />
+            
+        <!-- Изображение шага (если есть) -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/step_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginBottom="8dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/edit_step_step_image_description"
+            android:adjustViewBounds="true"
+            android:visibility="gone"
+            app:shapeAppearanceOverlay="@style/RoundedImageView"/>
+            
+        <!-- Инструкция шага -->
+        <TextView
+            android:id="@+id/edit_step_instruction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="?android:attr/textColorPrimary"
+            android:layout_marginBottom="8dp"
+            tools:text="Инструкция по приготовлению для данного шага" />
+
+        <!-- Кнопки "В список" и "В корзину" (видны только если это редактирование) -->
+        <LinearLayout
+            android:id="@+id/button_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:visibility="gone">
+            
+            <Button
+                android:id="@+id/button_add_to_list"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/step_add_to_list_button"
+                android:layout_marginEnd="4dp"
+                style="?android:attr/buttonBarButtonStyle" />
+                
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="match_parent" />
+                
+            <Button
+                android:id="@+id/button_add_to_cart"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/step_add_to_cart_button"
+                android:layout_marginStart="4dp"
+                style="?android:attr/buttonBarButtonStyle" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView> 

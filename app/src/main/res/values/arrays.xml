@@ -1,0 +1,250 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="reply_entries">
+        <item>Reply</item>
+        <item>Reply to all</item>
+    </string-array>
+
+    <string-array name="reply_values">
+        <item>reply</item>
+        <item>reply_all</item>
+    </string-array>
+
+    <string-array name="theme_entries">
+        <item>Светлая</item>
+        <item>Тёмная</item>
+        <item>Системная</item>        
+    </string-array>
+
+    <string-array name="theme_value">
+        <item>light</item>
+        <item>dark</item>
+        <item>system</item>
+    </string-array>
+
+    <string-array name="ingredient_types">
+        <item>шт.</item>
+        <item>г</item>
+        <item>кг</item>
+        <item>мл</item>
+        <item>л</item>
+        <item>ст.л.</item>
+        <item>ч.л.</item>
+        <item>стакан</item>
+        <item>по вкусу</item>
+    </string-array>
+
+
+
+    <string-array name="ingredients_list">
+        <!-- Овощи и зелень -->
+        <item>Авокадо</item>
+        <item>Артишок</item>
+        <item>Баклажан</item>
+        <item>Брокколи</item>
+        <item>Брюссельская капуста</item>
+        <item>Горох</item>
+        <item>Дайкон</item>
+        <item>Кабачок</item>
+        <item>Капуста белокочанная</item>
+        <item>Капуста краснокочанная</item>
+        <item>Картофель</item>
+        <item>Кейл</item>
+        <item>Кольраби</item>
+        <item>Кресс-салат</item>
+        <item>Лук-порей</item>
+        <item>Лук репчатый</item>
+        <item>Мангольд</item>
+        <item>Морковь</item>
+        <item>Огурец</item>
+        <item>Паприка</item>
+        <item>Патиссон</item>
+        <item>Петрушка</item>
+        <item>Редис</item>
+        <item>Редька</item>
+        <item>Репа</item>
+        <item>Руккола</item>
+        <item>Салат айсберг</item>
+        <item>Свекла</item>
+        <item>Сельдерей</item>
+        <item>Спаржа</item>
+        <item>Томаты</item>
+        <item>Топинамбур</item>
+        <item>Тыква</item>
+        <item>Укроп</item>
+        <item>Хрен</item>
+        <item>Цветная капуста</item>
+        <item>Цуккини</item>
+        <item>Чеснок</item>
+        <item>Шпинат</item>
+        <item>Щавель</item>
+
+        <!-- Фрукты и ягоды -->
+        <item>Абрикос</item>
+        <item>Айва</item>
+        <item>Алыча</item>
+        <item>Ананас</item>
+        <item>Апельсин</item>
+        <item>Банан</item>
+        <item>Виноград</item>
+        <item>Гранат</item>
+        <item>Грейпфрут</item>
+        <item>Груша</item>
+        <item>Дуриан</item>
+        <item>Инжир</item>
+        <item>Киви</item>
+        <item>Кокос</item>
+        <item>Лимон</item>
+        <item>Лайм</item>
+        <item>Манго</item>
+        <item>Маракуйя</item>
+        <item>Нектарин</item>
+        <item>Папайя</item>
+        <item>Персик</item>
+        <item>Помело</item>
+        <item>Рамбутан</item>
+        <item>Слива</item>
+        <item>Фейхоа</item>
+        <item>Хурма</item>
+        <item>Черешня</item>
+        <item>Черника</item>
+        <item>Шелковица</item>
+        <item>Яблоко</item>
+
+        <!-- Мясо и птица -->
+        <item>Баранина</item>
+        <item>Ветчина</item>
+        <item>Говядина</item>
+        <item>Гусь</item>
+        <item>Индейка</item>
+        <item>Колбаса</item>
+        <item>Кролик</item>
+        <item>Курица</item>
+        <item>Оленина</item>
+        <item>Перепелка</item>
+        <item>Свинина</item>
+        <item>Сало</item>
+        <item>Утка</item>
+        <item>Фарш мясной</item>
+        <item>Цыпленок</item>
+        <item>Язык говяжий</item>
+
+        <!-- Рыба и морепродукты -->
+        <item>Анчоусы</item>
+        <item>Кальмар</item>
+        <item>Камбала</item>
+        <item>Каракатица</item>
+        <item>Карп</item>
+        <item>Кета</item>
+        <item>Креветки</item>
+        <item>Лосось</item>
+        <item>Мидии</item>
+        <item>Мойва</item>
+        <item>Окунь</item>
+        <item>Осетр</item>
+        <item>Палтус</item>
+        <item>Раки</item>
+        <item>Сельдь</item>
+        <item>Семга</item>
+        <item>Скумбрия</item>
+        <item>Судак</item>
+        <item>Треска</item>
+        <item>Тунец</item>
+        <item>Угорь</item>
+        <item>Форель</item>
+        <item>Щука</item>
+
+        <!-- Крупы и бобовые -->
+        <item>Булгур</item>
+        <item>Горох нут</item>
+        <item>Гречка</item>
+        <item>Киноа</item>
+        <item>Кукурузная крупа</item>
+        <item>Маш</item>
+        <item>Перловка</item>
+        <item>Пшено</item>
+        <item>Рис басмати</item>
+        <item>Рис дикий</item>
+        <item>Рис жасмин</item>
+        <item>Соя</item>
+        <item>Фасоль белая</item>
+        <item>Фасоль красная</item>
+        <item>Чечевица</item>
+        <item>Ячневая крупа</item>
+
+        <!-- Молочные продукты -->
+        <item>Айран</item>
+        <item>Йогурт</item>
+        <item>Камамбер</item>
+        <item>Кефир</item>
+        <item>Масло сливочное</item>
+        <item>Моцарелла</item>
+        <item>Пармезан</item>
+        <item>Рикотта</item>
+        <item>Сливки</item>
+        <item>Сметана</item>
+        <item>Сыр фета</item>
+        <item>Творог</item>
+        <item>Тофу</item>
+        <item>Молоко</item>
+
+        <!-- Специи и приправы -->
+        <item>Асафетида</item>
+        <item>Базилик</item>
+        <item>Ваниль</item>
+        <item>Гвоздика</item>
+        <item>Имбирь</item>
+        <item>Кардамон</item>
+        <item>Кайенский перец</item>
+        <item>Кунжут</item>
+        <item>Куркума</item>
+        <item>Майоран</item>
+        <item>Мята</item>
+        <item>Паприка копченая</item>
+        <item>Прованские травы</item>
+        <item>Розмарин</item>
+        <item>Тимьян</item>
+        <item>Чабер</item>
+        <item>Шафран</item>
+        <item>Эстрагон</item>
+
+        <!-- Масла и уксусы -->
+        <item>Арахисовое масло</item>
+        <item>Кокосовое масло</item>
+        <item>Кунжутное масло</item>
+        <item>Оливковое масло</item>
+        <item>Подсолнечное масло</item>
+        <item>Трюфельное масло</item>
+        <item>Яблочный уксус</item>
+        <item>Бальзамический уксус</item>
+
+        <!-- Орехи и сухофрукты -->
+        <item>Арахис</item>
+        <item>Грецкий орех</item>
+        <item>Изюм</item>
+        <item>Кешью</item>
+        <item>Курага</item>
+        <item>Миндаль</item>
+        <item>Финик</item>
+        <item>Фисташки</item>
+        <item>Чернослив</item>
+
+        <!-- Другое -->
+        <item>Агар-агар</item>
+        <item>Желатин</item>
+        <item>Каперсы</item>
+        <item>Кокосовая стружка</item>
+        <item>Крахмал</item>
+        <item>Мисо-паста</item>
+        <item>Морская соль</item>
+        <item>Нори</item>
+        <item>Пивные дрожжи</item>
+        <item>Соевый соус</item>
+        <item>Томатная паста</item>
+        <item>Хлопья чили</item>
+        <item>Хмели-сунели</item>
+        <item>Чатни</item>
+        <item>Шоколад горький</item>
+        <item>Экстракт ванили</item>
+    </string-array>
+</resources>

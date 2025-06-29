@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:title="@string/ai_chat_title"
+        app:navigationIcon="?attr/homeAsUpIndicator" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewMessages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/inputCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="4dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.App.CornerTop"
+        app:cardBackgroundColor="?attr/colorSurface">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp">
+
+        <!-- <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/buttonPhoto"
+                android:layout_width="@dimen/chat_input_size_button"
+                android:layout_height="@dimen/chat_input_size_button"
+                app:fabCustomSize="@dimen/chat_input_size_button"
+                app:shapeAppearanceOverlay="@style/RoundedButton"
+                android:layout_marginEnd="8dp"
+                app:srcCompat="@drawable/attach_file"
+                app:backgroundTint="?attr/colorSecondary"
+                android:contentDescription="Выбор фото" /> -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                app:boxBackgroundColor="?attr/colorSurface">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:minLines="1"
+                    android:maxLines="5"
+                    android:scrollHorizontally="false"
+                    android:hint="@string/ai_chat_message_hint" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/buttonSend"
+                android:layout_width="@dimen/chat_input_size_button"
+                android:layout_height="@dimen/chat_input_size_button"
+                app:fabCustomSize="@dimen/chat_input_size_button"
+                app:shapeAppearanceOverlay="@style/RoundedButton"
+                android:layout_marginStart="8dp"
+                app:srcCompat="@drawable/send"
+                app:backgroundTint="?attr/colorPrimary"
+                android:contentDescription="@string/ai_chat_send_button_description" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

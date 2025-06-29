@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activities.RecipeDetailActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:titleCentered="true"
+            app:title="  " />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="8dp">
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"/>
+                
+                <TextView
+                android:id="@+id/recipe_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                tools:text="Название рецепта" />
+
+                <!-- Изображение рецепта -->
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/recipe_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginBottom="16dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@string/recipe_image_description"
+                    android:adjustViewBounds="true"
+                    app:shapeAppearanceOverlay="@style/RoundedImageView"
+                    tools:src="@drawable/white_card_background" />
+
+                <!-- Секция с ингредиентами -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/background_ingredients_section" 
+                    android:padding="16dp"
+                    android:layout_marginTop="8dp">
+                    
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        
+                        <ImageView
+                            android:id="@+id/basket_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_basket"
+                            app:tint="?attr/colorPrimary"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                            
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/recipe_detail_products_title"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:layout_marginStart="8dp"
+                            app:layout_constraintStart_toEndOf="@id/basket_icon"
+                            app:layout_constraintTop_toTopOf="@id/basket_icon"
+                            app:layout_constraintBottom_toBottomOf="@id/basket_icon" />
+                            
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/recipe_detail_servings_label"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="16sp"/>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/decrease_portion"
+                                style="@style/Widget.Material3.Button"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:text="@string/recipe_detail_decrease_servings_button"
+                                android:textSize="24sp"
+                                android:textStyle="bold"
+                                android:textColor="?attr/colorOnPrimary"
+                                android:padding="0dp"
+                                app:backgroundTint="?attr/colorPrimary"
+                                app:cornerRadius="24dp"
+                                app:rippleColor="?attr/colorOnPrimary"
+                                app:strokeWidth="0dp"
+                                android:stateListAnimator="@null"
+                                android:focusable="true"
+                                android:clickable="true"
+                                android:contentDescription="@string/recipe_detail_decrease_servings_description"
+                                android:backgroundTint="?attr/colorPrimary"
+                                app:elevation="2dp"
+                                app:iconTint="@android:color/white"
+                                app:iconGravity="textStart"
+                                app:iconPadding="0dp"
+                                android:scaleType="center"
+                                android:gravity="center"
+                                android:minWidth="0dp"
+                                android:minHeight="0dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                app:shapeAppearanceOverlay="@style/RoundedButton" />
+                                
+                            <TextView
+                                android:id="@+id/portion_count"
+                                android:layout_width="40dp"
+                                android:layout_height="32dp"
+                                android:elevation="4dp"
+                                android:text="1"
+                                android:textColor="?android:attr/textColorPrimary"
+                                android:gravity="center"
+                                android:textSize="16sp"
+                                android:background="@drawable/portion_count_background"
+                                android:layout_marginHorizontal="4dp"
+                                android:textStyle="bold" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/increase_portion"
+                                style="@style/Widget.Material3.Button"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:text="@string/recipe_detail_increase_servings_button"
+                                android:textSize="24sp"
+                                android:textStyle="bold"
+                                android:textColor="?attr/colorOnPrimary"
+                                android:padding="0dp"
+                                app:backgroundTint="?attr/colorPrimary"
+                                app:cornerRadius="24dp"
+                                app:rippleColor="?attr/colorOnPrimary"
+                                app:strokeWidth="0dp"
+                                android:stateListAnimator="@null"
+                                android:focusable="true"
+                                android:clickable="true"
+                                android:contentDescription="@string/recipe_detail_increase_servings_description"
+                                android:backgroundTint="?attr/colorPrimary"
+                                app:elevation="2dp"
+                                app:iconTint="@android:color/white"
+                                app:iconGravity="textStart"
+                                app:iconPadding="0dp"
+                                android:scaleType="center"
+                                android:gravity="center"
+                                android:minWidth="0dp"
+                                android:minHeight="0dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:insetLeft="0dp"
+                                android:insetRight="0dp"
+                                app:shapeAppearanceOverlay="@style/RoundedButton" />
+
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/recipe_detail_ingredients_title"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="16sp"
+                        android:layout_marginTop="16dp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/ingredients_recyclerview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="16dp">
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Секция с шагами приготовления -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/recipe_detail_start_cooking_button"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginHorizontal="16dp" />
+                    
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/steps_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginHorizontal="16dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+                
+                <TextView
+                    android:id="@+id/recipe_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:gravity="end"
+                    android:textSize="14sp"
+                    android:textStyle="italic"
+                    android:textColor="?android:attr/textColorSecondary"
+                    tools:text="Добавлено: 01.03.2023" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/like_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/recipe_detail_like_button_description"
+        android:src="@drawable/ic_favorite"
+        app:backgroundTint="?attr/colorError"
+        app:tint="?attr/colorOnError" />
+    
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
