@@ -209,6 +209,15 @@ public class UnifiedRecipeRepository {
                 } else {
                     Log.w(TAG, "Ответ сервера не содержит ID рецепта");
                 }
+                
+                // Устанавливаем URL изображения из ответа сервера
+                if (response != null && response.getPhotoUrl() != null) {
+                    savedRecipe.setPhoto_url(response.getPhotoUrl());
+                    Log.d(TAG, "URL изображения получен от сервера: " + response.getPhotoUrl());
+                } else {
+                    Log.w(TAG, "Ответ сервера не содержит URL изображения");
+                }
+                
                 AppExecutors.getInstance().diskIO().execute(() -> {
                     localRepository.insert(savedRecipe);
                     mainThreadHandler.post(() -> callback.onSuccess(savedRecipe));
@@ -227,12 +236,19 @@ public class UnifiedRecipeRepository {
             @Override
             public void onSuccess(GeneralServerResponse response, Recipe updatedRecipe) {
                 // После успешного обновления на сервере, обновляем в локальной БД
+                // Используем оригинальный recipe с обновленными данными, а не updatedRecipe из коллбэка
+                Recipe recipeToSave = recipe;
+                
+                // Обновляем URL изображения если получен новый с сервера
                 if(response != null && response.getPhotoUrl() != null){
-                    updatedRecipe.setPhoto_url(response.getPhotoUrl());
+                    recipeToSave.setPhoto_url(response.getPhotoUrl());
+                    Log.d(TAG, "URL изображения обновлен от сервера: " + response.getPhotoUrl());
+                } else {
+                    Log.d(TAG, "Сервер не вернул новый URL изображения при обновлении рецепта");
                 }
                 AppExecutors.getInstance().diskIO().execute(() -> {
-                    localRepository.update(updatedRecipe);
-                    mainThreadHandler.post(() -> callback.onSuccess(updatedRecipe));
+                    localRepository.update(recipeToSave);
+                    mainThreadHandler.post(() -> callback.onSuccess(recipeToSave));
                 });
             }
 

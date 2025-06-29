@@ -141,7 +141,7 @@ public class UserPermissionUseCase {
         }
         
         Log.d(TAG, "canEditRecipe: доступ запрещен - пользователь не автор и не администратор");
-        return PermissionResult.denied("У вас нет прав на редактирование этого рецепта");
+        return PermissionResult.denied("Вы не являетесь автором этого рецепта или модератором");
     }
     
     /**
@@ -150,12 +150,32 @@ public class UserPermissionUseCase {
      * @return PermissionResult с результатом проверки
      */
     public PermissionResult canDeleteRecipe(String recipeOwnerId) {
-        // Логика такая же как для редактирования
-        PermissionResult result = canEditRecipe(recipeOwnerId);
-        if (!result.hasPermission()) {
-            return PermissionResult.denied(result.getReason().replace("редактирование", "удаление"));
+        // Проверяем авторизацию
+        if (!isUserLoggedIn()) {
+            return PermissionResult.denied("Пользователь не авторизован");
         }
-        return result;
+        
+        String currentUserId = getCurrentUserId();
+        
+        // Проверяем валидность ID пользователя
+        if (currentUserId == null || currentUserId.equals("0")) {
+            return PermissionResult.denied("Некорректный ID пользователя");
+        }
+        
+        // Проверяем права администратора
+        if (isAdmin()) {
+            Log.d(TAG, "canDeleteRecipe: доступ разрешен - пользователь администратор");
+            return PermissionResult.allowed();
+        }
+        
+        // Проверяем, является ли пользователь автором рецепта
+        if (isRecipeOwner(currentUserId, recipeOwnerId)) {
+            Log.d(TAG, "canDeleteRecipe: доступ разрешен - пользователь автор рецепта");
+            return PermissionResult.allowed();
+        }
+        
+        Log.d(TAG, "canDeleteRecipe: доступ запрещен - пользователь не автор и не администратор");
+        return PermissionResult.denied("Вы не являетесь автором этого рецепта или модератором");
     }
     
     /**

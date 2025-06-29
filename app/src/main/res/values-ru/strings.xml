@@ -214,4 +214,8 @@
     <string name="validation_steps_empty">Добавьте хотя бы один шаг приготовления</string>
     <string name="validation_steps_invalid">Заполните описание для каждого шага</string>
     <string name="validation_image_empty">Выберите изображение для рецепта</string>
+
+    <string name="moderation_failed">Рецепт не прошел модерацию: %s</string>
+    <string name="moderation_failed_generic">Рецепт не прошел модерацию. Пожалуйста, проверьте содержимое и попробуйте снова.</string>
+    <string name="moderation_checking">Рецепт проверяется модерацией...</string>
 </resources> 

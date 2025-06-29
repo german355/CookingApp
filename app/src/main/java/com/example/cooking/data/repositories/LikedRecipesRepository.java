@@ -48,53 +48,33 @@ public class LikedRecipesRepository extends NetworkRepository {
      * Запускает синхронизацию с сервером если есть сеть
      */
     public void syncLikedRecipesFromServer() {
-        Log.d(TAG, "syncLikedRecipesFromServer: START"); // Новый лог
+        Log.d(TAG, "syncLikedRecipesFromServer: START");
         if (!isNetworkAvailable()) {
-            Log.d(TAG, "syncLikedRecipesFromServer: Network is NOT available. Skipping sync."); // Измененный лог
+            Log.d(TAG, "syncLikedRecipesFromServer: Network is NOT available. Skipping sync.");
             return;
         }
-        Log.d(TAG, "syncLikedRecipesFromServer: Network IS available. Proceeding with sync."); // Новый лог
-        Disposable d = Completable.fromAction(this::fetchAndStoreLikedRecipes)
+        Log.d(TAG, "syncLikedRecipesFromServer: Network IS available. Proceeding with sync.");
+
+        disposables.add(
+            apiService.getLikedRecipes()
                 .subscribeOn(Schedulers.io())
+                .doOnSuccess(response -> {
+                    if (response.isSuccess() && response.getRecipeIds() != null) {
+                        Log.d(TAG, "[DB Sync] Получен успешный ответ с " + response.getRecipeIds().size() + " ID лайков.");
+                        storeServerLikedRecipes(response.getRecipeIds());
+                    } else {
+                        String errorMessage = response.getMessage() != null ? response.getMessage() : "Ответ не содержит данных.";
+                        Log.e(TAG, "[DB Sync] Ошибка при синхронизации лайков (success=false): " + errorMessage);
+                    }
+                })
+                .doOnError(throwable -> {
+                     Log.e(TAG, "[DB Sync] Исключение при выполнении запроса синхронизации лайков", throwable);
+                })
                 .subscribe(
-                        () -> {},
-                        throwable -> Log.e(TAG, "Ошибка syncLikedRecipesFromServer", throwable)
-                );
-        disposables.add(d);
-    }
-
-    /**
-     * Выполняет сетевой запрос и сохраняет результат в БД.
-     */
-    private void fetchAndStoreLikedRecipes() {
-        Log.d(TAG, "fetchAndStoreLikedRecipes: START"); // <--- Новый лог (вместо старого [fetchAndStore]...)
-        // Используем общий ApiService
-        retrofit2.Call<LikedRecipesResponse> call = apiService.getLikedRecipes();
-        try {
-            // Используем execute() для синхронного выполнения в фоновом потоке Executor'a
-            retrofit2.Response<LikedRecipesResponse> response = call.execute();
-            Log.d(TAG, "[fetchAndStore] Получен ответ от сервера: Code=" + response.code() + ", isSuccessful="
-                    + response.isSuccessful());
-
-            if (response.isSuccessful() && response.body() != null) {
-                LikedRecipesResponse likedResponse = response.body();
-                if (likedResponse.isSuccess()) {
-                    List<Integer> recipeIds = likedResponse.getRecipeIds();
-                    storeServerLikedRecipes(recipeIds);
-                } else {
-                    // Сервер вернул success=false
-                    Log.e(TAG, "[fetchAndStore] Ошибка при синхронизации лайкнутых рецептов (success=false): " +
-                            "Code: " + response.code() + ", Message: " + likedResponse.getMessage());
-                }
-            } else {
-                // Неуспешный HTTP ответ
-                Log.e(TAG, "[fetchAndStore] Ошибка при синхронизации лайкнутых рецептов (HTTP неудача): " +
-                        "Code: " + response.code() + ", Message: " + response.message());
-            }
-        } catch (Exception e) {
-            // Исключение при выполнении запроса или обработке ответа
-            Log.e(TAG, "[fetchAndStore] Исключение при синхронизации лайкнутых рецептов", e);
-        }
+                    response -> Log.i(TAG, "[DB Sync] Синхронизация лайков успешно завершена."),
+                    throwable -> Log.e(TAG, "Критическая ошибка в цепочке syncLikedRecipesFromServer", throwable)
+                )
+        );
     }
 
     /**

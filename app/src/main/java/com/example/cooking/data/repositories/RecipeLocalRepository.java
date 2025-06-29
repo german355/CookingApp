@@ -141,7 +141,6 @@ public class RecipeLocalRepository extends NetworkRepository{
     
     /**
      * Обновить рецепт в базе данных
-     * @param recipe рецепт для обновления
      */
     public void update(Recipe recipe) {
         PerformanceMonitor.measureDatabaseOperation("update_recipe", () -> {
@@ -154,8 +153,6 @@ public class RecipeLocalRepository extends NetworkRepository{
     
     /**
      * Обновить состояние лайка рецепта
-     * @param recipeId идентификатор рецепта
-     * @param isLiked новое состояние лайка
      */
     public void updateLikeStatus(int recipeId, boolean isLiked) {
         PerformanceMonitor.measureDatabaseOperation("update_like_status", () -> {
@@ -171,8 +168,6 @@ public class RecipeLocalRepository extends NetworkRepository{
     
     /**
      * Синхронно получить рецепт по идентификатору
-     * @param recipeId идентификатор рецепта
-     * @return рецепт или null, если не найден
      */
     public Recipe getRecipeByIdSync(int recipeId) {
         return PerformanceMonitor.measureOperation("get_recipe_by_id_sync", () -> {
@@ -190,7 +185,6 @@ public class RecipeLocalRepository extends NetworkRepository{
     
     /**
      * Удалить рецепт из базы данных по идентификатору
-     * @param recipeId идентификатор рецепта для удаления
      */
     public void deleteRecipe(int recipeId) {
         PerformanceMonitor.measureDatabaseOperation("delete_recipe", () -> {
@@ -220,7 +214,6 @@ public class RecipeLocalRepository extends NetworkRepository{
      * - вставляет новые рецепты
      * - обновляет измененные рецепты  
      * - удаляет отсутствующие рецепты
-     * @param newRecipes список новых рецептов с сервера
      */
     public void smartReplaceRecipes(List<Recipe> newRecipes) {
         PerformanceMonitor.measureDatabaseOperation("smart_replace_recipes", () -> {
@@ -303,7 +296,6 @@ public class RecipeLocalRepository extends NetworkRepository{
     /**
      * Заменить все рецепты в базе данных с оптимизациями производительности.
      * Использует ленивую сериализацию и мониторинг производительности.
-     * @param recipes список новых рецептов
      */
     public void replaceAllRecipes(List<Recipe> recipes) {
         PerformanceMonitor.measureDatabaseOperation("replace_all_recipes", () -> {
