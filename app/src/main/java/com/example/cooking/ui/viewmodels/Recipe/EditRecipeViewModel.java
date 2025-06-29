@@ -217,7 +217,6 @@ public class EditRecipeViewModel extends BaseRecipeFormViewModel {
                 currentRecipeId,
                 currentPhotoUrl
             )
-            .doFinally(() -> state.setIsSaving(false))
             .subscribe(
                 updatedRecipe -> {
                     Log.d(TAG, "saveRecipe: Recipe построен, userId = " + updatedRecipe.getUserId());
@@ -231,6 +230,7 @@ public class EditRecipeViewModel extends BaseRecipeFormViewModel {
                             public void onSuccess(com.example.cooking.network.models.GeneralServerResponse response, Recipe savedRecipe) {
                                 AppExecutors.getInstance().mainThread().execute(() -> {
                                     state.setSaveResult(true);
+                                    state.setIsSaving(false); // Снимаем флаг загрузки
                                 });
                                 Log.d(TAG, "Рецепт успешно обновлен");
                             }
@@ -239,6 +239,7 @@ public class EditRecipeViewModel extends BaseRecipeFormViewModel {
                             public void onFailure(String error, com.example.cooking.network.models.GeneralServerResponse errorResponse) {
                                 AppExecutors.getInstance().mainThread().execute(() -> {
                                     state.setErrorMessage(error);
+                                    state.setIsSaving(false); // Снимаем флаг загрузки
                                 });
                                 Log.e(TAG, "Ошибка при обновлении рецепта: " + error);
                             }
@@ -248,6 +249,7 @@ public class EditRecipeViewModel extends BaseRecipeFormViewModel {
                 error -> {
                     Log.e(TAG, "Ошибка при построении рецепта", error);
                     state.setErrorMessage(error.getMessage());
+                    state.setIsSaving(false); // Снимаем флаг загрузки и в случае ошибки построения
                 }
             )
         );

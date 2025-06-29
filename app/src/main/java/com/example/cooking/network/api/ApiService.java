@@ -61,14 +61,6 @@ public interface ApiService {
     // =============== Рецепты - получение и поиск ===============
     
     /**
-     * Получает список всех рецептов.
-     * Идентификация пользователя происходит через Firebase токен в заголовках.
-     * @return Call объект с ответом типа RecipesResponse
-     */
-    @GET("recipes")
-    Call<RecipesResponse> getRecipes();
-    
-    /**
      * Получает список всех рецептов (RxJava версия).
      * Идентификация пользователя происходит через Firebase токен в заголовках.
      * @return Single объект с ответом типа RecipesResponse
@@ -79,23 +71,23 @@ public interface ApiService {
     /**
      * Получает список ID лайкнутых рецептов пользователя.
      * Идентификация пользователя происходит через Firebase токен в заголовках.
-     * @return Call объект с ответом типа LikedRecipesResponse
+     * @return Single объект с ответом типа LikedRecipesResponse
      */
     @GET("recipes/liked")
-    Call<LikedRecipesResponse> getLikedRecipes();
+    Single<LikedRecipesResponse> getLikedRecipes();
     
     /**
      * Простой поиск рецептов по строке.
      * @param query строка поиска
-     * @return Call объект с ответом типа SearchResponse
+     * @return Single объект с ответом типа SearchResponse
      */
     @GET("recipes/search-simple")
-    Call<SearchResponse> searchRecipesSimple(@Query("q") String query);
+    Single<SearchResponse> searchRecipesSimple(@Query("q") String query);
     
     // =============== Рецепты - создание, обновление, удаление ===============
     
     /**
-     * Метод для ДОБАВЛЕНИЯ нового рецепта с фото
+     * Метод для ДОБАВЛЕНИЯ нового рецепта 
      */
     @Multipart
     @POST("recipes/add")
@@ -104,17 +96,6 @@ public interface ApiService {
             @Part("ingredients") RequestBody ingredients,
             @Part("instructions") RequestBody instructions,
             @Part MultipartBody.Part photo
-    );
-    
-    /**
-     * Метод для ДОБАВЛЕНИЯ нового рецепта без фото
-     */
-    @Multipart
-    @POST("recipes/add")
-    Single<GeneralServerResponse> addRecipeWithoutPhoto(
-            @Part("title") RequestBody title,
-            @Part("ingredients") RequestBody ingredients,
-            @Part("instructions") RequestBody instructions
     );
     
     /**
@@ -138,14 +119,6 @@ public interface ApiService {
 
     // =============== Лайки рецептов ===============
 
-    /**
-     * Поставить/снять лайк рецепту
-     * @param recipeId ID рецепта
-     * @return ответ сервера
-     */
-    @POST("recipe/like/{id}")
-    Call<GeneralServerResponse> toggleLikeRecipe(@Path("id") int recipeId);
-
     @POST("recipes/{recipeId}/like")
     Completable toggleLikeRecipeCompletable(@Path("recipeId") int recipeId);
 
@@ -155,10 +128,10 @@ public interface ApiService {
      * @param query строка поиска
      * @param page номер страницы
      * @param perPage количество рецептов на странице
-     * @return Call объект с ответом типа SearchResponse
+     * @return Single объект с ответом типа SearchResponse
      */
     @GET("search")
-    Call<SearchResponse> searchRecipes(
+    Single<SearchResponse> searchRecipes(
             @Query("q")        String query,
             @Query("page")     int page,
             @Query("per_page") int perPage
@@ -171,18 +144,18 @@ public interface ApiService {
      * Запуск новой сессии AI-чата
      */
     @POST("chatbot/start-session")
-    Call<ChatSessionResponse> startChatSession();
+    Single<ChatSessionResponse> startChatSession();
 
     /**
      * Отправка сообщения в AI-чат
      * @param request тело запроса с текстом сообщения
      */
     @POST("chatbot/send-message")
-    Call<ChatMessageResponse> sendChatMessage(@Body ChatMessageRequest request);
+    Single<ChatMessageResponse> sendChatMessage(@Body ChatMessageRequest request);
 
     /**
      * Получение истории сообщений текущей сессии AI-чатa
      */
     @GET("chatbot/get-history")
-    Call<ChatHistoryResponse> getChatHistory();
+    Single<ChatHistoryResponse> getChatHistory();
 } 

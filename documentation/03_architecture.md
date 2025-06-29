@@ -74,7 +74,7 @@ sequenceDiagram
     Repository-->>ViewModel: "onNext(кэшированные рецепты)"
     ViewModel-->>View: "Обновить UI (показать кэш)"
 
-    Repository->>ApiService: "getRecipes()"
+    Repository->>ApiService: "getRecipesRx()"
     ApiService-->>Repository: "новые рецепты"
     Repository->>RecipeDao: "insertAll(новые рецепты)"
     Repository->>RecipeDao: "getAllRecipes()"

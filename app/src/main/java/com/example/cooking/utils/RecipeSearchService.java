@@ -1,204 +1,149 @@
 package com.example.cooking.utils;
 
+import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.example.cooking.R;
 import com.example.cooking.domain.entities.Recipe;
 import com.example.cooking.network.api.ApiService;
 import com.example.cooking.network.models.recipeResponses.SearchResponse;
 import com.example.cooking.network.services.NetworkService;
-import com.example.cooking.network.utils.ApiCallHandler;
-import retrofit2.Call;
-import android.os.Handler;
-import android.os.Looper;
-import android.content.Context;
-import android.widget.Toast;
-import android.util.Log;
-import java.util.Collections;
-import java.util.ArrayList;
-import java.util.List;
 import com.example.cooking.data.repositories.RecipeLocalRepository;
-import com.example.cooking.R;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class RecipeSearchService {
-    
+
     private static final String TAG = "RecipeSearchService";
-    
+
     public interface SearchCallback {
         void onSearchResults(List<Recipe> recipes);
         void onSearchError(String error);
     }
-    
+
     private final Context context;
     private final ApiService apiService;
-    private final Handler uiHandler = new Handler(Looper.getMainLooper());
-    
+    private final RecipeLocalRepository localRepository;
+    private final CompositeDisposable disposables = new CompositeDisposable();
+
     public RecipeSearchService(Context context) {
         this.context = context.getApplicationContext();
         this.apiService = NetworkService.getApiService(context);
+        this.localRepository = new RecipeLocalRepository(context);
     }
-    
-    /**
-     * Поиск рецептов по запросу
-     */
+
     public void searchRecipes(String query, SearchCallback callback) {
         Log.d(TAG, "searchRecipes start for query: '" + query + "'");
-        Log.d(TAG, "-------------- НАЧАЛО ПОИСКА --------------");
-        Log.d(TAG, "Поисковый запрос: '" + query + "'");
-        
+
         if (query == null || query.trim().isEmpty()) {
-            Log.d(TAG, "Поисковый запрос пуст или null, возвращаем пустой список");
+            Log.d(TAG, "Поисковый запрос пуст, возвращаем пустой список.");
             callback.onSearchResults(Collections.emptyList());
             return;
         }
-        
+
         MySharedPreferences preferences = new MySharedPreferences(context);
         boolean smartSearchEnabled = preferences.getBoolean("smart_search_enabled", true);
-        Log.d(TAG, "smartSearchEnabled: " + smartSearchEnabled);
-        
-        Log.d("RecipeSearchService", "Smart search enabled from prefs: " + smartSearchEnabled);
-        if (smartSearchEnabled) {
-            Log.d(TAG, "Использую умный поиск для запроса: '" + query + "'");
-            int page = 1;
-            int perPage = 20;
+        Log.d(TAG, "Smart search enabled: " + smartSearchEnabled);
 
-            try {
-                String formattedQuery = "\"" + query.trim() + "\"";
-                Log.d(TAG, "Формартированный запрос: " + formattedQuery);
-                
-                final Call<SearchResponse> smartCall = apiService.searchRecipes(formattedQuery, page, perPage);
-                
-                String fullUrl = smartCall.request().url().toString();
-                Log.d(TAG, "URL умного поиска: " + fullUrl);
+        Single<List<Recipe>> searchSingle = smartSearchEnabled
+                ? performSmartSearch(query)
+                : performSimpleSearch(query);
 
-                useAsyncCall(smartCall, query, callback);
-                
-            } catch (Exception e) { 
-                Log.e(TAG, "Ошибка подготовки умного поиска, exception:", e);
-                showToast(context.getString(R.string.search_service_smart_search_error));
-                fallbackToSimpleSearch(query, callback);
-            }
-        } else {
-            Log.d(TAG, "smartSearchEnabled=false, переходим к простому поиску");
-            fallbackToSimpleSearch(query, callback);
-        }
-    }
-    
-    /**
-     * Запасной метод для использования простого поиска
-     */
-    private void fallbackToSimpleSearch(String query, SearchCallback callback) {
-        Log.d("RecipeSearchService", "Использую простой поиск для запроса: " + query);
-        Log.d(TAG, "fallbackToSimpleSearch start for query: '" + query + "'");
-        Call<SearchResponse> call = apiService.searchRecipesSimple(query.trim());
-        Log.d("RecipeSearchService", "URL простого поиска: " + call.request().url());
-        ApiCallHandler.execute(call, new ApiCallHandler.ApiCallback<SearchResponse>() {
-            @Override
-            public void onSuccess(SearchResponse response) {
-                List<String> ids = response != null && response.getData() != null
-                    ? response.getData().getResults() : Collections.emptyList();
-                Log.d(TAG, "fallbackToSimpleSearch onSuccess ids size: " + ids.size());
-                AppExecutors.getInstance().diskIO().execute(() -> {
-                    RecipeLocalRepository localRepo = new RecipeLocalRepository(context);
-                    List<Recipe> fullRecipes = new ArrayList<>();
-                    for (String idStr : ids) {
-                        try {
-                            int id = Integer.parseInt(idStr);
-                            Recipe full = localRepo.getRecipeByIdSync(id);
-                            if (full != null) fullRecipes.add(full);
-                        } catch (NumberFormatException ignore) {}
+        disposables.add(
+            searchSingle
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    recipes -> {
+                        Log.d(TAG, "Search successful, found recipes: " + recipes.size());
+                        callback.onSearchResults(recipes);
+                    },
+                    throwable -> {
+                        Log.e(TAG, "Search failed", throwable);
+                        callback.onSearchError(context.getString(R.string.search_service_generic_error));
                     }
-                    uiHandler.post(() -> {
-                        callback.onSearchResults(fullRecipes);
-                        Log.d(TAG, "fallbackToSimpleSearch posting fullRecipes size: " + fullRecipes.size());
-                    });
+                )
+        );
+    }
+
+    private Single<List<Recipe>> performSmartSearch(String query) {
+        int page = 1;
+        int perPage = 20;
+        String formattedQuery = "\"" + query.trim() + "\"";
+        Log.d(TAG, "Performing smart search with query: " + formattedQuery);
+
+        return apiService.searchRecipes(formattedQuery, page, perPage)
+                .flatMap(this::processSearchResponse)
+                .doOnSuccess(recipes -> {
+                    if (!recipes.isEmpty()) {
+                        String foundMessage = context.getResources().getQuantityString(R.plurals.search_service_recipes_found, recipes.size(), recipes.size());
+                        showToastOnMainThread(foundMessage);
+                    }
+                })
+                .onErrorResumeNext(throwable -> {
+                    Log.w(TAG, "Smart search failed, falling back to simple search.", throwable);
+                    showToastOnMainThread(context.getString(R.string.search_service_smart_search_error));
+                    return performSimpleSearch(query);
                 });
+    }
+
+    private Single<List<Recipe>> performSimpleSearch(String query) {
+        Log.d(TAG, "Performing simple search with query: " + query);
+        return apiService.searchRecipesSimple(query.trim())
+                .flatMap(this::processSearchResponse);
+    }
+
+    private Single<List<Recipe>> processSearchResponse(SearchResponse response) {
+        if (response == null || response.getData() == null || response.getData().getResults() == null) {
+            Log.d(TAG, "Response or data is null, returning empty list.");
+            return Single.just(Collections.emptyList());
+        }
+
+        List<String> ids = response.getData().getResults();
+        if (ids.isEmpty()) {
+            Log.d(TAG, "No recipe IDs found in response.");
+            return Single.just(Collections.emptyList());
+        }
+
+        Log.d(TAG, "Processing " + ids.size() + " recipe IDs from search response.");
+        return Single.fromCallable(() -> {
+            List<Recipe> fullRecipes = new ArrayList<>();
+            int foundCount = 0;
+            int notFoundCount = 0;
+            for (String idStr : ids) {
+                try {
+                    int id = Integer.parseInt(idStr);
+                    Recipe full = localRepository.getRecipeByIdSync(id);
+                    if (full != null) {
+                        fullRecipes.add(full);
+                        foundCount++;
+                    } else {
+                        notFoundCount++;
+                    }
+                } catch (NumberFormatException e) {
+                    Log.w(TAG, "Invalid recipe ID format: " + idStr, e);
+                }
             }
-            @Override
-            public void onError(String errorMessage) {
-                Log.e(TAG, "fallbackToSimpleSearch onError: " + errorMessage);
-                callback.onSearchError(context.getString(R.string.search_service_generic_error));
-            }
+            Log.d(TAG, "DB lookup complete. Found: " + foundCount + ", Not Found: " + notFoundCount);
+            return fullRecipes;
         });
     }
-    
-    /**
-     * Использует асинхронный вызов API
-     */
-    private void useAsyncCall(Call<SearchResponse> callToExecute, String query, SearchCallback callback) {
-        ApiCallHandler.execute(callToExecute, new ApiCallHandler.ApiCallback<SearchResponse>() {
-            @Override
-            public void onSuccess(SearchResponse response) {
-                Log.d(TAG, "useAsyncCall onSuccess response: " + response);
 
-                if (response == null) {
-                    Log.d(TAG, "useAsyncCall response null, fallbackToSimpleSearch");
-                    fallbackToSimpleSearch(query, callback);
-                    return;
-                }
-                
-                if (response.getData() == null) {
-                    Log.d(TAG, "useAsyncCall data null, fallbackToSimpleSearch");
-                    fallbackToSimpleSearch(query, callback);
-                    return;
-                }
-                
-                if (response.getData().getResults() == null) {
-                    Log.d(TAG, "useAsyncCall results null, fallbackToSimpleSearch");
-                    fallbackToSimpleSearch(query, callback);
-                    return;
-                }
-                
-                List<String> ids = response.getData().getResults();
-                Log.d(TAG, "useAsyncCall initial ids size: " + ids.size());
-
-                if (!ids.isEmpty()) {
-                    String foundMessage = context.getResources().getQuantityString(R.plurals.search_service_recipes_found, ids.size(), ids.size());
-                    showToast(foundMessage);
-                    AppExecutors.getInstance().diskIO().execute(() -> {
-                        RecipeLocalRepository localRepo = new RecipeLocalRepository(context);
-                        List<Recipe> fullRecipes = new ArrayList<>();
-                        int foundCount = 0;
-                        int notFoundCount = 0;
-                        
-                        for (String idStr : ids) {
-                            try {
-                                int id = Integer.parseInt(idStr);
-                                Recipe full = localRepo.getRecipeByIdSync(id);
-
-                                if (full != null) {
-                                    fullRecipes.add(full);
-                                    foundCount++;
-                                } else {
-                                    notFoundCount++;
-                                }
-                            } catch (NumberFormatException e) {
-                            }
-                        }
-
-                        Log.d(TAG, "useAsyncCall DB load foundCount: " + foundCount + ", notFoundCount: " + notFoundCount + ", fullRecipes size: " + fullRecipes.size());
-                        
-                        final List<Recipe> finalRecipes = new ArrayList<>(fullRecipes); // создаем копию для безопасной передачи
-                        uiHandler.post(() -> {
-                            Log.d(TAG, "useAsyncCall posting finalRecipes size: " + finalRecipes.size());
-                            callback.onSearchResults(finalRecipes);
-                        });
-                    });
-                    return;
-                }
-                Log.d(TAG, "useAsyncCall ids empty, fallbackToSimpleSearch");
-                fallbackToSimpleSearch(query, callback);
-            }
-            @Override
-            public void onError(String errorMessage) {
-                Log.e(TAG, "useAsyncCall onError: " + errorMessage);
-                showToast(context.getString(R.string.search_service_search_on_vacation));
-                fallbackToSimpleSearch(query, callback);
-            }
-        });
+    public void cancel() {
+        disposables.clear();
     }
-    
-    /**
-     * Показывает тост для отладки
-     */
-    private void showToast(String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+
+    private void showToastOnMainThread(String message) {
+        AndroidSchedulers.mainThread().scheduleDirect(() -> {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        });
     }
 }

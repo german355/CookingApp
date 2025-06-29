@@ -120,9 +120,7 @@ public class RecipeRemoteRepository extends NetworkRepository {
         }
         
         disposables.add(
-            (imagePart != null 
-                ? apiService.addRecipe(title, ingredients, instructions, imagePart)
-                : apiService.addRecipeWithoutPhoto(title, ingredients, instructions))
+            apiService.addRecipe(title, ingredients, instructions, imagePart)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
