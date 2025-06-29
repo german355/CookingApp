@@ -91,7 +91,6 @@ public class AddRecipeViewModel extends BaseRecipeFormViewModel {
                     null  // новый рецепт, URL нет
                 );
             })
-            .doFinally(() -> isLoading.setValue(false))
             .subscribe(
                 newRecipe -> {
                     Log.d(TAG, "Recipe построен: " + newRecipe.getTitle());
@@ -103,6 +102,9 @@ public class AddRecipeViewModel extends BaseRecipeFormViewModel {
                         new RecipeManagementUseCase.RecipeSaveCallback() {
                             @Override
                             public void onSuccess(com.example.cooking.network.models.GeneralServerResponse response, Recipe savedRecipe) {
+                                // Скрываем индикатор загрузки при успехе
+                                isLoading.postValue(false);
+                                
                                 if (response.isSuccess() && savedRecipe != null) {
                                     saveSuccess.postValue(true);
                                     Log.d(TAG, "Рецепт успешно сохранен с ID: " + savedRecipe.getId());
@@ -118,9 +120,24 @@ public class AddRecipeViewModel extends BaseRecipeFormViewModel {
 
                             @Override
                             public void onFailure(String error, com.example.cooking.network.models.GeneralServerResponse errorResponse) {
+                                // Скрываем индикатор загрузки при ошибке
+                                isLoading.postValue(false);
+                                
                                 String detailedError = error;
                                 if (errorResponse != null && errorResponse.getMessage() != null) {
                                     detailedError += " (Сервер: " + errorResponse.getMessage() + ")";
+                                }
+
+                                // Специальная обработка ошибок модерации
+                                if (error != null && error.startsWith("Модерация:")) {
+                                    String moderationMessage = error.substring("Модерация:".length()).trim();
+                                    if (moderationMessage.isEmpty()) {
+                                        errorMessage.postValue(getApplication().getString(R.string.moderation_failed_generic));
+                                    } else {
+                                        errorMessage.postValue(getApplication().getString(R.string.moderation_failed, moderationMessage));
+                                    }
+                                    Log.w(TAG, "Рецепт отклонен модерацией: " + moderationMessage);
+                                    return;
                                 }
 
                                 // Если ошибка связана с дублированием рецепта, считаем это успешным сохранением
@@ -141,6 +158,8 @@ public class AddRecipeViewModel extends BaseRecipeFormViewModel {
                     );
                 },
                 error -> {
+                    // Скрываем индикатор загрузки при ошибке валидации
+                    isLoading.setValue(false);
                     Log.e(TAG, "Ошибка валидации или построения рецепта", error);
                     errorMessage.setValue(error.getMessage());
                 }
@@ -208,6 +227,13 @@ public class AddRecipeViewModel extends BaseRecipeFormViewModel {
      */
     public boolean hasImage() {
         return imageBytes != null && imageBytes.length > 0;
+    }
+    
+    /**
+     * Очищает сообщение об ошибке
+     */
+    public void clearErrorMessage() {
+        errorMessage.setValue(null);
     }
     
 

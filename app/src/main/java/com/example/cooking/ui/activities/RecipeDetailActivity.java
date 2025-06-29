@@ -365,47 +365,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.d(TAG, "onCreateOptionsMenu: Начало создания меню");
+        Log.d(TAG, "onCreateOptionsMenu: Создание меню");
         getMenuInflater().inflate(R.menu.menu_recipe_detail, menu);
         
-        // Получаем ID создателя рецепта
-        String recipeCreatorId = currentRecipe != null ? currentRecipe.getUserId() : null;
-        
-        // Используем UserPermissionUseCase для проверки прав
-        boolean canEdit = userPermissionUseCase.canEditRecipe(recipeCreatorId).hasPermission();
-        boolean canDelete = userPermissionUseCase.canDeleteRecipe(recipeCreatorId).hasPermission();
-        
-        Log.d(TAG, "onCreateOptionsMenu: canEdit = " + canEdit + ", canDelete = " + canDelete);
-        Log.d(TAG, "onCreateOptionsMenu: " + userPermissionUseCase.getUserPermissionInfo());
-
-        // Находим пункты меню
-        MenuItem moreItem = menu.findItem(R.id.action_more);
-        Log.d(TAG, "onCreateOptionsMenu: moreItem найден? " + (moreItem != null));
-        
-        if (moreItem != null && moreItem.hasSubMenu()) {
-            Log.d(TAG, "onCreateOptionsMenu: moreItem имеет субменю");
-            Menu subMenu = moreItem.getSubMenu();
-            
-            MenuItem editItem = subMenu.findItem(R.id.action_edit);
-            MenuItem deleteItem = subMenu.findItem(R.id.action_delete);
-
-            Log.d(TAG, "onCreateOptionsMenu: editItem найден? " + (editItem != null));
-            Log.d(TAG, "onCreateOptionsMenu: deleteItem найден? " + (deleteItem != null));
-
-            // Управляем видимостью пунктов меню
-            if (editItem != null) {
-                editItem.setVisible(canEdit);
-                Log.d(TAG, "onCreateOptionsMenu: editItem.setVisible(" + canEdit + ")");
-            }
-            if (deleteItem != null) {
-                deleteItem.setVisible(canDelete);
-                Log.d(TAG, "onCreateOptionsMenu: deleteItem.setVisible(" + canDelete + ")");
-            }
-        } else {
-            Log.w(TAG, "onCreateOptionsMenu: moreItem is null или не имеет субменю");
-        }
-
-        Log.d(TAG, "onCreateOptionsMenu: Завершение создания меню");
+        // Показываем все пункты меню, проверка прав будет в onOptionsItemSelected
+        Log.d(TAG, "onCreateOptionsMenu: Меню создано, все пункты видимы");
         return true;
     }
     

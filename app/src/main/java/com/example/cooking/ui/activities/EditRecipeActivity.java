@@ -207,6 +207,13 @@ public class EditRecipeActivity extends AppCompatActivity {
             addIngredientButton.setEnabled(!isSaving);
             addStepButton.setEnabled(!isSaving);
             recipeImageView.setEnabled(!isSaving);
+            
+            // Изменяем текст кнопки во время сохранения
+            if (isSaving) {
+                saveButton.setText("Сохранение...");
+            } else {
+                saveButton.setText("Сохранить изменения");
+            }
         });
 
         viewModel.getSaveResult().observe(this, result -> {

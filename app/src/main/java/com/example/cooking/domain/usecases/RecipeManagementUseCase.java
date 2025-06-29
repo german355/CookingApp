@@ -105,12 +105,6 @@ public class RecipeManagementUseCase {
         });
     }
     
-    /**
-     * Вставляет рецепт в локальное хранилище
-     */
-    public void insertLocalRecipe(Recipe recipe, RecipeSaveCallback callback) {
-        // Этот метод больше не нужен, так как сохранение в локальную БД инкапсулировано
-    }
     
     /**
      * Удаляет рецепт

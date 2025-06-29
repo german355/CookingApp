@@ -7,10 +7,10 @@ import com.google.gson.annotations.SerializedName;
  * когда возвращается ID ресурса
  */
 public class GeneralServerResponse extends BaseApiResponse {
-    @SerializedName("id") // Для ответа при создании, может содержать ID нового ресурса
+    @SerializedName(value = "recipeId", alternate = {"id"}) // Поддерживает как "recipeId", так и "id"
     private Integer id;
     
-    @SerializedName("photoUrl") // URL загруженного изображения
+    @SerializedName(value = "photo_url", alternate = {"photoUrl"}) // Поддерживает "photo_url" и "photoUrl"
     private String photoUrl;
 
     /**

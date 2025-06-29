@@ -229,8 +229,34 @@ public class EditRecipeViewModel extends BaseRecipeFormViewModel {
                             @Override
                             public void onSuccess(com.example.cooking.network.models.GeneralServerResponse response, Recipe savedRecipe) {
                                 AppExecutors.getInstance().mainThread().execute(() -> {
+                                    // Обновляем локальное состояние данными из сохраненного рецепта
+                                    if (savedRecipe != null) {
+                                        // Обновляем URL фото если получен новый с сервера
+                                        if (response != null && response.getPhotoUrl() != null) {
+                                            state.setPhotoUrl(response.getPhotoUrl());
+                                            savedRecipe.setPhoto_url(response.getPhotoUrl());
+                                        }
+                                        
+                                        // Обновляем ингредиенты и шаги из сохраненного рецепта
+                                        if (savedRecipe.getIngredients() != null) {
+                                            state.setIngredients(new ArrayList<>(savedRecipe.getIngredients()));
+                                        }
+                                        if (savedRecipe.getSteps() != null) {
+                                            state.setSteps(new ArrayList<>(savedRecipe.getSteps()));
+                                        }
+                                        
+                                        // Обновляем заголовок если он изменился
+                                        if (savedRecipe.getTitle() != null) {
+                                            state.setTitle(savedRecipe.getTitle());
+                                        }
+                                        
+                                        Log.d(TAG, "Локальное состояние обновлено: ингредиентов=" + 
+                                              (savedRecipe.getIngredients() != null ? savedRecipe.getIngredients().size() : 0) + 
+                                              ", шагов=" + (savedRecipe.getSteps() != null ? savedRecipe.getSteps().size() : 0));
+                                    }
+                                    
+                                    state.setIsSaving(false); // Скрываем индикатор только после успешного сохранения
                                     state.setSaveResult(true);
-                                    state.setIsSaving(false); // Снимаем флаг загрузки
                                 });
                                 Log.d(TAG, "Рецепт успешно обновлен");
                             }
@@ -238,8 +264,27 @@ public class EditRecipeViewModel extends BaseRecipeFormViewModel {
                             @Override
                             public void onFailure(String error, com.example.cooking.network.models.GeneralServerResponse errorResponse) {
                                 AppExecutors.getInstance().mainThread().execute(() -> {
-                                    state.setErrorMessage(error);
-                                    state.setIsSaving(false); // Снимаем флаг загрузки
+                                    state.setIsSaving(false); // Скрываем индикатор при ошибке
+                                    
+                                    // Специальная обработка ошибок модерации
+                                    if (error != null && error.startsWith("Модерация:")) {
+                                        String moderationMessage = error.substring("Модерация:".length()).trim();
+                                        if (moderationMessage.isEmpty()) {
+                                            state.setErrorMessage(getApplication().getString(R.string.moderation_failed_generic));
+                                        } else {
+                                            state.setErrorMessage(getApplication().getString(R.string.moderation_failed, moderationMessage));
+                                        }
+                                        Log.w(TAG,  moderationMessage);
+                                        return;
+                                    }
+                                    
+                                    // Для других ошибок используем стандартную обработку
+                                    String detailedError = error;
+                                    if (errorResponse != null && errorResponse.getMessage() != null) {
+                                        detailedError += " (Детали: " + errorResponse.getMessage() + ")";
+                                    }
+                                    
+                                    state.setErrorMessage(detailedError);
                                 });
                                 Log.e(TAG, "Ошибка при обновлении рецепта: " + error);
                             }
@@ -248,8 +293,8 @@ public class EditRecipeViewModel extends BaseRecipeFormViewModel {
                 },
                 error -> {
                     Log.e(TAG, "Ошибка при построении рецепта", error);
+                    state.setIsSaving(false); // Скрываем индикатор при ошибке построения рецепта
                     state.setErrorMessage(error.getMessage());
-                    state.setIsSaving(false); // Снимаем флаг загрузки и в случае ошибки построения
                 }
             )
         );

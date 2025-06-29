@@ -42,17 +42,6 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         
-        // Получаем ID пользователя и SharedPreferences
-        MySharedPreferences preferences = new MySharedPreferences(requireContext());
-        String userId = preferences.getString("userId", "0");
-
-        // Показ Toast с подсказкой при первом запуске приложения
-        boolean hintShown = preferences.getBoolean("swipe_hint_shown", false);
-        if (!hintShown) {
-            Toast.makeText(requireContext(), "Сделайте свайп вверх для получения рецептов", Toast.LENGTH_LONG).show();
-            preferences.putBoolean("swipe_hint_shown", true);
-        }
-        
         // Инициализация ViewModel, привязанной к жизненному циклу фрагмента
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         
@@ -113,15 +102,12 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
                 // Показываем ошибку и пустой вид, если данных нет
                 if (resource.getData() == null || resource.getData().isEmpty()) {
                     showEmptyView(true);
-                    showErrorMessage(resource.getMessage());
+
                 }
             } else if (resource.getStatus() == Resource.Status.LOADING) {
                 Log.d(TAG, "setupObservers: LOADING...");
             }
         });
-            
-        // Наблюдение за ошибками (для Toast/Snackbar)
-        homeViewModel.errorMessage.observe(getViewLifecycleOwner(), this::showErrorMessage);
     }
     
     /**
@@ -153,14 +139,9 @@ public class HomeFragment extends Fragment implements RecipeListAdapter.OnRecipe
         recyclerView.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
-    private void showErrorMessage(String message) {
-        //Toast.makeText(getContext(), "Ой, что-то пошло не так", Toast.LENGTH_SHORT).show();
-    }
-
     @Override
     public void onResume() {
         super.onResume();
-        // Убрали автоматическое обновление, чтобы не было запроса на сервер
     }
     
     @Override

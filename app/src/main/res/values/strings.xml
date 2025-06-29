@@ -214,4 +214,9 @@
     <string name="validation_steps_empty">Add at least one cooking step</string>
     <string name="validation_steps_invalid">Fill in the description for each step</string>
     <string name="validation_image_empty">Select an image for the recipe</string>
+
+    <!-- Moderation errors -->
+    <string name="moderation_failed">Recipe didn\'t pass moderation: %s</string>
+    <string name="moderation_failed_generic">Recipe didn\'t pass moderation. Please check the content and try again.</string>
+    <string name="moderation_checking">Recipe is being checked by moderation...</string>
 </resources>

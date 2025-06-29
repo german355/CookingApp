@@ -178,7 +178,11 @@ public class AddRecipeActivity extends AppCompatActivity implements
         // Наблюдаем за сообщениями об ошибках
         viewModel.getErrorMessage().observe(this, errorMsg -> {
             if (errorMsg != null && !errorMsg.isEmpty()) {
-                Toast.makeText(this, "Ой, что-то пошло не так", Toast.LENGTH_LONG).show();
+                // Показываем реальное сообщение об ошибке пользователю
+                Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Ошибка при создании рецепта: " + errorMsg);
+                // Очищаем сообщение об ошибке после показа
+                viewModel.clearErrorMessage();
             }
         });
         

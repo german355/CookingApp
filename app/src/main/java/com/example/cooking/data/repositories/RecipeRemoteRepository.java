@@ -16,9 +16,12 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import com.google.gson.Gson;
 import com.example.cooking.network.models.GeneralServerResponse;
+import com.example.cooking.network.models.BaseApiResponse;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import retrofit2.HttpException;
+import java.io.IOException;
 
 /**
  * Репозиторий для работы с удаленным API рецептов
@@ -51,6 +54,55 @@ public class RecipeRemoteRepository extends NetworkRepository {
     public RecipeRemoteRepository(Context context) {
         super(context);
         this.preferences = new MySharedPreferences(context);
+    }
+
+    /**
+     * Парсит HTTP ошибку для извлечения сообщения о модерации
+     * @param throwable исключение от Retrofit/OkHttp
+     * @return детальное сообщение об ошибке
+     */
+    private String parseHttpError(Throwable throwable) {
+        if (throwable instanceof HttpException) {
+            HttpException httpException = (HttpException) throwable;
+            try {
+                if (httpException.response() != null && httpException.response().errorBody() != null) {
+                    String errorBody = httpException.response().errorBody().string();
+                    Log.d(TAG, "HTTP error body: " + errorBody);
+                    
+                    // Пытаемся распарсить как BaseApiResponse
+                    try {
+                        BaseApiResponse errorResponse = gson.fromJson(errorBody, BaseApiResponse.class);
+                        if (errorResponse != null && errorResponse.getMessage() != null && !errorResponse.getMessage().isEmpty()) {
+                            String message = errorResponse.getMessage();
+                            Log.d(TAG, "Extracted error message: " + message);
+                            
+                            // Специальная обработка сообщений о модерации
+                            if (httpException.code() == 400) {
+                                Log.i(TAG, "Ошибка модерации (400): " + message);
+                                return "Модерация: " + message;
+                            }
+                            
+                            return message;
+                        }
+                    } catch (Exception e) {
+                        Log.w(TAG, "Не удалось распарсить ошибку как BaseApiResponse", e);
+                    }
+                    
+                    // Если не удалось распарсить как JSON, возвращаем сырое сообщение
+                    if (!errorBody.trim().isEmpty()) {
+                        return "Ошибка сервера (" + httpException.code() + "): " + errorBody;
+                    }
+                }
+                
+                return "Ошибка сервера: " + httpException.code() + " " + httpException.message();
+            } catch (IOException e) {
+                Log.e(TAG, "Ошибка при чтении тела HTTP ошибки", e);
+                return "Ошибка сервера: " + httpException.code() + " (не удалось прочитать детали)";
+            }
+        }
+        
+        // Для других типов ошибок возвращаем стандартное сообщение
+        return throwable.getMessage() != null ? throwable.getMessage() : "Неизвестная ошибка сети";
     }
 
     /**
@@ -125,7 +177,20 @@ public class RecipeRemoteRepository extends NetworkRepository {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 response -> { if (callback != null) callback.onSuccess(response, recipe); },
-                throwable -> { if (callback != null) callback.onFailure(throwable.getMessage(), null); }
+                throwable -> { 
+                    if (callback != null) {
+                        String detailedError = parseHttpError(throwable);
+                        Log.e(TAG, "Ошибка сохранения рецепта: " + detailedError);
+                        
+                        // Попытаемся извлечь GeneralServerResponse из HttpException
+                        GeneralServerResponse errorResponse = null;
+                        if (throwable instanceof HttpException) {
+                            errorResponse = extractErrorResponse((HttpException) throwable);
+                        }
+                        
+                        callback.onFailure(detailedError, errorResponse);
+                    }
+                }
             )
         );
     }
@@ -146,9 +211,37 @@ public class RecipeRemoteRepository extends NetworkRepository {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 response -> { if (callback != null) callback.onSuccess(response, recipe); },
-                throwable -> { if (callback != null) callback.onFailure(throwable.getMessage(), null); }
+                throwable -> { 
+                    if (callback != null) {
+                        String detailedError = parseHttpError(throwable);
+                        Log.e(TAG, "Ошибка обновления рецепта: " + detailedError);
+                        
+                        // Попытаемся извлечь GeneralServerResponse из HttpException
+                        GeneralServerResponse errorResponse = null;
+                        if (throwable instanceof HttpException) {
+                            errorResponse = extractErrorResponse((HttpException) throwable);
+                        }
+                        
+                        callback.onFailure(detailedError, errorResponse);
+                    }
+                }
             )
         );
+    }
+
+    /**
+     * Извлекает GeneralServerResponse из HttpException для передачи в callback
+     */
+    private GeneralServerResponse extractErrorResponse(HttpException httpException) {
+        try {
+            if (httpException.response() != null && httpException.response().errorBody() != null) {
+                String errorBody = httpException.response().errorBody().string();
+                return gson.fromJson(errorBody, GeneralServerResponse.class);
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "Не удалось извлечь GeneralServerResponse из ошибки", e);
+        }
+        return null;
     }
 
     public void deleteRecipe(int recipeId, DeleteRecipeCallback callback) {
