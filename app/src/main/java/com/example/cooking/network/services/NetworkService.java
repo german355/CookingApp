@@ -111,9 +111,6 @@ public class NetworkService {
     /**
      * Получает сервис для общего API с использованием двойной проверки блокировки
      * для потокобезопасности.
-     *
-     * @param context контекст приложения
-     * @return экземпляр ApiService
      */
     public static ApiService getApiService(Context context) {
         if (apiService == null) {
@@ -128,17 +125,6 @@ public class NetworkService {
         return apiService;
     }
     
-    /**
-     * Сбрасывает все закэшированные экземпляры клиентов и сервисов.
-     * Полезно при смене авторизации или сетевых настроек.
-     */
-    public static synchronized void reset() {
-        synchronized (NetworkService.class) {
-            httpClient = null;
-            retrofit = null;
-            apiService = null;
-            Log.d(TAG, "Все сетевые клиенты и сервисы сброшены");
-        }
-    }
+
     
 } 

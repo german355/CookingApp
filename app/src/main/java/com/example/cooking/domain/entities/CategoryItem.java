@@ -33,25 +33,12 @@ public class CategoryItem {
         return filterKey;
     }
 
-    public void setFilterKey(String filterKey) {
-        this.filterKey = filterKey;
-    }
 
     public String getFilterType() {
         return filterType;
     }
 
-    public void setFilterType(String filterType) {
-        this.filterType = filterType;
-    }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public String getImageUrl() {
         return imageUrl;

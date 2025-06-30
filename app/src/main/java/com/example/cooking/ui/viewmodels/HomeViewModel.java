@@ -144,7 +144,6 @@ public class HomeViewModel extends AndroidViewModel {
         }
         
         // Оптимистичное обновление UI не требуется,
-        // т.к. MediatorLiveData отреагирует на изменение в БД.
         recipeLikeUseCase.setLikeStatus(userId, recipe.getId(), isLiked, _errorMessage);
     }
 
@@ -172,14 +171,8 @@ public class HomeViewModel extends AndroidViewModel {
         // Выполняем поиск через UseCase
         recipeSearchUseCase.searchRecipes(query.trim(), smartSearchEnabled, _searchResults, _errorMessage, _isRefreshing);
     }
-    
-    /**
-     * Очищает поиск и возвращается к отображению всех рецептов
-     */
-    public void clearSearch() {
-        Log.d(TAG, "clearSearch() вызван");
-        performSearch("");
-    }
+
+
     
     /**
      * Очистить ресурсы

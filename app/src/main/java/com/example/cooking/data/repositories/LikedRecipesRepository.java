@@ -27,11 +27,6 @@ public class LikedRecipesRepository extends NetworkRepository {
     private final RecipeLocalRepository recipeLocalRepository; // Добавляем зависимость
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    public interface LikedRecipesCallback {
-        void onRecipesLoaded(List<Recipe> recipes);
-
-        void onDataNotAvailable(String error);
-    }
 
     public LikedRecipesRepository(Context context) {
         super(context);
@@ -82,7 +77,7 @@ public class LikedRecipesRepository extends NetworkRepository {
      * Перезаписывает старые данные.
      */
     private void storeServerLikedRecipes(List<Integer> serverRecipeIds) {
-        Completable.fromAction(() -> {
+        disposables.add(Completable.fromAction(() -> {
             List<LikedRecipeEntity> likedEntitiesToInsert = new ArrayList<>();
             // формируем список из ID
             for (Integer id : serverRecipeIds) {
@@ -113,49 +108,28 @@ public class LikedRecipesRepository extends NetworkRepository {
         .subscribe(
                 () -> {},
                 throwable -> Log.e(TAG, "Ошибка storeServerLikedRecipes", throwable)
-        );
-    }
-
-    /**
-     * Добавить лайкнутый рецепт в локальную базу.
-     * Используется при действии пользователя "лайкнуть".
-     */
-    public void insertLikedRecipeLocal(int recipeId) {
-        Completable.fromAction(() -> likedRecipeDao.insert(new LikedRecipeEntity(recipeId)))
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                        () -> {},
-                        throwable -> Log.e(TAG, "Ошибка insertLikedRecipeLocal", throwable)
-                );
+        ));
     }
 
 
-    /**
-     * Проверить, лайкнут ли рецепт локально (синхронно).
-     * ВНИМАНИЕ: Выполняет запрос к БД в вызывающем потоке. Не использовать в UI
-     * потоке!
-     */
-    public boolean isRecipeLikedLocalSync(int recipeId) {
-        return likedRecipeDao.isRecipeLiked(recipeId);
-    }
 
     /**
      * Обновляет статус лайка локально.
      * Если isLiked=true, добавляет лайк; если false, удаляет его.
      */
     public void updateLikeStatusLocal(int recipeId, boolean isLiked) {
-        Completable.fromAction(() -> {
+        disposables.add(Completable.fromAction(() -> {
             if (isLiked) likedRecipeDao.insert(new LikedRecipeEntity(recipeId));
             else likedRecipeDao.deleteById(recipeId);
         }).subscribeOn(Schedulers.io()).subscribe(
                 () -> {},
                 throwable -> Log.e(TAG, "Ошибка добавления лайка локально", throwable)
-        );
+        ));
         
         // Обновляем статус лайка в таблице recipes
-        Completable.fromAction(() -> {
+        disposables.add(Completable.fromAction(() -> {
             recipeLocalRepository.updateLikeStatus(recipeId, isLiked);
-        }).subscribeOn(Schedulers.io()).subscribe();
+        }).subscribeOn(Schedulers.io()).subscribe());
     }
 
     /**
@@ -164,36 +138,8 @@ public class LikedRecipesRepository extends NetworkRepository {
     public List<Integer> getLikedRecipeIdsSync() {
         return likedRecipeDao.getLikedRecipeIdsSync();
     }
-    
-    /**
-     * Отправляет запрос на сервер для добавления лайка и добавляет запись в локальную БД
-     */
-    public void addLikedRecipe(int recipeId) {
-        Log.d(TAG, "addLikedRecipe(): выполняем только локальное обновление");
-        Disposable d1 = Completable.fromAction(() -> {
-            Log.d(TAG, "Добавление лайка в локальную БД: recipeId=" + recipeId);
-            likedRecipeDao.insert(new LikedRecipeEntity(recipeId));
-        }).subscribeOn(Schedulers.io()).subscribe(
-                () -> Log.d(TAG, "Лайк добавлен локально: recipeId=" + recipeId),
-                throwable -> Log.e(TAG, "Ошибка добавления лайка локально", throwable)
-        );
-        disposables.add(d1);
-    }
-    
-    /**
-     * Отправляет запрос на сервер для удаления лайка и удаляет запись из локальной БД
-     */
-    public void removeLikedRecipe(int recipeId) {
-        Log.d(TAG, "removeLikedRecipe(): выполняем только локальное обновление");
-        Disposable d2 = Completable.fromAction(() -> {
-            Log.d(TAG, "Удаление лайка в локальной БД: recipeId=" + recipeId);
-            likedRecipeDao.deleteById(recipeId);
-        }).subscribeOn(Schedulers.io()).subscribe(
-                () -> Log.d(TAG, "Лайк удалён локально: recipeId=" + recipeId),
-                throwable -> Log.e(TAG, "Ошибка удаления лайка локально", throwable)
-        );
-        disposables.add(d2);
-    }
+
+
 
     /**
      * Отправляет запрос на сервер для переключения статуса лайка (без ожидания ответа)
@@ -205,18 +151,11 @@ public class LikedRecipesRepository extends NetworkRepository {
     }
 
     /**
-     * Очищает все подписки RxJava
-     */
-    public void clearDisposables() {
-        disposables.clear();
-    }
-    
-    /**
      * Полностью очищает все лайки пользователя.
      * Используется при выходе из аккаунта.
      */
     public void clearAllLikes() {
-        Completable.fromAction(() -> {
+        disposables.add(Completable.fromAction(() -> {
             // Очищаем таблицу лайков
             likedRecipeDao.deleteAll();
             // Сбрасываем флаги isLiked у всех рецептов
@@ -227,6 +166,6 @@ public class LikedRecipesRepository extends NetworkRepository {
         .subscribe(
             () -> {},
             throwable -> Log.e(TAG, "Ошибка при очистке всех лайков", throwable)
-        );
+        ));
     }
 }

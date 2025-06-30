@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.example.cooking.R;
-import com.example.cooking.domain.validators.RecipeValidator;
 import com.example.cooking.utils.AppExecutors;
 
 import java.io.ByteArrayOutputStream;
@@ -41,24 +40,17 @@ public class ImageProcessor {
         private final boolean success;
         private final byte[] imageBytes;
         private final String errorMessage;
-        private final int originalWidth;
-        private final int originalHeight;
         private final int processedWidth;
         private final int processedHeight;
-        private final long originalSize;
         private final long processedSize;
         
         private ImageResult(boolean success, byte[] imageBytes, String errorMessage,
-                           int originalWidth, int originalHeight, int processedWidth, int processedHeight,
-                           long originalSize, long processedSize) {
+                           int processedWidth, int processedHeight, long processedSize) {
             this.success = success;
             this.imageBytes = imageBytes;
             this.errorMessage = errorMessage;
-            this.originalWidth = originalWidth;
-            this.originalHeight = originalHeight;
             this.processedWidth = processedWidth;
             this.processedHeight = processedHeight;
-            this.originalSize = originalSize;
             this.processedSize = processedSize;
         }
         
@@ -73,12 +65,12 @@ public class ImageProcessor {
         // Статические методы для создания результатов
         public static ImageResult success(byte[] imageBytes, int originalWidth, int originalHeight,
                                         int processedWidth, int processedHeight, long originalSize, long processedSize) {
-            return new ImageResult(true, imageBytes, null, originalWidth, originalHeight,
-                                 processedWidth, processedHeight, originalSize, processedSize);
+            return new ImageResult(true, imageBytes, null,
+                    processedWidth, processedHeight, processedSize);
         }
         
         public static ImageResult error(String errorMessage) {
-            return new ImageResult(false, null, errorMessage, 0, 0, 0, 0, 0, 0);
+            return new ImageResult(false, null, errorMessage, 0, 0, 0);
         }
     }
     
@@ -88,11 +80,7 @@ public class ImageProcessor {
         void onError(String errorMessage);
         void onProgress(int progress); // 0-100
     }
-    
-   
-    public void processImageFromUri(Uri imageUri, ImageProcessingCallback callback) {
-        processImageFromUri(imageUri, DEFAULT_MAX_SIZE, DEFAULT_QUALITY, callback);
-    }
+
     
     
     public void processImageFromUri(Uri imageUri, int maxSize, int quality, ImageProcessingCallback callback) {
@@ -114,7 +102,7 @@ public class ImageProcessor {
                 }
                 
                 AppExecutors.getInstance().mainThread().execute(() -> callback.onProgress(30));
-                
+
                 // Декодируем изображение
                 Bitmap originalBitmap = BitmapFactory.decodeStream(inputStream);
                 inputStream.close();

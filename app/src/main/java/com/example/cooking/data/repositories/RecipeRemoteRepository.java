@@ -4,8 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.cooking.domain.entities.Recipe;
-import com.example.cooking.network.models.recipeResponses.RecipesResponse;
-import com.example.cooking.network.utils.ApiCallHandler;
+
 import com.example.cooking.utils.MySharedPreferences;
 
 import java.util.List;
@@ -113,7 +112,6 @@ public class RecipeRemoteRepository extends NetworkRepository {
     public synchronized void getRecipes(final RecipesCallback callback) {
         // Проверяем, не выполняется ли уже запрос
         if (isRequestInProgress) {
-            Log.d(TAG, "Запрос рецептов уже выполняется, пропускаем дублирующий запрос");
             callback.onDataNotAvailable("Запрос уже выполняется");
             return;
         }

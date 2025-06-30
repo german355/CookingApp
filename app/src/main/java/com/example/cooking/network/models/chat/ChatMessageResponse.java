@@ -25,31 +25,13 @@ public class ChatMessageResponse extends com.example.cooking.network.models.Base
         return aiResponse;
     }
 
-    public void setAiResponse(String aiResponse) {
-        this.aiResponse = aiResponse;
-    }
     public ArrayList<Integer> getRecipesIds() {return recipesIds;}
-    public void setRecipesIds(ArrayList<Integer> recipesIds) { this.recipesIds = recipesIds;}
 
-    public boolean isHasRecipes() {
-        return hasRecipes;
-    }
 
     public boolean getHasRecipes() {
         return hasRecipes;
     }
 
-    public void setHasRecipes(boolean hasRecipes) {
-        this.hasRecipes = hasRecipes;
-    }
-
-    public String getUserMessage() {
-        return userMessage;
-    }
-
-    public void setUserMessage(String userMessage) {
-        this.userMessage = userMessage;
-    }
 
     public int getUserId() {
         return userId;

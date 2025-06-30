@@ -101,16 +101,6 @@ public class UserPermissionUseCase {
     }
     
     /**
-     * Получает уровень прав текущего пользователя
-     * @return уровень прав (1 - пользователь, 2 - администратор)
-     */
-    public int getCurrentUserPermission() {
-        int permission = preferences.getUserPermission();
-        Log.d(TAG, "getCurrentUserPermission: result=" + permission);
-        return permission;
-    }
-    
-    /**
      * Проверяет, может ли пользователь редактировать рецепт
      * @param recipeOwnerId ID владельца рецепта
      * @return PermissionResult с результатом проверки
@@ -178,18 +168,4 @@ public class UserPermissionUseCase {
         return PermissionResult.denied("Вы не являетесь автором этого рецепта или модератором");
     }
 
-    
-    /**
-     * Получает подробную информацию о правах пользователя для отладки
-     * @return строка с информацией о правах
-     */
-    public String getUserPermissionInfo() {
-        String currentUserId = getCurrentUserId();
-        int permission = getCurrentUserPermission();
-        boolean isLoggedIn = isUserLoggedIn();
-        boolean isAdmin = isAdmin();
-        
-        return String.format("UserPermission [userId=%s, permission=%d, isLoggedIn=%b, isAdmin=%b]", 
-                            currentUserId, permission, isLoggedIn, isAdmin);
-    }
 } 

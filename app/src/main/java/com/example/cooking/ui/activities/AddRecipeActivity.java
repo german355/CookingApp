@@ -3,8 +3,6 @@ package com.example.cooking.ui.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -46,11 +44,11 @@ import com.example.cooking.auth.FirebaseAuthManager;
 
 /**
  * Активность для добавления нового рецепта
- * Использует AddRecipeViewModel для управления бизнес-логикой
  */
 public class AddRecipeActivity extends AppCompatActivity implements
         IngredientAdapter.IngredientUpdateListener,
         StepAdapter.StepUpdateListener {
+    
     private static final String TAG = "AddRecipeActivity";
     private static final int REQUEST_STORAGE_PERMISSION = 1001;
     private static final int REQUEST_PICK_IMAGE = 1002;
@@ -60,244 +58,143 @@ public class AddRecipeActivity extends AppCompatActivity implements
     private Button saveButton;
     private ProgressBar progressBar;
     private ImageView recipeImageView;
-    private TextInputLayout titleInputLayout;
     private TextView textImageView;
-    private TextView ingredientsErrorTextView;
-    private TextView stepsErrorTextView;
+    private RecyclerView ingredientsRecyclerView, stepsRecyclerView;
+    private Button addIngredientButton, addStepButton;
 
-    // Новые UI компоненты для RecyclerView
-    private RecyclerView ingredientsRecyclerView;
-    private RecyclerView stepsRecyclerView;
-    private Button addIngredientButton;
-    private Button addStepButton;
-
-    // Адаптеры
+    // Адаптеры и ViewModel
     private IngredientAdapter ingredientAdapter;
     private StepAdapter stepAdapter;
-
-    // ViewModel
     private AddRecipeViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_recipe);
-        // Сброс прокрутки NestedScrollView к началу
+        
+        // Сброс прокрутки к началу
         NestedScrollView scrollView = findViewById(R.id.main_scroll_view);
         scrollView.post(() -> scrollView.fullScroll(View.FOCUS_UP));
 
-        // Настраиваем toolbar
-        setupToolbar();
-
-        // Инициализируем ViewModel
-        viewModel = new ViewModelProvider(this).get(AddRecipeViewModel.class);
-        
-        // Инициализируем UI компоненты
-        initViews();
-        
-        // Настраиваем RecyclerView
-        setupRecyclerViews();
-        
-        // Настраиваем наблюдателей LiveData
-        setupObservers();
-        
-        // Настраиваем обработчики событий
-        setupEventListeners();
+        setupUI();
+        setupViewModelAndObservers();
     }
     
     /**
-     * Настраивает toolbar
+     * Настройка всего UI в одном методе
      */
-    private void setupToolbar() {
+    private void setupUI() {
+        // Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Добавить рецепт");
-    }
-    
-    /**
-     * Инициализирует UI компоненты
-     */
-    private void initViews() {
+        
+        // Инициализация views
         titleEditText = findViewById(R.id.recipe_title);
         saveButton = findViewById(R.id.save_button);
         progressBar = findViewById(R.id.progress_bar);
         recipeImageView = findViewById(R.id.recipe_image);
-        titleInputLayout = findViewById(R.id.recipe_title_layout);
         textImageView = findViewById(R.id.textImage);
-
-        // Инициализация RecyclerView и кнопок добавления
         ingredientsRecyclerView = findViewById(R.id.ingredients_recyclerview);
         stepsRecyclerView = findViewById(R.id.steps_recyclerview);
         addIngredientButton = findViewById(R.id.add_ingredient_button);
         addStepButton = findViewById(R.id.add_step_button);
 
         recipeImageView.setImageResource(R.drawable.select_recipe_view);
+        
+        // Настройка RecyclerViews
+        setupRecyclerViews();
+        
+        // Обработчики событий
+        setupEventListeners();
     }
     
     /**
-     * Настраивает RecyclerView
+     * Настройка RecyclerViews
      */
     private void setupRecyclerViews() {
         ingredientAdapter = new IngredientAdapter(this);
         stepAdapter = new StepAdapter(this, this);
 
-        // Настраиваем LinearLayoutManager с автоизмерением для корректного отображения всех элементов
-        LinearLayoutManager ingredientsLayoutManager = new LinearLayoutManager(this);
-        ingredientsLayoutManager.setAutoMeasureEnabled(true);
-        ingredientsRecyclerView.setLayoutManager(ingredientsLayoutManager);
-        ingredientsRecyclerView.setAdapter(ingredientAdapter);
-        ingredientsRecyclerView.setNestedScrollingEnabled(false);
-        ingredientsRecyclerView.setHasFixedSize(false);
-
-        // Аналогично для RecyclerView шагов
-        LinearLayoutManager stepsLayoutManager = new LinearLayoutManager(this);
-        stepsLayoutManager.setAutoMeasureEnabled(true);
-        stepsRecyclerView.setLayoutManager(stepsLayoutManager);
-        stepsRecyclerView.setAdapter(stepAdapter);
-        stepsRecyclerView.setNestedScrollingEnabled(false);
-        stepsRecyclerView.setHasFixedSize(false);
+        setupRecyclerView(ingredientsRecyclerView, ingredientAdapter);
+        setupRecyclerView(stepsRecyclerView, stepAdapter);
         stepsRecyclerView.setItemViewCacheSize(20);
-        
         stepsRecyclerView.setItemAnimator(null);
-
-
+    }
+    
+    private void setupRecyclerView(RecyclerView recyclerView, RecyclerView.Adapter adapter) {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setAutoMeasureEnabled(true);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setHasFixedSize(false);
     }
     
     /**
-     * Настраивает наблюдателей LiveData из ViewModel
+     * Настройка ViewModel и observers
      */
-    private void setupObservers() {
-        // Наблюдаем за статусом загрузки
-        viewModel.getIsLoading().observe(this, isLoading -> {
-            progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-            saveButton.setEnabled(!isLoading);
-            if (isLoading) {
-                saveButton.setText("Сохранение...");
-            } else {
-                saveButton.setText("Сохранить рецепт");
-            }
-        });
+    private void setupViewModelAndObservers() {
+        viewModel = new ViewModelProvider(this).get(AddRecipeViewModel.class);
         
-        // Наблюдаем за сообщениями об ошибках
-        viewModel.getErrorMessage().observe(this, errorMsg -> {
-            if (errorMsg != null && !errorMsg.isEmpty()) {
-                // Показываем реальное сообщение об ошибке пользователю
-                Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
-                Log.e(TAG, "Ошибка при создании рецепта: " + errorMsg);
-                // Очищаем сообщение об ошибке после показа
-                viewModel.clearErrorMessage();
-            }
-        });
+        // Основные состояния
+        viewModel.getIsLoading().observe(this, this::handleLoadingState);
+        viewModel.getErrorMessage().observe(this, this::handleErrorMessage);
+        viewModel.getSaveSuccess().observe(this, this::handleSaveSuccess);
         
-        // Наблюдаем за успешным сохранением
-        viewModel.getSaveSuccess().observe(this, success -> {
-            if (success != null && success) {
-                Toast.makeText(this, "Рецепт успешно сохранен", Toast.LENGTH_LONG).show();
-                setResult(RESULT_OK);
-                finish();
-            }
-        });
-        
-        // Наблюдаем за ошибками валидации Title
-        viewModel.getTitleError().observe(this, error -> {
-            titleInputLayout.setError(error);
-            titleInputLayout.setErrorTextColor(error != null ? ColorStateList.valueOf(Color.RED) : null);
-        });
-        
-        // Наблюдаем за ошибками валидации списка Ингредиентов
-        viewModel.getIngredientsListError().observe(this, error -> {
-            if (ingredientsErrorTextView != null) {
-                ingredientsErrorTextView.setVisibility(error != null ? View.VISIBLE : View.GONE);
-                ingredientsErrorTextView.setText(error);
-            }
-        });
-        
-        // Наблюдаем за ошибками валидации списка Шагов
-        viewModel.getStepsListError().observe(this, error -> {
-            if (stepsErrorTextView != null) {
-                stepsErrorTextView.setVisibility(error != null ? View.VISIBLE : View.GONE);
-                stepsErrorTextView.setText(error);
-            }
-        });
-        
-        // Наблюдаем за ошибками изображения
-        viewModel.getImageError().observe(this, error -> {
-            if (error != null) {
-                textImageView.setTextColor(Color.RED);
-                textImageView.setText(error);
-            } else {
-                textImageView.setTextColor(ContextCompat.getColor(this, android.R.color.black));
-                if (viewModel.hasImage()) {
-                    textImageView.setText("Изображение выбрано");
-                } else {
-                    textImageView.setText("Выберите изображение*");
-                }
-            }
-        });
-        
-        // Наблюдаем за списком ингредиентов
+        // Данные
         viewModel.getIngredients().observe(this, ingredients -> {
-            // Создаем новый список, чтобы DiffUtil в ListAdapter корректно обработал изменения
             ingredientAdapter.submitList(ingredients != null ? new ArrayList<>(ingredients) : null);
-            // Прокручиваем к последнему элементу, если он был добавлен
             if (ingredients != null && !ingredients.isEmpty()) {
-                ingredientsRecyclerView.post(() -> {
-                    int position = ingredients.size() - 1;
-                    if (position >= 0) {
-                        ingredientsRecyclerView.smoothScrollToPosition(position);
-                    }
-                });
+                ingredientsRecyclerView.post(() -> 
+                    ingredientsRecyclerView.smoothScrollToPosition(ingredients.size() - 1));
             }
         });
         
-        // Наблюдаем за списком шагов
         viewModel.getSteps().observe(this, steps -> {
-            // Обновляем список шагов
             stepAdapter.submitList(steps != null ? new ArrayList<>(steps) : null);
         });
     }
     
+    private void handleLoadingState(Boolean isLoading) {
+        progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        saveButton.setEnabled(!isLoading);
+        saveButton.setText(isLoading ? "Сохранение..." : "Сохранить рецепт");
+    }
+    
+    private void handleErrorMessage(String errorMsg) {
+        if (errorMsg != null && !errorMsg.isEmpty()) {
+            Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+            viewModel.clearErrorMessage();
+        }
+    }
+    
+    private void handleSaveSuccess(Boolean success) {
+        if (success != null && success) {
+            Toast.makeText(this, "Рецепт успешно сохранен", Toast.LENGTH_LONG).show();
+            setResult(RESULT_OK);
+            finish();
+        }
+    }
+    
     /**
-     * Настраивает обработчики событий для UI компонентов
+     * Настройка обработчиков событий
      */
     private void setupEventListeners() {
-        // Обработчик изменения текста для названия рецепта
         titleEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                viewModel.setTitle(s.toString());
-            }
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(Editable s) { viewModel.setTitle(s.toString()); }
         });
         
-        // Обработчик клика по изображению
-        recipeImageView.setOnClickListener(view -> {
-            checkStoragePermissionAndPickImage();
-        });
+        recipeImageView.setOnClickListener(view -> checkStoragePermissionAndPickImage());
+        addIngredientButton.setOnClickListener(v -> viewModel.addEmptyIngredient());
+        addStepButton.setOnClickListener(v -> viewModel.addEmptyStep());
         
-        // Обработчик клика по кнопке "Добавить ингредиент"
-        addIngredientButton.setOnClickListener(v -> {
-            viewModel.addEmptyIngredient();
-        });
-        
-        // Обработчик клика по кнопке "Добавить шаг"
-        addStepButton.setOnClickListener(v -> {
-            viewModel.addEmptyStep();
-        });
-        
-        // Обработчик клика по кнопке "Сохранить"
         saveButton.setOnClickListener(v -> {
-            MySharedPreferences prefs = new MySharedPreferences(AddRecipeActivity.this);
-            String userId = prefs.getUserId();
-            Log.d(TAG, userId);
             if (!FirebaseAuthManager.getInstance().isUserSignedIn()) {
-                Toast.makeText(AddRecipeActivity.this, "Войдите в систему, чтобы добавлять рецепты", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Войдите в систему, чтобы добавлять рецепты", Toast.LENGTH_LONG).show();
                 return;
             }
             viewModel.saveRecipe();
@@ -305,48 +202,37 @@ public class AddRecipeActivity extends AppCompatActivity implements
     }
     
     /**
-     * Проверяет разрешение на доступ к хранилищу и открывает галерею
+     * Проверка разрешений и открытие галереи
      */
     private void checkStoragePermissionAndPickImage() {
-        String permission;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permission = Manifest.permission.READ_MEDIA_IMAGES;
-        } else {
-            permission = Manifest.permission.READ_EXTERNAL_STORAGE;
-        }
+        String permission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU 
+            ? Manifest.permission.READ_MEDIA_IMAGES 
+            : Manifest.permission.READ_EXTERNAL_STORAGE;
         
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{permission}, REQUEST_STORAGE_PERMISSION);
-            Toast.makeText(this, "Для выбора фото необходимо предоставить разрешение на доступ к галерее",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Для выбора фото необходимо предоставить разрешение", Toast.LENGTH_LONG).show();
         } else {
             openGallery();
         }
     }
     
-    /**
-     * Открывает галерею для выбора изображения
-     */
     private void openGallery() {
         try {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, REQUEST_PICK_IMAGE);
         } catch (Exception e) {
-            Toast.makeText(this, "Не удалось открыть галерею",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Не удалось открыть галерею", Toast.LENGTH_SHORT).show();
         }
     }
     
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_STORAGE_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openGallery();
-            } else {
-                Toast.makeText(this, "Для выбора изображения необходим доступ к хранилищу",
-                        Toast.LENGTH_SHORT).show();
-            }
+        if (requestCode == REQUEST_STORAGE_PERMISSION && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            openGallery();
+        } else {
+            Toast.makeText(this, "Для выбора изображения необходим доступ к хранилищу", Toast.LENGTH_SHORT).show();
         }
     }
     
@@ -356,11 +242,8 @@ public class AddRecipeActivity extends AppCompatActivity implements
         if (requestCode == REQUEST_PICK_IMAGE && resultCode == RESULT_OK && data != null) {
             Uri selectedImageUri = data.getData();
             if (selectedImageUri != null) {
-                Log.d(TAG, "onActivityResult: Изображение выбрано: " + selectedImageUri);
-                
                 recipeImageView.setImageURI(selectedImageUri);
                 textImageView.setText("Изображение выбрано");
-                
                 viewModel.processSelectedImage(selectedImageUri);
             }
         }
@@ -376,60 +259,29 @@ public class AddRecipeActivity extends AppCompatActivity implements
     }
     
     @Override
-    public void onBackPressed() {
-        checkForUnsavedChangesAndExit();
-    }
+    public void onBackPressed() { checkForUnsavedChangesAndExit(); }
     
-    /**
-     * Проверяет наличие несохраненных изменений и предлагает выйти
-     */
     private void checkForUnsavedChangesAndExit() {
-        boolean titleChanged = titleEditText.getText() != null && !titleEditText.getText().toString().isEmpty();
-        boolean imageSelected = viewModel.hasImage();
-        boolean ingredientsExist = viewModel.getIngredients().getValue() != null && !viewModel.getIngredients().getValue().isEmpty();
-        boolean stepsExist = viewModel.getSteps().getValue() != null && !viewModel.getSteps().getValue().isEmpty();
+        boolean hasChanges = (titleEditText.getText() != null && !titleEditText.getText().toString().isEmpty())
+            || viewModel.hasImage()
+            || (viewModel.getIngredients().getValue() != null && !viewModel.getIngredients().getValue().isEmpty())
+            || (viewModel.getSteps().getValue() != null && !viewModel.getSteps().getValue().isEmpty());
 
-        if (titleChanged || imageSelected || ingredientsExist || stepsExist) {
-            showExitConfirmDialog();
+        if (hasChanges) {
+            new AlertDialog.Builder(this)
+                .setTitle("Отменить создание рецепта?")
+                .setMessage("Введенные данные будут потеряны")
+                .setPositiveButton("Да", (dialog, which) -> finish())
+                .setNegativeButton("Нет", (dialog, which) -> dialog.dismiss())
+                .show();
         } else {
             finish();
         }
     }
-    
-    /**
-     * Показывает диалог подтверждения выхода
-     */
-    private void showExitConfirmDialog() {
-        new AlertDialog.Builder(this)
-            .setTitle("Отменить создание рецепта?")
-            .setMessage("Введенные данные будут потеряны")
-            .setPositiveButton("Да", (dialog, which) -> {
-                dialog.dismiss();
-                finish();
-            })
-            .setNegativeButton("Нет", (dialog, which) -> dialog.dismiss())
-            .show();
-    }
 
-    // --- Реализация слушателей адаптеров ---
-
-    @Override
-    public void onIngredientUpdated(int position, Ingredient ingredient) {
-        viewModel.updateIngredient(position, ingredient);
-    }
-
-    @Override
-    public void onIngredientRemoved(int position) {
-        viewModel.removeIngredient(position);
-    }
-
-    @Override
-    public void onStepUpdated(int position, Step step) {
-        viewModel.updateStep(position, step);
-    }
-
-    @Override
-    public void onStepRemoved(int position) {
-        viewModel.removeStep(position);
-    }
+    // Реализация слушателей адаптеров
+    @Override public void onIngredientUpdated(int position, Ingredient ingredient) { viewModel.updateIngredient(position, ingredient); }
+    @Override public void onIngredientRemoved(int position) { viewModel.removeIngredient(position); }
+    @Override public void onStepUpdated(int position, Step step) { viewModel.updateStep(position, step); }
+    @Override public void onStepRemoved(int position) { viewModel.removeStep(position); }
 }

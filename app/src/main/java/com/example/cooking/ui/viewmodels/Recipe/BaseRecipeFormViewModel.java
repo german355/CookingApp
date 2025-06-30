@@ -146,23 +146,8 @@ public abstract class BaseRecipeFormViewModel extends AndroidViewModel {
             getCurrentSteps()
         );
     }
-    
-    // === АБСТРАКТНЫЕ МЕТОДЫ ДЛЯ ОШИБОК ВАЛИДАЦИИ ===
-    
-    /**
-     * Установить ошибку валидации названия
-     */
-    protected abstract void setTitleError(String error);
-    
-    /**
-     * Установить ошибку валидации списка ингредиентов
-     */
-    protected abstract void setIngredientsError(String error);
-    
-    /**
-     * Установить ошибку валидации списка шагов
-     */
-    protected abstract void setStepsError(String error);
+
+
     
     // === ОБЩИЕ МЕТОДЫ ОБРАБОТКИ ИЗОБРАЖЕНИЙ ===
     

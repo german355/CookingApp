@@ -71,30 +71,7 @@ public class MainViewModel extends AndroidViewModel {
         return isUserLoggedIn;
     }
 
-    /**
-     * Возвращает LiveData с выбранным пунктом навигации
-     */
-    public LiveData<Integer> getSelectedNavigationItem() {
-        return selectedNavigationItem;
-    }
 
-    /**
-     * Устанавливает выбранный пункт навигации
-     */
-    public void setSelectedNavigationItem(int itemId) {
-        selectedNavigationItem.setValue(itemId);
-
-        // Обновляем видимость кнопки добавления в зависимости от выбранного пункта
-        updateAddButtonVisibility(itemId);
-    }
-
-    /**
-     * Обновляет видимость кнопки добавления рецепта
-     */
-    private void updateAddButtonVisibility(int itemId) {
-        // Показываем кнопку только на главном экране
-        showAddButton.setValue(itemId == R.id.nav_home);
-    }
 
     /**
      * Устанавливает видимость кнопки добавления
@@ -143,17 +120,6 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
-    /**
-     * Обрабатывает результат активности
-     * 
-     * @param requestCode Код запроса
-     * @param resultCode  Код результата
-     */
-    public void handleActivityResult(int requestCode, int resultCode) {
-        // Обновляем состояние авторизации после возвращения из других активностей
-        checkAuthState();
-    }
-
     public LiveData<Void> getLoginEvent() {
         return loginEvent;
     }
@@ -176,27 +142,7 @@ public class MainViewModel extends AndroidViewModel {
         logoutEvent.postValue(null);
     }
 
-    /**
-     * Метод для передачи запроса поиска
-     */
-    public void onSearchRequested(String query) {
-        searchQueryEvent.setValue(query);
-    }
 
-    public LiveData<String> getSearchQueryEvent() {
-        return searchQueryEvent;
-    }
-
-    /**
-     * Метод для уведомления об успешном добавлении рецепта
-     */
-    public void onRecipeAdded() {
-        recipeAddedEvent.setValue(null);
-    }
-
-    public LiveData<Void> getRecipeAddedEvent() {
-        return recipeAddedEvent;
-    }
 
     // Получить статус меню FAB
     public LiveData<Boolean> getIsFabMenuExpanded() {

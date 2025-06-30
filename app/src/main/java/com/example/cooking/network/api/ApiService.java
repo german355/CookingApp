@@ -37,23 +37,18 @@ public interface ApiService {
     
     /**
      * Регистрация пользователя
-     * @param request запрос с данными регистрации
-     * @return ответ сервера
      */
     @POST("auth/register")
     Single<ApiResponse> registerUser(@Body UserRegisterRequest request);
     
     /**
      * Вход пользователя
-     * @return ответ сервера
      */
     @POST("auth/login")
     Single<ApiResponse> loginUser();
     
     /**
      * Запрос на сброс пароля
-     * @param request запрос на сброс пароля
-     * @return ответ сервера
      */
     @POST("auth/password-reset-request")
     Single<ApiResponse> requestPasswordReset(@Body PasswordResetRequest request);
@@ -62,8 +57,6 @@ public interface ApiService {
     
     /**
      * Получает список всех рецептов (RxJava версия).
-     * Идентификация пользователя происходит через Firebase токен в заголовках.
-     * @return Single объект с ответом типа RecipesResponse
      */
     @GET("recipes")
     Single<RecipesResponse> getRecipesRx();
@@ -71,15 +64,12 @@ public interface ApiService {
     /**
      * Получает список ID лайкнутых рецептов пользователя.
      * Идентификация пользователя происходит через Firebase токен в заголовках.
-     * @return Single объект с ответом типа LikedRecipesResponse
      */
     @GET("recipes/liked")
     Single<LikedRecipesResponse> getLikedRecipes();
     
     /**
      * Простой поиск рецептов по строке.
-     * @param query строка поиска
-     * @return Single объект с ответом типа SearchResponse
      */
     @GET("recipes/search-simple")
     Single<SearchResponse> searchRecipesSimple(@Query("q") String query);
@@ -124,11 +114,6 @@ public interface ApiService {
 
     /**
      * Расширенный поиск рецептов с пагинацией.
-     * Идентификация пользователя происходит через Firebase токен в заголовках.
-     * @param query строка поиска
-     * @param page номер страницы
-     * @param perPage количество рецептов на странице
-     * @return Single объект с ответом типа SearchResponse
      */
     @GET("search")
     Single<SearchResponse> searchRecipes(

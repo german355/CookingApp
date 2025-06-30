@@ -194,4 +194,8 @@ public class AuthUseCase {
     public boolean isUserLoggedIn() {
         return authManager.getCurrentUser() != null;
     }
+
+    public String getCurrentUserId() {
+        return preferences.getString("userId", "99");
+    }
 }
