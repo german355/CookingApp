@@ -42,11 +42,8 @@ public class DataConverters {
             return null;
         }
         
-        long startTime = System.nanoTime();
         try {
-            String result = GSON_INSTANCE.toJson(ingredients);
-            logPerformance("fromIngredientList", startTime, ingredients.size());
-            return result;
+            return GSON_INSTANCE.toJson(ingredients);
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при сериализации списка ингредиентов", e);
             return null;
@@ -70,7 +67,6 @@ public class DataConverters {
             return new ArrayList<>(cached); // Возвращаем копию
         }
         
-        long startTime = System.nanoTime();
         try {
             List<Ingredient> list = GSON_INSTANCE.fromJson(ingredientsString, INGREDIENT_LIST_TYPE);
             if (list == null) {
@@ -82,7 +78,6 @@ public class DataConverters {
                 INGREDIENT_CACHE.put(ingredientsString, new ArrayList<>(list));
             }
             
-            logPerformance("toIngredientList", startTime, list.size());
             return list;
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при преобразовании JSON в список ингредиентов: " + ingredientsString, e);
@@ -100,11 +95,8 @@ public class DataConverters {
             return null;
         }
         
-        long startTime = System.nanoTime();
         try {
-            String result = GSON_INSTANCE.toJson(steps);
-            logPerformance("fromStepList", startTime, steps.size());
-            return result;
+            return GSON_INSTANCE.toJson(steps);
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при сериализации списка шагов", e);
             return null;
@@ -128,7 +120,6 @@ public class DataConverters {
             return new ArrayList<>(cached); // Возвращаем копию
         }
         
-        long startTime = System.nanoTime();
         try {
             List<Step> list = GSON_INSTANCE.fromJson(stepsString, STEP_LIST_TYPE);
             if (list == null) {
@@ -148,7 +139,6 @@ public class DataConverters {
                 STEP_CACHE.put(stepsString, new ArrayList<>(list));
             }
             
-            logPerformance("toStepList", startTime, list.size());
             return list;
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при преобразовании JSON в список шагов: " + stepsString, e);
@@ -199,22 +189,6 @@ public class DataConverters {
         }
         
         Log.d(TAG, "Кэш предварительно загружен: " + getCacheStats());
-    }
-
-    /**
-     * Логирует производительность операций сериализации.
-     */
-    private static void logPerformance(String operation, long startTimeNanos, int itemCount) {
-        long durationMs = (System.nanoTime() - startTimeNanos) / 1_000_000;
-        
-        // Логируем только медленные операции
-        if (durationMs > 5) { // Более 5ms считается медленным
-            Log.w(TAG, String.format("%s: %dms for %d items (%.2f ms/item)", 
-                                   operation, durationMs, itemCount, 
-                                   itemCount > 0 ? (double)durationMs / itemCount : 0));
-        } else if (Log.isLoggable(TAG, Log.DEBUG)) {
-            Log.d(TAG, String.format("%s: %dms for %d items", operation, durationMs, itemCount));
-        }
     }
 
     /**

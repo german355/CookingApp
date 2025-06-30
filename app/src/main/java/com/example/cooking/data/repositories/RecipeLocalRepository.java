@@ -12,7 +12,6 @@ import com.example.cooking.data.database.RecipeDao;
 import com.example.cooking.data.database.RecipeEntity;
 import com.example.cooking.data.database.converters.DataConverters;
 import com.example.cooking.utils.AppExecutors;
-import com.example.cooking.utils.PerformanceMonitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,17 +44,15 @@ public class RecipeLocalRepository extends NetworkRepository{
         return Transformations.map(
             recipeDao.getAllRecipes(),
             entities -> {
-                return PerformanceMonitor.measureOperation("transform_entities_to_recipes", () -> {
-                    List<Recipe> recipes = new ArrayList<>();
-                    if (entities != null) {
-                        for (RecipeEntity entity : entities) {
-                            recipes.add(entity.toRecipe());
-                        }
-                        // Предварительная загрузка кэша для часто используемых данных
-                        preloadCacheForEntities(entities);
+                List<Recipe> recipes = new ArrayList<>();
+                if (entities != null) {
+                    for (RecipeEntity entity : entities) {
+                        recipes.add(entity.toRecipe());
                     }
-                    return recipes;
-                });
+                    // Предварительная загрузка кэша для часто используемых данных
+                    preloadCacheForEntities(entities);
+                }
+                return recipes;
             }
         );
     }
@@ -65,27 +62,25 @@ public class RecipeLocalRepository extends NetworkRepository{
      * @return список рецептов
      */
     public List<Recipe> getAllRecipesSync() {
-        return PerformanceMonitor.measureOperation("get_all_recipes_sync", () -> {
-            try {
-                List<RecipeEntity> entities = recipeDao.getAllRecipesSync();
-                List<Recipe> recipes = new ArrayList<>();
-                
-                if (entities != null) {
-                    for (RecipeEntity entity : entities) {
-                        recipes.add(entity.toRecipe());
-                    }
-                    Log.d(TAG, "Получено " + recipes.size() + " рецептов из локальной БД");
-                    
-                    // Предварительная загрузка кэша для оптимизации последующих операций
-                    preloadCacheForEntities(entities);
+        try {
+            List<RecipeEntity> entities = recipeDao.getAllRecipesSync();
+            List<Recipe> recipes = new ArrayList<>();
+            
+            if (entities != null) {
+                for (RecipeEntity entity : entities) {
+                    recipes.add(entity.toRecipe());
                 }
+                Log.d(TAG, "Получено " + recipes.size() + " рецептов из локальной БД");
                 
-                return recipes;
-            } catch (Exception e) {
-                Log.e(TAG, "Ошибка при получении рецептов из БД: " + e.getMessage());
-                return new ArrayList<>();
+                // Предварительная загрузка кэша для оптимизации последующих операций
+                preloadCacheForEntities(entities);
             }
-        });
+            
+            return recipes;
+        } catch (Exception e) {
+            Log.e(TAG, "Ошибка при получении рецептов из БД: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
     /**
@@ -96,8 +91,6 @@ public class RecipeLocalRepository extends NetworkRepository{
         if (entities == null || entities.isEmpty()) return;
         
         AppExecutors.getInstance().diskIO().execute(() -> {
-            PerformanceMonitor.Timer timer = PerformanceMonitor.Timer.start("preload_serialization_cache");
-            
             try {
                 List<String> ingredientJsons = new ArrayList<>();
                 List<String> stepJsons = new ArrayList<>();
@@ -120,8 +113,8 @@ public class RecipeLocalRepository extends NetworkRepository{
                 
                 Log.d(TAG, String.format("Кэш предварительно загружен для %d рецептов. %s", 
                                         entities.size(), DataConverters.getCacheStats()));
-            } finally {
-                timer.stop();
+            } catch (Exception e) {
+                Log.e(TAG, "Ошибка при предварительной загрузке кэша: " + e.getMessage());
             }
         });
     }
@@ -131,11 +124,9 @@ public class RecipeLocalRepository extends NetworkRepository{
      * @param recipe рецепт для вставки
      */
     public void insert(Recipe recipe) {
-        PerformanceMonitor.measureDatabaseOperation("insert_recipe", () -> {
-            AppExecutors.getInstance().diskIO().execute(() -> {
-                RecipeEntity entity = new RecipeEntity(recipe);
-                recipeDao.insert(entity);
-            });
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            RecipeEntity entity = new RecipeEntity(recipe);
+            recipeDao.insert(entity);
         });
     }
     
@@ -143,11 +134,9 @@ public class RecipeLocalRepository extends NetworkRepository{
      * Обновить рецепт в базе данных
      */
     public void update(Recipe recipe) {
-        PerformanceMonitor.measureDatabaseOperation("update_recipe", () -> {
-            AppExecutors.getInstance().diskIO().execute(() -> {
-                RecipeEntity entity = new RecipeEntity(recipe);
-                recipeDao.update(entity);
-            });
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            RecipeEntity entity = new RecipeEntity(recipe);
+            recipeDao.update(entity);
         });
     }
     
@@ -155,14 +144,12 @@ public class RecipeLocalRepository extends NetworkRepository{
      * Обновить состояние лайка рецепта
      */
     public void updateLikeStatus(int recipeId, boolean isLiked) {
-        PerformanceMonitor.measureDatabaseOperation("update_like_status", () -> {
-            try {
-                recipeDao.updateLikeStatus(recipeId, isLiked);
-                Log.d(TAG, "Статус лайка обновлен в локальной базе: recipeId=" + recipeId + ", isLiked=" + isLiked);
-            } catch (Exception e) {
-                Log.e(TAG, "Ошибка обновления статуса лайка: " + e.getMessage(), e);
-            }
-        });
+        try {
+            recipeDao.updateLikeStatus(recipeId, isLiked);
+            Log.d(TAG, "Статус лайка обновлен в локальной базе: recipeId=" + recipeId + ", isLiked=" + isLiked);
+        } catch (Exception e) {
+            Log.e(TAG, "Ошибка обновления статуса лайка: " + e.getMessage(), e);
+        }
     }
 
     
@@ -170,15 +157,13 @@ public class RecipeLocalRepository extends NetworkRepository{
      * Синхронно получить рецепт по идентификатору
      */
     public Recipe getRecipeByIdSync(int recipeId) {
-        return PerformanceMonitor.measureOperation("get_recipe_by_id_sync", () -> {
-            RecipeEntity entity = recipeDao.getRecipeByIdSync(recipeId);
-            if (entity != null) {
-                // Предварительно загружаем кэш для этой сущности
-                entity.refreshCache();
-                return entity.toRecipe();
-            }
-            return null;
-        });
+        RecipeEntity entity = recipeDao.getRecipeByIdSync(recipeId);
+        if (entity != null) {
+            // Предварительно загружаем кэш для этой сущности
+            entity.refreshCache();
+            return entity.toRecipe();
+        }
+        return null;
     }
     
 
@@ -187,25 +172,23 @@ public class RecipeLocalRepository extends NetworkRepository{
      * Удалить рецепт из базы данных по идентификатору
      */
     public void deleteRecipe(int recipeId) {
-        PerformanceMonitor.measureDatabaseOperation("delete_recipe", () -> {
-            try {
-                AppExecutors.getInstance().diskIO().execute(() -> {
-                    try {
-                        RecipeEntity recipe = recipeDao.getRecipeById(recipeId);
-                        if (recipe != null) {
-                            recipeDao.delete(recipe);
-                            Log.d(TAG, "Рецепт успешно удален из базы данных: " + recipeId);
-                        } else {
-                            Log.w(TAG, "Попытка удалить несуществующий рецепт: " + recipeId);
-                        }
-                    } catch (Exception e) {
-                        Log.e(TAG, "Ошибка при удалении рецепта: " + recipeId, e);
+        try {
+            AppExecutors.getInstance().diskIO().execute(() -> {
+                try {
+                    RecipeEntity recipe = recipeDao.getRecipeById(recipeId);
+                    if (recipe != null) {
+                        recipeDao.delete(recipe);
+                        Log.d(TAG, "Рецепт успешно удален из базы данных: " + recipeId);
+                    } else {
+                        Log.w(TAG, "Попытка удалить несуществующий рецепт: " + recipeId);
                     }
-                });
-            } catch (Exception e) {
-                Log.e(TAG, "Ошибка при запуске задачи удаления рецепта: " + recipeId, e);
-            }
-        });
+                } catch (Exception e) {
+                    Log.e(TAG, "Ошибка при удалении рецепта: " + recipeId, e);
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Ошибка при запуске задачи удаления рецепта: " + recipeId, e);
+        }
     }
     
     /**
@@ -216,80 +199,70 @@ public class RecipeLocalRepository extends NetworkRepository{
      * - удаляет отсутствующие рецепты
      */
     public void smartReplaceRecipes(List<Recipe> newRecipes) {
-        PerformanceMonitor.measureDatabaseOperation("smart_replace_recipes", () -> {
-            AppExecutors.getInstance().diskIO().execute(() -> {
-                try {
-                    PerformanceMonitor.Timer analysisTimer = PerformanceMonitor.Timer.start("analyze_recipe_differences");
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            try {
+                // Получаем существующие ID из БД
+                List<Integer> existingIds = recipeDao.getAllRecipeIds();
+                
+                // Подготавливаем коллекции для разных типов операций
+                List<RecipeEntity> toInsert = new ArrayList<>();
+                List<RecipeEntity> toUpdate = new ArrayList<>();
+                Set<Integer> newIds = new HashSet<>();
+                
+                // Анализируем новые рецепты и определяем операции
+                for (Recipe recipe : newRecipes) {
+                    newIds.add(recipe.getId());
+                    RecipeEntity entity = new RecipeEntity(recipe);
+                    entity.refreshCache(); // Предварительно загружаем кэш
                     
-                    // Получаем существующие ID из БД
-                    List<Integer> existingIds = recipeDao.getAllRecipeIds();
-                    
-                    // Подготавливаем коллекции для разных типов операций
-                    List<RecipeEntity> toInsert = new ArrayList<>();
-                    List<RecipeEntity> toUpdate = new ArrayList<>();
-                    Set<Integer> newIds = new HashSet<>();
-                    
-                    // Анализируем новые рецепты и определяем операции
-                    for (Recipe recipe : newRecipes) {
-                        newIds.add(recipe.getId());
-                        RecipeEntity entity = new RecipeEntity(recipe);
-                        entity.refreshCache(); // Предварительно загружаем кэш
-                        
-                        if (existingIds.contains(recipe.getId())) {
-                            toUpdate.add(entity);
-                        } else {
-                            toInsert.add(entity);
-                        }
+                    if (existingIds.contains(recipe.getId())) {
+                        toUpdate.add(entity);
+                    } else {
+                        toInsert.add(entity);
+                    }
+                }
+                
+                // Находим рецепты для удаления (есть в БД, но нет в новых данных)
+                List<Integer> toDelete = existingIds.stream()
+                    .filter(id -> !newIds.contains(id))
+                    .collect(Collectors.toList());
+                
+                // Выполняем операции в транзакции для атомарности
+                AppDatabase.getInstance(context).runInTransaction(() -> {
+                    // Удаляем отсутствующие рецепты
+                    if (!toDelete.isEmpty()) {
+                        recipeDao.deleteRecipesByIds(toDelete);
+                        Log.d(TAG, "Удалено рецептов: " + toDelete.size());
                     }
                     
-                    // Находим рецепты для удаления (есть в БД, но нет в новых данных)
-                    List<Integer> toDelete = existingIds.stream()
-                        .filter(id -> !newIds.contains(id))
-                        .collect(Collectors.toList());
+                    // Вставляем новые рецепты
+                    if (!toInsert.isEmpty()) {
+                        recipeDao.insertNewRecipes(toInsert);
+                        Log.d(TAG, "Вставлено новых рецептов: " + toInsert.size());
+                    }
                     
-                    analysisTimer.stop();
+                    // Обновляем существующие рецепты
+                    if (!toUpdate.isEmpty()) {
+                        recipeDao.updateExistingRecipes(toUpdate);
+                        Log.d(TAG, "Обновлено рецептов: " + toUpdate.size());
+                    }
+                });
+                
+                // Предварительно загружаем кэш для новых данных
+                List<RecipeEntity> allNewEntities = new ArrayList<>();
+                allNewEntities.addAll(toInsert);
+                allNewEntities.addAll(toUpdate);
+                preloadCacheForEntities(allNewEntities);
+                
+                Log.d(TAG, String.format(
+                    "Умная замена завершена: всего=%d, новых=%d, обновлено=%d, удалено=%d", 
+                    newRecipes.size(), toInsert.size(), toUpdate.size(), toDelete.size()));
                     
-                    // Выполняем операции в транзакции для атомарности
-                    PerformanceMonitor.Timer transactionTimer = PerformanceMonitor.Timer.start("smart_replace_transaction");
-                    
-                    AppDatabase.getInstance(context).runInTransaction(() -> {
-                        // Удаляем отсутствующие рецепты
-                        if (!toDelete.isEmpty()) {
-                            recipeDao.deleteRecipesByIds(toDelete);
-                            Log.d(TAG, "Удалено рецептов: " + toDelete.size());
-                        }
-                        
-                        // Вставляем новые рецепты
-                        if (!toInsert.isEmpty()) {
-                            recipeDao.insertNewRecipes(toInsert);
-                            Log.d(TAG, "Вставлено новых рецептов: " + toInsert.size());
-                        }
-                        
-                        // Обновляем существующие рецепты
-                        if (!toUpdate.isEmpty()) {
-                            recipeDao.updateExistingRecipes(toUpdate);
-                            Log.d(TAG, "Обновлено рецептов: " + toUpdate.size());
-                        }
-                    });
-                    
-                    transactionTimer.stop();
-                    
-                    // Предварительно загружаем кэш для новых данных
-                    List<RecipeEntity> allNewEntities = new ArrayList<>();
-                    allNewEntities.addAll(toInsert);
-                    allNewEntities.addAll(toUpdate);
-                    preloadCacheForEntities(allNewEntities);
-                    
-                    Log.d(TAG, String.format(
-                        "Умная замена завершена: всего=%d, новых=%d, обновлено=%d, удалено=%d", 
-                        newRecipes.size(), toInsert.size(), toUpdate.size(), toDelete.size()));
-                        
-                } catch (Exception e) {
-                    Log.e(TAG, "Ошибка при умной замене рецептов: " + e.getMessage(), e);
-                    // Fallback на обычную замену в случае ошибки
-                    replaceAllRecipes(newRecipes);
-                }
-            });
+            } catch (Exception e) {
+                Log.e(TAG, "Ошибка при умной замене рецептов: " + e.getMessage(), e);
+                // Fallback на обычную замену в случае ошибки
+                replaceAllRecipes(newRecipes);
+            }
         });
     }
 
@@ -298,77 +271,54 @@ public class RecipeLocalRepository extends NetworkRepository{
      * Использует ленивую сериализацию и мониторинг производительности.
      */
     public void replaceAllRecipes(List<Recipe> recipes) {
-        PerformanceMonitor.measureDatabaseOperation("replace_all_recipes", () -> {
-            PerformanceMonitor.Timer conversionTimer = PerformanceMonitor.Timer.start("convert_recipes_to_entities");
+        List<RecipeEntity> entities = new ArrayList<>();
+        if (recipes != null) {
+            // Конвертируем рецепты в сущности батчами для лучшей производительности
+            final int BATCH_SIZE = 25; // Уменьшено для лучшей отзывчивости
             
-            List<RecipeEntity> entities = new ArrayList<>();
-            if (recipes != null) {
-                // Конвертируем рецепты в сущности батчами для лучшей производительности
-                final int BATCH_SIZE = 25; // Уменьшено для лучшей отзывчивости
+            for (int i = 0; i < recipes.size(); i += BATCH_SIZE) {
+                int endIndex = Math.min(i + BATCH_SIZE, recipes.size());
+                List<Recipe> batch = recipes.subList(i, endIndex);
                 
-                for (int i = 0; i < recipes.size(); i += BATCH_SIZE) {
-                    int endIndex = Math.min(i + BATCH_SIZE, recipes.size());
-                    List<Recipe> batch = recipes.subList(i, endIndex);
-                    
-                    for (Recipe recipe : batch) {
-                        RecipeEntity entity = new RecipeEntity(recipe);
-                        // Предварительно загружаем кэш для новых сущностей
-                        entity.refreshCache();
-                        entities.add(entity);
-                    }
-                    
-                    // Проверка прерывания потока
-                    if (Thread.currentThread().isInterrupted()) {
-                        Log.w(TAG, "Операция прервана при конвертации рецептов");
-                        return;
-                    }
-                    
-                    // Микропауза для предотвращения блокировки UI
-                    if (endIndex < recipes.size()) {
-                        try {
-                            Thread.sleep(5);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            break;
-                        }
+                for (Recipe recipe : batch) {
+                    RecipeEntity entity = new RecipeEntity(recipe);
+                    // Предварительно загружаем кэш для новых сущностей
+                    entity.refreshCache();
+                    entities.add(entity);
+                }
+                
+                // Проверка прерывания потока
+                if (Thread.currentThread().isInterrupted()) {
+                    Log.w(TAG, "Операция прервана при конвертации рецептов");
+                    return;
+                }
+                
+                // Микропауза для предотвращения блокировки UI
+                if (endIndex < recipes.size()) {
+                    try {
+                        Thread.sleep(5);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
                     }
                 }
             }
+        }
+        
+        // Выполняем замену в БД внутри транзакции
+        try {
+            AppDatabase.getInstance(context).runInTransaction(() -> {
+                recipeDao.replaceAllRecipes(entities);
+            });
+            Log.d(TAG, "Все рецепты заменены с ленивой сериализацией, count=" + entities.size());
             
-            conversionTimer.stop();
+            // Очищаем старый кэш и загружаем новый
+            DataConverters.clearCache();
+            preloadCacheForEntities(entities);
             
-            // Выполняем замену в БД внутри транзакции
-            PerformanceMonitor.Timer dbTimer = PerformanceMonitor.Timer.start("database_replace_transaction");
-            
-            try {
-                AppDatabase.getInstance(context).runInTransaction(() -> {
-                    recipeDao.replaceAllRecipes(entities);
-                });
-                Log.d(TAG, "Все рецепты заменены с ленивой сериализацией, count=" + entities.size());
-                
-                // Очищаем старый кэш и загружаем новый
-                DataConverters.clearCache();
-                preloadCacheForEntities(entities);
-                
-            } catch (Exception e) {
-                Log.e(TAG, "Ошибка при replaceAllRecipes", e);
-            } finally {
-                dbTimer.stop();
-            }
-        });
-    }
-    
-    /**
-     * Возвращает статистику производительности репозитория.
-     * @return строка с отчетом о производительности
-     */
-    public String getPerformanceStats() {
-        StringBuilder stats = new StringBuilder();
-        stats.append("=== Статистика RecipeLocalRepository ===\n");
-        stats.append(PerformanceMonitor.getPerformanceReport());
-        stats.append("\n=== Статистика кэша DataConverters ===\n");
-        stats.append(DataConverters.getCacheStats());
-        return stats.toString();
+        } catch (Exception e) {
+            Log.e(TAG, "Ошибка при replaceAllRecipes", e);
+        }
     }
     
     /**
@@ -376,7 +326,6 @@ public class RecipeLocalRepository extends NetworkRepository{
      */
     public void clearAllCaches() {
         DataConverters.clearCache();
-        PerformanceMonitor.clearStats();
         Log.d(TAG, "Все кэши очищены");
     }
 }

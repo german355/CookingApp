@@ -15,7 +15,7 @@ import com.example.cooking.domain.entities.Step;
 import com.example.cooking.network.models.GeneralServerResponse;
 import com.example.cooking.network.utils.Resource;
 import com.example.cooking.utils.MySharedPreferences;
-import com.example.cooking.utils.PerformanceMonitor;
+import com.example.cooking.utils.AppExecutors;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import com.example.cooking.utils.AppExecutors;
 
 public class UnifiedRecipeRepository {
     private static final String TAG = "UnifiedRecipeRepository";
@@ -85,10 +84,8 @@ public class UnifiedRecipeRepository {
                 // Обрабатываем данные в фоновом потоке батчами для лучшей производительности
                 AppExecutors.getInstance().diskIO().execute(() -> {
                     try {
-                        // Получаем лайки одним запросом с мониторингом производительности
-                        Set<Integer> likedIds = PerformanceMonitor.measureOperation("get_liked_ids", () -> 
-                            new HashSet<>(likedRecipesRepository.getLikedRecipeIdsSync())
-                        );
+                        // Получаем лайки одним запросом
+                        Set<Integer> likedIds = new HashSet<>(likedRecipesRepository.getLikedRecipeIdsSync());
                         
                         // Обрабатываем рецепты оптимизированными батчами (уменьшено с 50 до 25)
                         processRecipesInOptimizedBatches(remoteRecipes, likedIds);
@@ -122,19 +119,14 @@ public class UnifiedRecipeRepository {
         final int OPTIMAL_BATCH_SIZE = 25; // Уменьшено с 50 для лучшей отзывчивости
         final int PAUSE_BETWEEN_BATCHES_MS = 5; // Уменьшено с 10
         
-        PerformanceMonitor.Timer batchTimer = PerformanceMonitor.Timer.start("process_recipes_batches");
-        
         try {
             for (int i = 0; i < recipes.size(); i += OPTIMAL_BATCH_SIZE) {
                 int endIndex = Math.min(i + OPTIMAL_BATCH_SIZE, recipes.size());
                 List<Recipe> batch = recipes.subList(i, endIndex);
                 
                 // Параллельная обработка лайков в батче для максимальной производительности
-                PerformanceMonitor.measureOperation("process_batch_" + (i / OPTIMAL_BATCH_SIZE), () -> {
-                    batch.parallelStream().forEach(recipe -> {
-                        recipe.setLiked(likedIds.contains(recipe.getId()));
-                    });
-                    return null;
+                batch.parallelStream().forEach(recipe -> {
+                    recipe.setLiked(likedIds.contains(recipe.getId()));
                 });
                 
                 // Проверка прерывания потока
@@ -156,8 +148,8 @@ public class UnifiedRecipeRepository {
             
             Log.d(TAG, String.format("Обработано %d рецептов в %d батчах с ленивой сериализацией", 
                                    recipes.size(), (recipes.size() + OPTIMAL_BATCH_SIZE - 1) / OPTIMAL_BATCH_SIZE));
-        } finally {
-            batchTimer.stop();
+        } catch (Exception e) {
+            Log.e(TAG, "Ошибка при обработке батчей: " + e.getMessage());
         }
     }
 
@@ -304,30 +296,11 @@ public class UnifiedRecipeRepository {
     }
     
     /**
-     * Возвращает детальную статистику производительности репозитория.
-     */
-    public String getDetailedPerformanceStats() {
-        StringBuilder stats = new StringBuilder();
-        stats.append("=== Статистика UnifiedRecipeRepository ===\n");
-        stats.append(PerformanceMonitor.getPerformanceReport());
-        stats.append("\n").append(localRepository.getPerformanceStats());
-        return stats.toString();
-    }
-    
-    /**
      * Очищает все кэши для освобождения памяти.
      * Рекомендуется вызывать при нехватке памяти или перед закрытием приложения.
      */
     public void clearAllCaches() {
         localRepository.clearAllCaches();
         Log.d(TAG, "Все кэши UnifiedRecipeRepository очищены");
-    }
-    
-    /**
-     * Проверяет наличие проблем с производительностью.
-     * @return true если обнаружены медленные операции
-     */
-    public boolean hasPerformanceIssues() {
-        return PerformanceMonitor.hasPerformanceIssues();
     }
 }
