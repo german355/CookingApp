@@ -170,10 +170,6 @@ public class IngredientViewAdapter extends ListAdapter<IngredientViewAdapter.Ing
             }
             
             amountTextView.setText(formattedAmount);
-            
-            // Логируем для отладки
-            Log.d("IngredientViewHolder", "Отображение ингредиента: " + name + 
-                  ", количество: " + calculatedAmount + " " + unit);
         }
     }
 

@@ -144,8 +144,8 @@ public class ApiCallHandler {
                 if (errorResponse != null && errorResponse.getMessage() != null && !errorResponse.getMessage().isEmpty()) {
                     return errorResponse.getMessage();
                 }
-            } catch (Exception ignored) {
-                // Если не удалось распарсить как BaseApiResponse, возвращаем тело ошибки как есть
+            } catch (Exception e) {
+                Log.w(TAG, "Не удалось распарсить ответ как BaseApiResponse: " + e.getMessage());
             }
             
             return "Ошибка сервера: " + response.code() + " - " + errorBody;

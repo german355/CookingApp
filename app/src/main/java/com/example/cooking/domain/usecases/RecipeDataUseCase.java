@@ -64,16 +64,7 @@ public class RecipeDataUseCase {
         }, 500); // Минимальная задержка для показа индикатора загрузки
     }
     
-    /**
-     * Проверяет доступность сети
-     */
-    public boolean isNetworkAvailable() {
-        if (connectivityManager != null) {
-            android.net.NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-            return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        }
-        return false;
-    }
+
     
     /**
      * Очищает ресурсы

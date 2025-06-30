@@ -48,10 +48,11 @@ public class Recipe implements Parcelable {
     @SerializedName("photo")
     private String photo_url; // URL основного изображения рецепта
 
-    /**
-     * Адаптер для десериализации поля ingredients.
-     * Упрощенная версия для улучшения производительности.
-     */
+    private static <T> ArrayList<T> handleParseError(String context, Exception e) {
+        android.util.Log.w("Recipe", "Failed to parse " + context + ": " + e.getMessage());
+        return new ArrayList<>();
+    }
+
     public static class IngredientsAdapter extends TypeAdapter<ArrayList<Ingredient>> {
         private static final Gson GSON_INSTANCE = new Gson();
         private static final Type INGREDIENT_LIST_TYPE = new TypeToken<ArrayList<Ingredient>>() {}.getType();
@@ -81,16 +82,14 @@ public class Recipe implements Parcelable {
                     ArrayList<Ingredient> parsedIngredients = GSON_INSTANCE.fromJson(jsonString, INGREDIENT_LIST_TYPE);
                     return parsedIngredients != null ? parsedIngredients : new ArrayList<>();
                 } catch (Exception e) {
-                    android.util.Log.w("Recipe", "Failed to parse ingredients string, returning empty list");
-                    return new ArrayList<>();
+                    return handleParseError("ingredients string", e);
                 }
             } else if (in.peek() == JsonToken.BEGIN_ARRAY) {
                 try {
                     ArrayList<Ingredient> parsedIngredients = GSON_INSTANCE.fromJson(in, INGREDIENT_LIST_TYPE);
                     return parsedIngredients != null ? parsedIngredients : new ArrayList<>();
                 } catch (Exception e) {
-                    android.util.Log.w("Recipe", "Failed to parse ingredients array, returning empty list");
-                    return new ArrayList<>();
+                    return handleParseError("ingredients array", e);
                 }
             } else {
                 android.util.Log.w("Recipe", "Unexpected token for ingredients, skipping");
@@ -100,10 +99,6 @@ public class Recipe implements Parcelable {
         }
     }
 
-    /**
-     * Адаптер для десериализации поля instructions.
-     * Упрощенная версия для улучшения производительности.
-     */
     public static class StepsAdapter extends TypeAdapter<ArrayList<Step>> {
         private static final Gson GSON_INSTANCE = new Gson();
         private static final Type STEP_LIST_TYPE = new TypeToken<ArrayList<Step>>() {}.getType();
@@ -133,16 +128,14 @@ public class Recipe implements Parcelable {
                     ArrayList<Step> parsedSteps = GSON_INSTANCE.fromJson(jsonString, STEP_LIST_TYPE);
                     return parsedSteps != null ? parsedSteps : new ArrayList<>();
                 } catch (Exception e) {
-                    android.util.Log.w("Recipe", "Failed to parse steps string, returning empty list");
-                    return new ArrayList<>();
+                    return handleParseError("steps string", e);
                 }
             } else if (in.peek() == JsonToken.BEGIN_ARRAY) {
                 try {
                     ArrayList<Step> parsedSteps = GSON_INSTANCE.fromJson(in, STEP_LIST_TYPE);
                     return parsedSteps != null ? parsedSteps : new ArrayList<>();
                 } catch (Exception e) {
-                    android.util.Log.w("Recipe", "Failed to parse steps array, returning empty list");
-                    return new ArrayList<>();
+                    return handleParseError("steps array", e);
                 }
             } else {
                 android.util.Log.w("Recipe", "Unexpected token for steps, skipping");

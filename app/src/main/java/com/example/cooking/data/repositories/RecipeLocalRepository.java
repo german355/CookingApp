@@ -27,6 +27,11 @@ public class RecipeLocalRepository extends NetworkRepository{
     
     private static final String TAG = "RecipeLocalRepository";
     private final RecipeDao recipeDao;
+    
+    // Кэш для результатов фильтрации по категориям
+    private final java.util.concurrent.ConcurrentHashMap<String, List<Recipe>> categoryFilterCache = new java.util.concurrent.ConcurrentHashMap<>();
+    private volatile long lastCacheUpdate = 0;
+    private static final long CACHE_VALIDITY_MS = 30000; // 30 секунд
 
     
     public RecipeLocalRepository(Context context) {
@@ -127,6 +132,7 @@ public class RecipeLocalRepository extends NetworkRepository{
         AppExecutors.getInstance().diskIO().execute(() -> {
             RecipeEntity entity = new RecipeEntity(recipe);
             recipeDao.insert(entity);
+            invalidateCache(); // Инвалидируем кэш
         });
     }
     
@@ -137,6 +143,7 @@ public class RecipeLocalRepository extends NetworkRepository{
         AppExecutors.getInstance().diskIO().execute(() -> {
             RecipeEntity entity = new RecipeEntity(recipe);
             recipeDao.update(entity);
+            invalidateCache(); // Инвалидируем кэш
         });
     }
     
@@ -153,6 +160,62 @@ public class RecipeLocalRepository extends NetworkRepository{
     }
 
     
+    /**
+     * Получает рецепты отфильтрованные по категории с оптимизацией SQL и кэшированием
+     * Использует прямые SQL запросы вместо фильтрации в памяти
+     */
+    public List<Recipe> getRecipesByCategory(String filterKey, String filterType) {
+        String cacheKey = filterType + ":" + filterKey;
+        
+        // Проверяем кэш
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastCacheUpdate < CACHE_VALIDITY_MS) {
+            List<Recipe> cachedResult = categoryFilterCache.get(cacheKey);
+            if (cachedResult != null) {
+                Log.d(TAG, "Возвращен результат из кэша для " + cacheKey + " (" + cachedResult.size() + " рецептов)");
+                return new ArrayList<>(cachedResult); // Возвращаем копию для безопасности
+            }
+        }
+        
+        try {
+            List<RecipeEntity> entities;
+            
+            // Используем оптимизированные SQL запросы
+            switch (filterType) {
+                case "meal_type":
+                    entities = recipeDao.getRecipesByMealType(filterKey);
+                    break;
+                case "food_type":
+                    entities = recipeDao.getRecipesByFoodType(filterKey);
+                    break;
+                default:
+                    Log.w(TAG, "Неизвестный тип фильтра: " + filterType);
+                    return new ArrayList<>();
+            }
+            
+            // Конвертируем в Recipe объекты
+            List<Recipe> recipes = new ArrayList<>();
+            if (entities != null) {
+                for (RecipeEntity entity : entities) {
+                    recipes.add(entity.toRecipe());
+                }
+                
+                // Предварительно загружаем кэш для отфильтрованных рецептов
+                preloadCacheForEntities(entities);
+                
+                Log.d(TAG, "SQL фильтрация: найдено " + recipes.size() + " рецептов для " + filterType + "=" + filterKey);
+            }
+            
+            // Сохраняем в кэш
+            categoryFilterCache.put(cacheKey, new ArrayList<>(recipes));
+            
+            return recipes;
+        } catch (Exception e) {
+            Log.e(TAG, "Ошибка при фильтрации рецептов: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
     /**
      * Синхронно получить рецепт по идентификатору
      */
@@ -178,6 +241,7 @@ public class RecipeLocalRepository extends NetworkRepository{
                     RecipeEntity recipe = recipeDao.getRecipeById(recipeId);
                     if (recipe != null) {
                         recipeDao.delete(recipe);
+                        invalidateCache(); // Инвалидируем кэш
                         Log.d(TAG, "Рецепт успешно удален из базы данных: " + recipeId);
                     } else {
                         Log.w(TAG, "Попытка удалить несуществующий рецепт: " + recipeId);
@@ -189,6 +253,15 @@ public class RecipeLocalRepository extends NetworkRepository{
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при запуске задачи удаления рецепта: " + recipeId, e);
         }
+    }
+    
+    /**
+     * Инвалидирует кэш фильтрации при изменении данных
+     */
+    private void invalidateCache() {
+        categoryFilterCache.clear();
+        lastCacheUpdate = System.currentTimeMillis();
+        Log.d(TAG, "Кэш фильтрации инвалидирован");
     }
     
     /**
@@ -257,6 +330,9 @@ public class RecipeLocalRepository extends NetworkRepository{
                 Log.d(TAG, String.format(
                     "Умная замена завершена: всего=%d, новых=%d, обновлено=%d, удалено=%d", 
                     newRecipes.size(), toInsert.size(), toUpdate.size(), toDelete.size()));
+                
+                // Инвалидируем кэш после изменений
+                invalidateCache();
                     
             } catch (Exception e) {
                 Log.e(TAG, "Ошибка при умной замене рецептов: " + e.getMessage(), e);
@@ -316,6 +392,9 @@ public class RecipeLocalRepository extends NetworkRepository{
             DataConverters.clearCache();
             preloadCacheForEntities(entities);
             
+            // Инвалидируем кэш фильтрации
+            invalidateCache();
+            
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при replaceAllRecipes", e);
         }
@@ -326,6 +405,7 @@ public class RecipeLocalRepository extends NetworkRepository{
      */
     public void clearAllCaches() {
         DataConverters.clearCache();
+        invalidateCache();
         Log.d(TAG, "Все кэши очищены");
     }
 }

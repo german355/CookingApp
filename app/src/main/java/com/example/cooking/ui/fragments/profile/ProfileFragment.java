@@ -57,7 +57,7 @@ public class ProfileFragment extends Fragment {
         editNameButton = view.findViewById(R.id.edit_name_button);
         changePasswordButton = view.findViewById(R.id.change_password_button);
         logoutButton = view.findViewById(R.id.logout_button);
-        //deleteAccountButton = view.findViewById(R.id.delete_account_button);
+
         progressBar = view.findViewById(R.id.progress_bar);
 
         // Настраиваем наблюдателей LiveData

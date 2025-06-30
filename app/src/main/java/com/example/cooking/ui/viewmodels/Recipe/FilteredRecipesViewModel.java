@@ -9,13 +9,12 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.cooking.domain.entities.Recipe;
 import com.example.cooking.ui.fragments.FilteredRecipesFragment;
 import com.example.cooking.domain.usecases.RecipeDataUseCase;
+import com.example.cooking.domain.usecases.RecipeFilterUseCase;
 import com.example.cooking.domain.usecases.RecipeLikeUseCase;
-import com.example.cooking.utils.AppExecutors;
 import com.example.cooking.utils.MySharedPreferences;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * ViewModel для {@link FilteredRecipesFragment}.
@@ -33,43 +32,21 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
     public final LiveData<Boolean> isRefreshing = _isRefreshing;
 
     private final RecipeDataUseCase recipeDataUseCase;
+    private final RecipeFilterUseCase recipeFilterUseCase;
     private final RecipeLikeUseCase recipeLikeUseCase;
 
     public FilteredRecipesViewModel(@NonNull Application application) {
         super(application);
         recipeDataUseCase = new RecipeDataUseCase(application);
+        recipeFilterUseCase = new RecipeFilterUseCase(application);
         recipeLikeUseCase = new RecipeLikeUseCase(application);
     }
 
     public void loadFilteredRecipes(String filterKey, String filterType) {
         _isRefreshing.setValue(true);
         
-        AppExecutors.getInstance().diskIO().execute(() -> {
-            List<Recipe> allRecipes = recipeDataUseCase.getAllRecipesSync();
-            if (allRecipes == null) {
-                _errorMessage.postValue("Не удалось загрузить рецепты.");
-                _filteredRecipes.postValue(Collections.emptyList());
-                _isRefreshing.postValue(false);
-                return;
-            }
-
-            List<Recipe> filtered = allRecipes.stream()
-                    .filter(recipe -> {
-                        if ("meal_type".equals(filterType)) {
-                            return filterKey.equalsIgnoreCase(recipe.getMealType());
-                        } else if ("food_type".equals(filterType)) {
-                            return filterKey.equalsIgnoreCase(recipe.getFoodType());
-                        }
-                        return false;
-                    })
-                    .collect(Collectors.toList());
-            
-            _filteredRecipes.postValue(filtered);
-            if (filtered.isEmpty()) {
-                _errorMessage.postValue("Рецепты в этой категории не найдены.");
-            }
-            _isRefreshing.postValue(false);
-        });
+        // Используем единый метод фильтрации с автообновлением
+        recipeFilterUseCase.filterRecipesByCategory(filterKey, filterType, _filteredRecipes, _errorMessage, _isRefreshing);
     }
 
     public void toggleLikeStatus(Recipe recipe, boolean isLiked) {
@@ -78,15 +55,17 @@ public class FilteredRecipesViewModel extends AndroidViewModel {
     }
     
     public void refreshData() {
-        // В этой реализации обновление данных происходит через HomeFragment,
-        // а этот ViewModel просто получает отфильтрованный результат из общей базы.
-        // При необходимости можно добавить вызов recipeDataUseCase.refreshRecipes(...)
+        // Получаем текущие параметры фильтрации (можно сохранить в полях класса)
+        // Пока используем общее обновление через RecipeDataUseCase
+        MutableLiveData<com.example.cooking.network.utils.Resource<List<Recipe>>> dummyLiveData = new MutableLiveData<>();
+        recipeDataUseCase.refreshRecipes(_isRefreshing, _errorMessage, dummyLiveData, null);
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
         recipeDataUseCase.clearResources();
+        recipeFilterUseCase.clearResources();
         recipeLikeUseCase.clearResources();
     }
 } 

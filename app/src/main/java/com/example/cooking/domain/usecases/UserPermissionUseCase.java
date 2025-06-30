@@ -177,15 +177,7 @@ public class UserPermissionUseCase {
         Log.d(TAG, "canDeleteRecipe: доступ запрещен - пользователь не автор и не администратор");
         return PermissionResult.denied("Вы не являетесь автором этого рецепта или модератором");
     }
-    
-    /**
-     * Проверяет, может ли пользователь управлять рецептом (редактировать или удалять)
-     * @param recipeOwnerId ID владельца рецепта
-     * @return true если пользователь может управлять рецептом
-     */
-    public boolean canManageRecipe(String recipeOwnerId) {
-        return canEditRecipe(recipeOwnerId).hasPermission();
-    }
+
     
     /**
      * Получает подробную информацию о правах пользователя для отладки

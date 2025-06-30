@@ -27,8 +27,8 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 public class FilteredRecipesFragment extends Fragment implements RecipeListAdapter.OnRecipeLikeListener {
 
     private static final String TAG = "FilteredRecipesFragment";
-    public static final String ARG_FILTER_KEY = "filter_key";
-    public static final String ARG_FILTER_TYPE = "filter_type";
+    public static final String ARG_FILTER_KEY = "filterKey";
+    public static final String ARG_FILTER_TYPE = "filterType";
 
     private FilteredRecipesViewModel viewModel;
     private RecipeListAdapter adapter;

@@ -8,9 +8,11 @@ import com.example.cooking.network.api.ApiService;
 import com.example.cooking.network.interceptors.AuthInterceptor;
 import com.example.cooking.network.interceptors.RetryInterceptor;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -45,9 +47,6 @@ public class NetworkService {
     /**
      * Получает настроенный OkHttpClient с использованием двойной проверки блокировки
      * для потокобезопасности.
-     *
-     * @param context контекст приложения для доступа к кэшу
-     * @return экземпляр OkHttpClient
      */
     public static OkHttpClient getHttpClient(Context context) {
         if (httpClient == null) {
@@ -68,6 +67,8 @@ public class NetworkService {
                             // Отключаем кэш, чтобы избежать ошибок "unexpected end of stream" на больших ответах
                             .cache(null)
                             .retryOnConnectionFailure(true)
+                            // Принудительно используем HTTP/1.1 для стабильности соединения
+                            .protocols(java.util.Arrays.asList(okhttp3.Protocol.HTTP_1_1))
                             .addInterceptor(loggingInterceptor)
                             .addInterceptor(new AuthInterceptor(context))
                             .addInterceptor(new RetryInterceptor(MAX_RETRY_ATTEMPTS, RETRY_DELAY_MILLIS));
@@ -84,9 +85,7 @@ public class NetworkService {
     /**
      * Получает настроенный Retrofit клиент с использованием двойной проверки блокировки
      * для потокобезопасности.
-     *
-     * @param context контекст приложения
-     * @return экземпляр Retrofit
+
      */
     public static Retrofit getRetrofit(Context context) {
         if (retrofit == null) {
@@ -142,41 +141,4 @@ public class NetworkService {
         }
     }
     
-    /**
-     * Очищает кэш HTTP-запросов.
-     * Полезно при проблемах с устаревшими данными.
-     * 
-     * @param context контекст приложения
-     * @return true если кэш успешно очищен, false в случае ошибки
-     */
-    /*public static boolean clearCache(Context context) {
-        try {
-            Cache cache = getHttpClient(context).cache();
-            if (cache != null) {
-                cache.evictAll();
-                Log.d(TAG, "Кэш сетевых запросов очищен");
-                return true;
-            }
-            return false;
-        } catch (Exception e) {
-            Log.e(TAG, "Ошибка при очистке кэша", e);
-            return false;
-        }
-    }*/
-    
-    /**
-     * Возвращает текущий размер кэша.
-     * 
-     * @param context контекст приложения
-     * @return размер кэша в байтах или -1 в случае ошибки
-     */
-    /*public static long getCacheSize(Context context) {
-        try {
-            Cache cache = getHttpClient(context).cache();
-            return cache != null ? cache.size() : 0;
-        } catch (Exception e) {
-            Log.e(TAG, "Ошибка при получении размера кэша", e);
-            return -1;
-        }
-    }*/
 } 

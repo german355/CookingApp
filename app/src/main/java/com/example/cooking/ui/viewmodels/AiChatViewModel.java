@@ -185,7 +185,7 @@ public class AiChatViewModel extends AndroidViewModel {
     }
     
     public void onPhotoButtonClicked() {
-        // TODO: обработать выбор фото
+
     }
 
     @Override

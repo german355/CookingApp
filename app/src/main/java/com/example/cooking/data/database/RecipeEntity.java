@@ -20,7 +20,12 @@ import java.util.Objects;
  * Использует {@link TypeConverters} для сохранения списков ингредиентов и шагов.
  * Поддерживает ленивую сериализацию для оптимизации производительности.
  */
-@Entity(tableName = "recipes")
+@Entity(tableName = "recipes", 
+        indices = {
+            @androidx.room.Index(value = "mealType", name = "index_mealType"),
+            @androidx.room.Index(value = "foodType", name = "index_foodType"),
+            @androidx.room.Index(value = "title", name = "index_title")
+        })
 @TypeConverters(DataConverters.class)
 public class RecipeEntity {
     @PrimaryKey // Первичный ключ для таблицы recipes

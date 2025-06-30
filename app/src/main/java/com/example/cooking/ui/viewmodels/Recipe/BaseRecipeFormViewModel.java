@@ -75,108 +75,65 @@ public abstract class BaseRecipeFormViewModel extends AndroidViewModel {
     
     // === ОБЩИЕ МЕТОДЫ УПРАВЛЕНИЯ ИНГРЕДИЕНТАМИ ===
     
-    /**
-     * Добавляет пустой ингредиент в список
-     */
     public void addEmptyIngredient() {
-        try {
+        executeWithErrorHandling(() -> {
             List<Ingredient> updatedList = recipeFormUseCase.addEmptyIngredient(getCurrentIngredients());
             setCurrentIngredients(updatedList);
-        } catch (RuntimeException e) {
-            Log.e(TAG, "Ошибка при добавлении ингредиента", e);
-            setErrorMessage(e.getMessage());
-        }
+        }, "добавлении ингредиента");
     }
     
-    /**
-     * Обновляет ингредиент по позиции
-     */
     public void updateIngredient(int position, Ingredient ingredient) {
-        try {
+        executeWithErrorHandling(() -> {
             List<Ingredient> updatedList = recipeFormUseCase.updateIngredient(getCurrentIngredients(), position, ingredient);
             setCurrentIngredients(updatedList);
-            
-            // Убираем real-time валидацию - валидируем только при сохранении
-            // Это предотвращает спам Toast сообщений при вводе каждого символа
-        } catch (RuntimeException e) {
-            Log.e(TAG, "Ошибка при обновлении ингредиента", e);
-            setErrorMessage(e.getMessage());
-        }
+        }, "обновлении ингредиента");
     }
     
-    /**
-     * Удаляет ингредиент по позиции
-     */
     public void removeIngredient(int position) {
-        try {
+        executeWithErrorHandling(() -> {
             List<Ingredient> updatedList = recipeFormUseCase.removeIngredient(getCurrentIngredients(), position);
             setCurrentIngredients(updatedList);
-            
-            // Убираем real-time валидацию - валидируем только при сохранении
-            // Это предотвращает спам Toast сообщений
-        } catch (RuntimeException e) {
-            Log.e(TAG, "Ошибка при удалении ингредиента", e);
-            setErrorMessage(e.getMessage());
-        }
+        }, "удалении ингредиента");
     }
     
     // === ОБЩИЕ МЕТОДЫ УПРАВЛЕНИЯ ШАГАМИ ===
     
-    /**
-     * Добавляет пустой шаг в список
-     */
     public void addEmptyStep() {
-        try {
+        executeWithErrorHandling(() -> {
             List<Step> updatedList = recipeFormUseCase.addEmptyStep(getCurrentSteps());
             setCurrentSteps(updatedList);
-        } catch (RuntimeException e) {
-            Log.e(TAG, "Ошибка при добавлении шага", e);
-            setErrorMessage(e.getMessage());
-        }
+        }, "добавлении шага");
     }
     
-    /**
-     * Обновляет шаг по позиции
-     */
     public void updateStep(int position, Step step) {
-        try {
+        executeWithErrorHandling(() -> {
             List<Step> updatedList = recipeFormUseCase.updateStep(getCurrentSteps(), position, step);
             setCurrentSteps(updatedList);
-            
-            // Убираем real-time валидацию - валидируем только при сохранении
-            // Это предотвращает спам Toast сообщений при вводе каждого символа
-        } catch (RuntimeException e) {
-            Log.e(TAG, "Ошибка при обновлении шага", e);
-            setErrorMessage(e.getMessage());
-        }
+        }, "обновлении шага");
     }
     
-    /**
-     * Удаляет шаг по позиции
-     */
     public void removeStep(int position) {
-        try {
+        executeWithErrorHandling(() -> {
             List<Step> updatedList = recipeFormUseCase.removeStep(getCurrentSteps(), position);
             setCurrentSteps(updatedList);
-            
-            // Убираем real-time валидацию - валидируем только при сохранении
-            // Это предотвращает спам Toast сообщений
+        }, "удалении шага");
+    }
+    
+    // === ОБЩИЙ МЕТОД ОБРАБОТКИ ОШИБОК ===
+    
+    private void executeWithErrorHandling(Runnable operation, String operationType) {
+        try {
+            operation.run();
         } catch (RuntimeException e) {
-            Log.e(TAG, "Ошибка при удалении шага", e);
+            Log.e(TAG, "Ошибка при " + operationType, e);
             setErrorMessage(e.getMessage());
         }
     }
     
     // === ОБЩИЕ МЕТОДЫ ВАЛИДАЦИИ ===
     
-    /**
-     * Устанавливает название рецепта с валидацией
-     */
     public void setTitle(String title) {
         setCurrentTitle(title);
-        
-        // Убираем real-time валидацию заголовка - валидируем только при сохранении
-        // Это предотвращает показ ошибок при неполном вводе заголовка
     }
     
     /**

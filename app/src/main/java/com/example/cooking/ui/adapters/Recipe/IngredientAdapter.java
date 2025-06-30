@@ -286,7 +286,7 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
             new DiffUtil.ItemCallback<Ingredient>() {
         @Override
         public boolean areItemsTheSame(@NonNull Ingredient oldItem, @NonNull Ingredient newItem) {
-            // TODO: Добавить уникальный ID для ингредиента, если возможно, иначе сравнивать по позиции?
+    
             // Временное сравнение по ссылкам, что не идеально для ListAdapter
             return oldItem == newItem; // Или использовать позицию/уникальный ID
         }

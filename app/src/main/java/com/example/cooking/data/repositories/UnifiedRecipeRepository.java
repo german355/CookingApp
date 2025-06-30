@@ -176,6 +176,13 @@ public class UnifiedRecipeRepository {
         });
     }
 
+    public void filterRecipesByCategory(String filterKey, String filterType, MutableLiveData<List<Recipe>> filteredResultsLiveData) {
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            List<Recipe> filteredResults = localRepository.getRecipesByCategory(filterKey, filterType);
+            filteredResultsLiveData.postValue(filteredResults);
+        });
+    }
+
     private boolean matchesSearchQuery(Recipe recipe, String query) {
         if (recipe.getTitle() != null && recipe.getTitle().toLowerCase().contains(query)) return true;
         if (recipe.getIngredients() != null) {
@@ -190,6 +197,8 @@ public class UnifiedRecipeRepository {
         }
         return false;
     }
+
+
 
     public void saveRecipe(Recipe recipe, byte[] imageBytes, RecipeCallback<Recipe> callback) {
         remoteRepository.saveRecipe(recipe, imageBytes, new RecipeRemoteRepository.RecipeSaveCallback() {
@@ -227,8 +236,6 @@ public class UnifiedRecipeRepository {
         remoteRepository.updateRecipe(recipe, imageBytes, new RecipeRemoteRepository.RecipeSaveCallback() {
             @Override
             public void onSuccess(GeneralServerResponse response, Recipe updatedRecipe) {
-                // После успешного обновления на сервере, обновляем в локальной БД
-                // Используем оригинальный recipe с обновленными данными, а не updatedRecipe из коллбэка
                 Recipe recipeToSave = recipe;
                 
                 // Обновляем URL изображения если получен новый с сервера
@@ -294,11 +301,7 @@ public class UnifiedRecipeRepository {
     public Recipe getRecipeByIdSync(int recipeId) {
         return localRepository.getRecipeByIdSync(recipeId);
     }
-    
-    /**
-     * Очищает все кэши для освобождения памяти.
-     * Рекомендуется вызывать при нехватке памяти или перед закрытием приложения.
-     */
+
     public void clearAllCaches() {
         localRepository.clearAllCaches();
         Log.d(TAG, "Все кэши UnifiedRecipeRepository очищены");

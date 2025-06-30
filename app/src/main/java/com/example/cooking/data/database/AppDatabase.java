@@ -12,7 +12,7 @@ import androidx.room.RoomDatabase.JournalMode;
  * Определяет сущности базы данных, версию схемы и предоставляет доступ к Data Access Objects (DAO).
  * Реализован как Singleton для обеспечения единственного экземпляра на все приложение.
  */
-@Database(entities = {RecipeEntity.class, LikedRecipeEntity.class}, version = 5, exportSchema = false)
+@Database(entities = {RecipeEntity.class, LikedRecipeEntity.class}, version = 6, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     
     private static final String DATABASE_NAME = "recipes_database";

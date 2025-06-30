@@ -63,7 +63,6 @@ public class DataConverters {
         // Проверяем кэш
         List<Ingredient> cached = INGREDIENT_CACHE.get(ingredientsString);
         if (cached != null) {
-            Log.d(TAG, "Загружен список ингредиентов из кэша");
             return new ArrayList<>(cached); // Возвращаем копию
         }
         
@@ -116,7 +115,6 @@ public class DataConverters {
         // Проверяем кэш
         List<Step> cached = STEP_CACHE.get(stepsString);
         if (cached != null) {
-            Log.d(TAG, "Загружен список шагов из кэша");
             return new ArrayList<>(cached); // Возвращаем копию
         }
         
@@ -191,17 +189,4 @@ public class DataConverters {
         Log.d(TAG, "Кэш предварительно загружен: " + getCacheStats());
     }
 
-    /**
-     * Быстрая проверка валидности JSON без полной десериализации.
-     * @param json строка для проверки
-     * @return true если JSON выглядит валидным
-     */
-    public static boolean isValidJson(String json) {
-        if (json == null || json.trim().isEmpty()) {
-            return false;
-        }
-        String trimmed = json.trim();
-        return (trimmed.startsWith("[") && trimmed.endsWith("]")) || 
-               (trimmed.startsWith("{") && trimmed.endsWith("}"));
-    }
 } 
