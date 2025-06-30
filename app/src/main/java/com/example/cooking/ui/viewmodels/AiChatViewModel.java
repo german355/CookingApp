@@ -183,10 +183,7 @@ public class AiChatViewModel extends AndroidViewModel {
         clearChatLiveData = chatRepository.startChatSession();
         clearChatLiveData.observeForever(clearChatObserver);
     }
-    
-    public void onPhotoButtonClicked() {
 
-    }
 
     @Override
     protected void onCleared() {

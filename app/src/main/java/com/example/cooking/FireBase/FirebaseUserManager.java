@@ -28,7 +28,6 @@ public class FirebaseUserManager {
 
     /**
      * Получение текущего пользователя
-     * @return объект текущего пользователя или null, если пользователь не авторизован
      */
     public FirebaseUser getCurrentUser() {
         return firebaseAuth.getCurrentUser();
@@ -36,13 +35,9 @@ public class FirebaseUserManager {
 
     /**
      * Получение UID пользователя
-     * @return уникальный идентификатор пользователя или null, если пользователь не авторизован
      */
     public String getUserId() {
         FirebaseUser user = getCurrentUser();
         return user != null ? user.getUid() : null;
     }
-
-
-
-} 
+}

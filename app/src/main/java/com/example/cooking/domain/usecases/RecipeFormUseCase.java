@@ -131,48 +131,15 @@ public class RecipeFormUseCase {
         }
     }
     
-    // === ВАЛИДАЦИЯ (простые методы синхронные, сложные - RxJava) ===
-    
-    /**
-     * Валидация только названия (простая операция)
-     */
-    public RecipeValidator.ValidationResult validateTitle(String title) {
-        return validator.validateTitle(title);
-    }
-    
-    /**
-     * Валидация списка ингредиентов (простая операция)
-     */
-    public RecipeValidator.ValidationResult validateIngredients(List<Ingredient> ingredients) {
-        return validator.validateIngredientsList(ingredients);
-    }
-    
-    /**
-     * Валидация списка шагов (простая операция)
-     */
-    public RecipeValidator.ValidationResult validateSteps(List<Step> steps) {
-        return validator.validateStepsList(steps);
-    }
-    
+
+
     /**
      * Проверка готовности рецепта к сохранению (простая операция)
      */
     public boolean canSaveRecipe(String title, List<Ingredient> ingredients, List<Step> steps) {
         return validator.canSaveRecipe(title, ingredients, steps);
     }
-    
-    /**
-     * Полная валидация формы рецепта (RxJava для сложных цепочек)
-     */
-    public Single<RecipeValidator.ValidationResult> validateRecipeForm(String title, 
-                                                                     List<Ingredient> ingredients, 
-                                                                     List<Step> steps) {
-        return Single.fromCallable(() -> 
-            validator.validateAll(title, ingredients, steps)
-        )
-        .subscribeOn(Schedulers.computation())
-        .observeOn(AndroidSchedulers.mainThread());
-    }
+
     
     // === ОБРАБОТКА ИЗОБРАЖЕНИЙ ===
     
@@ -204,7 +171,7 @@ public class RecipeFormUseCase {
                     
                     @Override
                     public void onProgress(int progress) {
-                        // Прогресс можно игнорировать или передать через Subject при необходимости
+
                     }
                 });
         })
@@ -250,39 +217,51 @@ public class RecipeFormUseCase {
     // === ПОДГОТОВКА ДАННЫХ ===
     
     /**
-     * Создает объект Recipe из данных формы
+     * Создает объект Recipe из данных формы (синхронная версия)
      */
-    public Single<Recipe> buildRecipe(String title, 
-                                    List<Ingredient> ingredients, 
-                                    List<Step> steps, 
-                                    String userId, 
-                                    Integer recipeId, 
-                                    String photoUrl) {
-        return Single.fromCallable(() -> {
-            // Подготавливаем шаги для сохранения (обновляем нумерацию)
-            List<Step> preparedSteps = listManager.prepareStepsForSaving(steps);
-            
-            Recipe recipe = new Recipe();
-            if (recipeId != null && recipeId != 0) {
-                recipe.setId(recipeId);
-            }
-            recipe.setTitle(title);
-            recipe.setUserId(userId);
-            recipe.setIngredients(new ArrayList<>(ingredients));
-            recipe.setSteps(new ArrayList<>(preparedSteps));
-            recipe.setPhoto_url(photoUrl);
-            recipe.setLiked(false);
-            
-            Log.d(TAG, "Recipe построен: ID=" + recipe.getId() + 
-                      ", Title=" + recipe.getTitle() + 
-                      ", UserId=" + recipe.getUserId() + 
-                      ", Ingredients=" + ingredients.size() + 
-                      ", Steps=" + preparedSteps.size());
-            
-            return recipe;
-        })
-        .subscribeOn(Schedulers.computation())
-        .observeOn(AndroidSchedulers.mainThread());
+    public Recipe buildRecipe(String title, 
+                            List<Ingredient> ingredients, 
+                            List<Step> steps, 
+                            String userId, 
+                            Integer recipeId, 
+                            String photoUrl) {
+        // Подготавливаем шаги для сохранения (обновляем нумерацию)
+        List<Step> preparedSteps = listManager.prepareStepsForSaving(steps);
+        
+        Recipe recipe = new Recipe();
+        if (recipeId != null && recipeId != 0) {
+            recipe.setId(recipeId);
+        }
+        recipe.setTitle(title);
+        recipe.setUserId(userId);
+        recipe.setIngredients(new ArrayList<>(ingredients));
+        recipe.setSteps(new ArrayList<>(preparedSteps));
+        recipe.setPhoto_url(photoUrl);
+        recipe.setLiked(false);
+        
+        Log.d(TAG, "Recipe построен: ID=" + recipe.getId() + 
+                  ", Title=" + recipe.getTitle() + 
+                  ", UserId=" + recipe.getUserId() + 
+                  ", Ingredients=" + ingredients.size() + 
+                  ", Steps=" + preparedSteps.size());
+        
+        return recipe;
+    }
+    
+    /**
+     * Создает объект Recipe из данных формы (асинхронная версия для обратной совместимости)
+     * @deprecated Используйте синхронную версию buildRecipe()
+     */
+    @Deprecated
+    public Single<Recipe> buildRecipeAsync(String title, 
+                                         List<Ingredient> ingredients, 
+                                         List<Step> steps, 
+                                         String userId, 
+                                         Integer recipeId, 
+                                         String photoUrl) {
+        return Single.fromCallable(() -> buildRecipe(title, ingredients, steps, userId, recipeId, photoUrl))
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread());
     }
     
     /**

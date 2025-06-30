@@ -21,23 +21,8 @@ public class ChatHistoryResponse {
         return messages;
     }
 
-    public void setMessages(List<ChatMessage> messages) {
-        this.messages = messages;
-    }
-
-    public boolean isHasMore() {
-        return hasMore;
-    }
-
-    public void setHasMore(boolean hasMore) {
-        this.hasMore = hasMore;
-    }
 
     public int getMessageCount() {
         return messageCount;
-    }
-
-    public void setMessageCount(int messageCount) {
-        this.messageCount = messageCount;
     }
 }

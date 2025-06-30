@@ -4,7 +4,7 @@ import com.example.cooking.network.models.BaseApiResponse;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * DTO для ответа при запуске сессии AI-чата.
+ * DTO для ответа при запуске сессии AI-чата.(пока не реализованно) на сервере
  */
 public class ChatSessionResponse extends BaseApiResponse {
     @SerializedName("sessionId")

@@ -34,13 +34,7 @@ public class RecipeDataUseCase {
         return repository.getAllRecipesLocal();
     }
     
-    /**
-     * Получает все рецепты синхронно (для использования в фоновых потоках)
-     */
-    public List<Recipe> getAllRecipesSync() {
-        return repository.getAllRecipesSync();
-    }
-    
+
     /**
      * Обновляет рецепты с сервера
      */

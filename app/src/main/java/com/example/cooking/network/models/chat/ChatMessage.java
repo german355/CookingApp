@@ -39,27 +39,10 @@ public class ChatMessage {
         this.message = message;
     }
 
-    public String getTimestamp() {
-        return timestamp;
-    }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public boolean isHasRecipes() {
-        return hasRecipes;
-    }
-
-    public void setHasRecipes(boolean hasRecipes) {
-        this.hasRecipes = hasRecipes;
-    }
 
     public List<Integer> getRecipeIds() {
         return recipeIds;
     }
 
-    public void setRecipeIds(List<Integer> recipeIds) {
-        this.recipeIds = recipeIds;
-    }
 }

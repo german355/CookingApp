@@ -67,10 +67,6 @@ public class UnifiedRecipeRepository {
         return localRepository.getAllRecipes();
     }
 
-    public List<Recipe> getAllRecipesSync() {
-        return localRepository.getAllRecipesSync();
-    }
-
     public void syncWithRemoteData(MutableLiveData<Resource<List<Recipe>>> recipesLiveData, MutableLiveData<String> errorMessage) {
         if (!isNetworkAvailable()) {
             errorMessage.postValue("Нет подключения к сети. Отображаются сохраненные данные.");
@@ -236,9 +232,10 @@ public class UnifiedRecipeRepository {
         remoteRepository.updateRecipe(recipe, imageBytes, new RecipeRemoteRepository.RecipeSaveCallback() {
             @Override
             public void onSuccess(GeneralServerResponse response, Recipe updatedRecipe) {
-                Recipe recipeToSave = recipe;
+                // Используем обновленный рецепт от сервера вместо исходного
+                Recipe recipeToSave = updatedRecipe;
                 
-                // Обновляем URL изображения если получен новый с сервера
+                // Обновляем URL изображения если получен новый в response
                 if(response != null && response.getPhotoUrl() != null){
                     recipeToSave.setPhoto_url(response.getPhotoUrl());
                     Log.d(TAG, "URL изображения обновлен от сервера: " + response.getPhotoUrl());

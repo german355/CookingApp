@@ -4,6 +4,7 @@ import android.app.Application;
 import com.example.cooking.domain.entities.Recipe;
 import com.example.cooking.data.repositories.UnifiedRecipeRepository;
 import com.example.cooking.network.models.GeneralServerResponse;
+import com.example.cooking.domain.validators.RecipeValidator;
 
 /**
  * Use Case для управления рецептами (CRUD операции)
@@ -15,12 +16,14 @@ public class RecipeManagementUseCase {
     private final UnifiedRecipeRepository repository;
     private final Application application;
     private final android.net.ConnectivityManager connectivityManager;
+    private final RecipeValidator validator;
     
     public RecipeManagementUseCase(Application application) {
         this.application = application;
         this.repository = UnifiedRecipeRepository.getInstance(application);
         this.connectivityManager = (android.net.ConnectivityManager) 
             application.getSystemService(android.content.Context.CONNECTIVITY_SERVICE);
+        this.validator = new RecipeValidator(application);
     }
     
     /**
@@ -43,6 +46,20 @@ public class RecipeManagementUseCase {
      * Сохраняет новый рецепт
      */
     public void saveRecipe(Recipe recipe, byte[] imageBytes, RecipeSaveCallback callback) {
+        // Валидация рецепта
+        RecipeValidator.ValidationResult validationResult = validator.validateAll(
+            recipe.getTitle(), 
+            recipe.getIngredients(), 
+            recipe.getSteps()
+        );
+        
+        if (!validationResult.isValid()) {
+            if (callback != null) {
+                callback.onFailure(validationResult.getErrorMessage(), null);
+            }
+            return;
+        }
+        
         if (!isNetworkAvailable()) {
             if (callback != null) {
                 callback.onFailure("Ошибка соединения с сервером. Проверьте подключение к интернету", null);
@@ -54,7 +71,6 @@ public class RecipeManagementUseCase {
             @Override
             public void onSuccess(Recipe savedRecipe) {
                 if (callback != null) {
-                    // Создаем фиктивный успешный ответ, так как remoteRepository больше не возвращает GeneralServerResponse
                     GeneralServerResponse response = new GeneralServerResponse();
                     response.setSuccess(true);
                     response.setId(savedRecipe.getId());
@@ -75,6 +91,20 @@ public class RecipeManagementUseCase {
      * Обновляет существующий рецепт
      */
     public void updateRecipe(Recipe recipe, byte[] imageBytes, RecipeSaveCallback callback) {
+        // Валидация рецепта
+        RecipeValidator.ValidationResult validationResult = validator.validateAll(
+            recipe.getTitle(), 
+            recipe.getIngredients(), 
+            recipe.getSteps()
+        );
+        
+        if (!validationResult.isValid()) {
+            if (callback != null) {
+                callback.onFailure(validationResult.getErrorMessage(), null);
+            }
+            return;
+        }
+        
         if (!isNetworkAvailable()) {
             if (callback != null) {
                 callback.onFailure("Ошибка соединения с сервером. Проверьте подключение к интернету", null);

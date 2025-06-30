@@ -55,10 +55,6 @@ public class RecipeValidator {
     
     /**
      * Полная валидация всех данных рецепта
-     * @param title название рецепта
-     * @param ingredients список ингредиентов
-     * @param steps список шагов
-     * @return результат валидации
      */
     public ValidationResult validateAll(String title, List<Ingredient> ingredients, List<Step> steps) {
         Log.d(TAG, "validateAll: Начинаю полную валидацию рецепта");
@@ -87,8 +83,6 @@ public class RecipeValidator {
     
     /**
      * Валидация названия рецепта
-     * @param title название рецепта
-     * @return результат валидации
      */
     public ValidationResult validateTitle(String title) {
         if (title == null || title.trim().isEmpty()) {
@@ -115,8 +109,6 @@ public class RecipeValidator {
     
     /**
      * Валидация списка ингредиентов
-     * @param ingredients список ингредиентов
-     * @return результат валидации
      */
     public ValidationResult validateIngredientsList(List<Ingredient> ingredients) {
         if (ingredients == null || ingredients.isEmpty()) {
@@ -140,8 +132,6 @@ public class RecipeValidator {
     
     /**
      * Валидация одного ингредиента
-     * @param ingredient ингредиент для проверки
-     * @param position позиция в списке (для ошибок)
      * @return результат валидации
      */
     public ValidationResult validateSingleIngredient(Ingredient ingredient, int position) {
@@ -173,8 +163,6 @@ public class RecipeValidator {
     
     /**
      * Валидация списка шагов
-     * @param steps список шагов
-     * @return результат валидации
      */
     public ValidationResult validateStepsList(List<Step> steps) {
         if (steps == null || steps.isEmpty()) {
@@ -198,9 +186,6 @@ public class RecipeValidator {
     
     /**
      * Валидация одного шага
-     * @param step шаг для проверки
-     * @param position позиция в списке (для ошибок)
-     * @return результат валидации
      */
     public ValidationResult validateSingleStep(Step step, int position) {
         if (step == null) {
