@@ -62,6 +62,11 @@ public class AddRecipeActivity extends AppCompatActivity implements
     private RecyclerView ingredientsRecyclerView, stepsRecyclerView;
     private Button addIngredientButton, addStepButton;
 
+    // Новые UI элементы для улучшенного дизайна изображения
+    private View imagePlaceholder;
+    private View imageContainer;
+    private ProgressBar imageProgress;
+
     // Адаптеры и ViewModel
     private IngredientAdapter ingredientAdapter;
     private StepAdapter stepAdapter;
@@ -101,7 +106,13 @@ public class AddRecipeActivity extends AppCompatActivity implements
         addIngredientButton = findViewById(R.id.add_ingredient_button);
         addStepButton = findViewById(R.id.add_step_button);
 
-        recipeImageView.setImageResource(R.drawable.select_recipe_view);
+        // Новые UI элементы
+        imagePlaceholder = findViewById(R.id.image_placeholder);
+        imageContainer = findViewById(R.id.image_container);
+        imageProgress = findViewById(R.id.image_progress);
+
+        // Изначально показываем placeholder
+        showImagePlaceholder();
         
         // Настройка RecyclerViews
         setupRecyclerViews();
@@ -188,7 +199,10 @@ public class AddRecipeActivity extends AppCompatActivity implements
             @Override public void afterTextChanged(Editable s) { viewModel.setTitle(s.toString()); }
         });
         
-        recipeImageView.setOnClickListener(view -> checkStoragePermissionAndPickImage());
+        // Обработчики для изображения
+        imagePlaceholder.setOnClickListener(view -> checkStoragePermissionAndPickImage());
+        imageContainer.setOnClickListener(view -> checkStoragePermissionAndPickImage());
+        
         addIngredientButton.setOnClickListener(v -> viewModel.addEmptyIngredient());
         addStepButton.setOnClickListener(v -> viewModel.addEmptyStep());
         
@@ -242,11 +256,40 @@ public class AddRecipeActivity extends AppCompatActivity implements
         if (requestCode == REQUEST_PICK_IMAGE && resultCode == RESULT_OK && data != null) {
             Uri selectedImageUri = data.getData();
             if (selectedImageUri != null) {
+                showImageLoading();
                 recipeImageView.setImageURI(selectedImageUri);
+                showSelectedImage();
                 textImageView.setText("Изображение выбрано");
                 viewModel.processSelectedImage(selectedImageUri);
             }
         }
+    }
+    
+    /**
+     * Показать placeholder для изображения
+     */
+    private void showImagePlaceholder() {
+        imagePlaceholder.setVisibility(View.VISIBLE);
+        imageContainer.setVisibility(View.GONE);
+        imageProgress.setVisibility(View.GONE);
+    }
+    
+    /**
+     * Показать выбранное изображение
+     */
+    private void showSelectedImage() {
+        imagePlaceholder.setVisibility(View.GONE);
+        imageContainer.setVisibility(View.VISIBLE);
+        imageProgress.setVisibility(View.GONE);
+    }
+    
+    /**
+     * Показать индикатор загрузки изображения
+     */
+    private void showImageLoading() {
+        imagePlaceholder.setVisibility(View.GONE);
+        imageContainer.setVisibility(View.GONE);
+        imageProgress.setVisibility(View.VISIBLE);
     }
     
     @Override

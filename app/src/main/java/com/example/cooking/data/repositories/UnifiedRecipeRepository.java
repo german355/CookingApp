@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -121,10 +122,12 @@ public class UnifiedRecipeRepository {
                 List<Recipe> batch = recipes.subList(i, endIndex);
                 
                 // Параллельная обработка лайков в батче для максимальной производительности
-                batch.parallelStream().forEach(recipe -> {
-                    recipe.setLiked(likedIds.contains(recipe.getId()));
-                });
-                
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    batch.parallelStream().forEach(recipe -> {
+                        recipe.setLiked(likedIds.contains(recipe.getId()));
+                    });
+                }
+
                 // Проверка прерывания потока
                 if (Thread.currentThread().isInterrupted()) {
                     Log.w(TAG, "Обработка батчей прервана");
@@ -165,9 +168,12 @@ public class UnifiedRecipeRepository {
             List<Recipe> allRecipes = localRepository.getAllRecipesSync();
             if (allRecipes == null) allRecipes = Collections.emptyList();
             String lowerQuery = query.toLowerCase();
-            List<Recipe> filteredResults = allRecipes.stream()
-                    .filter(recipe -> matchesSearchQuery(recipe, lowerQuery))
-                    .collect(Collectors.toList());
+            List<Recipe> filteredResults = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                filteredResults = allRecipes.stream()
+                        .filter(recipe -> matchesSearchQuery(recipe, lowerQuery))
+                        .collect(Collectors.toList());
+            }
             searchResultsLiveData.postValue(filteredResults);
         });
     }

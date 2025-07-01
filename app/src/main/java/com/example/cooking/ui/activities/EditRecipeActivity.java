@@ -63,6 +63,11 @@ public class EditRecipeActivity extends AppCompatActivity implements
     private ImageView recipeImageView;
     private TextView textImage;
     
+    // Новые UI элементы для улучшенного дизайна изображения
+    private View imagePlaceholder;
+    private View imageContainer;
+    private ProgressBar imageProgress;
+    
     private EditRecipeViewModel viewModel;
     private UserPermissionUseCase userPermissionUseCase;
     
@@ -129,8 +134,16 @@ public class EditRecipeActivity extends AppCompatActivity implements
         recipeImageView = findViewById(R.id.recipe_image);
         textImage = findViewById(R.id.textImage);
         
-        textImage.setText("Изображение рецепта* (нажмите, чтобы изменить)");
+        // Новые UI элементы
+        imagePlaceholder = findViewById(R.id.image_placeholder);
+        imageContainer = findViewById(R.id.image_container);
+        imageProgress = findViewById(R.id.image_progress);
+        
+        textImage.setText("Изображение рецепта");
         saveButton.setText("Сохранить изменения");
+        
+        // Обновляем текст в placeholder для режима редактирования
+        updatePlaceholderText();
         
         setupRecyclerViews();
         setupEventListeners();
@@ -160,9 +173,11 @@ public class EditRecipeActivity extends AppCompatActivity implements
         viewModel = new ViewModelProvider(this).get(EditRecipeViewModel.class);
         viewModel.setRecipeData(recipeToEdit);
         
-        // Загружаем изображение если есть URL
+        // Инициализируем состояние изображения
         if (recipeToEdit.getPhoto_url() != null && !recipeToEdit.getPhoto_url().isEmpty()) {
             viewModel.loadImageFromUrl(recipeToEdit.getPhoto_url());
+        } else {
+            showImagePlaceholder();
         }
         
         // Основные состояния
@@ -226,19 +241,36 @@ public class EditRecipeActivity extends AppCompatActivity implements
     
     private void handlePhotoUrl(String url) {
         if (url != null && !url.isEmpty() && viewModel.getImageBytes().getValue() == null) {
-            Glide.with(this).load(url).into(recipeImageView);
-            textImage.setText("Изображение загружено");
+            showImageLoading();
+            Glide.with(this)
+                .load(url)
+                .listener(new com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@androidx.annotation.Nullable com.bumptech.glide.load.engine.GlideException e, Object model, com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target, boolean isFirstResource) {
+                        showImagePlaceholder();
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(android.graphics.drawable.Drawable resource, Object model, com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target, com.bumptech.glide.load.DataSource dataSource, boolean isFirstResource) {
+                        showSelectedImage();
+                        return false;
+                    }
+                })
+                .into(recipeImageView);
+        } else {
+            showImagePlaceholder();
         }
     }
     
     private void handleImageBytes(byte[] bytes) {
         if (bytes != null && bytes.length > 0) {
+            showImageLoading();
             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             recipeImageView.setImageBitmap(bitmap);
-            textImage.setText("Изображение загружено");
+            showSelectedImage();
         } else if (viewModel.getPhotoUrl().getValue() == null || viewModel.getPhotoUrl().getValue().isEmpty()) {
-            recipeImageView.setImageResource(R.drawable.placeholder_image);
-            textImage.setText("Нажмите чтобы загрузить изображение");
+            showImagePlaceholder();
         }
     }
     
@@ -248,8 +280,11 @@ public class EditRecipeActivity extends AppCompatActivity implements
     private void setupEventListeners() {
         addIngredientButton.setOnClickListener(v -> viewModel.addEmptyIngredient());
         addStepButton.setOnClickListener(v -> viewModel.addEmptyStep());
-        recipeImageView.setOnClickListener(v -> checkStoragePermissionAndPickImage());
-        textImage.setOnClickListener(v -> checkStoragePermissionAndPickImage());
+        
+        // Обработчики для изображения
+        imagePlaceholder.setOnClickListener(v -> checkStoragePermissionAndPickImage());
+        imageContainer.setOnClickListener(v -> checkStoragePermissionAndPickImage());
+        
         saveButton.setOnClickListener(v -> viewModel.saveRecipe());
         
         titleEditText.addTextChangedListener(new android.text.TextWatcher() {
@@ -294,7 +329,50 @@ public class EditRecipeActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PICK_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri imageUri = data.getData();
+            showImageLoading();
             viewModel.processSelectedImage(imageUri);
+        }
+    }
+    
+    /**
+     * Показать placeholder для изображения
+     */
+    private void showImagePlaceholder() {
+        imagePlaceholder.setVisibility(View.VISIBLE);
+        imageContainer.setVisibility(View.GONE);
+        imageProgress.setVisibility(View.GONE);
+    }
+    
+    /**
+     * Показать выбранное изображение
+     */
+    private void showSelectedImage() {
+        imagePlaceholder.setVisibility(View.GONE);
+        imageContainer.setVisibility(View.VISIBLE);
+        imageProgress.setVisibility(View.GONE);
+    }
+    
+    /**
+     * Показать индикатор загрузки изображения
+     */
+    private void showImageLoading() {
+        imagePlaceholder.setVisibility(View.GONE);
+        imageContainer.setVisibility(View.GONE);
+        imageProgress.setVisibility(View.VISIBLE);
+    }
+    
+    /**
+     * Обновляет текст в placeholder для режима редактирования
+     */
+    private void updatePlaceholderText() {
+        TextView placeholderMainText = imagePlaceholder.findViewById(R.id.placeholder_main_text);
+        TextView placeholderSubText = imagePlaceholder.findViewById(R.id.placeholder_sub_text);
+        
+        if (placeholderMainText != null) {
+            placeholderMainText.setText("Нажмите для изменения фото");
+        }
+        if (placeholderSubText != null) {
+            placeholderSubText.setText("Текущее изображение будет заменено");
         }
     }
     

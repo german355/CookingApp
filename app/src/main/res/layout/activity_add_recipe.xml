@@ -31,21 +31,86 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/add_recipe_image_label"
-                    android:textSize="18dp"
-                    android:id="@+id/textImage">
-
-            </TextView>
-
+            <!-- Image Section Card -->
             <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="220dp"
+                    android:layout_height="wrap_content"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="?attr/colorSurfaceContainer"
+                    android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/add_recipe_image_label"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="?attr/colorOnSurface"
+                            android:id="@+id/textImage"
+                            android:layout_marginBottom="12dp" />
+
+                    <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="220dp"
                     android:layout_marginBottom="8dp">
+
+                        <!-- Placeholder when no image -->
+                        <LinearLayout
+                                android:id="@+id/image_placeholder"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/dashed_border_image_placeholder"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackground">
+
+                            <ImageView
+                                    android:layout_width="48dp"
+                                    android:layout_height="48dp"
+                                    android:src="@drawable/ic_camera_add"
+                                    android:layout_marginBottom="8dp" />
+
+                            <TextView
+                                    android:id="@+id/placeholder_main_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Нажмите для добавления фото"
+                                    android:textSize="14sp"
+                                    android:textColor="?attr/colorPrimary"
+                                    android:textStyle="bold" />
+
+                            <TextView
+                                    android:id="@+id/placeholder_sub_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Рекомендуется соотношение 16:9"
+                                    android:textSize="12sp"
+                                    android:textColor="?attr/colorOnSurfaceVariant"
+                                    android:layout_marginTop="4dp" />
+
+                        </LinearLayout>
+
+                        <!-- Image when selected -->
+                        <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/image_container"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                app:cardCornerRadius="16dp"
+                                app:cardElevation="0dp"
+                                android:visibility="gone">
+
+                            <FrameLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent">
 
                 <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/recipe_image"
@@ -53,8 +118,45 @@
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
                         android:contentDescription="@string/add_recipe_photo_description"
-                        android:background="#F5F5F5"
                         app:shapeAppearanceOverlay="@style/RoundedImageView" />
+
+                                <!-- Overlay for change option -->
+                                <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="#80000000"
+                                        android:clickable="true"
+                                        android:focusable="true"
+                                        android:foreground="?attr/selectableItemBackground" />
+
+                                <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Изменить фото"
+                                        android:textColor="@android:color/white"
+                                        android:textStyle="bold"
+                                        android:textSize="14sp"
+                                        android:layout_gravity="center"
+                                        android:background="@drawable/step_number_background"
+                                        android:paddingHorizontal="12dp"
+                                        android:paddingVertical="6dp" />
+
+                            </FrameLayout>
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- Loading indicator -->
+                        <ProgressBar
+                                android:id="@+id/image_progress"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:visibility="gone" />
+
+                    </FrameLayout>
+
+                </LinearLayout>
+
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
@@ -69,12 +171,26 @@
                     tools:text="Ошибка загрузки фото: ..."
                     tools:visibility="visible"/>
 
+            <!-- Recipe Title Card -->
+            <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="?attr/colorSurfaceContainer"
+                    android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
             <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/recipe_title_layout"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
                     android:hint="@string/add_recipe_name_hint">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -85,20 +201,61 @@
                         android:maxLines="2" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Секция Ингредиенты -->
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Ingredients Section Card -->
+            <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="?attr/colorSurfaceContainer"
+                    android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                    <!-- Section Header -->
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="16dp">
+
+                        <View
+                                android:layout_width="4dp"
+                                android:layout_height="24dp"
+                                android:background="@drawable/section_accent_line"
+                                android:layout_marginEnd="12dp" />
+
+                        <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_basket"
+                                android:tint="?attr/colorPrimary"
+                                android:layout_marginEnd="8dp" />
+
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/add_recipe_ingredients_label"
-                    android:textSize="16sp"
+                                android:textSize="18sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="8dp"/>
+                                android:textColor="?attr/colorOnSurface" />
+
+                    </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/ingredients_recyclerview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
+                            android:layout_marginBottom="12dp"
                     android:nestedScrollingEnabled="false"
                     android:overScrollMode="never"
                     android:focusable="false"
@@ -115,22 +272,64 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:text="@string/add_recipe_add_ingredient_button"
-                    android:layout_marginBottom="16dp"/>
+                            android:drawableStart="@drawable/ic_add"
+                            android:drawablePadding="8dp" />
 
-            <!-- Секция Шаги приготовления -->
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Cooking Steps Section Card -->
+            <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="?attr/colorSurfaceContainer"
+                    android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                    <!-- Section Header -->
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="16dp">
+
+                        <View
+                                android:layout_width="4dp"
+                                android:layout_height="24dp"
+                                android:background="@drawable/section_accent_line"
+                                android:layout_marginEnd="12dp" />
+
+                        <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_list"
+                                android:tint="?attr/colorPrimary"
+                                android:layout_marginEnd="8dp" />
+
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/add_recipe_steps_label"
-                    android:textSize="16sp"
+                                android:textSize="18sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="8dp"/>
+                                android:textColor="?attr/colorOnSurface" />
+
+                    </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/steps_recyclerview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
+                            android:layout_marginBottom="12dp"
                     android:nestedScrollingEnabled="false"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
@@ -147,7 +346,12 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:text="@string/add_recipe_add_step_button"
-                    android:layout_marginBottom="16dp"/>
+                            android:drawableStart="@drawable/ic_add"
+                            android:drawablePadding="8dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -113,7 +113,7 @@ public interface ApiService {
     Completable toggleLikeRecipeCompletable(@Path("recipeId") int recipeId);
 
     /**
-     * Расширенный поиск рецептов с пагинацией.
+     * Расширенный поиск рецептов с пагинацией.(пагинация пока что условная)
      */
     @GET("search")
     Single<SearchResponse> searchRecipes(
