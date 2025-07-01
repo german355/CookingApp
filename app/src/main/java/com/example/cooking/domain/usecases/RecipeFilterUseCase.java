@@ -1,6 +1,8 @@
 package com.example.cooking.domain.usecases;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
 import androidx.lifecycle.MutableLiveData;
 import com.example.cooking.domain.entities.Recipe;
 import com.example.cooking.data.repositories.UnifiedRecipeRepository;
@@ -17,6 +19,7 @@ public class RecipeFilterUseCase {
     
     private final UnifiedRecipeRepository repository;
     private final RecipeDataUseCase recipeDataUseCase;
+    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
     
     public RecipeFilterUseCase(Application application) {
         this.repository = UnifiedRecipeRepository.getInstance(application);
@@ -40,19 +43,20 @@ public class RecipeFilterUseCase {
                                       MutableLiveData<String> errorMessageLiveData,
                                       MutableLiveData<Boolean> isRefreshingLiveData) {
         
-        repository.filterRecipesByCategory(filterKey, filterType, new MutableLiveData<List<Recipe>>() {
+        // Создаем временную MutableLiveData для получения результатов
+        MutableLiveData<List<Recipe>> tempResultsLiveData = new MutableLiveData<List<Recipe>>() {
             @Override
-            public void setValue(List<Recipe> recipes) {
-                super.setValue(recipes);
-                handleFilterResults(recipes, filterKey, filterType, filteredResultsLiveData, 
-                                  errorMessageLiveData, isRefreshingLiveData);
-            }
-            
-            @Override 
             public void postValue(List<Recipe> recipes) {
-                setValue(recipes);
+                // Переключаемся на main thread для безопасной обработки
+                mainThreadHandler.post(() -> {
+                    handleFilterResults(recipes, filterKey, filterType, filteredResultsLiveData, 
+                                      errorMessageLiveData, isRefreshingLiveData);
+                });
             }
-        });
+        };
+        
+        // Вызываем фильтрацию, результат придет через postValue (безопасно для background thread)
+        repository.filterRecipesByCategory(filterKey, filterType, tempResultsLiveData);
     }
     
     /**
@@ -71,13 +75,13 @@ public class RecipeFilterUseCase {
                                    errorMessageLiveData, isRefreshingLiveData);
             } else {
                 // Без автообновления - просто возвращаем пустой результат
-                filteredResultsLiveData.setValue(recipes);
+                filteredResultsLiveData.postValue(recipes);
             }
         } else {
             // Данные есть - возвращаем результат
-            filteredResultsLiveData.setValue(recipes);
+            filteredResultsLiveData.postValue(recipes);
             if (isRefreshingLiveData != null) {
-                isRefreshingLiveData.setValue(false);
+                isRefreshingLiveData.postValue(false);
             }
         }
     }
