@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:src="@drawable/chat_bubble"
-            android:contentDescription="Чат AI"
+            android:contentDescription="@string/chat_fab_description"
             style="@style/Widget.App.FloatingActionButton"
             app:layout_constraintBottom_toTopOf="@id/fab_add_recipe"
             app:layout_constraintEnd_toEndOf="parent"

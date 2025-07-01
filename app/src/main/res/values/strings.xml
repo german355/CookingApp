@@ -219,4 +219,12 @@
     <string name="moderation_failed">Recipe didn\'t pass moderation: %s</string>
     <string name="moderation_failed_generic">Recipe didn\'t pass moderation. Please check the content and try again.</string>
     <string name="moderation_checking">Recipe is being checked by moderation...</string>
+
+    <!-- Bug Report Feature -->
+    <string name="bug_report_button">Report a Problem</string>
+    <string name="bug_report_title">Support Service</string>
+    <string name="bug_report_description">Describe any issues you\'ve noticed in the app, and our AI assistant will help resolve them</string>
+    <string name="bug_report_examples">For example: \"Recipes not loading\", \"App freezes when adding photos\", \"Login error\"</string>
+    <string name="chat_welcome_with_bugs">Hello! I am your virtual assistant. I can help with recipes, cooking tips, and solving app issues. How can I help you?</string>
+    <string name="chat_fab_description">Chat with AI assistant (including support)</string>
 </resources>

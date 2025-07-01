@@ -107,6 +107,17 @@
                 android:textSize="14sp"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_marginBottom="8dp"/>
+
+            <Button
+                android:id="@+id/report_problem_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/bug_report_button"
+                android:textSize="14sp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:drawableStart="@drawable/chat_bubble"
+                android:drawablePadding="8dp"
+                android:layout_marginBottom="8dp"/>
                 
             <!--<Button
                 android:id="@+id/delete_account_button"

@@ -1,6 +1,7 @@
 package com.example.cooking.ui.fragments.profile;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -21,6 +22,7 @@ import androidx.navigation.Navigation;
 import com.example.cooking.R;
 import com.example.cooking.ui.viewmodels.profile.ProfileViewModel;
 import com.example.cooking.ui.viewmodels.MainViewModel;
+import com.example.cooking.ui.activities.AiChatActivity;
 
 /**
  * Фрагмент для отображения профиля пользователя и настроек приложения
@@ -36,6 +38,7 @@ public class ProfileFragment extends Fragment {
     private Button changePasswordButton;
     private Button logoutButton;
     private Button deleteAccountButton;
+    private Button reportProblemButton;
     private ProgressBar progressBar;
 
     private ProfileViewModel viewModel;
@@ -57,6 +60,7 @@ public class ProfileFragment extends Fragment {
         editNameButton = view.findViewById(R.id.edit_name_button);
         changePasswordButton = view.findViewById(R.id.change_password_button);
         logoutButton = view.findViewById(R.id.logout_button);
+        reportProblemButton = view.findViewById(R.id.report_problem_button);
 
         progressBar = view.findViewById(R.id.progress_bar);
 
@@ -146,6 +150,9 @@ public class ProfileFragment extends Fragment {
 
         // Обработчик кнопки выхода
         logoutButton.setOnClickListener(v -> confirmLogout());
+
+        // Обработчик кнопки сообщения о проблеме
+        reportProblemButton.setOnClickListener(v -> showBugReportDialog());
 
         // Обработчик кнопки удаления аккаунта (Пока не реализованно)
         if (deleteAccountButton != null) {
@@ -253,6 +260,23 @@ public class ProfileFragment extends Fragment {
                     }
                 })
                 .setNegativeButton("Отмена", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    /**
+     * Показывает диалог информации о том, как сообщать о проблемах через AI ассистента
+     */
+    private void showBugReportDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.bug_report_title))
+                .setMessage(getString(R.string.bug_report_description) + "\n\n" + 
+                           getString(R.string.bug_report_examples))
+                .setPositiveButton("Открыть чат", (dialog, which) -> {
+                    // Открываем AI чат
+                    Intent intent = new Intent(requireContext(), AiChatActivity.class);
+                    startActivity(intent);
+                })
+                .setNegativeButton("Закрыть", (dialog, which) -> dialog.dismiss())
                 .show();
     }
 }

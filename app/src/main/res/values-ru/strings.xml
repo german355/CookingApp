@@ -218,4 +218,12 @@
     <string name="moderation_failed">Рецепт не прошел модерацию: %s</string>
     <string name="moderation_failed_generic">Рецепт не прошел модерацию. Пожалуйста, проверьте содержимое и попробуйте снова.</string>
     <string name="moderation_checking">Рецепт проверяется модерацией...</string>
+
+    <!-- Bug Report Feature -->
+    <string name="bug_report_button">Сообщить о проблеме</string>
+    <string name="bug_report_title">Служба поддержки</string>
+    <string name="bug_report_description">Опишите проблему которую вы заметили в приложении, и наш AI-ассистент поможет её решить</string>
+    <string name="bug_report_examples">Например: \"Не загружаются рецепты\", \"Приложение зависает при добавлении фото\", \"Ошибка при входе в аккаунт\"</string>
+    <string name="chat_welcome_with_bugs">Здравствуйте! Я ваш виртуальный помощник. Могу помочь с рецептами, кулинарными советами и решением проблем в приложении. Чем могу помочь?</string>
+    <string name="chat_fab_description">Чат с AI-ассистентом (включая поддержку)</string>
 </resources> 
