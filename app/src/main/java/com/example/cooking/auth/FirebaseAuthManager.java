@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.lang.ref.WeakReference;
 import java.util.Locale;
 
 import io.reactivex.rxjava3.core.Single;
@@ -261,17 +262,53 @@ public class FirebaseAuthManager {
             throw new IllegalStateException("Google Sign In was not initialized. Call initGoogleSignIn() first.");
         }
         
+        if (activity == null) {
+            Log.e(TAG, "Activity is null, cannot start Google Sign In");
+            return;
+        }
+
+        if (activity.isFinishing() || activity.isDestroyed()) {
+            Log.e(TAG, "Activity is finishing or destroyed, cannot start Google Sign In");
+            return;
+        }
+        
         try {
             Log.d(TAG, "Starting Google Sign In flow");
+            // Используем WeakReference для избежания утечек памяти и race condition
+            WeakReference<Activity> activityRef = new WeakReference<>(activity);
+            
             // Очищаем предыдущий аккаунт для избежания кеширования
             googleSignInClient.signOut().addOnCompleteListener(task -> {
-                Intent signInIntent = googleSignInClient.getSignInIntent();
-                if (signInIntent != null) {
-                    Log.d(TAG, "Got sign in intent, starting activity for result with RC_SIGN_IN=" + RC_SIGN_IN);
-                    activity.startActivityForResult(signInIntent, RC_SIGN_IN);
-                } else {
-                    Log.e(TAG, "Sign in intent is null");
-                    Toast.makeText(activity, "Ошибка запуска Google Sign In", Toast.LENGTH_SHORT).show();
+                Activity activityFromRef = activityRef.get();
+                
+                // Проверяем валидность Activity после асинхронной операции
+                if (activityFromRef == null) {
+                    Log.w(TAG, "Activity reference is null after signOut, cannot proceed with Google Sign In");
+                    return;
+                }
+                
+                if (activityFromRef.isFinishing() || activityFromRef.isDestroyed()) {
+                    Log.w(TAG, "Activity is finishing or destroyed after signOut, cannot proceed with Google Sign In");
+                    return;
+                }
+                
+                // Проверяем результат операции signOut
+                if (!task.isSuccessful()) {
+                    Log.w(TAG, "SignOut failed, but continuing with sign in", task.getException());
+                }
+                
+                try {
+                    Intent signInIntent = googleSignInClient.getSignInIntent();
+                    if (signInIntent != null) {
+                        Log.d(TAG, "Got sign in intent, starting activity for result with RC_SIGN_IN=" + RC_SIGN_IN);
+                        activityFromRef.startActivityForResult(signInIntent, RC_SIGN_IN);
+                    } else {
+                        Log.e(TAG, "Sign in intent is null");
+                        Toast.makeText(activityFromRef, "Ошибка запуска Google Sign In", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error getting sign in intent or starting activity", e);
+                    Toast.makeText(activityFromRef, "Ошибка запуска Google Sign In: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         } catch (Exception e) {
