@@ -193,6 +193,9 @@ public class ImageProcessor {
             return ImageResult.error("Изображение не может быть null");
         }
         
+        Bitmap resizedBitmap = null;
+        ByteArrayOutputStream baos = null;
+        
         try {
             int originalWidth = originalBitmap.getWidth();
             int originalHeight = originalBitmap.getHeight();
@@ -200,12 +203,12 @@ public class ImageProcessor {
             Log.d(TAG, "Обрабатываю изображение: " + originalWidth + "x" + originalHeight);
             
             // Изменяем размер если нужно
-            Bitmap resizedBitmap = resizeBitmap(originalBitmap, maxSize);
+            resizedBitmap = resizeBitmap(originalBitmap, maxSize);
             int processedWidth = resizedBitmap.getWidth();
             int processedHeight = resizedBitmap.getHeight();
             
             // Сжимаем в JPEG
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos = new ByteArrayOutputStream();
             boolean compressed = resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
             
             if (!compressed) {
@@ -234,6 +237,18 @@ public class ImageProcessor {
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при обработке Bitmap", e);
             return ImageResult.error("Ошибка обработки изображения: " + e.getMessage());
+        } finally {
+            // Освобождаем ресурсы для предотвращения OutOfMemoryError
+            if (resizedBitmap != null && resizedBitmap != originalBitmap && !resizedBitmap.isRecycled()) {
+                resizedBitmap.recycle();
+            }
+            if (baos != null) {
+                try {
+                    baos.close();
+                } catch (Exception e) {
+                    Log.w(TAG, "Ошибка при закрытии ByteArrayOutputStream", e);
+                }
+            }
         }
     }
     
@@ -268,7 +283,20 @@ public class ImageProcessor {
         
         Log.d(TAG, "Изменяю размер с " + width + "x" + height + " на " + newWidth + "x" + newHeight);
         
-        return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
+        Bitmap scaledBitmap = null;
+        try {
+            scaledBitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
+            return scaledBitmap;
+        } catch (OutOfMemoryError e) {
+            Log.e(TAG, "OutOfMemoryError при изменении размера изображения", e);
+            if (scaledBitmap != null && !scaledBitmap.isRecycled()) {
+                scaledBitmap.recycle();
+            }
+            // Пробуем с меньшим размером
+            int reducedSize = maxSize / 2;
+            Log.d(TAG, "Пробуем уменьшить до " + reducedSize + "px");
+            return resizeBitmap(bitmap, reducedSize);
+        }
     }
     
 

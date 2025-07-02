@@ -117,9 +117,9 @@ public class FavoritesFragment extends Fragment implements RecipeListAdapter.OnR
     private void updateRecipesList(List<Recipe> recipes) {
         adapter.submitList(recipes);
         if (recipes.isEmpty()) {
-            showEmptyFavoritesFragment();
+            showEmptyFragment();
         } else {
-            hideEmptyFavoritesFragment();
+            hideEmptyFragment();
             recyclerView.setVisibility(View.VISIBLE);
         }
     }
@@ -127,39 +127,38 @@ public class FavoritesFragment extends Fragment implements RecipeListAdapter.OnR
     /**
      * Показывает фрагмент пустого состояния избранного (когда нет лайков ВООБЩЕ).
      */
-    private void showEmptyFavoritesFragment() {
-        Log.d(TAG, "Showing empty favorites fragment.");
-        recyclerView.setVisibility(View.GONE);
-        emptyView.setVisibility(View.GONE);
-        if (emptyContainer != null) {
-             emptyContainer.setVisibility(View.VISIBLE);
-             if (getChildFragmentManager().findFragmentById(R.id.empty_container_favorites) == null) {
-                 getChildFragmentManager().beginTransaction()
-                         .replace(R.id.empty_container_favorites, new EmptyFavoritesFragment())
-                         .commitAllowingStateLoss();
-             }
-        } else {
-            Log.e(TAG, "Empty container view is null!");
-            emptyView.setText(R.string.no_favorites_yet);
-            emptyView.setVisibility(View.VISIBLE);
+    private void showEmptyFragment() {
+        if (getChildFragmentManager().findFragmentById(R.id.empty_container_favorites) == null) {
+            // Проверяем, что Fragment все еще активен и можем выполнять transactions
+            if (isAdded() && !isStateSaved() && getActivity() != null && !getActivity().isFinishing()) {
+                try {
+                    getChildFragmentManager().beginTransaction()
+                            .add(R.id.empty_container_favorites, new EmptyFavoritesFragment())
+                            .commit();
+                } catch (IllegalStateException e) {
+                    Log.w(TAG, "Cannot perform fragment transaction", e);
+                }
+            }
         }
-        hideLoading();
-        hideErrorState();
     }
     
     /**
-     * Скрывает фрагмент пустого состояния избранного.
+     * Скрывает empty state при наличии рецептов
      */
-    private void hideEmptyFavoritesFragment() {
-        Log.d(TAG, "Hiding empty favorites fragment.");
-        if (emptyContainer != null) {
-            emptyContainer.setVisibility(View.GONE);
-             Fragment emptyFragment = getChildFragmentManager().findFragmentById(R.id.empty_container_favorites);
-            if (emptyFragment != null) {
-                getChildFragmentManager().beginTransaction().remove(emptyFragment).commitAllowingStateLoss();
+    private void hideEmptyFragment() {
+        Fragment emptyFragment = getChildFragmentManager().findFragmentById(R.id.empty_container_favorites);
+        if (emptyFragment != null) {
+            // Проверяем, что Fragment все еще активен и можем выполнять transactions
+            if (isAdded() && !isStateSaved() && getActivity() != null && !getActivity().isFinishing()) {
+                try {
+                    getChildFragmentManager().beginTransaction()
+                            .remove(emptyFragment)
+                            .commit();
+                } catch (IllegalStateException e) {
+                    Log.w(TAG, "Cannot perform fragment transaction", e);
+                }
             }
         }
-        recyclerView.setVisibility(View.VISIBLE);
     }
     
     /**

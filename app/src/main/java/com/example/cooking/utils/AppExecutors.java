@@ -6,7 +6,9 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Глобальный пул исполнителей для приложения
@@ -16,8 +18,8 @@ public class AppExecutors {
 
     private static final int THREAD_COUNT = 3;
 
-    private final Executor diskIO;
-    private final Executor networkIO;
+    private final ExecutorService diskIO;
+    private final ExecutorService networkIO;
     private final Executor mainThread;
 
     // Синглтон для получения экземпляра
@@ -48,6 +50,12 @@ public class AppExecutors {
         return diskIO;
     }
 
+    /**
+     * Получает исполнителя для сетевых операций
+     */
+    public Executor networkIO() {
+        return networkIO;
+    }
 
     /**
      * Получает исполнителя для главного потока
@@ -55,6 +63,43 @@ public class AppExecutors {
      */
     public Executor mainThread() {
         return mainThread;
+    }
+
+    /**
+     * Корректное завершение работы всех executor'ов для предотвращения утечек памяти
+     */
+    public static void shutdown() {
+        if (instance != null) {
+            synchronized (AppExecutors.class) {
+                if (instance != null) {
+                    try {
+                        instance.diskIO.shutdown();
+                        instance.networkIO.shutdown();
+                        
+                        // Ждем завершения текущих задач
+                        if (!instance.diskIO.awaitTermination(5, TimeUnit.SECONDS)) {
+                            instance.diskIO.shutdownNow();
+                        }
+                        if (!instance.networkIO.awaitTermination(5, TimeUnit.SECONDS)) {
+                            instance.networkIO.shutdownNow();
+                        }
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        instance.diskIO.shutdownNow();
+                        instance.networkIO.shutdownNow();
+                    } finally {
+                        instance = null;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Проверяет, были ли executor'ы завершены
+     */
+    public boolean isShutdown() {
+        return diskIO.isShutdown() && networkIO.isShutdown();
     }
 
     /**

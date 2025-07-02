@@ -3,6 +3,7 @@ package com.example.cooking;
 import android.app.Application;
 import androidx.preference.PreferenceManager;
 import android.content.SharedPreferences;
+import com.example.cooking.utils.AppExecutors;
 import com.example.cooking.utils.ThemeUtils;
 
 
@@ -22,6 +23,31 @@ public class MyApplication extends Application {
 
         
 
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        
+        // Корректно завершаем все executor'ы для предотвращения утечек памяти
+        try {
+            AppExecutors.shutdown();
+        } catch (Exception e) {
+            android.util.Log.w("MyApplication", "Error shutting down AppExecutors", e);
+        }
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        
+        // При нехватке памяти очищаем кэши
+        try {
+            // Можно добавить очистку кэшей репозиториев если необходимо
+            android.util.Log.i("MyApplication", "Low memory callback - considering cache cleanup");
+        } catch (Exception e) {
+            android.util.Log.w("MyApplication", "Error during low memory cleanup", e);
+        }
     }
 
     /**

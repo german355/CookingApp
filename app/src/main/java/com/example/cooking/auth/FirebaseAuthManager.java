@@ -287,33 +287,56 @@ public class FirebaseAuthManager {
                     return;
                 }
                 
+                // Дополнительная проверка lifecycle состояния
                 if (activityFromRef.isFinishing() || activityFromRef.isDestroyed()) {
                     Log.w(TAG, "Activity is finishing or destroyed after signOut, cannot proceed with Google Sign In");
                     return;
                 }
                 
-                // Проверяем результат операции signOut
-                if (!task.isSuccessful()) {
-                    Log.w(TAG, "SignOut failed, but continuing with sign in", task.getException());
-                }
-                
+                // Проверяем, что активность все еще в активном состоянии
                 try {
-                    Intent signInIntent = googleSignInClient.getSignInIntent();
-                    if (signInIntent != null) {
-                        Log.d(TAG, "Got sign in intent, starting activity for result with RC_SIGN_IN=" + RC_SIGN_IN);
-                        activityFromRef.startActivityForResult(signInIntent, RC_SIGN_IN);
+                    if (activityFromRef.getLifecycle().getCurrentState().isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED)) {
+                        // Проверяем результат операции signOut
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "SignOut failed, but continuing with sign in", task.getException());
+                        }
+                        
+                        try {
+                            Intent signInIntent = googleSignInClient.getSignInIntent();
+                            if (signInIntent != null) {
+                                Log.d(TAG, "Got sign in intent, starting activity for result with RC_SIGN_IN=" + RC_SIGN_IN);
+                                activityFromRef.startActivityForResult(signInIntent, RC_SIGN_IN);
+                            } else {
+                                Log.e(TAG, "Sign in intent is null");
+                                showToastSafely(activityFromRef, "Ошибка запуска Google Sign In");
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error getting sign in intent or starting activity", e);
+                            showToastSafely(activityFromRef, "Ошибка запуска Google Sign In: " + e.getMessage());
+                        }
                     } else {
-                        Log.e(TAG, "Sign in intent is null");
-                        Toast.makeText(activityFromRef, "Ошибка запуска Google Sign In", Toast.LENGTH_SHORT).show();
+                        Log.w(TAG, "Activity is not in active state, cannot start Google Sign In");
                     }
                 } catch (Exception e) {
-                    Log.e(TAG, "Error getting sign in intent or starting activity", e);
-                    Toast.makeText(activityFromRef, "Ошибка запуска Google Sign In: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error checking activity lifecycle", e);
                 }
             });
         } catch (Exception e) {
             Log.e(TAG, "Error starting Google Sign In flow", e);
-            Toast.makeText(activity, "Ошибка запуска Google Sign In: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            showToastSafely(activity, "Ошибка запуска Google Sign In: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Безопасное отображение Toast с проверкой состояния активности
+     */
+    private void showToastSafely(Activity activity, String message) {
+        if (activity != null && !activity.isFinishing() && !activity.isDestroyed()) {
+            try {
+                Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Log.e(TAG, "Error showing toast", e);
+            }
         }
     }
 

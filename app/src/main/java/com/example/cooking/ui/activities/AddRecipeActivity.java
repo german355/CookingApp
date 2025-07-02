@@ -36,6 +36,7 @@ import com.example.cooking.ui.adapters.Recipe.IngredientAdapter;
 import com.example.cooking.ui.adapters.Recipe.StepAdapter;
 import com.example.cooking.ui.viewmodels.Recipe.AddRecipeViewModel;
 import com.example.cooking.utils.MySharedPreferences;
+import com.example.cooking.utils.UIUtils;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -196,7 +197,12 @@ public class AddRecipeActivity extends AppCompatActivity implements
         titleEditText.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override public void afterTextChanged(Editable s) { viewModel.setTitle(s.toString()); }
+            @Override 
+            public void afterTextChanged(Editable s) { 
+                if (s != null) {
+                    viewModel.setTitle(s.toString()); 
+                }
+            }
         });
         
         // Обработчики для изображения
@@ -305,7 +311,7 @@ public class AddRecipeActivity extends AppCompatActivity implements
     public void onBackPressed() { checkForUnsavedChangesAndExit(); }
     
     private void checkForUnsavedChangesAndExit() {
-        boolean hasChanges = (titleEditText.getText() != null && !titleEditText.getText().toString().isEmpty())
+        boolean hasChanges = UIUtils.hasText(titleEditText)
             || viewModel.hasImage()
             || (viewModel.getIngredients().getValue() != null && !viewModel.getIngredients().getValue().isEmpty())
             || (viewModel.getSteps().getValue() != null && !viewModel.getSteps().getValue().isEmpty());

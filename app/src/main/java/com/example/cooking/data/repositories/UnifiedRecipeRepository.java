@@ -39,6 +39,11 @@ public class UnifiedRecipeRepository {
     private final CompositeDisposable disposables = new CompositeDisposable();
     private final MySharedPreferences prefs;
 
+    // Кэш для избежания множественных запросов к БД
+    private volatile Set<Integer> cachedLikedIds = null;
+    private volatile long likedIdsCacheTime = 0;
+    private static final long LIKED_IDS_CACHE_DURATION = 5 * 60 * 1000; // 5 минут кэширования
+
     public interface RecipeCallback<T> {
         void onSuccess(T data);
         void onFailure(String error);
@@ -80,13 +85,15 @@ public class UnifiedRecipeRepository {
             public void onRecipesLoaded(List<Recipe> remoteRecipes) {
                 AppExecutors.getInstance().diskIO().execute(() -> {
                     try {
-                        Set<Integer> likedIds = new HashSet<>(likedRecipesRepository.getLikedRecipeIdsSync());
+                        // Используем кэшированные liked IDs для оптимизации
+                        Set<Integer> likedIds = getCachedLikedIds();
                         
                         processRecipesInOptimizedBatches(remoteRecipes, likedIds);
                         
                         localRepository.smartReplaceRecipes(remoteRecipes);
-                        List<Recipe> updatedLocalRecipes = localRepository.getAllRecipesSync();
-                        recipesLiveData.postValue(Resource.success(updatedLocalRecipes));
+                        
+                        // Используем асинхронную загрузку локальных данных
+                        loadLocalDataAsync(recipesLiveData);
                         
                         Log.d(TAG, "Успешно обработано " + remoteRecipes.size() + " рецептов");
                     } catch (Exception e) {
@@ -102,6 +109,36 @@ public class UnifiedRecipeRepository {
                 errorMessage.postValue(error);
                 loadLocalData(recipesLiveData);
             }
+        });
+    }
+
+    /**
+     * Получение кэшированных liked IDs с проверкой валидности кэша
+     */
+    private Set<Integer> getCachedLikedIds() {
+        long currentTime = System.currentTimeMillis();
+        
+        if (cachedLikedIds != null && (currentTime - likedIdsCacheTime) < LIKED_IDS_CACHE_DURATION) {
+            Log.d(TAG, "Используем кэшированные liked IDs");
+            return new HashSet<>(cachedLikedIds);
+        }
+        
+        // Обновляем кэш
+        Set<Integer> likedIds = new HashSet<>(likedRecipesRepository.getLikedRecipeIdsSync());
+        cachedLikedIds = likedIds;
+        likedIdsCacheTime = currentTime;
+        Log.d(TAG, "Обновлен кэш liked IDs (" + likedIds.size() + " элементов)");
+        
+        return new HashSet<>(likedIds);
+    }
+
+    /**
+     * Асинхронная загрузка локальных данных
+     */
+    private void loadLocalDataAsync(MutableLiveData<Resource<List<Recipe>>> recipesLiveData) {
+        AppExecutors.getInstance().diskIO().execute(() -> {
+            List<Recipe> localRecipes = localRepository.getAllRecipesSync();
+            recipesLiveData.postValue(Resource.success(localRecipes));
         });
     }
 
@@ -193,8 +230,6 @@ public class UnifiedRecipeRepository {
         return false;
     }
 
-
-
     public void saveRecipe(Recipe recipe, byte[] imageBytes, RecipeCallback<Recipe> callback) {
         remoteRepository.saveRecipe(recipe, imageBytes, new RecipeRemoteRepository.RecipeSaveCallback() {
             @Override
@@ -267,13 +302,34 @@ public class UnifiedRecipeRepository {
     }
 
     public void setLikeStatus(int recipeId, boolean isLiked) {
+        // Сначала обновляем кэш для мгновенного отклика UI
+        updateLikedIdsCache(recipeId, isLiked);
+        
         AppExecutors.getInstance().diskIO().execute(() -> {
             localRepository.updateLikeStatus(recipeId, isLiked);
             likedRecipesRepository.updateLikeStatusLocal(recipeId, isLiked);
             likedRecipesRepository.toggleLikeRecipeOnServer(recipeId)
                 .subscribeOn(Schedulers.io())
-                .subscribe(() -> {}, throwable -> Log.e(TAG, "Failed to toggle like on server", throwable));
+                .subscribe(() -> {}, throwable -> {
+                    Log.e(TAG, "Failed to toggle like on server", throwable);
+                    // При ошибке откатываем кэш
+                    updateLikedIdsCache(recipeId, !isLiked);
+                });
         });
+    }
+
+    /**
+     * Обновление кэша liked IDs для мгновенного отклика UI
+     */
+    private void updateLikedIdsCache(int recipeId, boolean isLiked) {
+        if (cachedLikedIds != null) {
+            if (isLiked) {
+                cachedLikedIds.add(recipeId);
+            } else {
+                cachedLikedIds.remove(recipeId);
+            }
+            likedIdsCacheTime = System.currentTimeMillis(); // Обновляем время кэша
+        }
     }
 
     public boolean isNetworkAvailable() {
@@ -286,7 +342,7 @@ public class UnifiedRecipeRepository {
     }
 
     public Set<Integer> getLikedRecipeIds() {
-        return new HashSet<>(likedRecipesRepository.getLikedRecipeIdsSync());
+        return getCachedLikedIds();
     }
 
     public Recipe getRecipeByIdSync(int recipeId) {
@@ -295,6 +351,9 @@ public class UnifiedRecipeRepository {
 
     public void clearAllCaches() {
         localRepository.clearAllCaches();
+        // Очищаем наш кэш
+        cachedLikedIds = null;
+        likedIdsCacheTime = 0;
         Log.d(TAG, "Все кэши UnifiedRecipeRepository очищены");
     }
 }

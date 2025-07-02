@@ -48,6 +48,10 @@ public class StepAdapter extends ListAdapter<Step, RecyclerView.ViewHolder> {
      */
     private static final int VIEW_TYPE_EDIT = 2;
 
+    private static final String TAG = "StepAdapter";
+    private static final long TEXT_UPDATE_DELAY = 500; // Задержка для обновления текста
+    
+    private final Handler textUpdateHandler = new Handler(Looper.getMainLooper());
 
     public interface StepUpdateListener {
 
@@ -340,6 +344,16 @@ public class StepAdapter extends ListAdapter<Step, RecyclerView.ViewHolder> {
                 }
             });
         }
+
+        /**
+         * Очистка ресурсов ViewHolder для предотвращения утечек памяти
+         */
+        public void cleanup() {
+            if (pendingTextUpdate != null) {
+                debounceHandler.removeCallbacks(pendingTextUpdate);
+                pendingTextUpdate = null;
+            }
+        }
     }
 
     /**
@@ -350,15 +364,14 @@ public class StepAdapter extends ListAdapter<Step, RecyclerView.ViewHolder> {
             new DiffUtil.ItemCallback<Step>() {
                 @Override
                 public boolean areItemsTheSame(@NonNull Step oldItem, @NonNull Step newItem) {
-                    // Используем системный хеш-код для сравнения объектов
-                    return System.identityHashCode(oldItem) == System.identityHashCode(newItem);
+                    // Сравниваем по номеру шага (позиции)
+                    return oldItem.getNumber() == newItem.getNumber();
                 }
 
                 @Override
                 public boolean areContentsTheSame(@NonNull Step oldItem, @NonNull Step newItem) {
-                    // Сравниваем только необходимые поля
-                    return oldItem.getNumber() == newItem.getNumber() &&
-                           Objects.equals(oldItem.getInstruction(), newItem.getInstruction()) &&
+                    // Сравниваем содержимое
+                    return Objects.equals(oldItem.getInstruction(), newItem.getInstruction()) &&
                            Objects.equals(oldItem.getUrl(), newItem.getUrl());
                 }
                 
@@ -368,4 +381,13 @@ public class StepAdapter extends ListAdapter<Step, RecyclerView.ViewHolder> {
                     return super.getChangePayload(oldItem, newItem);
                 }
             };
+
+    @Override
+    public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+        super.onViewRecycled(holder);
+        // Очищаем ресурсы при переработке ViewHolder
+        if (holder instanceof StepEditViewHolder) {
+            ((StepEditViewHolder) holder).cleanup();
+        }
+    }
 }
