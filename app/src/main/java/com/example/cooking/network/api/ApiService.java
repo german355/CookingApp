@@ -71,7 +71,7 @@ public interface ApiService {
     /**
      * Простой поиск рецептов по строке.
      */
-    @GET("recipes/search-simple")
+    @GET("recipes/search/simple")
     Single<SearchResponse> searchRecipesSimple(@Query("q") String query);
     
     // =============== Рецепты - создание, обновление, удаление ===============

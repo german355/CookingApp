@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "735196544943-v48kblbqvejqqp819ocml2ujhbedr6fv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cooking",
+            "certificate_hash": "a5c1e84c3437c0af7a0541cda4c0d49c0cdfad3c"
+          }
+        },
+        {
           "client_id": "735196544943-8nha6idmte73q0orur9m37taklrglv9g.apps.googleusercontent.com",
           "client_type": 3
         }
