@@ -256,7 +256,31 @@ public class ImageProcessor {
      * Изменяет размер Bitmap с сохранением пропорций
      */
     public Bitmap resizeBitmap(Bitmap bitmap, int maxSize) {
+        return resizeBitmap(bitmap, maxSize, 0); // Вызываем перегруженный метод с счетчиком рекурсии
+    }
+    
+    /**
+     * Изменяет размер Bitmap с сохранением пропорций и защитой от бесконечной рекурсии
+     * @param bitmap исходный bitmap
+     * @param maxSize максимальный размер стороны
+     * @param recursionDepth глубина рекурсии для предотвращения stack overflow
+     */
+    private Bitmap resizeBitmap(Bitmap bitmap, int maxSize, int recursionDepth) {
         if (bitmap == null) {
+            return null;
+        }
+        
+        // Защита от бесконечной рекурсии
+        final int MAX_RECURSION_DEPTH = 5;
+        final int MIN_SIZE = 32; // Минимальный размер 32x32 пикселя
+        
+        if (recursionDepth >= MAX_RECURSION_DEPTH) {
+            Log.w(TAG, "Достигнута максимальная глубина рекурсии при изменении размера изображения");
+            return null;
+        }
+        
+        if (maxSize < MIN_SIZE) {
+            Log.w(TAG, "Размер изображения слишком мал: " + maxSize + "px, минимум: " + MIN_SIZE + "px");
             return null;
         }
         
@@ -281,7 +305,8 @@ public class ImageProcessor {
             newWidth = (int) (maxSize * ratio);
         }
         
-        Log.d(TAG, "Изменяю размер с " + width + "x" + height + " на " + newWidth + "x" + newHeight);
+        Log.d(TAG, "Изменяю размер с " + width + "x" + height + " на " + newWidth + "x" + newHeight + 
+                  " (глубина рекурсии: " + recursionDepth + ")");
         
         Bitmap scaledBitmap = null;
         try {
@@ -292,10 +317,24 @@ public class ImageProcessor {
             if (scaledBitmap != null && !scaledBitmap.isRecycled()) {
                 scaledBitmap.recycle();
             }
-            // Пробуем с меньшим размером
+            
+            // Пробуем с меньшим размером, но с ограничением рекурсии
             int reducedSize = maxSize / 2;
-            Log.d(TAG, "Пробуем уменьшить до " + reducedSize + "px");
-            return resizeBitmap(bitmap, reducedSize);
+            Log.d(TAG, "Пробуем уменьшить до " + reducedSize + "px (попытка " + (recursionDepth + 1) + ")");
+            
+            // Проверяем, что новый размер не слишком мал
+            if (reducedSize >= MIN_SIZE) {
+                return resizeBitmap(bitmap, reducedSize, recursionDepth + 1);
+            } else {
+                Log.w(TAG, "Невозможно уменьшить изображение до безопасного размера");
+                return null;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Неожиданная ошибка при изменении размера изображения", e);
+            if (scaledBitmap != null && !scaledBitmap.isRecycled()) {
+                scaledBitmap.recycle();
+            }
+            return null;
         }
     }
     
