@@ -49,12 +49,10 @@ public class RetryInterceptor implements Interceptor {
                     Log.d(TAG, "Повторная попытка #" + tryCount + " для " + request.url());
                 }
                 
-                // Если это не первая попытка и предыдущий ответ существует, закрываем его
                 if (response != null && response.body() != null) {
                     response.close();
                 }
                 
-                // Делаем запрос
                 response = chain.proceed(request);
                 
                 // Повторяем только при серверных ошибках (5xx) или ошибке 429 (Too Many Requests)

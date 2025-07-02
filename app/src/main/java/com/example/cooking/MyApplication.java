@@ -28,18 +28,15 @@ public class MyApplication extends Application {
      * Инициализирует тему приложения согласно сохраненным настройкам
      */
     private void initializeTheme() {
-        // Получаем доступ к SharedPreferences с тем же именем, что и в SettingsFragment
+
         SharedPreferences sharedPreferences = getSharedPreferences("acs", MODE_PRIVATE);
 
-        // Читаем сохраненное значение темы (по умолчанию - "system")
+
         String themeValue = sharedPreferences.getString("theme", "system");
 
         // Применяем сохраненную тему
         ThemeUtils.applyTheme(themeValue);
     }
 
-    /**
-     * Инициализирует клиент для Learning to Rank
-     */
 
 }

@@ -10,9 +10,9 @@ import java.util.Objects;
  * Реализует Parcelable для передачи между компонентами Android.
  */
 public class Step implements Parcelable {
-    private int number;         // Порядковый номер шага
-    private String instruction; // Текстовое описание инструкции для шага
-    private String url;           // URL-адрес изображения или видео, иллюстрирующего шаг (может быть null)
+    private int number;
+    private String instruction;
+    private String url;
 
     /**
      * Конструктор по умолчанию.

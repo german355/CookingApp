@@ -75,7 +75,6 @@ public class AiChatActivity extends AppCompatActivity {
         recyclerViewMessages.setAdapter(messageAdapter);
 
         editTextMessage = findViewById(R.id.editTextMessage);
-        //buttonPhoto = findViewById(R.id.buttonPhoto);
         buttonSend = findViewById(R.id.buttonSend);
 
         setupObservers();
@@ -108,6 +107,5 @@ public class AiChatActivity extends AppCompatActivity {
                 editTextMessage.setText("");
             }
         });
-        // buttonPhoto.setOnClickListener(v -> viewModel.onPhotoButtonClicked());
     }
 }

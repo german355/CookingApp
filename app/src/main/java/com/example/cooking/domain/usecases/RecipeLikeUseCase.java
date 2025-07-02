@@ -33,7 +33,6 @@ public class RecipeLikeUseCase {
                              MutableLiveData<String> errorMessageLiveData) {
         Log.d(TAG, "setLikeStatus called: id=" + recipeId + " liked=" + newLikeStatus + " networkAvailable=" + isNetworkAvailable());
         
-        // Проверяем доступность сети перед установкой статуса лайка
         if (!isNetworkAvailable()) {
             String errorMsg = "Вы в офлайн режиме и не можете ставить лайки";
             if (errorMessageLiveData != null) {
@@ -53,20 +52,7 @@ public class RecipeLikeUseCase {
         
         repository.setLikeStatus(recipeId, newLikeStatus);
     }
-    
-    /**
-     * Переключает статус лайка рецепта
-     */
-    public void toggleLike(int recipeId) {
-        // Логика переключения теперь полностью в setLikeStatus
-    }
-    
-    /**
-     * Получает список ID лайкнутых рецептов
-     */
-    public Set<Integer> getLikedRecipeIds() {
-        return repository.getLikedRecipeIds();
-    }
+
     
     /**
      * Проверяет доступность сети

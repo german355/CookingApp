@@ -144,13 +144,11 @@ public class AuthUseCase {
         isLoading.postValue(true);
         authManager.signOut();
         
-        // Очищаем лайки и настройки пользователя
         String userId = preferences.getString("userId", "0");
         if (userId != null && !userId.equals("0")) {
             likedRepo.clearAllLikes();
         }
         
-        // Очищаем настройки пользователя
         preferences.putString("userId", "0");
         preferences.putString("username", "");
         preferences.putString("email", "");

@@ -20,11 +20,11 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class LikedRecipesRepository extends NetworkRepository {
-    private static final String TAG = "LikedRecipesRepository_DEBUG"; // Используем другой тег для отладочных логов
+    private static final String TAG = "LikedRecipesRepository_DEBUG";
     private static final String API_URL = ServerConfig.BASE_API_URL;
     private final LikedRecipeDao likedRecipeDao;
     private final RecipeDao recipeDao;
-    private final RecipeLocalRepository recipeLocalRepository; // Добавляем зависимость
+    private final RecipeLocalRepository recipeLocalRepository;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
 
@@ -79,19 +79,15 @@ public class LikedRecipesRepository extends NetworkRepository {
     private void storeServerLikedRecipes(List<Integer> serverRecipeIds) {
         disposables.add(Completable.fromAction(() -> {
             List<LikedRecipeEntity> likedEntitiesToInsert = new ArrayList<>();
-            // формируем список из ID
             for (Integer id : serverRecipeIds) {
                 likedEntitiesToInsert.add(new LikedRecipeEntity(id));
             }
 
-            // Выполняем операции в транзакции для атомарности
             try {
                 Log.d(TAG, "[DB Sync] Запуск транзакции для обновления лайков");
                 AppDatabase.getInstance(context).runInTransaction(() -> {
-                    // очистить все
                     likedRecipeDao.deleteAll();
                     recipeDao.clearAllLikeStatus();
-                    // вставить новые лайки и обновить флаг
                     if (!likedEntitiesToInsert.isEmpty()) {
                         likedRecipeDao.insertAll(likedEntitiesToInsert);
                         for (LikedRecipeEntity e : likedEntitiesToInsert) {

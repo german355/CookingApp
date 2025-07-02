@@ -14,11 +14,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "735196544943-mklrki5k4opt9d6m77nk4um9llhloco8.apps.googleusercontent.com",
+          "client_id": "735196544943-0f5c9hmiugospobljo3vs1rqjd9krqf3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.cooking",
-            "certificate_hash": "cb3009c7d5d19e5f1d384fbad6eed2bd19119c51"
+            "certificate_hash": "5cdbae9a228e7a8071ca56b708aa999565e81216"
+          }
+        },
+        {
+          "client_id": "735196544943-kqq8s1mvqmg68bpmp5onmhoncton9i2k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cooking",
+            "certificate_hash": "a5ec25a5052b5405579aac57ad35e83d892049b6"
           }
         },
         {

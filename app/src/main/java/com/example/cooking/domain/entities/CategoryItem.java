@@ -8,8 +8,8 @@ import java.util.Objects;
  */
 public class CategoryItem {
     private String name;
-    private String filterKey; // Ключ, используемый для фильтрации рецептов по этой категории
-    private String filterType; // Тип фильтра (например, "meal_type" или "food_type")
+    private String filterKey;
+    private String filterType;
     private String description;
     private String imageUrl;
 

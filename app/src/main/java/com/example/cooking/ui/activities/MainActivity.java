@@ -89,10 +89,8 @@ public class MainActivity extends AppCompatActivity {
         setupEventHandlers();
         setupObservers();
 
-        // Обновление меню при смене фрагмента
         navController.addOnDestinationChangedListener((controller, destination, args) -> invalidateOptionsMenu());
 
-        // Устанавливаем цвет статус-бара программно
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             getWindow().setStatusBarColor(getColor(R.color.md_theme_surfaceContainer));
         }
@@ -102,9 +100,7 @@ public class MainActivity extends AppCompatActivity {
      * Инициализирует UI компоненты
      */
     private void initViews() {
-        // Инициализируем кнопку добавления рецепта
         addButton = findViewById(R.id.fab_add);
-        // Сохраняем оригинальные цвет и иконку
         fabOriginalTint = addButton.getBackgroundTintList();
         fabOriginalIcon = R.drawable.more_vert;
         fabAddRecipe = findViewById(R.id.fab_add_recipe);
@@ -128,14 +124,11 @@ public class MainActivity extends AppCompatActivity {
         if (navHostFragment != null) {
             navController = navHostFragment.getNavController();
             toolbar.setNavigationOnClickListener(v -> navController.navigateUp());
-            // Следим за изменениями пункта назначения для обновления UI
             navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
                 int id = destination.getId();
-                // Показываем FAB кнопку только на HomeFragment
                 boolean showAddButton = id == R.id.nav_home;
                 viewModel.setShowAddButton(showAddButton);
                 
-                // Показываем поиск только на главном экране, в каталоге и в избранном
                 boolean showSearch = id == R.id.nav_home || id == R.id.nav_catalog || id == R.id.nav_favorites;
                 if (showSearch) {
                     if (getSupportActionBar() != null) {
@@ -161,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
             bottomNavigationView.setOnItemSelectedListener(item -> {
                 int destinationId = item.getItemId();
 
-                // Опции навигации для сохранения состояния
                 NavOptions options = new NavOptions.Builder()
                         .setLaunchSingleTop(true)
                         .setRestoreState(true)
@@ -187,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
      * Настраивает обработчики событий
      */
     private void setupEventHandlers() {
-        // Настраиваем кнопку добавления рецепта
         addButton.setOnClickListener(v -> viewModel.toggleFabMenu());
         fabAddRecipe.setOnClickListener(v -> {
             if (viewModel.isUserLoggedIn()) {
@@ -253,7 +244,6 @@ public class MainActivity extends AppCompatActivity {
                 fabChat.setVisibility(View.VISIBLE);
                 fabAddRecipe.startAnimation(fabShowAnim);
                 fabChat.startAnimation(fabShowAnim);
-                // Сменить иконку и цвет главной FAB
                 addButton.setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
                 addButton.setBackgroundTintList(ColorStateList.valueOf(
                     ContextCompat.getColor(this, android.R.color.darker_gray)

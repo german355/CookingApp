@@ -54,7 +54,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Message message = messages.get(position);
         if (holder instanceof LoadingViewHolder) {
-            // nothing to bind
         } else {
             if (holder instanceof RecipesViewHolder) {
                 ((RecipesViewHolder) holder).bind(message.getAttachedRecipes());
@@ -89,7 +88,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         public void bind(Message message) {
             textView.setText(message.getText());
-            // выравнивание сообщения через FrameLayout.LayoutParams
             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) textView.getLayoutParams();
             if (message.isUser()) {
                 params.gravity = Gravity.END;
@@ -110,7 +108,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(itemView);
             recyclerView = itemView.findViewById(R.id.recycler_view_recipes);
             recyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext(), RecyclerView.HORIZONTAL, false));
-            // Передаём true, чтобы адаптер знал, что это режим чата и выставил корректную ширину карточек
             adapter = new RecipeListAdapter((recipe, isLiked) -> {}, true);
             recyclerView.setAdapter(adapter);
         }
@@ -123,7 +120,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     static class LoadingViewHolder extends RecyclerView.ViewHolder {
         public LoadingViewHolder(@NonNull View itemView) {
             super(itemView);
-            // LoadingDots автоматически запускает анимацию
         }
     }
 }
