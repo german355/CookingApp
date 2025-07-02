@@ -55,7 +55,6 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
         private final ImageButton removeButton;
         private final IngredientUpdateListener listener;
         
-        // TextInputLayout для отображения ошибок
         private final TextInputLayout nameLayout;
         private final TextInputLayout countLayout;
         private final TextInputLayout typeLayout;
@@ -63,15 +62,13 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
         private Ingredient currentIngredient;
         private int currentPosition;
 
-        // TextWatcher для отслеживания изменений и предотвращения рекурсии
         private TextWatcher nameWatcher;
         private TextWatcher countWatcher;
         
-        // Handler для debounce
         private final Handler debounceHandler = new Handler(Looper.getMainLooper());
         private Runnable pendingNameUpdate;
         private Runnable pendingCountUpdate;
-        private static final int DEBOUNCE_DELAY_MS = 300; // 300ms задержка
+        private static final int DEBOUNCE_DELAY_MS = 300;
 
         ViewHolder(@NonNull View itemView, IngredientUpdateListener listener) {
             super(itemView);
@@ -81,12 +78,10 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
             typeEditText = itemView.findViewById(R.id.edit_ingredient_type);
             removeButton = itemView.findViewById(R.id.button_remove_ingredient);
             
-            // Получаем TextInputLayout через getParent()
             nameLayout = (TextInputLayout) nameEditText.getParent().getParent();
             countLayout = (TextInputLayout) countEditText.getParent().getParent();
             typeLayout = (TextInputLayout) typeEditText.getParent().getParent();
             
-            // Настройка выпадающего списка для поля названия ингредиента
             ArrayAdapter<String> nameAdapter = new ArrayAdapter<>(
                 itemView.getContext(),
                 android.R.layout.simple_dropdown_item_1line,
@@ -95,10 +90,8 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
             nameEditText.setAdapter(nameAdapter);
             nameEditText.setThreshold(2); // Показывать подсказки после ввода 2 символов
             
-            // Обеспечим корректную ширину выпадающего списка для имени
             nameEditText.setDropDownWidth(android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
             
-            // Настройка выпадающего списка для поля типа ингредиента
             ArrayAdapter<String> unitAdapter = new ArrayAdapter<>(
                 itemView.getContext(),
                 android.R.layout.simple_dropdown_item_1line,
@@ -106,16 +99,14 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
             );
             typeEditText.setAdapter(unitAdapter);
             
-            // Обеспечим корректную ширину выпадающего списка для типа
             typeEditText.setDropDownWidth(android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
             
-            // Настройка поля типа как выпадающего списка
             typeEditText.setOnClickListener(v -> typeEditText.showDropDown());
             typeEditText.setOnItemClickListener((parent, view, pos, id) -> {
                 String type = (String) parent.getItemAtPosition(pos);
                 if (currentIngredient != null) {
                     currentIngredient.setType(type);
-                    typeLayout.setError(null); // Очищаем ошибку при выборе
+                    typeLayout.setError(null);
                     listener.onIngredientUpdated(currentPosition, currentIngredient);
                 }
             });
@@ -134,10 +125,8 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
             currentIngredient = ingredient;
             currentPosition = position;
 
-            // Удаляем старые Watcher'ы перед установкой нового текста
             removeWatchers();
 
-            // Очищаем ошибки валидации при связывании новых данных
             nameLayout.setError(null);
             countLayout.setError(null);
             typeLayout.setError(null);
@@ -145,9 +134,7 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
             nameEditText.setText(ingredient.getName());
             countEditText.setText(ingredient.getCount() > 0 ? String.valueOf(ingredient.getCount()) : "");
             typeEditText.setText(ingredient.getType(), false);
-            
-            // Скрываем кнопку удаления только для первого ингредиента (индекс 0)
-            // Остальные ингредиенты можно удалять, даже если они стали первыми после удаления предыдущих
+
             if (position == 0) {
                 removeButton.setVisibility(View.GONE);
             } else {
@@ -162,7 +149,6 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
             if (nameWatcher != null) nameEditText.removeTextChangedListener(nameWatcher);
             if (countWatcher != null) countEditText.removeTextChangedListener(countWatcher);
             
-            // Очищаем pending callbacks для предотвращения memory leaks
             if (pendingNameUpdate != null) {
                 debounceHandler.removeCallbacks(pendingNameUpdate);
                 pendingNameUpdate = null;
@@ -281,14 +267,12 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
         }
     }
 
-    // DiffUtil для эффективного обновления
     private static final DiffUtil.ItemCallback<Ingredient> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<Ingredient>() {
         @Override
         public boolean areItemsTheSame(@NonNull Ingredient oldItem, @NonNull Ingredient newItem) {
     
-            // Временное сравнение по ссылкам, что не идеально для ListAdapter
-            return oldItem == newItem; // Или использовать позицию/уникальный ID
+            return oldItem == newItem;
         }
 
         @Override

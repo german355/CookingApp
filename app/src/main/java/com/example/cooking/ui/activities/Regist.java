@@ -106,8 +106,7 @@ public class Regist extends AppCompatActivity {
         loginPromptTextView = findViewById(R.id.loginPromptTextView);
         orTextView = findViewById(R.id.orTextView);
         progressBar = findViewById(R.id.progressBar);
-        //resendVerificationButton = findViewById(R.id.resendVerificationButton);
-        
+
         if (progressBar == null) {
             Log.w(TAG, "ProgressBar не найден в layout, необходимо добавить его в activity_register.xml");
         }

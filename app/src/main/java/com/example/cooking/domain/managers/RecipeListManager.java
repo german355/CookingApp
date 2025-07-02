@@ -78,7 +78,6 @@ public class RecipeListManager {
             return ListOperationResult.error("Некорректная позиция ингредиента: " + position);
         }
         
-        // Не удаляем, если это последний ингредиент
         if (currentList.size() <= 1) {
             return ListOperationResult.error("Нельзя удалить последний ингредиент");
         }
@@ -116,7 +115,7 @@ public class RecipeListManager {
         
         List<Step> newList = new ArrayList<>(currentList);
         Step newStep = new Step();
-        newStep.setNumber(newList.size() + 1); // Номера начинаются с 1
+        newStep.setNumber(newList.size() + 1);
         newList.add(newStep);
         
         Log.d(TAG, "Добавлен пустой шаг #" + newStep.getNumber() + ". Размер списка: " + newList.size());
@@ -134,12 +133,9 @@ public class RecipeListManager {
         }
         
         List<Step> newList = new ArrayList<>(currentList);
-        // Устанавливаем правильный номер шага
         step.setNumber(position + 1);
         newList.set(position, step);
         
-        // Убираем избыточное логирование для улучшения производительности
-        // Log.d(TAG, "Обновлен шаг на позиции " + position + " (шаг #" + step.getNumber() + ")");
         return ListOperationResult.success(newList);
     }
     

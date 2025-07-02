@@ -113,12 +113,10 @@ public class UserPermissionUseCase {
         
         String currentUserId = getCurrentUserId();
         
-        // Проверяем валидность ID пользователя
         if (currentUserId == null || currentUserId.equals("0")) {
             return PermissionResult.denied("Некорректный ID пользователя");
         }
         
-        // Проверяем права администратора
         if (isAdmin()) {
             Log.d(TAG, "canEditRecipe: доступ разрешен - пользователь администратор");
             return PermissionResult.allowed();
@@ -136,23 +134,18 @@ public class UserPermissionUseCase {
     
     /**
      * Проверяет, может ли пользователь удалить рецепт
-     * @param recipeOwnerId ID владельца рецепта
-     * @return PermissionResult с результатом проверки
      */
     public PermissionResult canDeleteRecipe(String recipeOwnerId) {
-        // Проверяем авторизацию
         if (!isUserLoggedIn()) {
             return PermissionResult.denied("Пользователь не авторизован");
         }
         
         String currentUserId = getCurrentUserId();
         
-        // Проверяем валидность ID пользователя
         if (currentUserId == null || currentUserId.equals("0")) {
             return PermissionResult.denied("Некорректный ID пользователя");
         }
         
-        // Проверяем права администратора
         if (isAdmin()) {
             Log.d(TAG, "canDeleteRecipe: доступ разрешен - пользователь администратор");
             return PermissionResult.allowed();

@@ -55,7 +55,6 @@ public class RecipeFilterUseCase {
             }
         };
         
-        // Вызываем фильтрацию, результат придет через postValue (безопасно для background thread)
         repository.filterRecipesByCategory(filterKey, filterType, tempResultsLiveData);
     }
     
@@ -68,17 +67,13 @@ public class RecipeFilterUseCase {
                                    MutableLiveData<Boolean> isRefreshingLiveData) {
         
         if (recipes == null || recipes.isEmpty()) {
-            // Локальных данных нет
             if (isRefreshingLiveData != null) {
-                // Есть индикатор загрузки - загружаем с сервера и повторяем фильтрацию
-                refreshDataAndFilter(filterKey, filterType, filteredResultsLiveData, 
+                refreshDataAndFilter(filterKey, filterType, filteredResultsLiveData,
                                    errorMessageLiveData, isRefreshingLiveData);
             } else {
-                // Без автообновления - просто возвращаем пустой результат
                 filteredResultsLiveData.postValue(recipes);
             }
         } else {
-            // Данные есть - возвращаем результат
             filteredResultsLiveData.postValue(recipes);
             if (isRefreshingLiveData != null) {
                 isRefreshingLiveData.postValue(false);
@@ -96,7 +91,6 @@ public class RecipeFilterUseCase {
         
         MutableLiveData<Resource<List<Recipe>>> dummyLiveData = new MutableLiveData<>();
         recipeDataUseCase.refreshRecipes(isRefreshingLiveData, errorMessageLiveData, dummyLiveData, () -> {
-            // После обновления - повторяем фильтрацию БЕЗ автообновления (избегаем рекурсии)
             filterRecipesByCategory(filterKey, filterType, filteredResultsLiveData, errorMessageLiveData);
         });
     }

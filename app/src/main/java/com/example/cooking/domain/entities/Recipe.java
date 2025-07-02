@@ -24,12 +24,11 @@ import java.util.Objects;
  * Реализует Parcelable для передачи между компонентами Android.
  */
 public class Recipe implements Parcelable {
-    // Основные поля рецепта
     private int id;
     private String title;
     private String created_at;
     private String userId;
-    private boolean isLiked; // Статус "лайк" от пользователя
+    private boolean isLiked;
 
     @SerializedName("ingredients")
     @JsonAdapter(IngredientsAdapter.class)
@@ -40,14 +39,13 @@ public class Recipe implements Parcelable {
     private ArrayList<Step> steps = new ArrayList<>();
     
     @SerializedName("meal_type")
-    private String mealType; // Тип приема пищи (напр., Завтрак, Обед)
+    private String mealType;
     
     @SerializedName("food_type")
-    private String foodType; // Тип блюда (напр., Суп, Салат)
+    private String foodType;
     
     @SerializedName("photo")
-    private String photo_url; // URL основного изображения рецепта
-
+    private String photo_url;
     private static <T> ArrayList<T> handleParseError(String context, Exception e) {
         android.util.Log.w("Recipe", "Failed to parse " + context + ": " + e.getMessage());
         return new ArrayList<>();

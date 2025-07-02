@@ -28,7 +28,7 @@ import java.util.Objects;
         })
 @TypeConverters(DataConverters.class)
 public class RecipeEntity {
-    @PrimaryKey // Первичный ключ для таблицы recipes
+    @PrimaryKey
     private int id;
     private String title;        // Название рецепта
     private List<Ingredient> ingredients; // Список ингредиентов
@@ -40,7 +40,6 @@ public class RecipeEntity {
     private String photo_url;
     private boolean isLiked;
 
-    // Поля для ленивого кэширования сериализованных данных (не сохраняются в БД)
     @Ignore
     private String cachedIngredientsJson;
     @Ignore  
@@ -58,13 +57,12 @@ public class RecipeEntity {
     }
 
     /**
-     * Создает {@link RecipeEntity} на основе доменной модели {@link Recipe}.
-     * @param recipe Доменный объект рецепта.
+     * Создает сущность рецепта на основе доменной модели а.
      */
     public RecipeEntity(Recipe recipe) {
         this.id = recipe.getId();
         this.title = recipe.getTitle();
-        // Копируем списки, чтобы избежать модификации оригинальных списков в объекте Recipe
+
         this.ingredients = recipe.getIngredients() == null ? new ArrayList<>() : new ArrayList<>(recipe.getIngredients());
         this.instructions = recipe.getSteps() == null ? new ArrayList<>() : new ArrayList<>(recipe.getSteps());
         this.mealType = recipe.getMealType();
@@ -85,7 +83,6 @@ public class RecipeEntity {
         Recipe recipe = new Recipe();
         recipe.setId(id);
         recipe.setTitle(title);
-        // Создаем новые копии списков для объекта Recipe
         recipe.setIngredients(ingredients == null ? new ArrayList<>() : new ArrayList<>(ingredients));
         recipe.setSteps(instructions == null ? new ArrayList<>() : new ArrayList<>(instructions));
         recipe.setMealType(mealType);
@@ -286,7 +283,6 @@ public class RecipeEntity {
     @NonNull
     @Override
     public String toString() {
-        // Более краткий toString для лучшей читаемости логов, можно добавить больше полей при необходимости
         return "RecipeEntity{" +
                 "id=" + id +
                 ", title='" + title + '\'' +

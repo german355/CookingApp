@@ -24,7 +24,7 @@ public class ChatRepository extends NetworkRepository {
             apiService.startChatSession()
                 .toFlowable()
                 .subscribeOn(Schedulers.io())
-                .onErrorReturnItem(new ChatSessionResponse()) // Return empty object on error
+                .onErrorReturnItem(new ChatSessionResponse())
         );
     }
 
@@ -34,7 +34,7 @@ public class ChatRepository extends NetworkRepository {
             apiService.sendChatMessage(request)
                 .toFlowable()
                 .subscribeOn(Schedulers.io())
-                .onErrorReturnItem(new ChatMessageResponse()) // Return empty object on error
+                .onErrorReturnItem(new ChatMessageResponse())
         );
     }
 
@@ -43,7 +43,7 @@ public class ChatRepository extends NetworkRepository {
             apiService.getChatHistory()
                 .toFlowable()
                 .subscribeOn(Schedulers.io())
-                .onErrorReturnItem(new ChatHistoryResponse()) // Return empty object on error
+                .onErrorReturnItem(new ChatHistoryResponse())
         );
     }
 }

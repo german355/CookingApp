@@ -24,8 +24,7 @@ public class DataConverters {
     private static final Gson GSON_INSTANCE = new Gson();
     private static final Type INGREDIENT_LIST_TYPE = new TypeToken<ArrayList<Ingredient>>() {}.getType();
     private static final Type STEP_LIST_TYPE = new TypeToken<ArrayList<Step>>() {}.getType();
-    
-    // Кэш для часто используемых JSON строк (опционально, для экстремальной оптимизации)
+
     private static final ConcurrentHashMap<String, List<Ingredient>> INGREDIENT_CACHE = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, List<Step>> STEP_CACHE = new ConcurrentHashMap<>();
     private static final int MAX_CACHE_SIZE = 100; // Ограничиваем размер кэша

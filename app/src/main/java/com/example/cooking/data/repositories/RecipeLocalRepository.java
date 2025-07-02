@@ -180,7 +180,6 @@ public class RecipeLocalRepository extends NetworkRepository{
         try {
             List<RecipeEntity> entities;
             
-            // Используем оптимизированные SQL запросы
             switch (filterType) {
                 case "meal_type":
                     entities = recipeDao.getRecipesByMealType(filterKey);
@@ -274,19 +273,16 @@ public class RecipeLocalRepository extends NetworkRepository{
     public void smartReplaceRecipes(List<Recipe> newRecipes) {
         AppExecutors.getInstance().diskIO().execute(() -> {
             try {
-                // Получаем существующие ID из БД
                 List<Integer> existingIds = recipeDao.getAllRecipeIds();
                 
-                // Подготавливаем коллекции для разных типов операций
                 List<RecipeEntity> toInsert = new ArrayList<>();
                 List<RecipeEntity> toUpdate = new ArrayList<>();
                 Set<Integer> newIds = new HashSet<>();
                 
-                // Анализируем новые рецепты и определяем операции
                 for (Recipe recipe : newRecipes) {
                     newIds.add(recipe.getId());
                     RecipeEntity entity = new RecipeEntity(recipe);
-                    entity.refreshCache(); // Предварительно загружаем кэш
+                    entity.refreshCache();
                     
                     if (existingIds.contains(recipe.getId())) {
                         toUpdate.add(entity);
@@ -295,26 +291,21 @@ public class RecipeLocalRepository extends NetworkRepository{
                     }
                 }
                 
-                // Находим рецепты для удаления (есть в БД, но нет в новых данных)
                 List<Integer> toDelete = existingIds.stream()
                     .filter(id -> !newIds.contains(id))
                     .collect(Collectors.toList());
                 
-                // Выполняем операции в транзакции для атомарности
                 AppDatabase.getInstance(context).runInTransaction(() -> {
-                    // Удаляем отсутствующие рецепты
                     if (!toDelete.isEmpty()) {
                         recipeDao.deleteRecipesByIds(toDelete);
                         Log.d(TAG, "Удалено рецептов: " + toDelete.size());
                     }
                     
-                    // Вставляем новые рецепты
                     if (!toInsert.isEmpty()) {
                         recipeDao.insertNewRecipes(toInsert);
                         Log.d(TAG, "Вставлено новых рецептов: " + toInsert.size());
                     }
                     
-                    // Обновляем существующие рецепты
                     if (!toUpdate.isEmpty()) {
                         recipeDao.updateExistingRecipes(toUpdate);
                         Log.d(TAG, "Обновлено рецептов: " + toUpdate.size());
@@ -331,12 +322,10 @@ public class RecipeLocalRepository extends NetworkRepository{
                     "Умная замена завершена: всего=%d, новых=%d, обновлено=%d, удалено=%d", 
                     newRecipes.size(), toInsert.size(), toUpdate.size(), toDelete.size()));
                 
-                // Инвалидируем кэш после изменений
                 invalidateCache();
                     
             } catch (Exception e) {
                 Log.e(TAG, "Ошибка при умной замене рецептов: " + e.getMessage(), e);
-                // Fallback на обычную замену в случае ошибки
                 replaceAllRecipes(newRecipes);
             }
         });
@@ -349,8 +338,7 @@ public class RecipeLocalRepository extends NetworkRepository{
     public void replaceAllRecipes(List<Recipe> recipes) {
         List<RecipeEntity> entities = new ArrayList<>();
         if (recipes != null) {
-            // Конвертируем рецепты в сущности батчами для лучшей производительности
-            final int BATCH_SIZE = 25; // Уменьшено для лучшей отзывчивости
+            final int BATCH_SIZE = 25;
             
             for (int i = 0; i < recipes.size(); i += BATCH_SIZE) {
                 int endIndex = Math.min(i + BATCH_SIZE, recipes.size());
@@ -358,7 +346,6 @@ public class RecipeLocalRepository extends NetworkRepository{
                 
                 for (Recipe recipe : batch) {
                     RecipeEntity entity = new RecipeEntity(recipe);
-                    // Предварительно загружаем кэш для новых сущностей
                     entity.refreshCache();
                     entities.add(entity);
                 }
@@ -381,14 +368,12 @@ public class RecipeLocalRepository extends NetworkRepository{
             }
         }
         
-        // Выполняем замену в БД внутри транзакции
         try {
             AppDatabase.getInstance(context).runInTransaction(() -> {
                 recipeDao.replaceAllRecipes(entities);
             });
             Log.d(TAG, "Все рецепты заменены с ленивой сериализацией, count=" + entities.size());
             
-            // Очищаем старый кэш и загружаем новый
             DataConverters.clearCache();
             preloadCacheForEntities(entities);
             

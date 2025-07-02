@@ -78,16 +78,12 @@ public class UnifiedRecipeRepository {
         remoteRepository.getRecipes(new RecipeRemoteRepository.RecipesCallback() {
             @Override
             public void onRecipesLoaded(List<Recipe> remoteRecipes) {
-                // Обрабатываем данные в фоновом потоке батчами для лучшей производительности
                 AppExecutors.getInstance().diskIO().execute(() -> {
                     try {
-                        // Получаем лайки одним запросом
                         Set<Integer> likedIds = new HashSet<>(likedRecipesRepository.getLikedRecipeIdsSync());
                         
-                        // Обрабатываем рецепты оптимизированными батчами (уменьшено с 50 до 25)
                         processRecipesInOptimizedBatches(remoteRecipes, likedIds);
                         
-                        // Используем умную замену с дифференциальными обновлениями
                         localRepository.smartReplaceRecipes(remoteRecipes);
                         List<Recipe> updatedLocalRecipes = localRepository.getAllRecipesSync();
                         recipesLiveData.postValue(Resource.success(updatedLocalRecipes));
@@ -113,15 +109,13 @@ public class UnifiedRecipeRepository {
      * Оптимизированная обработка рецептов батчами с улучшенной производительностью.
      */
     private void processRecipesInOptimizedBatches(List<Recipe> recipes, Set<Integer> likedIds) {
-        final int OPTIMAL_BATCH_SIZE = 25; // Уменьшено с 50 для лучшей отзывчивости
-        final int PAUSE_BETWEEN_BATCHES_MS = 5; // Уменьшено с 10
-        
+        final int OPTIMAL_BATCH_SIZE = 25;
+        final int PAUSE_BETWEEN_BATCHES_MS = 5;
         try {
             for (int i = 0; i < recipes.size(); i += OPTIMAL_BATCH_SIZE) {
                 int endIndex = Math.min(i + OPTIMAL_BATCH_SIZE, recipes.size());
                 List<Recipe> batch = recipes.subList(i, endIndex);
                 
-                // Параллельная обработка лайков в батче для максимальной производительности
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     batch.parallelStream().forEach(recipe -> {
                         recipe.setLiked(likedIds.contains(recipe.getId()));
@@ -134,7 +128,6 @@ public class UnifiedRecipeRepository {
                     break;
                 }
                 
-                // Микропауза между батчами для предотвращения блокировки
                 if (endIndex < recipes.size()) {
                     try {
                         Thread.sleep(PAUSE_BETWEEN_BATCHES_MS);
@@ -206,14 +199,12 @@ public class UnifiedRecipeRepository {
         remoteRepository.saveRecipe(recipe, imageBytes, new RecipeRemoteRepository.RecipeSaveCallback() {
             @Override
             public void onSuccess(GeneralServerResponse response, Recipe savedRecipe) {
-                // После успешного сохранения на сервере, сохраняем в локальную БД
                 if (response != null && response.getId() != null) {
                     savedRecipe.setId(response.getId());
                 } else {
                     Log.w(TAG, "Ответ сервера не содержит ID рецепта");
                 }
                 
-                // Устанавливаем URL изображения из ответа сервера
                 if (response != null && response.getPhotoUrl() != null) {
                     savedRecipe.setPhoto_url(response.getPhotoUrl());
                     Log.d(TAG, "URL изображения получен от сервера: " + response.getPhotoUrl());
@@ -238,10 +229,8 @@ public class UnifiedRecipeRepository {
         remoteRepository.updateRecipe(recipe, imageBytes, new RecipeRemoteRepository.RecipeSaveCallback() {
             @Override
             public void onSuccess(GeneralServerResponse response, Recipe updatedRecipe) {
-                // Используем обновленный рецепт от сервера вместо исходного
                 Recipe recipeToSave = updatedRecipe;
                 
-                // Обновляем URL изображения если получен новый в response
                 if(response != null && response.getPhotoUrl() != null){
                     recipeToSave.setPhoto_url(response.getPhotoUrl());
                     Log.d(TAG, "URL изображения обновлен от сервера: " + response.getPhotoUrl());
@@ -281,7 +270,6 @@ public class UnifiedRecipeRepository {
         AppExecutors.getInstance().diskIO().execute(() -> {
             localRepository.updateLikeStatus(recipeId, isLiked);
             likedRecipesRepository.updateLikeStatusLocal(recipeId, isLiked);
-            // Отправляем запрос на сервер, но не ждем ответа (fire and forget)
             likedRecipesRepository.toggleLikeRecipeOnServer(recipeId)
                 .subscribeOn(Schedulers.io())
                 .subscribe(() -> {}, throwable -> Log.e(TAG, "Failed to toggle like on server", throwable));

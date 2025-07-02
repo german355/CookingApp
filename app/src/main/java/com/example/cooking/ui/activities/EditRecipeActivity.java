@@ -76,7 +76,6 @@ public class EditRecipeActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_recipe);
         
-        // Сброс прокрутки к началу
         NestedScrollView scrollView = findViewById(R.id.main_scroll_view);
         scrollView.post(() -> scrollView.fullScroll(View.FOCUS_UP));
         

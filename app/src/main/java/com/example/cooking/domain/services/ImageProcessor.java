@@ -78,7 +78,7 @@ public class ImageProcessor {
     public interface ImageProcessingCallback {
         void onSuccess(ImageResult result);
         void onError(String errorMessage);
-        void onProgress(int progress); // 0-100
+        void onProgress(int progress);
     }
 
     

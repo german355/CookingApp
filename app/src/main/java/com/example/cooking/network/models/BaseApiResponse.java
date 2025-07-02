@@ -19,10 +19,8 @@ public class BaseApiResponse {
 
     /**
      * Проверяет успешность выполнения запроса
-     * @return true если запрос выполнен успешно
      */
     public boolean isSuccess() {
-        // Если поле status определено, используем его, иначе используем поле success
         if (status != null) {
             return "success".equalsIgnoreCase(status) || "ok".equalsIgnoreCase(status);
         }
@@ -31,7 +29,6 @@ public class BaseApiResponse {
 
     /**
      * Получает сообщение от сервера
-     * @return сообщение с описанием результата запроса
      */
     public String getMessage() {
         return message;

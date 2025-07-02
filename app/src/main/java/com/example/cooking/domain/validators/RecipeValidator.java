@@ -43,7 +43,6 @@ public class RecipeValidator {
             return errorMessage;
         }
         
-        // Статические методы для создания результатов
         public static ValidationResult success() {
             return new ValidationResult(true, null);
         }

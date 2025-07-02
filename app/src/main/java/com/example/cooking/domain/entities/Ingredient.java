@@ -10,10 +10,9 @@ import java.util.Objects;
  * Реализует Parcelable для передачи между компонентами Android.
  */
 public class Ingredient implements Parcelable {
-    private String name; // Название ингредиента
-    private float count;   // Количество ингредиента (может быть дробным)
-    private String type; // Единица измерения (например, "г", "мл", "шт")
-
+    private String name;
+    private float count;
+    private String type;
     /**
      * Конструктор по умолчанию.
      * Может быть необходим для некоторых библиотек или процессов десериализации.
@@ -92,8 +91,6 @@ public class Ingredient implements Parcelable {
         dest.writeString(type);
     }
 
-    // Методы equals() и hashCode() для корректного сравнения и использования в коллекциях.
-    // Учитывают поля, важные для идентификации объекта (например, для DiffUtil).
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

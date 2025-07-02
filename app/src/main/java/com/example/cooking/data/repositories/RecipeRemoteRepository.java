@@ -32,7 +32,6 @@ public class RecipeRemoteRepository extends NetworkRepository {
     private final MySharedPreferences preferences;
     private final CompositeDisposable disposables = new CompositeDisposable();
     
-    // Флаг для предотвращения множественных одновременных запросов
     private volatile boolean isRequestInProgress = false;
 
     public interface RecipesCallback {
@@ -87,7 +86,6 @@ public class RecipeRemoteRepository extends NetworkRepository {
                         Log.w(TAG, "Не удалось распарсить ошибку как BaseApiResponse", e);
                     }
                     
-                    // Если не удалось распарсить как JSON, возвращаем сырое сообщение
                     if (!errorBody.trim().isEmpty()) {
                         return "Ошибка сервера (" + httpException.code() + "): " + errorBody;
                     }
@@ -100,38 +98,32 @@ public class RecipeRemoteRepository extends NetworkRepository {
             }
         }
         
-        // Для других типов ошибок возвращаем стандартное сообщение
         return throwable.getMessage() != null ? throwable.getMessage() : "Неизвестная ошибка сети";
     }
 
     /**
      * Получить рецепты с сервера
-     * 
-     * @param callback callback для возврата результата
      */
     public synchronized void getRecipes(final RecipesCallback callback) {
-        // Проверяем, не выполняется ли уже запрос
         if (isRequestInProgress) {
             callback.onDataNotAvailable("Запрос уже выполняется");
             return;
         }
         
-        // Проверяем доступность сети
         if (!isNetworkAvailable()) {
             Log.d(TAG, "Сеть недоступна, отменяем запрос рецептов");
             callback.onDataNotAvailable("Нет подключения к интернету");
             return;
         }
 
-        // Устанавливаем флаг выполнения запроса
         isRequestInProgress = true;
         Log.d(TAG, "Начинаем запрос рецептов с сервера");
 
         // Используем RxJava для выполнения запроса в фоновом потоке
         disposables.add(
             apiService.getRecipesRx()
-            .subscribeOn(Schedulers.io()) // Выполняем в фоновом потоке
-            .observeOn(AndroidSchedulers.mainThread()) // Результат в главном потоке
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 response -> {
                     synchronized (RecipeRemoteRepository.this) {
@@ -159,7 +151,6 @@ public class RecipeRemoteRepository extends NetworkRepository {
     }
 
     public void saveRecipe(Recipe recipe, byte[] imageBytes, RecipeSaveCallback callback) {
-        // Подготовка данных запроса
         RequestBody title = RequestBody.create(MediaType.parse("text/plain"), recipe.getTitle());
         RequestBody ingredients = RequestBody.create(MediaType.parse("text/plain"), gson.toJson(recipe.getIngredients()));
         RequestBody instructions = RequestBody.create(MediaType.parse("text/plain"), gson.toJson(recipe.getSteps()));

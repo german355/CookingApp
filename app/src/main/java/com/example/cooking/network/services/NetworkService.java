@@ -27,14 +27,12 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class NetworkService {
     private static final String TAG = "NetworkService";
     
-    // Параметры настройки клиента
     private static final int CONNECT_TIMEOUT = 30; // 30 секунд
-    private static final int READ_TIMEOUT = 60;    // 60 секунд (увеличено)
+    private static final int READ_TIMEOUT = 60;    // 60 секунд
     private static final int WRITE_TIMEOUT = 30;   // 30 секунд
     private static final int MAX_RETRY_ATTEMPTS = 3;
     private static final long RETRY_DELAY_MILLIS = 1000; // 1 секунда
     
-    // Хранение экземпляров для singleton паттерна
     private static volatile OkHttpClient httpClient;
     private static volatile Retrofit retrofit;
     private static volatile ApiService apiService;
@@ -52,22 +50,18 @@ public class NetworkService {
         if (httpClient == null) {
             synchronized (NetworkService.class) {
                 if (httpClient == null) {
-                    // Создаем логгер для HTTP-запросов
-                    HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> 
+                    HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message ->
                         Log.d(TAG, "OkHttp: " + message));
                     
                     // Устанавливаем максимальный уровень логирования
                     loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
                     
-                    // Создаем и настраиваем клиент
                     OkHttpClient.Builder builder = new OkHttpClient.Builder()
                             .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
                             .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
                             .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
-                            // Отключаем кэш, чтобы избежать ошибок "unexpected end of stream" на больших ответах
                             .cache(null)
                             .retryOnConnectionFailure(true)
-                            // Принудительно используем HTTP/1.1 для стабильности соединения
                             .protocols(java.util.Arrays.asList(okhttp3.Protocol.HTTP_1_1))
                             .addInterceptor(loggingInterceptor)
                             .addInterceptor(new AuthInterceptor(context))
