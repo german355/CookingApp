@@ -7,6 +7,8 @@
 [![Min SDK](https://img.shields.io/badge/Min%20SDK-23-blue.svg)](https://developer.android.com/studio/releases/platforms)
 [![Target SDK](https://img.shields.io/badge/Target%20SDK-34-blue.svg)](https://developer.android.com/studio/releases/platforms)
 
+Код сервера: https://github.com/Kiloms/ServerCookingAppV2?tab=readme-ov-file
+
 ## 📱 О проекте
 
 Cooking App - это современное мобильное приложение для Android, предназначенное для любителей кулинарии. Приложение позволяет пользователям находить, создавать, сохранять и делиться рецептами, а также получать помощь от искусственного интеллекта в кулинарных вопросах.
