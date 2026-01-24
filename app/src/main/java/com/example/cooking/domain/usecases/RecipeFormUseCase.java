@@ -4,6 +4,7 @@ import android.app.Application;
 import android.net.Uri;
 import android.util.Log;
 
+import com.example.cooking.R;
 import com.example.cooking.domain.entities.Ingredient;
 import com.example.cooking.domain.entities.Recipe;
 import com.example.cooking.domain.entities.Step;
@@ -35,7 +36,7 @@ public class RecipeFormUseCase {
     
     public RecipeFormUseCase(Application application) {
         this.application = application;
-        this.listManager = new RecipeListManager();
+        this.listManager = new RecipeListManager(application);
         this.validator = new RecipeValidator(application);
         this.imageProcessor = new ImageProcessor(application);
     }
@@ -74,7 +75,7 @@ public class RecipeFormUseCase {
      */
     public List<Ingredient> removeIngredient(List<Ingredient> ingredients, int position) {
         if (!listManager.canRemoveIngredient(ingredients, position)) {
-            throw new RuntimeException("Нельзя удалить единственный ингредиент");
+            throw new RuntimeException(application.getString(R.string.validation_remove_last_ingredient));
         }
         
         RecipeListManager.ListOperationResult result = 
@@ -119,7 +120,7 @@ public class RecipeFormUseCase {
      */
     public List<Step> removeStep(List<Step> steps, int position) {
         if (!listManager.canRemoveStep(steps, position)) {
-            throw new RuntimeException("Нельзя удалить единственный шаг");
+            throw new RuntimeException(application.getString(R.string.validation_remove_last_step));
         }
         
         RecipeListManager.ListOperationResult result = 
@@ -149,7 +150,7 @@ public class RecipeFormUseCase {
     public Single<byte[]> processImage(Uri imageUri) {
         return Single.<byte[]>create(emitter -> {
             if (imageUri == null) {
-                emitter.onError(new Exception("URI изображения не может быть null"));
+                emitter.onError(new Exception(application.getString(R.string.error_image_selection_uri_null)));
                 return;
             }
             
@@ -185,7 +186,7 @@ public class RecipeFormUseCase {
     public Single<byte[]> loadImageFromUrl(String url) {
         return Single.<byte[]>create(emitter -> {
             if (url == null || url.isEmpty()) {
-                emitter.onError(new Exception("URL изображения пуст"));
+                emitter.onError(new Exception(application.getString(R.string.error_image_url_empty)));
                 return;
             }
             

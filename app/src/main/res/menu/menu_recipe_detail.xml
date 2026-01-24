@@ -5,25 +5,29 @@
     <item
         android:id="@+id/action_share"
         android:icon="@drawable/ic_share"
-        android:title="Поделиться"
+        android:title="@string/menu_recipe_share"
+        app:iconTint="?attr/colorOnSurface"
         app:showAsAction="ifRoom" />
     
     <item
         android:id="@+id/action_more"
         android:icon="@drawable/ic_more"
-        android:title="Еще"
+        android:title="@string/menu_recipe_more"
+        app:iconTint="?attr/colorOnSurface"
         app:showAsAction="always">
         
         <menu>
             <item
                 android:id="@+id/action_edit"
                 android:icon="@drawable/ic_edit"
-                android:title="Редактировать" />
+                android:title="@string/menu_recipe_edit"
+                app:iconTint="?attr/colorOnSurface" />
                 
             <item
                 android:id="@+id/action_delete"
                 android:icon="@drawable/ic_delete"
-                android:title="Удалить" />
+                android:title="@string/menu_recipe_delete"
+                app:iconTint="?attr/colorOnSurface" />
         </menu>
     </item>
 </menu> 

@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import com.example.cooking.R;
 import com.example.cooking.domain.entities.Recipe;
 import com.example.cooking.utils.MySharedPreferences;
 import com.example.cooking.domain.usecases.RecipeDataUseCase;
@@ -68,10 +69,14 @@ public class RecipeDetailViewModel extends AndroidViewModel {
                     RecipeDetailUIState newState = RecipeDetailUIState.withRecipe(loadedRecipe, userPermissionUseCase.canEditRecipe(loadedRecipe.getUserId()).hasPermission(), userPermissionUseCase.canDeleteRecipe(loadedRecipe.getUserId()).hasPermission());
                     uiState.postValue(newState);
                 } else {
-                    uiState.postValue(RecipeDetailUIState.error("Рецепт не найден"));
+                    uiState.postValue(RecipeDetailUIState.error(getApplication().getString(R.string.error_recipe_not_found)));
                 }
             } catch (Exception e) {
-                uiState.postValue(RecipeDetailUIState.error("Ошибка загрузки: " + e.getMessage()));
+                uiState.postValue(
+                    RecipeDetailUIState.error(
+                        getApplication().getString(R.string.error_loading_recipe_with_message, e.getMessage())
+                    )
+                );
             }
         });
     }
@@ -140,7 +145,7 @@ public class RecipeDetailViewModel extends AndroidViewModel {
         
         // Проверяем права доступа
         if (!current.canDelete()) {
-            uiState.setValue(current.withError("У вас нет прав для удаления этого рецепта"));
+            uiState.setValue(current.withError(getApplication().getString(R.string.error_no_delete_permission)));
             return;
         }
         

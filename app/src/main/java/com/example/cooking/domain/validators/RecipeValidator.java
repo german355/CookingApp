@@ -85,19 +85,19 @@ public class RecipeValidator {
      */
     public ValidationResult validateTitle(String title) {
         if (title == null || title.trim().isEmpty()) {
-            String error = context.getString(R.string.error_enter_recipe_name);
+            String error = context.getString(R.string.validation_recipe_name_empty);
             Log.w(TAG, "validateTitle: Название пустое");
             return ValidationResult.error(error);
         }
         
         if (title.trim().length() < 3) {
-            String error = "Название рецепта должно содержать минимум 3 символа";
+            String error = context.getString(R.string.validation_recipe_name_too_short);
             Log.w(TAG, "validateTitle: Название слишком короткое: " + title.trim().length());
             return ValidationResult.error(error);
         }
         
         if (title.trim().length() > 100) {
-            String error = "Название рецепта не должно превышать 100 символов";
+            String error = context.getString(R.string.validation_recipe_name_too_long);
             Log.w(TAG, "validateTitle: Название слишком длинное: " + title.trim().length());
             return ValidationResult.error(error);
         }
@@ -111,7 +111,7 @@ public class RecipeValidator {
      */
     public ValidationResult validateIngredientsList(List<Ingredient> ingredients) {
         if (ingredients == null || ingredients.isEmpty()) {
-            String error = context.getString(R.string.error_add_at_least_one_ingredient);
+            String error = context.getString(R.string.validation_ingredients_empty);
             Log.w(TAG, "validateIngredientsList: Список ингредиентов пуст");
             return ValidationResult.error(error);
         }
@@ -135,25 +135,25 @@ public class RecipeValidator {
      */
     public ValidationResult validateSingleIngredient(Ingredient ingredient, int position) {
         if (ingredient == null) {
-            String error = "Ингредиент #" + position + " не может быть пустым";
+            String error = context.getString(R.string.validation_ingredient_empty, position);
             return ValidationResult.error(error);
         }
         
         // Проверяем название ингредиента
         if (ingredient.getName() == null || ingredient.getName().trim().isEmpty()) {
-            String error = "Укажите название для ингредиента #" + position;
+            String error = context.getString(R.string.validation_ingredient_name_required, position);
             return ValidationResult.error(error);
         }
         
         // Проверяем тип/единицу измерения
         if (ingredient.getType() == null || ingredient.getType().trim().isEmpty()) {
-            String error = "Укажите единицу измерения для ингредиента #" + position;
+            String error = context.getString(R.string.validation_ingredient_unit_required, position);
             return ValidationResult.error(error);
         }
         
         // Проверяем количество
         if (ingredient.getCount() <= 0) {
-            String error = "Укажите корректное количество для ингредиента #" + position;
+            String error = context.getString(R.string.validation_ingredient_amount_required, position);
             return ValidationResult.error(error);
         }
         
@@ -165,7 +165,7 @@ public class RecipeValidator {
      */
     public ValidationResult validateStepsList(List<Step> steps) {
         if (steps == null || steps.isEmpty()) {
-            String error = context.getString(R.string.error_add_at_least_one_step);
+            String error = context.getString(R.string.validation_steps_empty);
             Log.w(TAG, "validateStepsList: Список шагов пуст");
             return ValidationResult.error(error);
         }
@@ -188,21 +188,21 @@ public class RecipeValidator {
      */
     public ValidationResult validateSingleStep(Step step, int position) {
         if (step == null) {
-            String error = "Шаг #" + position + " не может быть пустым";
+            String error = context.getString(R.string.validation_step_empty, position);
             Log.w(TAG, "validateSingleStep: Шаг null на позиции " + position);
             return ValidationResult.error(error);
         }
         
         // Проверяем описание шага
         if (step.getInstruction() == null || step.getInstruction().trim().isEmpty()) {
-            String error = "Опишите действие для шага #" + position;
+            String error = context.getString(R.string.validation_step_description_required, position);
             Log.w(TAG, "validateSingleStep: Пустое описание шага на позиции " + position);
             return ValidationResult.error(error);
         }
         
         // Проверяем минимальную длину описания
         if (step.getInstruction().trim().length() < 7) {
-            String error = "Описание шага #" + position + " слишком короткое (минимум 7 символов)";
+            String error = context.getString(R.string.validation_step_description_too_short, position);
             Log.w(TAG, "validateSingleStep: Слишком короткое описание шага на позиции " + position);
             return ValidationResult.error(error);
         }

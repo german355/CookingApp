@@ -11,6 +11,7 @@ import com.example.cooking.data.database.AppDatabase;
 import com.example.cooking.data.database.LikedRecipeDao;
 import com.example.cooking.data.database.RecipeDao;
 import com.example.cooking.data.repositories.LikedRecipesRepository;
+import com.example.cooking.R;
 import com.example.cooking.network.services.UserService;
 import com.example.cooking.utils.MySharedPreferences;
 import com.example.cooking.auth.FirebaseAuthManager;
@@ -72,12 +73,12 @@ public class ProfileUseCase {
         MutableLiveData<String> displayName
     ) {
         if (newName == null || newName.trim().isEmpty()) {
-            errorMessage.postValue("Имя не может быть пустым");
+            errorMessage.postValue(application.getString(R.string.profile_name_empty));
             return;
         }
         FirebaseUser user = authManager.getCurrentUser();
         if (user == null) {
-            errorMessage.postValue("Пользователь не авторизован");
+            errorMessage.postValue(application.getString(R.string.error_user_not_authenticated));
             return;
         }
         disposables.add(
@@ -96,7 +97,9 @@ public class ProfileUseCase {
                 })
                 .subscribe(
                     () -> {},
-                    t -> errorMessage.postValue("Ошибка при обновлении имени: " + t.getMessage())
+                    t -> errorMessage.postValue(
+                        application.getString(R.string.profile_update_name_error, t.getMessage())
+                    )
                 )
         );
     }
@@ -109,12 +112,12 @@ public class ProfileUseCase {
         MutableLiveData<Boolean> operationSuccess
     ) {
         if (currentPassword == null || newPassword == null) {
-            errorMessage.postValue("Пароли не могут быть пустыми");
+            errorMessage.postValue(application.getString(R.string.profile_passwords_empty));
             return;
         }
         FirebaseUser user = authManager.getCurrentUser();
         if (user == null || user.getEmail() == null) {
-            errorMessage.postValue("Пользователь не авторизован");
+            errorMessage.postValue(application.getString(R.string.error_user_not_authenticated));
             return;
         }
         disposables.add(
@@ -126,7 +129,9 @@ public class ProfileUseCase {
                 .doFinally(() -> isLoading.postValue(false))
                 .subscribe(
                     () -> operationSuccess.postValue(true),
-                    t -> errorMessage.postValue("Ошибка при обновлении пароля: " + t.getMessage())
+                    t -> errorMessage.postValue(
+                        application.getString(R.string.profile_update_password_error, t.getMessage())
+                    )
                 )
         );
     }
@@ -141,12 +146,12 @@ public class ProfileUseCase {
         MutableLiveData<Boolean> operationSuccess
     ) {
         if (password == null || password.isEmpty()) {
-            errorMessage.postValue("Пароль не может быть пустым");
+            errorMessage.postValue(application.getString(R.string.profile_password_empty));
             return;
         }
         FirebaseUser user = authManager.getCurrentUser();
         if (user == null || user.getEmail() == null) {
-            errorMessage.postValue("Пользователь не авторизован");
+            errorMessage.postValue(application.getString(R.string.error_user_not_authenticated));
             return;
         }
         disposables.add(
@@ -175,7 +180,9 @@ public class ProfileUseCase {
                 })
                 .subscribe(
                     () -> {},
-                    t -> errorMessage.postValue("Ошибка при удалении аккаунта: " + t.getMessage())
+                    t -> errorMessage.postValue(
+                        application.getString(R.string.profile_delete_account_error, t.getMessage())
+                    )
                 )
         );
     }
@@ -237,7 +244,9 @@ public class ProfileUseCase {
                     },
                     throwable -> {
                         isLoading.postValue(false);
-                        errorMessage.postValue("Ошибка входа через Google: " + throwable.getMessage());
+                        errorMessage.postValue(
+                            application.getString(R.string.profile_google_signin_error, throwable.getMessage())
+                        );
                     }
                 )
         );

@@ -9,21 +9,21 @@
     <fragment
         android:id="@+id/nav_home"
         android:name="com.example.cooking.ui.fragments.HomeFragment"
-        android:label="Главная"
+        android:label="@string/nav_home_title"
         tools:layout="@layout/fragment_home" />
 
     <!-- Избранное -->
     <fragment
         android:id="@+id/nav_favorites"
         android:name="com.example.cooking.ui.fragments.favorite.FavoritesFragment"
-        android:label="Избранное"
+        android:label="@string/nav_favorites_title"
         tools:layout="@layout/fragment_favorites" />
 
     <!-- Общий профиль (контейнер) -->
     <fragment
         android:id="@+id/nav_profile"
         android:name="com.example.cooking.ui.fragments.SharedProfileFragment"
-        android:label="Профиль"
+        android:label="@string/profile_title"
         tools:layout="@layout/fragment_shared_profile">
         <!-- Переходы с экрана профиля -->
         <action
@@ -53,7 +53,7 @@
     <fragment
         android:id="@+id/destination_profile"
         android:name="com.example.cooking.ui.fragments.profile.ProfileFragment"
-        android:label="Мой профиль"
+        android:label="@string/nav_my_profile_title"
         tools:layout="@layout/fragment_profile">
         <action
             app:enterAnim="@anim/slide_in_right"
@@ -68,21 +68,21 @@
     <fragment
         android:id="@+id/destination_auth"
         android:name="com.example.cooking.ui.fragments.profile.AuthFragment"
-        android:label="Авторизация"
+        android:label="@string/nav_auth_title"
         tools:layout="@layout/fragment_auth" />
 
     <!-- Настройки -->
     <fragment
         android:id="@+id/destination_settings"
         android:name="com.example.cooking.ui.fragments.profile.SettingsFragment"
-        android:label="Настройки"
+        android:label="@string/shared_profile_settings"
         tools:layout="@layout/fragment_settings" />
 
     <!-- Каталог -->
     <fragment
         android:id="@+id/nav_catalog"
         android:name="com.example.cooking.ui.fragments.CatalogFragment"
-        android:label="Каталог"
+        android:label="@string/catalog_title"
         tools:layout="@layout/fragment_catalog" >
         <action
             android:id="@+id/action_catalog_to_filteredRecipes"

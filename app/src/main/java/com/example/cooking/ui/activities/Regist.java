@@ -21,6 +21,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.example.cooking.ui.viewmodels.profile.AuthViewModel;
+import java.util.Locale;
 
 /**
  * Активность регистрации пользователя
@@ -127,13 +128,71 @@ public class Regist extends AppCompatActivity {
             googleSignupButton.setEnabled(!isLoading);
             
             // Изменяем текст кнопки регистрации
-            registerButton.setText(isLoading ? "Подождите..." : "Зарегистрироваться");
+            registerButton.setText(isLoading ? getString(R.string.auth_register_loading) : getString(R.string.register_button));
         });
         
         // Наблюдаем за сообщениями об ошибках
         viewModel.getErrorMessage().observe(this, errorMsg -> {
             if (errorMsg != null && !errorMsg.isEmpty()) {
-                emailInputLayout.setError(errorMsg);
+                String normalized = errorMsg.toLowerCase(Locale.ROOT);
+                if (normalized.contains("429") || normalized.contains("too many requests")) {
+                    Toast.makeText(this, getString(R.string.auth_too_many_requests), Toast.LENGTH_LONG).show();
+                    viewModel.clearErrorMessage();
+                    return;
+                }
+                if (normalized.contains("network")
+                        || normalized.contains("unable to resolve host")
+                        || normalized.contains("unknown host")
+                        || normalized.contains("failed to connect")
+                        || normalized.contains("timeout")
+                        || normalized.contains("status code 7")
+                        || normalized.contains(" 7:")) {
+                    Toast.makeText(this, getString(R.string.error_no_internet_connection), Toast.LENGTH_LONG).show();
+                    viewModel.clearErrorMessage();
+                    return;
+                }
+
+                String nameEmpty = getString(R.string.auth_name_cannot_be_empty);
+                String nameShort = getString(R.string.auth_name_too_short);
+                String emailEmpty = getString(R.string.auth_email_cannot_be_empty);
+                String emailInvalid = getString(R.string.auth_invalid_email_format);
+                String passwordEmpty = getString(R.string.auth_password_cannot_be_empty);
+                String passwordShort = getString(R.string.auth_password_too_short);
+                String confirmEmpty = getString(R.string.auth_confirm_password_cannot_be_empty);
+                String passwordsMismatch = getString(R.string.auth_passwords_do_not_match);
+
+                if (errorMsg.equals(nameEmpty) || errorMsg.equals(nameShort)) {
+                    nameInputLayout.setError(errorMsg);
+                    viewModel.clearErrorMessage();
+                    return;
+                } else if (errorMsg.equals(emailEmpty) || errorMsg.equals(emailInvalid)) {
+                    emailInputLayout.setError(errorMsg);
+                    viewModel.clearErrorMessage();
+                    return;
+                } else if (errorMsg.equals(passwordEmpty) || errorMsg.equals(passwordShort)) {
+                    passwordInputLayout.setError(errorMsg);
+                    viewModel.clearErrorMessage();
+                    return;
+                } else if (errorMsg.equals(confirmEmpty) || errorMsg.equals(passwordsMismatch)) {
+                    confirmPasswordInputLayout.setError(errorMsg);
+                    viewModel.clearErrorMessage();
+                    return;
+                } else if (normalized.contains("badly formatted") || normalized.contains("invalid email")) {
+                    emailInputLayout.setError(emailInvalid);
+                    viewModel.clearErrorMessage();
+                    return;
+                } else if (normalized.contains("already in use") || normalized.contains("email address is already in use")) {
+                    emailInputLayout.setError(getString(R.string.auth_email_already_in_use));
+                    viewModel.clearErrorMessage();
+                    return;
+                } else if (normalized.contains("weak password") || normalized.contains("password should be at least") || normalized.contains("at least 6")) {
+                    passwordInputLayout.setError(passwordShort);
+                    viewModel.clearErrorMessage();
+                    return;
+                } else {
+                    Toast.makeText(this, getString(R.string.auth_register_failed), Toast.LENGTH_LONG).show();
+                }
+
                 viewModel.clearErrorMessage();
             }
         });
@@ -142,7 +201,7 @@ public class Regist extends AppCompatActivity {
         viewModel.getIsAuthenticated().observe(this, isAuthenticated -> {
             if (isAuthenticated) {
                 // Уведомляем пользователя о подтверждении почты
-                Toast.makeText(this, "На вашу почту отправлено письмо для подтверждения", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.register_verification_email_sent), Toast.LENGTH_LONG).show();
                 // Переходим на главный экран
                 navigateToMainActivity();
             }
@@ -241,7 +300,7 @@ public class Regist extends AppCompatActivity {
             try {
                 viewModel.signInWithGoogle(this);
             } catch (Exception e) {
-                Toast.makeText(this, "Ошибка при входе через Google" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.auth_google_login_error), Toast.LENGTH_SHORT).show();
             }
         });
         
@@ -273,7 +332,7 @@ public class Regist extends AppCompatActivity {
         boolean isValid = viewModel.validateName(name);
         
         if (!isValid) {
-            nameInputLayout.setError("Имя должно содержать не менее 2 символов");
+            nameInputLayout.setError(getString(R.string.auth_name_too_short));
         } else {
             nameInputLayout.setError(null);
         }
@@ -288,7 +347,7 @@ public class Regist extends AppCompatActivity {
         boolean isValid = viewModel.validateEmail(email);
         
         if (!isValid) {
-            emailInputLayout.setError("Введите корректный email");
+            emailInputLayout.setError(getString(R.string.auth_invalid_email_format));
         } else {
             emailInputLayout.setError(null);
         }
@@ -303,7 +362,7 @@ public class Regist extends AppCompatActivity {
         boolean isValid = viewModel.validatePassword(password);
         
         if (!isValid) {
-            passwordInputLayout.setError("Пароль должен содержать не менее 6 символов");
+            passwordInputLayout.setError(getString(R.string.auth_password_too_short));
         } else {
             passwordInputLayout.setError(null);
         }
@@ -318,7 +377,7 @@ public class Regist extends AppCompatActivity {
         boolean isValid = viewModel.doPasswordsMatch(password, confirmPassword);
         
         if (!isValid) {
-            confirmPasswordInputLayout.setError("Пароли не совпадают");
+            confirmPasswordInputLayout.setError(getString(R.string.auth_passwords_do_not_match));
         } else {
             confirmPasswordInputLayout.setError(null);
         }

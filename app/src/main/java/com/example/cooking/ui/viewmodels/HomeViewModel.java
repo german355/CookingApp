@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.cooking.domain.entities.Recipe;
 import com.example.cooking.auth.FirebaseAuthManager;
+import com.example.cooking.R;
 import com.example.cooking.domain.usecases.RecipeDataUseCase;
 import com.example.cooking.domain.usecases.RecipeLikeUseCase;
 import com.example.cooking.domain.usecases.RecipeSearchUseCase;
@@ -139,7 +140,7 @@ public class HomeViewModel extends AndroidViewModel {
     public void updateLikeStatus(Recipe recipe, boolean isLiked) {
         String userId = new MySharedPreferences(getApplication()).getString("userId", "0");
         if (!FirebaseAuthManager.getInstance().isUserSignedIn() || "0".equals(userId)) {
-            _errorMessage.setValue("Необходимо войти в аккаунт, чтобы ставить лайки");
+            _errorMessage.setValue(getApplication().getString(R.string.shared_view_model_login_to_like));
             return;
         }
         

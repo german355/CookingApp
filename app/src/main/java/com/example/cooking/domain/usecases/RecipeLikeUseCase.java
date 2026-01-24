@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 import android.widget.Toast;
 import androidx.lifecycle.MutableLiveData;
+import com.example.cooking.R;
 import com.example.cooking.data.repositories.UnifiedRecipeRepository;
 
 import java.util.Set;
@@ -34,7 +35,7 @@ public class RecipeLikeUseCase {
         Log.d(TAG, "setLikeStatus called: id=" + recipeId + " liked=" + newLikeStatus + " networkAvailable=" + isNetworkAvailable());
         
         if (!isNetworkAvailable()) {
-            String errorMsg = "Вы в офлайн режиме и не можете ставить лайки";
+            String errorMsg = application.getString(R.string.error_no_internet_connection);
             if (errorMessageLiveData != null) {
                 errorMessageLiveData.setValue(errorMsg);
             }
@@ -43,7 +44,7 @@ public class RecipeLikeUseCase {
         }
         
         if (userId == null || userId.equals("0") || userId.isEmpty()) {
-            String errorMsg = "Войдите, чтобы установить статус лайка";
+            String errorMsg = application.getString(R.string.auth_required_message);
             if (errorMessageLiveData != null) {
                 errorMessageLiveData.setValue(errorMsg);
             }

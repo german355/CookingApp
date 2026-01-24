@@ -1,8 +1,8 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="Внешний вид" app:iconSpaceReserved="false">
+    <PreferenceCategory app:title="@string/settings_appearance_title" app:iconSpaceReserved="false">
     <ListPreference
-    app:title="Тема"
+    app:title="@string/settings_theme_title"
     app:iconSpaceReserved="false"
     app:key="theme"
     app:defaultValue="system"
@@ -13,12 +13,12 @@
     />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Поиск и рекомендации" app:iconSpaceReserved="false">
+    <PreferenceCategory app:title="@string/settings_search_recommendations_title" app:iconSpaceReserved="false">
 
 
         <SwitchPreference
                 android:defaultValue="true"
-                android:title="Умный поиск"
+                android:title="@string/settings_smart_search_title"
                 android:key="smart_search_enabled"
                 app:iconSpaceReserved="false"/>
 

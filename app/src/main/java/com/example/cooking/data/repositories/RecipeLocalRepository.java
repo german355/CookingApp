@@ -135,6 +135,19 @@ public class RecipeLocalRepository extends NetworkRepository{
             invalidateCache(); // Инвалидируем кэш
         });
     }
+
+    /**
+     * Synchronous insert for background threads.
+     */
+    public void insertSync(Recipe recipe) {
+        try {
+            RecipeEntity entity = new RecipeEntity(recipe);
+            recipeDao.insert(entity);
+            invalidateCache();
+        } catch (Exception e) {
+            Log.e(TAG, "Error during synchronous insert: " + e.getMessage(), e);
+        }
+    }
     
     /**
      * Обновить рецепт в базе данных
@@ -145,6 +158,19 @@ public class RecipeLocalRepository extends NetworkRepository{
             recipeDao.update(entity);
             invalidateCache(); // Инвалидируем кэш
         });
+    }
+
+    /**
+     * Synchronous update for background threads.
+     */
+    public void updateSync(Recipe recipe) {
+        try {
+            RecipeEntity entity = new RecipeEntity(recipe);
+            recipeDao.update(entity);
+            invalidateCache();
+        } catch (Exception e) {
+            Log.e(TAG, "Error during synchronous update: " + e.getMessage(), e);
+        }
     }
     
     /**

@@ -93,7 +93,7 @@ public class AddRecipeActivity extends AppCompatActivity implements
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Добавить рецепт");
+        getSupportActionBar().setTitle(R.string.title_add_recipe);
         
         // Инициализация views
         titleEditText = findViewById(R.id.recipe_title);
@@ -171,7 +171,7 @@ public class AddRecipeActivity extends AppCompatActivity implements
     private void handleLoadingState(Boolean isLoading) {
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         saveButton.setEnabled(!isLoading);
-        saveButton.setText(isLoading ? "Сохранение..." : "Сохранить рецепт");
+        saveButton.setText(isLoading ? getString(R.string.saving_in_progress) : getString(R.string.add_recipe_save_button));
     }
     
     private void handleErrorMessage(String errorMsg) {
@@ -183,7 +183,7 @@ public class AddRecipeActivity extends AppCompatActivity implements
     
     private void handleSaveSuccess(Boolean success) {
         if (success != null && success) {
-            Toast.makeText(this, "Рецепт успешно сохранен", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.recipe_saved_success), Toast.LENGTH_LONG).show();
             setResult(RESULT_OK);
             finish();
         }
@@ -208,7 +208,7 @@ public class AddRecipeActivity extends AppCompatActivity implements
         
         saveButton.setOnClickListener(v -> {
             if (!FirebaseAuthManager.getInstance().isUserSignedIn()) {
-                Toast.makeText(this, "Войдите в систему, чтобы добавлять рецепты", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.error_login_to_add_recipe), Toast.LENGTH_LONG).show();
                 return;
             }
             viewModel.saveRecipe();
@@ -225,7 +225,7 @@ public class AddRecipeActivity extends AppCompatActivity implements
         
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{permission}, REQUEST_STORAGE_PERMISSION);
-            Toast.makeText(this, "Для выбора фото необходимо предоставить разрешение", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.error_photo_permission_required), Toast.LENGTH_LONG).show();
         } else {
             openGallery();
         }
@@ -236,7 +236,7 @@ public class AddRecipeActivity extends AppCompatActivity implements
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, REQUEST_PICK_IMAGE);
         } catch (Exception e) {
-            Toast.makeText(this, "Не удалось открыть галерею", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.error_gallery_open_failed), Toast.LENGTH_SHORT).show();
         }
     }
     
@@ -246,7 +246,7 @@ public class AddRecipeActivity extends AppCompatActivity implements
         if (requestCode == REQUEST_STORAGE_PERMISSION && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             openGallery();
         } else {
-            Toast.makeText(this, "Для выбора изображения необходим доступ к хранилищу", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.error_storage_permission_required), Toast.LENGTH_SHORT).show();
         }
     }
     
@@ -259,7 +259,7 @@ public class AddRecipeActivity extends AppCompatActivity implements
                 showImageLoading();
                 recipeImageView.setImageURI(selectedImageUri);
                 showSelectedImage();
-                textImageView.setText("Изображение выбрано");
+                textImageView.setText(R.string.image_selected);
                 viewModel.processSelectedImage(selectedImageUri);
             }
         }
@@ -312,10 +312,10 @@ public class AddRecipeActivity extends AppCompatActivity implements
 
         if (hasChanges) {
             new AlertDialog.Builder(this)
-                .setTitle("Отменить создание рецепта?")
-                .setMessage("Введенные данные будут потеряны")
-                .setPositiveButton("Да", (dialog, which) -> finish())
-                .setNegativeButton("Нет", (dialog, which) -> dialog.dismiss())
+                .setTitle(R.string.discard_recipe_title)
+                .setMessage(R.string.discard_recipe_message)
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> finish())
+                .setNegativeButton(android.R.string.no, (dialog, which) -> dialog.dismiss())
                 .show();
         } else {
             finish();

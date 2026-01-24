@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import android.os.Handler;
 import android.os.Looper;
+import com.example.cooking.R;
 import com.example.cooking.domain.entities.Recipe;
 import com.example.cooking.domain.entities.Ingredient;
 import com.example.cooking.domain.entities.Step;
@@ -70,7 +71,7 @@ public class UnifiedRecipeRepository {
 
     public void syncWithRemoteData(MutableLiveData<Resource<List<Recipe>>> recipesLiveData, MutableLiveData<String> errorMessage) {
         if (!isNetworkAvailable()) {
-            errorMessage.postValue("Нет подключения к сети. Отображаются сохраненные данные.");
+            errorMessage.postValue(context.getString(R.string.error_network_cached_data));
             loadLocalData(recipesLiveData);
             return;
         }
@@ -88,10 +89,8 @@ public class UnifiedRecipeRepository {
                         List<Recipe> updatedLocalRecipes = localRepository.getAllRecipesSync();
                         recipesLiveData.postValue(Resource.success(updatedLocalRecipes));
                         
-                        Log.d(TAG, "Успешно обработано " + remoteRecipes.size() + " рецептов");
                     } catch (Exception e) {
-                        Log.e(TAG, "Ошибка при обработке рецептов: " + e.getMessage());
-                        errorMessage.postValue("Ошибка при сохранении рецептов");
+                        errorMessage.postValue(context.getString(R.string.error_saving_recipes));
                         loadLocalData(recipesLiveData);
                     }
                 });
@@ -124,7 +123,6 @@ public class UnifiedRecipeRepository {
 
                 // Проверка прерывания потока
                 if (Thread.currentThread().isInterrupted()) {
-                    Log.w(TAG, "Обработка батчей прервана");
                     break;
                 }
                 
@@ -151,7 +149,7 @@ public class UnifiedRecipeRepository {
             if (localRecipes != null && !localRecipes.isEmpty()) {
                 recipesLiveData.postValue(Resource.success(localRecipes));
             } else {
-                recipesLiveData.postValue(Resource.error("Нет сохраненных рецептов.", null));
+                recipesLiveData.postValue(Resource.error(context.getString(R.string.error_no_saved_recipes), null));
             }
         });
     }
@@ -213,7 +211,7 @@ public class UnifiedRecipeRepository {
                 }
                 
                 AppExecutors.getInstance().diskIO().execute(() -> {
-                    localRepository.insert(savedRecipe);
+                    localRepository.insertSync(savedRecipe);
                     mainThreadHandler.post(() -> callback.onSuccess(savedRecipe));
                 });
             }
@@ -238,7 +236,30 @@ public class UnifiedRecipeRepository {
                     Log.d(TAG, "Сервер не вернул новый URL изображения при обновлении рецепта");
                 }
                 AppExecutors.getInstance().diskIO().execute(() -> {
-                    localRepository.update(recipeToSave);
+                    Recipe existing = localRepository.getRecipeByIdSync(recipeToSave.getId());
+                    if (existing != null) {
+                        recipeToSave.setLiked(existing.isLiked());
+                        if (recipeToSave.getCreated_at() == null || recipeToSave.getCreated_at().isEmpty()) {
+                            recipeToSave.setCreated_at(existing.getCreated_at());
+                        }
+                        if (recipeToSave.getMealType() == null || recipeToSave.getMealType().isEmpty()) {
+                            recipeToSave.setMealType(existing.getMealType());
+                        }
+                        if (recipeToSave.getFoodType() == null || recipeToSave.getFoodType().isEmpty()) {
+                            recipeToSave.setFoodType(existing.getFoodType());
+                        }
+                        if (recipeToSave.getUserId() == null || recipeToSave.getUserId().isEmpty()) {
+                            recipeToSave.setUserId(existing.getUserId());
+                        }
+                        if (recipeToSave.getPhoto_url() == null || recipeToSave.getPhoto_url().isEmpty()) {
+                            recipeToSave.setPhoto_url(existing.getPhoto_url());
+                        }
+                    } else {
+                        boolean isLiked = likedRecipesRepository.getLikedRecipeIdsSync().contains(recipeToSave.getId());
+                        recipeToSave.setLiked(isLiked);
+                    }
+
+                    localRepository.updateSync(recipeToSave);
                     mainThreadHandler.post(() -> callback.onSuccess(recipeToSave));
                 });
             }

@@ -3,7 +3,10 @@ package com.example.cooking.data.repositories;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.cooking.R;
 import com.example.cooking.domain.entities.Recipe;
+import com.example.cooking.domain.entities.Ingredient;
+import com.example.cooking.domain.entities.Step;
 
 import com.example.cooking.utils.MySharedPreferences;
 
@@ -77,7 +80,7 @@ public class RecipeRemoteRepository extends NetworkRepository {
                             // Специальная обработка сообщений о модерации
                             if (httpException.code() == 400) {
                                 Log.i(TAG, "Ошибка модерации (400): " + message);
-                                return "Модерация: " + message;
+                                return context.getString(R.string.moderation_prefix) + " " + message;
                             }
                             
                             return message;
@@ -87,18 +90,20 @@ public class RecipeRemoteRepository extends NetworkRepository {
                     }
                     
                     if (!errorBody.trim().isEmpty()) {
-                        return "Ошибка сервера (" + httpException.code() + "): " + errorBody;
+                        return context.getString(R.string.error_server_with_body, httpException.code(), errorBody);
                     }
                 }
                 
-                return "Ошибка сервера: " + httpException.code() + " " + httpException.message();
+                return context.getString(R.string.error_server_with_message, httpException.code(), httpException.message());
             } catch (IOException e) {
                 Log.e(TAG, "Ошибка при чтении тела HTTP ошибки", e);
-                return "Ошибка сервера: " + httpException.code() + " (не удалось прочитать детали)";
+                return context.getString(R.string.error_server_body_unreadable, httpException.code());
             }
         }
         
-        return throwable.getMessage() != null ? throwable.getMessage() : "Неизвестная ошибка сети";
+        return throwable.getMessage() != null
+                ? throwable.getMessage()
+                : context.getString(R.string.error_unknown_network);
     }
 
     /**
@@ -106,13 +111,13 @@ public class RecipeRemoteRepository extends NetworkRepository {
      */
     public synchronized void getRecipes(final RecipesCallback callback) {
         if (isRequestInProgress) {
-            callback.onDataNotAvailable("Запрос уже выполняется");
+            callback.onDataNotAvailable(context.getString(R.string.error_request_in_progress));
             return;
         }
         
         if (!isNetworkAvailable()) {
             Log.d(TAG, "Сеть недоступна, отменяем запрос рецептов");
-            callback.onDataNotAvailable("Нет подключения к интернету");
+            callback.onDataNotAvailable(context.getString(R.string.error_no_internet_connection));
             return;
         }
 
@@ -136,15 +141,16 @@ public class RecipeRemoteRepository extends NetworkRepository {
                         callback.onRecipesLoaded(recipes);
                     } else {
                         Log.w(TAG, "Список рецептов в ответе пуст");
-                        callback.onDataNotAvailable("Список рецептов пуст");
+                        callback.onDataNotAvailable(context.getString(R.string.error_recipes_list_empty));
                     }
                 },
                 throwable -> {
                     synchronized (RecipeRemoteRepository.this) {
                         isRequestInProgress = false; // Сбрасываем флаг при ошибке
                     }
-                    Log.e(TAG, "Ошибка запроса рецептов: " + throwable.getMessage());
-                    callback.onDataNotAvailable(throwable.getMessage());
+                    String detailedError = parseHttpError(throwable);
+                    Log.e(TAG, "Ошибка запроса рецептов: " + detailedError);
+                    callback.onDataNotAvailable(detailedError);
                 }
             )
         );
@@ -152,8 +158,8 @@ public class RecipeRemoteRepository extends NetworkRepository {
 
     public void saveRecipe(Recipe recipe, byte[] imageBytes, RecipeSaveCallback callback) {
         RequestBody title = RequestBody.create(MediaType.parse("text/plain"), recipe.getTitle());
-        RequestBody ingredients = RequestBody.create(MediaType.parse("text/plain"), gson.toJson(recipe.getIngredients()));
-        RequestBody instructions = RequestBody.create(MediaType.parse("text/plain"), gson.toJson(recipe.getSteps()));
+        RequestBody ingredients = RequestBody.create(MediaType.parse("text/plain"), serializeIngredients(recipe.getIngredients()));
+        RequestBody instructions = RequestBody.create(MediaType.parse("text/plain"), serializeInstructions(recipe.getSteps()));
         MultipartBody.Part imagePart = null;
         if (imageBytes != null && imageBytes.length > 0) {
             RequestBody file = RequestBody.create(MediaType.parse("image/*"), imageBytes);
@@ -186,8 +192,8 @@ public class RecipeRemoteRepository extends NetworkRepository {
 
     public void updateRecipe(Recipe recipe, byte[] imageBytes, RecipeSaveCallback callback) {
         RequestBody title = RequestBody.create(MediaType.parse("text/plain"), recipe.getTitle());
-        RequestBody ingredients = RequestBody.create(MediaType.parse("text/plain"), gson.toJson(recipe.getIngredients()));
-        RequestBody instructions = RequestBody.create(MediaType.parse("text/plain"), gson.toJson(recipe.getSteps()));
+        RequestBody ingredients = RequestBody.create(MediaType.parse("text/plain"), serializeIngredients(recipe.getIngredients()));
+        RequestBody instructions = RequestBody.create(MediaType.parse("text/plain"), serializeInstructions(recipe.getSteps()));
         MultipartBody.Part imagePart = null;
         if (imageBytes != null && imageBytes.length > 0) {
             RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), imageBytes);
@@ -233,6 +239,55 @@ public class RecipeRemoteRepository extends NetworkRepository {
         return null;
     }
 
+    private String serializeIngredients(List<Ingredient> ingredients) {
+        if (ingredients == null) {
+            return "[]";
+        }
+        List<IngredientPayload> payloads = new java.util.ArrayList<>(ingredients.size());
+        for (Ingredient ingredient : ingredients) {
+            String name = ingredient != null ? ingredient.getName() : null;
+            String count = ingredient != null ? String.valueOf(ingredient.getCount()) : null;
+            String type = ingredient != null ? ingredient.getType() : null;
+            payloads.add(new IngredientPayload(name, count, type));
+        }
+        return gson.toJson(payloads);
+    }
+
+    private String serializeInstructions(List<Step> steps) {
+        if (steps == null) {
+            return "[]";
+        }
+        List<InstructionPayload> payloads = new java.util.ArrayList<>(steps.size());
+        for (Step step : steps) {
+            int number = step != null ? step.getNumber() : 0;
+            String instruction = step != null ? step.getInstruction() : null;
+            payloads.add(new InstructionPayload(number, instruction));
+        }
+        return gson.toJson(payloads);
+    }
+
+    private static final class IngredientPayload {
+        private final String name;
+        private final String count;
+        private final String type;
+
+        private IngredientPayload(String name, String count, String type) {
+            this.name = name;
+            this.count = count;
+            this.type = type;
+        }
+    }
+
+    private static final class InstructionPayload {
+        private final int number;
+        private final String instruction;
+
+        private InstructionPayload(int number, String instruction) {
+            this.number = number;
+            this.instruction = instruction;
+        }
+    }
+
     public void deleteRecipe(int recipeId, DeleteRecipeCallback callback) {
         disposables.add(
             apiService.deleteRecipe(recipeId)
@@ -240,7 +295,11 @@ public class RecipeRemoteRepository extends NetworkRepository {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 () -> { if (callback != null) callback.onDeleteSuccess(); },
-                throwable -> { if (callback != null) callback.onDeleteFailure(throwable.getMessage()); }
+                throwable -> {
+                    if (callback != null) {
+                        callback.onDeleteFailure(parseHttpError(throwable));
+                    }
+                }
             )
         );
     }

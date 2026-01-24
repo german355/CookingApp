@@ -3,17 +3,17 @@
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_home"
-        android:title="Главная" />
+        android:title="@string/nav_home_title" />
     <item
         android:id="@+id/nav_favorites"
         android:icon="@drawable/ic_favorite"
-        android:title="Избранное" />
+        android:title="@string/nav_favorites_title" />
     <item
         android:id="@+id/nav_catalog"
         android:icon="@drawable/layers"
-        android:title="Каталог" />
+        android:title="@string/catalog_title" />
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_profile"
-        android:title="Профиль" />
+        android:title="@string/nav_my_profile_title" />
 </menu> 

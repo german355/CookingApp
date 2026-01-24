@@ -142,7 +142,7 @@ public class ImageProcessor {
      */
     public void processImageFromUrl(String imageUrl, int maxSize, int quality, ImageProcessingCallback callback) {
         if (imageUrl == null || imageUrl.trim().isEmpty()) {
-            callback.onError("URL изображения пуст");
+            callback.onError(context.getString(R.string.error_image_url_empty));
             return;
         }
         
@@ -159,7 +159,7 @@ public class ImageProcessor {
                 
                 if (originalBitmap == null) {
                     AppExecutors.getInstance().mainThread().execute(() -> 
-                        callback.onError("Не удалось декодировать изображение по URL"));
+                        callback.onError(context.getString(R.string.error_decoding_image_url)));
                     return;
                 }
                 
@@ -180,7 +180,7 @@ public class ImageProcessor {
             } catch (Exception e) {
                 Log.e(TAG, "Ошибка при загрузке изображения по URL", e);
                 AppExecutors.getInstance().mainThread().execute(() -> 
-                    callback.onError("Ошибка загрузки изображения: " + e.getMessage()));
+                    callback.onError(context.getString(R.string.error_loading_image, e.getMessage())));
             }
         });
     }
@@ -190,7 +190,7 @@ public class ImageProcessor {
      */
     public ImageResult processBitmap(Bitmap originalBitmap, int maxSize, int quality) {
         if (originalBitmap == null) {
-            return ImageResult.error("Изображение не может быть null");
+            return ImageResult.error(context.getString(R.string.error_image_null));
         }
         
         try {
@@ -209,7 +209,7 @@ public class ImageProcessor {
             boolean compressed = resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
             
             if (!compressed) {
-                return ImageResult.error("Не удалось сжать изображение");
+                return ImageResult.error(context.getString(R.string.error_image_compress_failed));
             }
             
             byte[] imageBytes = baos.toByteArray();
@@ -218,11 +218,11 @@ public class ImageProcessor {
             
             // Валидируем размер файла
             if (processedSize > MAX_FILE_SIZE_MB * 1024 * 1024) {
-                return ImageResult.error("Размер изображения превышает " + MAX_FILE_SIZE_MB + " МБ");
+                return ImageResult.error(context.getString(R.string.error_image_too_large, MAX_FILE_SIZE_MB));
             }
             
             if (processedSize < MIN_FILE_SIZE_KB * 1024) {
-                return ImageResult.error("Файл изображения слишком мал или поврежден");
+                return ImageResult.error(context.getString(R.string.error_image_too_small));
             }
             
             Log.d(TAG, "Изображение обработано: " + processedWidth + "x" + processedHeight + 
@@ -233,7 +233,7 @@ public class ImageProcessor {
             
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при обработке Bitmap", e);
-            return ImageResult.error("Ошибка обработки изображения: " + e.getMessage());
+            return ImageResult.error(context.getString(R.string.error_processing_image, e.getMessage()));
         }
     }
     

@@ -41,10 +41,10 @@ public class AiChatActivity extends AppCompatActivity {
         
         if (id == R.id.action_clear_chat) {
             new AlertDialog.Builder(this)
-                .setTitle("Очистить чат?")
-                .setMessage("Вы уверены, что хотите очистить чат?")
-                .setPositiveButton("Да", (dialog, which) -> viewModel.clearChat())
-                .setNegativeButton("Отмена", null)
+                .setTitle(R.string.chat_clear_title)
+                .setMessage(R.string.chat_clear_message)
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> viewModel.clearChat())
+                .setNegativeButton(R.string.cancel, null)
                 .show();
             return true;
         } else if (id == android.R.id.home) {

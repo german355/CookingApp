@@ -27,6 +27,7 @@ import com.example.cooking.ui.viewmodels.profile.AuthViewModel;
 import com.example.cooking.ui.viewmodels.MainViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import java.util.Locale;
 
 /**
  * Фрагмент авторизации, который показывается вместо ProfileFragment,
@@ -98,9 +99,9 @@ public class AuthFragment extends Fragment {
             googleLoginButton.setEnabled(!isLoading);
 
             if (isLoading) {
-                loginButton.setText("Входим...");
+                loginButton.setText(getString(R.string.auth_login_loading));
             } else {
-                loginButton.setText("Войти");
+                loginButton.setText(getString(R.string.login));
             }
         });
 
@@ -110,67 +111,75 @@ public class AuthFragment extends Fragment {
                 // Сброс предыдущих ошибок
                 emailInputLayout.setError(null);
                 passwordInputLayout.setError(null);
-                // Обработка ошибок
-                switch (errorMessage) {
-                    case "Email не может быть пустым":
-                    case "Неверный формат email":
-                        emailInputLayout.setError(errorMessage);
-                        break;
-                    case "Пароль не может быть пустым":
-                    case "Пароль должен содержать не менее 6 символов":
-                        passwordInputLayout.setError(errorMessage);
-                        break;
-                    default: {
-                        // Преобразуем Firebase-сообщения и технические тексты в понятный формат
-                        String msg = errorMessage != null ? errorMessage.trim() : "";
-                        if (msg.startsWith("Ошибка авторизации:")) {
-                            msg = msg.substring("Ошибка авторизации:".length()).trim();
-                        }
+                String emailEmpty = getString(R.string.auth_email_cannot_be_empty);
+                String emailInvalid = getString(R.string.auth_invalid_email_format);
+                String passwordEmpty = getString(R.string.auth_password_cannot_be_empty);
+                String passwordShort = getString(R.string.auth_password_too_short);
 
-                        String low = msg.toLowerCase();
-
-                        // 1) Ошибки формата e-mail
-                        if (low.contains("badly formatted")) {
-                            emailInputLayout.setError("Неверный формат email");
-                            break;
-                        }
-
-                        // 2) Ошибки пароля / учётных данных
-                        if (low.contains("wrong password") || low.contains("wrong-password") || low.contains("invalid password") || low.contains("invalid-credentials") || low.contains("auth credential") || low.contains("supplied auth credential")) {
-                            passwordInputLayout.setError("Неверная почта или пароль");
-                            break;
-                        }
-
-                        // 3) Пользователь не найден
-                        if (low.contains("user not found") || low.contains("no user record")) {
-                            Toast.makeText(requireContext(), "Пользователь с такой почтой не найден", Toast.LENGTH_LONG).show();
-                            break;
-                        }
-
-                        // 4) Сетевые проблемы
-                        if (low.contains("network") || low.contains("unable to resolve host") || low.contains("failed to connect") || low.contains("timeout") || low.contains(" 7:") || low.contains("status code 7")) {
-                            Toast.makeText(requireContext(), "Проблемы с соединением. Проверьте интернет и попробуйте снова", Toast.LENGTH_LONG).show();
-                            break;
-                        }
-
-                        // 5) Блокировка из-за большого количества попыток
-                        if (low.contains("blocked") || low.contains("too many requests")) {
-                            Toast.makeText(requireContext(), "Слишком много попыток. Попробуйте позже", Toast.LENGTH_LONG).show();
-                            break;
-                        }
-
-                        // 6) Остальные случаи – универсальное сообщение
-                        Toast.makeText(requireContext(), "Не удалось войти. Попробуйте позже", Toast.LENGTH_LONG).show();
-
-                        // Иногда сообщение может быть пустым при статусе 7, обрабатываем как сетевую ошибку
-                        if (msg.isEmpty()) {
-                            Toast.makeText(requireContext(), "Проблемы с соединением. Проверьте интернет и попробуйте снова", Toast.LENGTH_LONG).show();
-                            break;
-                        }
-
-                        break;
-                    }
+                if (errorMessage.equals(emailEmpty) || errorMessage.equals(emailInvalid)) {
+                    emailInputLayout.setError(errorMessage);
+                    viewModel.clearErrorMessage();
+                    return;
                 }
+                if (errorMessage.equals(passwordEmpty) || errorMessage.equals(passwordShort)) {
+                    passwordInputLayout.setError(errorMessage);
+                    viewModel.clearErrorMessage();
+                    return;
+                }
+
+                // Преобразуем Firebase-сообщения и технические тексты в понятный формат
+                String msg = errorMessage.trim();
+                String authErrorPrefix = getString(R.string.auth_error_prefix);
+                if (msg.startsWith(authErrorPrefix)) {
+                    msg = msg.substring(authErrorPrefix.length()).trim();
+                }
+
+                String low = msg.toLowerCase(Locale.ROOT);
+
+                // 1) Ошибки формата e-mail
+                if (low.contains("badly formatted")) {
+                    emailInputLayout.setError(emailInvalid);
+                    viewModel.clearErrorMessage();
+                    return;
+                }
+
+                // 2) Ошибки пароля / учётных данных
+                if (low.contains("wrong password") || low.contains("wrong-password") || low.contains("invalid password") || low.contains("invalid-credentials") || low.contains("auth credential") || low.contains("supplied auth credential")) {
+                    passwordInputLayout.setError(getString(R.string.auth_invalid_credentials));
+                    viewModel.clearErrorMessage();
+                    return;
+                }
+
+                // 3) Пользователь не найден
+                if (low.contains("user not found") || low.contains("no user record")) {
+                    Toast.makeText(requireContext(), getString(R.string.auth_user_not_found), Toast.LENGTH_LONG).show();
+                    viewModel.clearErrorMessage();
+                    return;
+                }
+
+                // 4) Сетевые проблемы
+                if (low.contains("network") || low.contains("unable to resolve host") || low.contains("failed to connect") || low.contains("timeout") || low.contains(" 7:") || low.contains("status code 7")) {
+                    Toast.makeText(requireContext(), getString(R.string.error_no_internet_connection), Toast.LENGTH_LONG).show();
+                    viewModel.clearErrorMessage();
+                    return;
+                }
+
+                // 5) Блокировка из-за большого количества попыток
+                if (low.contains("blocked") || low.contains("too many requests") || low.contains("429")) {
+                    Toast.makeText(requireContext(), getString(R.string.auth_too_many_requests), Toast.LENGTH_LONG).show();
+                    viewModel.clearErrorMessage();
+                    return;
+                }
+
+                // Иногда сообщение может быть пустым при статусе 7, обрабатываем как сетевую ошибку
+                if (msg.isEmpty()) {
+                    Toast.makeText(requireContext(), getString(R.string.error_no_internet_connection), Toast.LENGTH_LONG).show();
+                    viewModel.clearErrorMessage();
+                    return;
+                }
+
+                // 6) Остальные случаи - универсальное сообщение
+                Toast.makeText(requireContext(), getString(R.string.auth_login_failed), Toast.LENGTH_LONG).show();
                 viewModel.clearErrorMessage();
             }
         });
@@ -185,7 +194,7 @@ public class AuthFragment extends Fragment {
                 // Событие успешного входа
                 MainViewModel mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
                 mainViewModel.triggerLoginEvent();
-                Toast.makeText(requireContext(), "Вход выполнен успешно", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), getString(R.string.auth_login_success), Toast.LENGTH_SHORT).show();
                 navController.navigate(R.id.nav_profile);
             }
         });
@@ -206,7 +215,7 @@ public class AuthFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 boolean isEmailValid = viewModel.validateEmail(s.toString());
                 if (!isEmailValid) {
-                    emailInputLayout.setError("Введите корректный email");
+                    emailInputLayout.setError(getString(R.string.auth_invalid_email_format));
                 } else {
                     emailInputLayout.setError(null);
                 }
@@ -227,7 +236,7 @@ public class AuthFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 boolean isPasswordValid = viewModel.validatePassword(s.toString());
                 if (!isPasswordValid) {
-                    passwordInputLayout.setError("Пароль должен содержать не менее 6 символов");
+                    passwordInputLayout.setError(getString(R.string.auth_password_too_short));
                 } else {
                     passwordInputLayout.setError(null);
                 }
@@ -251,8 +260,7 @@ public class AuthFragment extends Fragment {
             try {
                 viewModel.signInWithGoogle(requireActivity());
             } catch (Exception e) {
-                Toast.makeText(requireContext(), "Ошибка при входе через Google",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), getString(R.string.auth_google_login_error), Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -67,7 +67,8 @@ public class AddRecipeViewModel extends BaseRecipeFormViewModel {
                         if (response.isSuccess() && savedRecipe != null) {
                             saveSuccess.postValue(true);
                         } else {
-                            handleSaveError(response != null ? response.getMessage() : "Неизвестная ошибка");
+                            String fallbackError = getApplication().getString(R.string.error_unknown);
+                            handleSaveError(response != null ? response.getMessage() : fallbackError);
                         }
                     }
 
@@ -76,8 +77,9 @@ public class AddRecipeViewModel extends BaseRecipeFormViewModel {
                         isLoading.postValue(false);
 
                         // Специальная обработка ошибок модерации
-                        if (error != null && error.startsWith("Модерация:")) {
-                            String moderationMessage = error.substring("Модерация:".length()).trim();
+                        String moderationPrefix = getApplication().getString(R.string.moderation_prefix);
+                        if (error != null && error.startsWith(moderationPrefix)) {
+                            String moderationMessage = error.substring(moderationPrefix.length()).trim();
                             errorMessage.postValue(moderationMessage.isEmpty() ? 
                                 getApplication().getString(R.string.moderation_failed_generic) :
                                 getApplication().getString(R.string.moderation_failed, moderationMessage));
@@ -86,7 +88,10 @@ public class AddRecipeViewModel extends BaseRecipeFormViewModel {
 
                         String detailedError = error;
                         if (errorResponse != null && errorResponse.getMessage() != null) {
-                            detailedError += " (Сервер: " + errorResponse.getMessage() + ")";
+                            detailedError += getApplication().getString(
+                                R.string.error_server_details,
+                                errorResponse.getMessage()
+                            );
                         }
                         errorMessage.postValue(detailedError);
                     }

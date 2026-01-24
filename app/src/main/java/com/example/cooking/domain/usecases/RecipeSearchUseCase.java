@@ -3,6 +3,7 @@ package com.example.cooking.domain.usecases;
 import android.app.Application;
 import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
+import com.example.cooking.R;
 import com.example.cooking.domain.entities.Recipe;
 import com.example.cooking.data.repositories.UnifiedRecipeRepository;
 import com.example.cooking.utils.RecipeSearchService;
@@ -75,7 +76,9 @@ public class RecipeSearchUseCase {
             @Override
             public void onSearchError(String error) {
                 Log.e(TAG, "Ошибка умного поиска: " + error);
-                errorMessageLiveData.postValue("Ошибка умного поиска: " + error + ". Выполняется локальный поиск.");
+                errorMessageLiveData.postValue(
+                    application.getString(R.string.error_smart_search_fallback, error)
+                );
                 Log.d(TAG, "Переключаюсь на локальный поиск из-за ошибки");
                 performLocalSearch(query, searchResultsLiveData, errorMessageLiveData, isRefreshingLiveData); 
             }

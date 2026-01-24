@@ -93,8 +93,7 @@ public class EditRecipeActivity extends AppCompatActivity implements
      */
     private boolean validateRecipeAndPermissions(Recipe recipeToEdit) {
         if (recipeToEdit == null) {
-            Log.e(TAG, "Recipe объект не найден");
-            Toast.makeText(this, "Ошибка загрузки данных для редактирования.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.error_edit_recipe_load_failed), Toast.LENGTH_LONG).show();
             finish();
             return false;
         }
@@ -103,12 +102,10 @@ public class EditRecipeActivity extends AppCompatActivity implements
         var permissionResult = userPermissionUseCase.canEditRecipe(recipeToEdit.getUserId());
         if (!permissionResult.hasPermission()) {
             Toast.makeText(this, permissionResult.getReason(), Toast.LENGTH_LONG).show();
-            Log.w(TAG, "Доступ запрещен: " + permissionResult.getReason());
             finish();
             return false;
         }
         
-        Log.d(TAG, "Валидация прошла успешно для рецепта ID: " + recipeToEdit.getId());
         return true;
     }
     
@@ -120,7 +117,7 @@ public class EditRecipeActivity extends AppCompatActivity implements
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Редактировать рецепт");
+        getSupportActionBar().setTitle(R.string.title_edit_recipe);
         
         // Инициализация views
         titleEditText = findViewById(R.id.recipe_title);
@@ -138,8 +135,8 @@ public class EditRecipeActivity extends AppCompatActivity implements
         imageContainer = findViewById(R.id.image_container);
         imageProgress = findViewById(R.id.image_progress);
         
-        textImage.setText("Изображение рецепта");
-        saveButton.setText("Сохранить изменения");
+        textImage.setText(R.string.edit_recipe_image_label);
+        saveButton.setText(R.string.edit_recipe_save_button);
         
         // Обновляем текст в placeholder для режима редактирования
         updatePlaceholderText();
@@ -217,7 +214,7 @@ public class EditRecipeActivity extends AppCompatActivity implements
         addStepButton.setEnabled(enabled);
         recipeImageView.setEnabled(enabled);
         
-        saveButton.setText(isSaving ? "Сохранение..." : "Сохранить изменения");
+        saveButton.setText(isSaving ? getString(R.string.saving_in_progress) : getString(R.string.edit_recipe_save_button));
     }
     
     private void handleErrorMessage(String error) {
@@ -229,7 +226,7 @@ public class EditRecipeActivity extends AppCompatActivity implements
     
     private void handleSaveResult(Boolean result) {
         if (result != null && result) {
-            Toast.makeText(this, "Рецепт успешно сохранен", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.recipe_updated_success), Toast.LENGTH_SHORT).show();
             setResult(RESULT_OK);
             finish();
         }
@@ -319,7 +316,7 @@ public class EditRecipeActivity extends AppCompatActivity implements
         if (requestCode == REQUEST_STORAGE_PERMISSION && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             openGallery();
         } else {
-            Toast.makeText(this, "Разрешение на доступ к хранилищу необходимо для выбора фото", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.error_storage_permission_required), Toast.LENGTH_SHORT).show();
         }
     }
     
@@ -368,10 +365,10 @@ public class EditRecipeActivity extends AppCompatActivity implements
         TextView placeholderSubText = imagePlaceholder.findViewById(R.id.placeholder_sub_text);
         
         if (placeholderMainText != null) {
-            placeholderMainText.setText("Нажмите для изменения фото");
+            placeholderMainText.setText(R.string.edit_recipe_placeholder_main);
         }
         if (placeholderSubText != null) {
-            placeholderSubText.setText("Текущее изображение будет заменено");
+            placeholderSubText.setText(R.string.edit_recipe_placeholder_sub);
         }
     }
     

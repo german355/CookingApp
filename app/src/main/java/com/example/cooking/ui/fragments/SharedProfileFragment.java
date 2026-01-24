@@ -60,15 +60,17 @@ public class SharedProfileFragment extends Fragment {
 
                 if (currentUser != null) {
                     String displayName = currentUser.getDisplayName();
-                    profileName.setText((displayName != null && !displayName.isEmpty()) ? displayName : "Профиль");
-                    profile_description.setText("Настройки профиля");
+                    profileName.setText((displayName != null && !displayName.isEmpty())
+                            ? displayName
+                            : getString(R.string.shared_profile_default_name));
+                    profile_description.setText(getString(R.string.shared_profile_description_settings));
                 } else {
-                    profileName.setText("Ошибка");
-                    profile_description.setText("Профиль (ошибка данных)");
+                    profileName.setText(getString(R.string.shared_profile_error_title));
+                    profile_description.setText(getString(R.string.shared_profile_error_description));
                 }
             } else {
-                profileName.setText("Гость");
-                profile_description.setText("Войти в профиль");
+                profileName.setText(getString(R.string.shared_profile_guest_title));
+                profile_description.setText(getString(R.string.shared_profile_guest_description));
             }
         });
 
@@ -84,7 +86,7 @@ public class SharedProfileFragment extends Fragment {
                 String displayName = currentUser.getDisplayName();
                 profileName.setText(displayName != null && !displayName.isEmpty()
                         ? displayName : profileName.getText().toString());
-                profile_description.setText("Настройки профиля");
+                profile_description.setText(getString(R.string.shared_profile_description_settings));
             }
         });
     }

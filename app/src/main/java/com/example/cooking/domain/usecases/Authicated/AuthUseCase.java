@@ -12,6 +12,7 @@ import com.example.cooking.auth.FirebaseAuthManager;
 import com.example.cooking.data.models.ApiResponse;
 import com.example.cooking.data.repositories.LikedRecipesRepository;
 import com.example.cooking.network.services.UserService;
+import com.example.cooking.R;
 import com.example.cooking.utils.MySharedPreferences;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -29,11 +30,13 @@ public class AuthUseCase {
     private final UserService userService;
     private final LikedRecipesRepository likedRepo;
     private final MySharedPreferences preferences;
+    private final Application application;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
     public static final int RC_SIGN_IN = FirebaseAuthManager.RC_SIGN_IN;
 
     public AuthUseCase(Application application) {
+        this.application = application;
         authManager = new FirebaseAuthManager(application);
         userService = new UserService(application);
         likedRepo = new LikedRecipesRepository(application);
@@ -72,7 +75,7 @@ public class AuthUseCase {
                     likedRepo.syncLikedRecipesFromServer();
                 }, t -> {
                     Log.e(TAG, "signIn error", t);
-                    errorMessage.postValue("Ошибка авторизации: " + t.getMessage());
+                    errorMessage.postValue(application.getString(R.string.auth_error_prefix) + " " + t.getMessage());
                 })
         );
     }
@@ -133,7 +136,7 @@ public class AuthUseCase {
                     likedRepo.syncLikedRecipesFromServer();
                 }, t -> {
                     Log.e(TAG, "Google signIn error", t);
-                    errorMessage.postValue("Ошибка авторизации: " + t.getMessage());
+                    errorMessage.postValue(application.getString(R.string.auth_error_prefix) + " " + t.getMessage());
                 })
         );
     }

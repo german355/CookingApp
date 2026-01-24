@@ -14,6 +14,7 @@ import com.example.cooking.domain.entities.Recipe;
 import com.example.cooking.domain.entities.Message;
 import com.example.cooking.domain.entities.Message.MessageType;
 import com.example.cooking.ui.adapters.Recipe.RecipeListAdapter;
+import com.example.cooking.ui.utils.MarkdownUtils;
 
 import java.util.List;
 
@@ -87,7 +88,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         public void bind(Message message) {
-            textView.setText(message.getText());
+            textView.setText(MarkdownUtils.toSpannable(message.getText()));
             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) textView.getLayoutParams();
             if (message.isUser()) {
                 params.gravity = Gravity.END;

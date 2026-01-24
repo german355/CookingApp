@@ -65,7 +65,7 @@ public class AuthBlockFragment extends Fragment {
         if (view != null && view.getContext() != null) {
             Toast.makeText(
                 view.getContext(), 
-                "Войдите в систему, чтобы добавлять рецепты в избранное", 
+                view.getContext().getString(R.string.auth_required_message), 
                 Toast.LENGTH_SHORT
             ).show();
         }

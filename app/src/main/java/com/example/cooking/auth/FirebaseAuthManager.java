@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.cooking.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -21,6 +22,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import java.lang.ref.WeakReference;
 import java.util.Locale;
 
+import androidx.annotation.StringRes;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.core.Completable;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -58,6 +60,13 @@ public class FirebaseAuthManager {
         this.context = application.getApplicationContext();
     }
 
+    private String getStringSafe(@StringRes int resId, Object... args) {
+        if (context == null) {
+            return "";
+        }
+        return args == null || args.length == 0 ? context.getString(resId) : context.getString(resId, args);
+    }
+
     /**
      * Получение экземпляра класса (Singleton)
      */
@@ -82,7 +91,7 @@ public class FirebaseAuthManager {
             googleSignInClient = GoogleSignIn.getClient(context, gso);
 
         } catch (Exception e) {
-            Toast.makeText(context, "Ошибка настройки Google Sign In", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.main_view_model_google_signin_error, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -112,7 +121,9 @@ public class FirebaseAuthManager {
                     if (task.isSuccessful() && firebaseAuth.getCurrentUser() != null) {
                         emitter.onSuccess(firebaseAuth.getCurrentUser());
                     } else {
-                        Throwable e = task.getException() != null ? task.getException() : new Exception("Unknown error signing in");
+                        Throwable e = task.getException() != null
+                                ? task.getException()
+                                : new Exception(getStringSafe(R.string.auth_unknown_signin_error));
                         emitter.onError(e);
                     }
                 });
@@ -129,7 +140,9 @@ public class FirebaseAuthManager {
                     if (task.isSuccessful() && firebaseAuth.getCurrentUser() != null) {
                         emitter.onSuccess(firebaseAuth.getCurrentUser());
                     } else {
-                        Throwable e = task.getException() != null ? task.getException() : new Exception("Unknown error registering");
+                        Throwable e = task.getException() != null
+                                ? task.getException()
+                                : new Exception(getStringSafe(R.string.auth_unknown_register_error));
                         emitter.onError(e);
                     }
                 });
@@ -143,14 +156,16 @@ public class FirebaseAuthManager {
         return Single.<String>create(emitter -> {
             FirebaseUser user = firebaseAuth.getCurrentUser();
             if (user == null) {
-                emitter.onError(new NullPointerException("Current user is null"));
+                emitter.onError(new NullPointerException(getStringSafe(R.string.auth_current_user_null)));
                 return;
             }
             user.getIdToken(forceRefresh).addOnCompleteListener(task -> {
                 if (task.isSuccessful() && task.getResult() != null) {
                     emitter.onSuccess(task.getResult().getToken());
                 } else {
-                    Throwable e = task.getException() != null ? task.getException() : new Exception("Unknown error getting token");
+                    Throwable e = task.getException() != null
+                            ? task.getException()
+                            : new Exception(getStringSafe(R.string.auth_unknown_token_error));
                     emitter.onError(e);
                 }
             });
@@ -167,7 +182,9 @@ public class FirebaseAuthManager {
                     if (task.isSuccessful()) {
                         emitter.onComplete();
                     } else {
-                        emitter.onError(task.getException() != null ? task.getException() : new Exception("Unknown error updating display name"));
+                        emitter.onError(task.getException() != null
+                                ? task.getException()
+                                : new Exception(getStringSafe(R.string.auth_unknown_update_display_name)));
                     }
                 });
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
@@ -183,7 +200,9 @@ public class FirebaseAuthManager {
                     if (task.isSuccessful()) {
                         emitter.onComplete();
                     } else {
-                        emitter.onError(task.getException() != null ? task.getException() : new Exception("Unknown error updating password"));
+                        emitter.onError(task.getException() != null
+                                ? task.getException()
+                                : new Exception(getStringSafe(R.string.auth_unknown_update_password)));
                     }
                 });
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
@@ -199,7 +218,9 @@ public class FirebaseAuthManager {
                 if (task.isSuccessful()) {
                     emitter.onSuccess(firebaseAuth.getCurrentUser());
                 } else {
-                    emitter.onError(task.getException() != null ? task.getException() : new Exception("Unknown error reauthenticating"));
+                    emitter.onError(task.getException() != null
+                            ? task.getException()
+                            : new Exception(getStringSafe(R.string.auth_unknown_reauthenticate)));
                 }
             });
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
@@ -213,12 +234,14 @@ public class FirebaseAuthManager {
             AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
             firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        emitter.onSuccess(firebaseAuth.getCurrentUser());
-                    } else {
-                        emitter.onError(task.getException() != null ? task.getException() : new Exception("Unknown error signing in with Google"));
-                    }
-                });
+                if (task.isSuccessful()) {
+                    emitter.onSuccess(firebaseAuth.getCurrentUser());
+                } else {
+                    emitter.onError(task.getException() != null
+                            ? task.getException()
+                            : new Exception(getStringSafe(R.string.auth_unknown_google_signin)));
+                }
+            });
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
@@ -229,14 +252,14 @@ public class FirebaseAuthManager {
         return Single.defer(() -> {
             if (data == null) {
                 Log.e(TAG, "Google Sign-In data is null");
-                return Single.error(new IllegalArgumentException("Google Sign-In data is null"));
+                return Single.error(new IllegalArgumentException(getStringSafe(R.string.auth_google_data_null)));
             }
             try {
                 Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 if (account == null || account.getIdToken() == null) {
                     Log.e(TAG, "Google Sign-In account or ID token is null");
-                    return Single.error(new Exception("ID token is null"));
+                    return Single.error(new Exception(getStringSafe(R.string.auth_google_id_token_null)));
                 }
                 Log.d(TAG, "Successfully got Google Sign-In account, proceeding to Firebase auth");
                 return firebaseAuthWithGoogleSingle(account.getIdToken());
@@ -244,7 +267,7 @@ public class FirebaseAuthManager {
                 Log.e(TAG, "Google Sign-In ApiException: " + e.getStatusCode());
                 if (e.getStatusCode() == 10) {
                     Log.e(TAG, "DEVELOPER_ERROR (10): Check SHA1 fingerprints in Firebase Console and verify google-services.json is up to date");
-                    return Single.error(new Exception("Ошибка конфигурации Google Sign-In. Проверьте настройки проекта в Firebase Console."));
+                    return Single.error(new Exception(getStringSafe(R.string.auth_google_signin_config_error)));
                 }
                 return Single.error(e);
             }
@@ -258,8 +281,8 @@ public class FirebaseAuthManager {
     public void signInWithGoogle(Activity activity) {
         if (googleSignInClient == null) {
             Log.e(TAG, "Google Sign In client not initialized");
-            Toast.makeText(activity, "Ошибка инициализации Google Sign In", Toast.LENGTH_SHORT).show();
-            throw new IllegalStateException("Google Sign In was not initialized. Call initGoogleSignIn() first.");
+            Toast.makeText(activity, R.string.main_view_model_google_signin_error, Toast.LENGTH_SHORT).show();
+            throw new IllegalStateException(getStringSafe(R.string.auth_google_not_initialized));
         }
         
         if (activity == null) {
@@ -304,16 +327,16 @@ public class FirebaseAuthManager {
                         activityFromRef.startActivityForResult(signInIntent, RC_SIGN_IN);
                     } else {
                         Log.e(TAG, "Sign in intent is null");
-                        Toast.makeText(activityFromRef, "Ошибка запуска Google Sign In", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activityFromRef, R.string.auth_google_login_error, Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     Log.e(TAG, "Error getting sign in intent or starting activity", e);
-                    Toast.makeText(activityFromRef, "Ошибка запуска Google Sign In: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activityFromRef, R.string.auth_google_login_error, Toast.LENGTH_SHORT).show();
                 }
             });
         } catch (Exception e) {
             Log.e(TAG, "Error starting Google Sign In flow", e);
-            Toast.makeText(activity, "Ошибка запуска Google Sign In: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, R.string.auth_google_login_error, Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -160,8 +160,9 @@ public class EditRecipeViewModel extends BaseRecipeFormViewModel {
 
     
     private void handleSaveError(String error, com.example.cooking.network.models.GeneralServerResponse errorResponse) {
-        if (error != null && error.startsWith("Модерация:")) {
-            String moderationMessage = error.substring("Модерация:".length()).trim();
+        String moderationPrefix = getApplication().getString(R.string.moderation_prefix);
+        if (error != null && error.startsWith(moderationPrefix)) {
+            String moderationMessage = error.substring(moderationPrefix.length()).trim();
             errorMessage.setValue(moderationMessage.isEmpty() ? 
                 getApplication().getString(R.string.moderation_failed_generic) :
                 getApplication().getString(R.string.moderation_failed, moderationMessage));
@@ -170,7 +171,10 @@ public class EditRecipeViewModel extends BaseRecipeFormViewModel {
         
         String detailedError = error;
         if (errorResponse != null && errorResponse.getMessage() != null) {
-            detailedError += " (Детали: " + errorResponse.getMessage() + ")";
+            detailedError += getApplication().getString(
+                R.string.error_details,
+                errorResponse.getMessage()
+            );
         }
         errorMessage.setValue(detailedError);
     }

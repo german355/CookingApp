@@ -85,6 +85,21 @@
         <item name="android:padding">8dp</item>
     </style>
 
+    <style name="Widget.Cooking.PopupMenu" parent="Widget.MaterialComponents.PopupMenu">
+        <item name="android:popupBackground">?attr/colorSurfaceContainerHigh</item>
+        <item name="android:elevation">8dp</item>
+        <item name="android:overlapAnchor">false</item>
+        <item name="android:dropDownVerticalOffset">4dp</item>
+        <item name="itemIconTint">?attr/colorOnSurface</item>
+        <item name="itemTextColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="Widget.Cooking.ListPopupWindow" parent="Widget.AppCompat.ListPopupWindow">
+        <item name="android:popupBackground">?attr/colorSurfaceContainerHigh</item>
+        <item name="android:elevation">8dp</item>
+        <item name="android:dropDownVerticalOffset">4dp</item>
+    </style>
+
     <style name="RoundedButton" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>

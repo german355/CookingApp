@@ -77,7 +77,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         // Получаем рецепт из Intent
         Recipe currentRecipe = getIntent().getParcelableExtra(EXTRA_SELECTED_RECIPE);
         if (currentRecipe == null) {
-            Toast.makeText(this, "Ошибка: Не удалось загрузить данные рецепта.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.error_recipe_data_load_failed), Toast.LENGTH_LONG).show();
             finish();
             return;
         }
@@ -128,7 +128,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         // Обработчики событий
         fabLike.setOnClickListener(v -> {
             if (!com.example.cooking.network.services.UserService.isUserLoggedIn()) {
-                Toast.makeText(this, "Войдите в аккаунт, чтобы поставить лайк", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.recipe_detail_login_to_like), Toast.LENGTH_LONG).show();
             } else {
                 viewModel.toggleLike();
             }
@@ -200,7 +200,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         }
         
         if (state.isDeleteSuccess()) {
-            Toast.makeText(this, "Рецепт успешно удален", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.recipe_deleted_success), Toast.LENGTH_SHORT).show();
             finish();
         }
         
@@ -309,10 +309,10 @@ public class RecipeDetailActivity extends AppCompatActivity {
      */
     private void showDeleteDialog() {
         new AlertDialog.Builder(this)
-                .setTitle("Удаление рецепта")
-                .setMessage("Вы уверены, что хотите удалить рецепт? Это действие нельзя отменить.")
-                .setPositiveButton("Удалить", (dialog, which) -> viewModel.deleteRecipe())
-                .setNegativeButton("Отмена", null)
+                .setTitle(R.string.recipe_delete_title)
+                .setMessage(R.string.recipe_delete_message)
+                .setPositiveButton(R.string.recipe_delete_confirm, (dialog, which) -> viewModel.deleteRecipe())
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
     
@@ -322,10 +322,10 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private void shareRecipe(Recipe recipe) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        String shareBody = "Посмотри рецепт: " + recipe.getTitle() + "\nПриложение для кулинарных рецептов";
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Рецепт: " + recipe.getTitle());
+        String shareBody = getString(R.string.recipe_share_body, recipe.getTitle());
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.recipe_share_subject, recipe.getTitle()));
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-        startActivity(Intent.createChooser(shareIntent, "Поделиться рецептом через"));
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.recipe_share_chooser)));
     }
     
     /**
@@ -342,7 +342,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         
         if (requestCode == EDIT_RECIPE_REQUEST && resultCode == RESULT_OK) {
-            Toast.makeText(this, "Рецепт успешно обновлен", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.recipe_updated_success), Toast.LENGTH_SHORT).show();
             // Перезагружаем рецепт через ViewModel
             viewModel.refreshRecipe();
         }

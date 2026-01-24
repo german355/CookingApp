@@ -73,7 +73,7 @@ public class RecipeDetailUIState {
     }
     
     public String getRecipeTitle() {
-        return recipe != null ? recipe.getTitle() : "Загрузка...";
+        return recipe != null ? recipe.getTitle() : "";
     }
     
     public String getRecipeImageUrl() {

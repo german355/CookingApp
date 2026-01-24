@@ -331,9 +331,9 @@ public class StepAdapter extends ListAdapter<Step, RecyclerView.ViewHolder> {
                 if (!hasFocus) {
                     String instruction = stepInstructionEditText.getText().toString().trim();
                     if (instruction.isEmpty()) {
-                        stepDescriptionLayout.setError("Опишите действие для этого шага");
+                        stepDescriptionLayout.setError(itemView.getContext().getString(R.string.step_error_description_required));
                     } else if (instruction.length() < 7) {
-                        stepDescriptionLayout.setError("Описание должно содержать минимум 7 символов");
+                        stepDescriptionLayout.setError(itemView.getContext().getString(R.string.step_error_description_min_length));
                     } else {
                         stepDescriptionLayout.setError(null);
                     }

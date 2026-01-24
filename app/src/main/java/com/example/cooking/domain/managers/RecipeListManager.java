@@ -1,7 +1,9 @@
 package com.example.cooking.domain.managers;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.example.cooking.R;
 import com.example.cooking.domain.entities.Ingredient;
 import com.example.cooking.domain.entities.Step;
 
@@ -16,6 +18,11 @@ public class RecipeListManager {
     
     private static final String TAG = "RecipeListManager";
 
+    private final Context context;
+
+    public RecipeListManager(Context context) {
+        this.context = context.getApplicationContext();
+    }
     
     public static class ListOperationResult {
         private final boolean success;
@@ -60,11 +67,13 @@ public class RecipeListManager {
 
     public ListOperationResult updateIngredient(List<Ingredient> currentList, int position, Ingredient ingredient) {
         if (currentList == null || position < 0 || position >= currentList.size()) {
-            return ListOperationResult.error("Некорректная позиция ингредиента: " + position);
+            return ListOperationResult.error(
+                context.getString(R.string.validation_invalid_ingredient_position, position)
+            );
         }
         
         if (ingredient == null) {
-            return ListOperationResult.error("Ингредиент не может быть null");
+            return ListOperationResult.error(context.getString(R.string.validation_ingredient_null));
         }
         
         List<Ingredient> newList = new ArrayList<>(currentList);
@@ -75,11 +84,13 @@ public class RecipeListManager {
 
     public ListOperationResult removeIngredient(List<Ingredient> currentList, int position) {
         if (currentList == null || position < 0 || position >= currentList.size()) {
-            return ListOperationResult.error("Некорректная позиция ингредиента: " + position);
+            return ListOperationResult.error(
+                context.getString(R.string.validation_invalid_ingredient_position, position)
+            );
         }
         
         if (currentList.size() <= 1) {
-            return ListOperationResult.error("Нельзя удалить последний ингредиент");
+            return ListOperationResult.error(context.getString(R.string.validation_remove_last_ingredient));
         }
         
         List<Ingredient> newList = new ArrayList<>(currentList);
@@ -125,11 +136,13 @@ public class RecipeListManager {
 
     public ListOperationResult updateStep(List<Step> currentList, int position, Step step) {
         if (currentList == null || position < 0 || position >= currentList.size()) {
-            return ListOperationResult.error("Некорректная позиция шага: " + position);
+            return ListOperationResult.error(
+                context.getString(R.string.validation_invalid_step_position, position)
+            );
         }
         
         if (step == null) {
-            return ListOperationResult.error("Шаг не может быть null");
+            return ListOperationResult.error(context.getString(R.string.validation_step_null));
         }
         
         List<Step> newList = new ArrayList<>(currentList);
@@ -142,12 +155,14 @@ public class RecipeListManager {
 
     public ListOperationResult removeStep(List<Step> currentList, int position) {
         if (currentList == null || position < 0 || position >= currentList.size()) {
-            return ListOperationResult.error("Некорректная позиция шага: " + position);
+            return ListOperationResult.error(
+                context.getString(R.string.validation_invalid_step_position, position)
+            );
         }
         
         // Не удаляем, если это последний шаг
         if (currentList.size() <= 1) {
-            return ListOperationResult.error("Нельзя удалить последний шаг");
+            return ListOperationResult.error(context.getString(R.string.validation_remove_last_step));
         }
         
         List<Step> newList = new ArrayList<>(currentList);

@@ -180,11 +180,11 @@ public class RecipeListAdapter extends ListAdapter<Recipe, RecipeListAdapter.Rec
             Log.d(TAG, "Favorite button clicked for recipeId=" + recipe.getId() + ", newLiked=" + isChecked);
             
             // Проверяем авторизацию пользователя
-            if (!FirebaseAuthManager.getInstance().isUserSignedIn()) {
-                // Пользователь не авторизован, показываем уведомление и навигацию
-                Toast.makeText(v.getContext(), "Пожалуйста, авторизуйтесь для лайка", Toast.LENGTH_SHORT).show();
-                // Возвращаем кнопку в исходное состояние
-                holder.favoriteButton.setChecked(!isChecked);
+                if (!FirebaseAuthManager.getInstance().isUserSignedIn()) {
+                    // Пользователь не авторизован, показываем уведомление и навигацию
+                    Toast.makeText(v.getContext(), R.string.auth_required_message, Toast.LENGTH_SHORT).show();
+                    // Возвращаем кнопку в исходное состояние
+                    holder.favoriteButton.setChecked(!isChecked);
                 return;
             }
             

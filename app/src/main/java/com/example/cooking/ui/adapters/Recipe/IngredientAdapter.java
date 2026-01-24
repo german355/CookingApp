@@ -225,7 +225,7 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
                 if (!hasFocus && currentIngredient != null) {
                     String name = nameEditText.getText().toString().trim();
                     if (name.isEmpty()) {
-                        nameLayout.setError("Укажите название ингредиента");
+                        nameLayout.setError(itemView.getContext().getString(R.string.ingredient_error_name_required));
                     } else {
                         nameLayout.setError(null);
                     }
@@ -237,17 +237,17 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
                 if (!hasFocus && currentIngredient != null) {
                     String countText = countEditText.getText().toString().trim();
                     if (countText.isEmpty()) {
-                        countLayout.setError("Укажите количество");
+                        countLayout.setError(itemView.getContext().getString(R.string.ingredient_error_amount_required));
                     } else {
                         try {
                             float count = Float.parseFloat(countText);
                             if (count <= 0) {
-                                countLayout.setError("Количество должно быть больше 0");
+                                countLayout.setError(itemView.getContext().getString(R.string.ingredient_error_amount_positive));
                             } else {
                                 countLayout.setError(null);
                             }
                         } catch (NumberFormatException e) {
-                            countLayout.setError("Введите корректное число");
+                            countLayout.setError(itemView.getContext().getString(R.string.ingredient_error_amount_invalid));
                         }
                     }
                 }
@@ -258,7 +258,7 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
                 if (!hasFocus && currentIngredient != null) {
                     String type = typeEditText.getText().toString().trim();
                     if (type.isEmpty()) {
-                        typeLayout.setError("Выберите единицу измерения");
+                        typeLayout.setError(itemView.getContext().getString(R.string.ingredient_error_unit_required));
                     } else {
                         typeLayout.setError(null);
                     }

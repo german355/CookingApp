@@ -102,14 +102,14 @@ public class ProfileFragment extends Fragment {
         // Наблюдатель за именем пользователя
         viewModel.getDisplayName().observe(getViewLifecycleOwner(), name -> {
             if (nameTextView != null) {
-                nameTextView.setText(name != null ? name : "Имя не указано");
+                nameTextView.setText(name != null ? name : getString(R.string.profile_name_not_set));
             }
         });
 
         // Наблюдатель за email пользователя
         viewModel.getEmail().observe(getViewLifecycleOwner(), email -> {
             if (emailTextView != null) {
-                emailTextView.setText(email != null ? email : "Email не указан");
+                emailTextView.setText(email != null ? email : getString(R.string.profile_email_not_set));
             }
         });
 
@@ -165,7 +165,7 @@ public class ProfileFragment extends Fragment {
      */
     private void showEditNameDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Изменить имя");
+        builder.setTitle(R.string.profile_edit_name_title);
 
         // Настраиваем поле ввода
         final EditText input = new EditText(requireContext());
@@ -174,15 +174,15 @@ public class ProfileFragment extends Fragment {
         builder.setView(input);
 
         // Настраиваем кнопки
-        builder.setPositiveButton("Сохранить", (dialog, which) -> {
+        builder.setPositiveButton(R.string.action_save, (dialog, which) -> {
             String newName = input.getText().toString().trim();
             if (!newName.isEmpty()) {
                 viewModel.updateDisplayName(newName);
             } else {
-                Toast.makeText(requireContext(), "Имя не может быть пустым", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), getString(R.string.profile_name_empty), Toast.LENGTH_SHORT).show();
             }
         });
-        builder.setNegativeButton("Отмена", (dialog, which) -> dialog.cancel());
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
 
         builder.show();
     }
@@ -192,7 +192,7 @@ public class ProfileFragment extends Fragment {
      */
     private void showChangePasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Изменить пароль");
+        builder.setTitle(R.string.change_password_dialog_title);
 
         // Создаем View для диалога с двумя полями ввода
         View viewInflated = LayoutInflater.from(requireContext())
@@ -204,19 +204,19 @@ public class ProfileFragment extends Fragment {
         builder.setView(viewInflated);
 
         // Настраиваем кнопки
-        builder.setPositiveButton("Изменить", (dialog, which) -> {
+        builder.setPositiveButton(R.string.action_change, (dialog, which) -> {
             String currentPassword = currentPasswordInput.getText().toString();
             String newPassword = newPasswordInput.getText().toString();
 
             if (currentPassword.isEmpty() || newPassword.isEmpty()) {
-                Toast.makeText(requireContext(), "Все поля должны быть заполнены", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), getString(R.string.error_all_fields_required), Toast.LENGTH_SHORT).show();
                 return;
             }
 
             // Вызываем метод ViewModel для обновления пароля
             viewModel.updatePassword(currentPassword, newPassword);
         });
-        builder.setNegativeButton("Отмена", (dialog, which) -> dialog.cancel());
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
 
         builder.show();
     }
@@ -226,14 +226,14 @@ public class ProfileFragment extends Fragment {
      */
     private void confirmLogout() {
         new AlertDialog.Builder(requireContext())
-                .setTitle("Выход из аккаунта")
-                .setMessage("Вы уверены, что хотите выйти из аккаунта?")
-                .setPositiveButton("Да", (dialog, which) -> {
+                .setTitle(R.string.profile_logout_button)
+                .setMessage(R.string.profile_logout_confirm_message)
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                     // Выполняем выход через ViewModel
                     viewModel.signOut();
                     // Наблюдатель за operationSuccess обработает переход
                 })
-                .setNegativeButton("Нет", (dialog, which) -> dialog.dismiss())
+                .setNegativeButton(android.R.string.no, (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
@@ -247,19 +247,18 @@ public class ProfileFragment extends Fragment {
         final EditText passwordInput = viewInflated.findViewById(R.id.password_input);
 
         new AlertDialog.Builder(requireContext())
-                .setTitle("Удаление аккаунта")
-                .setMessage(
-                        "Вы действительно хотите удалить аккаунт? Это действие необратимо.\n\nВведите пароль для подтверждения:")
+                .setTitle(R.string.profile_delete_account_title)
+                .setMessage(R.string.profile_delete_account_message)
                 .setView(viewInflated)
-                .setPositiveButton("Удалить", (dialog, which) -> {
+                .setPositiveButton(R.string.recipe_delete_confirm, (dialog, which) -> {
                     String password = passwordInput.getText().toString();
                     if (!password.isEmpty()) {
                         viewModel.deleteAccount(password);
                     } else {
-                        Toast.makeText(requireContext(), "Введите пароль", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), getString(R.string.profile_password_empty), Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("Отмена", (dialog, which) -> dialog.dismiss())
+                .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
@@ -271,12 +270,12 @@ public class ProfileFragment extends Fragment {
                 .setTitle(getString(R.string.bug_report_title))
                 .setMessage(getString(R.string.bug_report_description) + "\n\n" + 
                            getString(R.string.bug_report_examples))
-                .setPositiveButton("Открыть чат", (dialog, which) -> {
+                .setPositiveButton(R.string.action_open_chat, (dialog, which) -> {
                     // Открываем AI чат
                     Intent intent = new Intent(requireContext(), AiChatActivity.class);
                     startActivity(intent);
                 })
-                .setNegativeButton("Закрыть", (dialog, which) -> dialog.dismiss())
+                .setNegativeButton(R.string.action_close, (dialog, which) -> dialog.dismiss())
                 .show();
     }
 }

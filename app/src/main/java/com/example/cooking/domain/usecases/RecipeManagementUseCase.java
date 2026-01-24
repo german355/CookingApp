@@ -1,6 +1,7 @@
 package com.example.cooking.domain.usecases;
 
 import android.app.Application;
+import com.example.cooking.R;
 import com.example.cooking.domain.entities.Recipe;
 import com.example.cooking.data.repositories.UnifiedRecipeRepository;
 import com.example.cooking.network.models.GeneralServerResponse;
@@ -62,7 +63,7 @@ public class RecipeManagementUseCase {
         
         if (!isNetworkAvailable()) {
             if (callback != null) {
-                callback.onFailure("Ошибка соединения с сервером. Проверьте подключение к интернету", null);
+                callback.onFailure(application.getString(R.string.error_network_connection), null);
             }
             return;
         }
@@ -107,7 +108,7 @@ public class RecipeManagementUseCase {
         
         if (!isNetworkAvailable()) {
             if (callback != null) {
-                callback.onFailure("Ошибка соединения с сервером. Проверьте подключение к интернету", null);
+                callback.onFailure(application.getString(R.string.error_network_connection), null);
             }
             return;
         }
@@ -142,7 +143,7 @@ public class RecipeManagementUseCase {
     public void deleteRecipe(int recipeId, DeleteRecipeCallback callback) {
         if (!isNetworkAvailable()) {
             if (callback != null) {
-                callback.onDeleteFailure("Невозможно удалить рецепт в офлайн режиме");
+                callback.onDeleteFailure(application.getString(R.string.error_offline_delete_recipe));
             }
             return;
         }

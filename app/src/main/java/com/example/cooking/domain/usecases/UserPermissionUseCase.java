@@ -3,6 +3,7 @@ package com.example.cooking.domain.usecases;
 import android.app.Application;
 import android.util.Log;
 
+import com.example.cooking.R;
 import com.example.cooking.utils.MySharedPreferences;
 import com.example.cooking.network.services.UserService;
 
@@ -18,8 +19,10 @@ public class UserPermissionUseCase {
     public static final int PERMISSION_ADMIN = 2;   // Администратор
     
     private final MySharedPreferences preferences;
+    private final Application application;
     
     public UserPermissionUseCase(Application application) {
+        this.application = application;
         this.preferences = new MySharedPreferences(application);
     }
     
@@ -108,13 +111,13 @@ public class UserPermissionUseCase {
     public PermissionResult canEditRecipe(String recipeOwnerId) {
         // Проверяем авторизацию
         if (!isUserLoggedIn()) {
-            return PermissionResult.denied("Пользователь не авторизован");
+            return PermissionResult.denied(application.getString(R.string.error_user_not_authenticated));
         }
         
         String currentUserId = getCurrentUserId();
         
         if (currentUserId == null || currentUserId.equals("0")) {
-            return PermissionResult.denied("Некорректный ID пользователя");
+            return PermissionResult.denied(application.getString(R.string.error_invalid_user_id));
         }
         
         if (isAdmin()) {
@@ -129,7 +132,7 @@ public class UserPermissionUseCase {
         }
         
         Log.d(TAG, "canEditRecipe: доступ запрещен - пользователь не автор и не администратор");
-        return PermissionResult.denied("Вы не являетесь автором этого рецепта или модератором");
+        return PermissionResult.denied(application.getString(R.string.error_not_author_or_moderator));
     }
     
     /**
@@ -137,13 +140,13 @@ public class UserPermissionUseCase {
      */
     public PermissionResult canDeleteRecipe(String recipeOwnerId) {
         if (!isUserLoggedIn()) {
-            return PermissionResult.denied("Пользователь не авторизован");
+            return PermissionResult.denied(application.getString(R.string.error_user_not_authenticated));
         }
         
         String currentUserId = getCurrentUserId();
         
         if (currentUserId == null || currentUserId.equals("0")) {
-            return PermissionResult.denied("Некорректный ID пользователя");
+            return PermissionResult.denied(application.getString(R.string.error_invalid_user_id));
         }
         
         if (isAdmin()) {
@@ -158,7 +161,7 @@ public class UserPermissionUseCase {
         }
         
         Log.d(TAG, "canDeleteRecipe: доступ запрещен - пользователь не автор и не администратор");
-        return PermissionResult.denied("Вы не являетесь автором этого рецепта или модератором");
+        return PermissionResult.denied(application.getString(R.string.error_not_author_or_moderator));
     }
 
 } 
