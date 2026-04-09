@@ -3,6 +3,8 @@ package com.example.cooking.network.interceptors;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -54,14 +56,12 @@ public class RetryInterceptor implements Interceptor {
                 }
                 
                 response = chain.proceed(request);
-                
-                // Повторяем только при серверных ошибках (5xx) или ошибке 429 (Too Many Requests)
+
                 if (response.isSuccessful() || (response.code() < 500 && response.code() != 429)) {
-                    return response; // Успешный ответ или клиентская ошибка (кроме 429), не повторяем
+                    return response;
                 }
-                
-                // Если получили ошибку сервера (5xx) или 429, пробуем еще раз
-                shouldRetry = tryCount < maxRetries;
+
+                shouldRetry = shouldRetry(request, response, tryCount);
                 Log.w(TAG, "Запрос не успешен, код: " + response.code() + " URL: " + request.url() + 
                           (shouldRetry ? " Будет повторная попытка." : " Достигнут лимит повторных попыток."));
                 
@@ -75,7 +75,7 @@ public class RetryInterceptor implements Interceptor {
             if (shouldRetry) {
                 tryCount++;
                 try {
-                    long sleepTime = retryDelayMillis * (long)Math.pow(1.5, tryCount - 1); // Экспоненциальная задержка
+                    long sleepTime = getRetryDelayMillis(response, tryCount);
                     Log.d(TAG, "Ожидание " + sleepTime + " мс перед следующей попыткой");
                     Thread.sleep(sleepTime);
                 } catch (InterruptedException e) {
@@ -96,5 +96,42 @@ public class RetryInterceptor implements Interceptor {
         
         // Если по какой-то причине и response и exception null (маловероятно)
         throw new IOException("Не удалось выполнить запрос после " + maxRetries + " попыток.");
+    }
+
+    private boolean shouldRetry(Request request, Response response, int tryCount) {
+        if (response == null || tryCount >= maxRetries) {
+            return false;
+        }
+
+        String method = request.method().toUpperCase(Locale.ROOT);
+        boolean safeMethod = method.equals("GET") || method.equals("HEAD");
+
+        if (response.code() == 429) {
+            return safeMethod;
+        }
+
+        if (response.code() >= 500) {
+            return safeMethod;
+        }
+
+        return false;
+    }
+
+    private long getRetryDelayMillis(Response response, int tryCount) {
+        if (response != null && response.code() == 429) {
+            String retryAfterHeader = response.header("Retry-After");
+            if (retryAfterHeader != null) {
+                try {
+                    long seconds = Long.parseLong(retryAfterHeader.trim());
+                    if (seconds > 0) {
+                        return TimeUnit.SECONDS.toMillis(seconds);
+                    }
+                } catch (NumberFormatException ignored) {
+                    Log.w(TAG, "Не удалось распарсить Retry-After: " + retryAfterHeader);
+                }
+            }
+        }
+
+        return retryDelayMillis * (long) Math.pow(1.5, Math.max(0, tryCount - 1));
     }
 } 

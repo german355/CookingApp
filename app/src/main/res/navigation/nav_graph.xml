@@ -47,6 +47,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_sharedProfile_to_myRecipes"
+            app:destination="@id/destination_my_recipes"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <!-- Профиль пользователя -->
@@ -76,7 +83,14 @@
         android:id="@+id/destination_settings"
         android:name="com.example.cooking.ui.fragments.profile.SettingsFragment"
         android:label="@string/shared_profile_settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings">
+    </fragment>
+
+    <fragment
+        android:id="@+id/destination_my_recipes"
+        android:name="com.example.cooking.ui.fragments.MyRecipesFragment"
+        android:label="@string/settings_my_recipes_title"
+        tools:layout="@layout/fragment_filtered_recipes" />
 
     <!-- Каталог -->
     <fragment

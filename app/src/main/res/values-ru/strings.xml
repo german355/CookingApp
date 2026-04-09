@@ -309,6 +309,7 @@
     <string name="shared_profile_guest_title">Гость</string>
     <string name="shared_profile_guest_description">Войти в профиль</string>
     <string name="menu_recipe_share">Поделиться</string>
+    <string name="menu_recipe_chat">Спросить ИИ</string>
     <string name="menu_recipe_more">Еще</string>
     <string name="menu_recipe_edit">Редактировать</string>
     <string name="menu_recipe_delete">Удалить</string>
@@ -316,6 +317,10 @@
     <string name="settings_theme_title">Тема</string>
     <string name="settings_search_recommendations_title">Поиск и рекомендации</string>
     <string name="settings_smart_search_title">Умный поиск</string>
+    <string name="settings_my_recipes_title">Мои рецепты</string>
+    <string name="my_recipes_empty">У вас пока нет собственных рецептов</string>
+    <string name="chat_rate_limit_message">Слишком много запросов. Повторите через %1$d сек.</string>
+    <string name="chat_rate_limit_wait">Подождите окончания ограничения перед следующей отправкой.</string>
 
     <string name="validation_invalid_ingredient_position">Некорректная позиция ингредиента: %1$d</string>
     <string name="validation_ingredient_null">Ингредиент не может быть null</string>
@@ -400,4 +405,7 @@
     <string name="category_drink_desc">Жидкость для питья</string>
     <string name="category_jam_name">Джем/Варенье</string>
     <string name="category_jam_desc">Сладкая заготовка из фруктов/ягод</string>
+    <string name="chat_recipe_flow_loading_title">Собираю ваш рецепт</string>
+    <string name="chat_recipe_flow_loading_subtitle">Уточняю детали, подбираю рецепт и готовлю красивую карточку результата.</string>
+    <string name="chat_created_recipe_subtitle">ИИ создал этот рецепт для вас. Нажмите, чтобы открыть.</string>
 </resources> 

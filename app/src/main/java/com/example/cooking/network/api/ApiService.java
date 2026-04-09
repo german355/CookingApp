@@ -8,7 +8,9 @@ import com.example.cooking.network.models.chat.ChatHistoryResponse;
 import com.example.cooking.network.models.chat.ChatMessageRequest;
 import com.example.cooking.network.models.chat.ChatMessageResponse;
 import com.example.cooking.network.models.chat.ChatSessionResponse;
+import com.example.cooking.network.models.recipeResponses.BulkRecipesResponse;
 import com.example.cooking.network.models.recipeResponses.LikedRecipesResponse;
+import com.example.cooking.network.models.recipeResponses.RecipeIdsRequest;
 import com.example.cooking.network.models.recipeResponses.RecipesResponse;
 import com.example.cooking.network.models.recipeResponses.SearchResponse;
 
@@ -60,6 +62,9 @@ public interface ApiService {
      */
     @GET("recipes")
     Single<RecipesResponse> getRecipesRx();
+
+    @GET("recipes/mine")
+    Single<RecipesResponse> getMyRecipes();
     
     /**
      * Получает список ID лайкнутых рецептов пользователя.
@@ -73,6 +78,9 @@ public interface ApiService {
      */
     @GET("recipes/search/simple")
     Single<SearchResponse> searchRecipesSimple(@Query("q") String query);
+
+    @POST("recipes/bulk")
+    Single<BulkRecipesResponse> getRecipesBulk(@Body RecipeIdsRequest request);
     
     // =============== Рецепты - создание, обновление, удаление ===============
     
@@ -143,4 +151,4 @@ public interface ApiService {
      */
     @GET("chatbot/get-history")
     Single<ChatHistoryResponse> getChatHistory();
-} 
+}

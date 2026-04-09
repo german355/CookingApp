@@ -143,7 +143,11 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // Показываем кнопку назад для некоторых экранов (авторизация, настройки, профиль, фильтрованные рецепты)
-                if (id == R.id.destination_auth || id == R.id.destination_settings || id == R.id.destination_profile || id == R.id.nav_filtered_recipes) {
+                if (id == R.id.destination_auth
+                        || id == R.id.destination_settings
+                        || id == R.id.destination_profile
+                        || id == R.id.nav_filtered_recipes
+                        || id == R.id.destination_my_recipes) {
                     if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 } else {
                     if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -232,7 +236,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if (currentDestId == R.id.nav_profile ||
                         currentDestId == R.id.destination_profile ||
-                        currentDestId == R.id.destination_settings) {
+                        currentDestId == R.id.destination_settings ||
+                        currentDestId == R.id.destination_my_recipes) {
                     navController.navigate(R.id.nav_profile);
                 }
             }

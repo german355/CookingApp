@@ -19,6 +19,7 @@ import okhttp3.RequestBody;
 import com.google.gson.Gson;
 import com.example.cooking.network.models.GeneralServerResponse;
 import com.example.cooking.network.models.BaseApiResponse;
+import com.example.cooking.network.models.recipeResponses.BulkRecipesResponse;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -154,6 +155,55 @@ public class RecipeRemoteRepository extends NetworkRepository {
                 }
             )
         );
+    }
+
+    public synchronized void getMyRecipes(final RecipesCallback callback) {
+        if (isRequestInProgress) {
+            callback.onDataNotAvailable(context.getString(R.string.error_request_in_progress));
+            return;
+        }
+
+        if (!isNetworkAvailable()) {
+            callback.onDataNotAvailable(context.getString(R.string.error_no_internet_connection));
+            return;
+        }
+
+        isRequestInProgress = true;
+        disposables.add(
+            apiService.getMyRecipes()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    response -> {
+                        synchronized (RecipeRemoteRepository.this) {
+                            isRequestInProgress = false;
+                        }
+                        if (response.getRecipes() != null) {
+                            callback.onRecipesLoaded(response.getRecipes());
+                        } else {
+                            callback.onDataNotAvailable(context.getString(R.string.error_recipes_list_empty));
+                        }
+                    },
+                    throwable -> {
+                        synchronized (RecipeRemoteRepository.this) {
+                            isRequestInProgress = false;
+                        }
+                        callback.onDataNotAvailable(parseHttpError(throwable));
+                    }
+                )
+        );
+    }
+
+    public List<Recipe> getRecipesBulkSync(List<Integer> recipeIds) {
+        if (recipeIds == null || recipeIds.isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+        BulkRecipesResponse response = apiService.getRecipesBulk(
+                new com.example.cooking.network.models.recipeResponses.RecipeIdsRequest(recipeIds)
+        ).blockingGet();
+        return response != null && response.getData() != null
+                ? response.getData()
+                : java.util.Collections.emptyList();
     }
 
     public void saveRecipe(Recipe recipe, byte[] imageBytes, RecipeSaveCallback callback) {

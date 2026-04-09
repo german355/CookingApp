@@ -8,6 +8,13 @@
         android:title="@string/menu_recipe_share"
         app:iconTint="?attr/colorOnSurface"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_chat_recipe"
+        android:icon="@drawable/chat_bubble"
+        android:title="@string/menu_recipe_chat"
+        app:iconTint="?attr/colorOnSurface"
+        app:showAsAction="ifRoom" />
     
     <item
         android:id="@+id/action_more"

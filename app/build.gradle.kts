@@ -8,6 +8,16 @@ android {
     namespace = "com.example.cooking"
     compileSdk = 35
 
+    val releaseKeystoreFile = rootDir.resolve("app/keystore/cooking-release.jks")
+    val releaseStorePassword = project.findProperty("RELEASE_STORE_PASSWORD") as String? ?: ""
+    val releaseKeyAlias = project.findProperty("RELEASE_KEY_ALIAS") as String? ?: ""
+    val releaseKeyPassword = (project.findProperty("RELEASE_KEY_PASSWORD")
+        ?: project.findProperty("RELEASE_STORE_PASSWORD")) as String? ?: ""
+    val hasReleaseSigning = releaseKeystoreFile.exists() &&
+        releaseStorePassword.isNotBlank() &&
+        releaseKeyAlias.isNotBlank() &&
+        releaseKeyPassword.isNotBlank()
+
     defaultConfig {
         applicationId = "com.example.cooking"
         minSdk = 23
@@ -19,13 +29,13 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            // Путь к файлу keystore
-            storeFile = rootDir.resolve("app/keystore/cooking-release.jks")
-            // Значения берём из gradle.properties (или системных переменных)
-            storePassword = project.findProperty("RELEASE_STORE_PASSWORD") as String? ?: ""
-            keyAlias = project.findProperty("RELEASE_KEY_ALIAS") as String? ?: ""
-            keyPassword = (project.findProperty("RELEASE_KEY_PASSWORD") ?: project.findProperty("RELEASE_STORE_PASSWORD")) as String? ?: ""
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = releaseKeystoreFile
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
         }
     }
 
@@ -36,7 +46,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     compileOptions {

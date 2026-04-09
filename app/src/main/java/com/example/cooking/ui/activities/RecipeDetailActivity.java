@@ -29,6 +29,7 @@ import com.example.cooking.ui.adapters.Recipe.StepAdapter;
 import com.example.cooking.ui.adapters.Recipe.IngredientViewAdapter;
 import com.example.cooking.ui.viewmodels.Recipe.RecipeDetailViewModel;
 import com.example.cooking.ui.viewmodels.Recipe.RecipeDetailUIState;
+import com.example.cooking.network.services.UserService;
 import com.example.cooking.utils.ThemeUtils;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -293,6 +294,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_share) {
             shareRecipe(state.getRecipe());
+        } else if (id == R.id.action_chat_recipe) {
+            openRecipeChat();
         } else if (id == R.id.action_edit) {
             editRecipe(state.getRecipe());
         } else if (id == R.id.action_delete) {
@@ -314,6 +317,17 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 .setPositiveButton(R.string.recipe_delete_confirm, (dialog, which) -> viewModel.deleteRecipe())
                 .setNegativeButton(R.string.cancel, null)
                 .show();
+    }
+
+    private void openRecipeChat() {
+        if (!UserService.isUserLoggedIn()) {
+            Toast.makeText(this, R.string.please_login_to_continue, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent intent = new Intent(this, AiChatActivity.class);
+        intent.putExtra(AiChatActivity.EXTRA_CONTEXT_RECIPE_ID, recipeId);
+        startActivity(intent);
     }
     
     /**

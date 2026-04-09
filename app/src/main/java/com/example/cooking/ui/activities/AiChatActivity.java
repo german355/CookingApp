@@ -21,6 +21,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 
 public class AiChatActivity extends AppCompatActivity {
+    public static final String EXTRA_CONTEXT_RECIPE_ID = "context_recipe_id";
 
     private AiChatViewModel viewModel;
     private RecyclerView recyclerViewMessages;
@@ -68,6 +69,12 @@ public class AiChatActivity extends AppCompatActivity {
         }
 
         viewModel = new ViewModelProvider(this).get(AiChatViewModel.class);
+        if (getIntent() != null && getIntent().hasExtra(EXTRA_CONTEXT_RECIPE_ID)) {
+            int recipeId = getIntent().getIntExtra(EXTRA_CONTEXT_RECIPE_ID, -1);
+            if (recipeId > 0) {
+                viewModel.setRecipeContext(recipeId);
+            }
+        }
 
         recyclerViewMessages = findViewById(R.id.recyclerViewMessages);
         messageAdapter = new MessageAdapter(new ArrayList<Message>());
@@ -81,6 +88,12 @@ public class AiChatActivity extends AppCompatActivity {
         setupEventListeners();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        viewModel.refreshHistory();
+    }
+
     private void setupObservers() {
         viewModel.getMessages().observe(this, messages -> {
             messageAdapter.setMessages(messages);
@@ -89,7 +102,12 @@ public class AiChatActivity extends AppCompatActivity {
             }
         });
         
-        viewModel.getIsLoading().observe(this, loading -> buttonSend.setEnabled(!loading));
+        viewModel.getIsLoading().observe(this, loading ->
+            buttonSend.setEnabled(!loading && Boolean.TRUE.equals(viewModel.getCanSend().getValue()))
+        );
+        viewModel.getCanSend().observe(this, canSend ->
+            buttonSend.setEnabled(Boolean.TRUE.equals(canSend) && !Boolean.TRUE.equals(viewModel.getIsLoading().getValue()))
+        );
         
         viewModel.getShowMessage().observe(this, message -> {
             if (message != null && !message.isEmpty()) {
@@ -103,8 +121,13 @@ public class AiChatActivity extends AppCompatActivity {
         buttonSend.setOnClickListener(v -> {
             String text = editTextMessage.getText().toString().trim();
             if (!text.isEmpty()) {
-                viewModel.sendMessage(text);
-                editTextMessage.setText("");
+                buttonSend.setEnabled(false);
+                if (viewModel.sendMessage(text)) {
+                    editTextMessage.setText("");
+                } else {
+                    buttonSend.setEnabled(Boolean.TRUE.equals(viewModel.getCanSend().getValue())
+                            && !Boolean.TRUE.equals(viewModel.getIsLoading().getValue()));
+                }
             }
         });
     }

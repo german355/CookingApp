@@ -17,6 +17,12 @@ public class BaseApiResponse {
     @SerializedName("status")
     private String status;
 
+    @SerializedName("error_code")
+    private String errorCode;
+
+    @SerializedName("retry_after_seconds")
+    private Integer retryAfterSeconds;
+
     /**
      * Проверяет успешность выполнения запроса
      */
@@ -42,6 +48,14 @@ public class BaseApiResponse {
         return status;
     }
 
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public Integer getRetryAfterSeconds() {
+        return retryAfterSeconds;
+    }
+
     /**
      * Устанавливает флаг успешности запроса
      * @param success флаг успешности
@@ -64,5 +78,13 @@ public class BaseApiResponse {
      */
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public void setRetryAfterSeconds(Integer retryAfterSeconds) {
+        this.retryAfterSeconds = retryAfterSeconds;
     }
 } 

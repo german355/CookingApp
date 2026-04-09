@@ -13,7 +13,9 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.cooking.R;
 import com.example.cooking.ui.viewmodels.MainViewModel;
 import com.example.cooking.auth.FirebaseAuthManager;
+import com.example.cooking.network.services.UserService;
 import com.google.firebase.auth.FirebaseUser;
+import android.widget.Toast;
 
 public class SharedProfileFragment extends Fragment {
 
@@ -21,6 +23,7 @@ public class SharedProfileFragment extends Fragment {
     TextView profile_description;
     ConstraintLayout profile;
     ConstraintLayout settings;
+    ConstraintLayout myRecipesContainer;
     private MainViewModel activityViewModel;
     private NavController navController;
 
@@ -37,6 +40,7 @@ public class SharedProfileFragment extends Fragment {
         profile_description = view.findViewById(R.id.profile_description);
         profile = view.findViewById(R.id.profile_container);
         settings = view.findViewById(R.id.settings_container);
+        myRecipesContainer = view.findViewById(R.id.my_recipes_container);
 
         // Получаем NavController через NavHostFragment
         navController = NavHostFragment.findNavController(this);
@@ -77,6 +81,14 @@ public class SharedProfileFragment extends Fragment {
         settings.setOnClickListener(view1 -> {
             // Используем NavController для навигации к настройкам
             navController.navigate(R.id.action_sharedProfile_to_settings);
+        });
+
+        myRecipesContainer.setOnClickListener(view1 -> {
+            if (!UserService.isUserLoggedIn()) {
+                Toast.makeText(requireContext(), R.string.please_login_to_continue, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            navController.navigate(R.id.action_sharedProfile_to_myRecipes);
         });
 
         // Подписка на событие входа и обновление имени пользователя

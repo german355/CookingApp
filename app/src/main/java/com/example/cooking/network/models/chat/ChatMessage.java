@@ -23,6 +23,12 @@ public class ChatMessage {
     @SerializedName("recipe_ids")
     private List<Integer> recipeIds;
 
+    @SerializedName("created_recipe_id")
+    private Integer createdRecipeId;
+
+    @SerializedName("recipe_presentation")
+    private String recipePresentation;
+
     public boolean isUser() {
         return isUser;
     }
@@ -43,6 +49,14 @@ public class ChatMessage {
 
     public List<Integer> getRecipeIds() {
         return recipeIds;
+    }
+
+    public Integer getCreatedRecipeId() {
+        return createdRecipeId;
+    }
+
+    public String getRecipePresentation() {
+        return recipePresentation;
     }
 
 }

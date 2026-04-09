@@ -137,4 +137,48 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- Блок Мои рецепты -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/my_recipes_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/rounded_section_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:elevation="4dp">
+
+        <!-- Текст Мои рецепты -->
+        <TextView
+                android:id="@+id/my_recipes_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="@string/settings_my_recipes_title"
+                android:textSize="16sp"
+                android:textColor="?attr/colorOnSurface"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/my_recipes_arrow"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- Стрелка Мои рецепты -->
+        <ImageView
+                android:id="@+id/my_recipes_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_forward"
+                app:tint="?attr/colorOnSurfaceVariant"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </LinearLayout>

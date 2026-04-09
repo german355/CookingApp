@@ -44,7 +44,7 @@ public class Recipe implements Parcelable {
     @SerializedName("food_type")
     private String foodType;
     
-    @SerializedName("photo")
+    @SerializedName(value = "photo", alternate = {"photo_url"})
     private String photo_url;
     private static <T> ArrayList<T> handleParseError(String context, Exception e) {
         android.util.Log.w("Recipe", "Failed to parse " + context + ": " + e.getMessage());

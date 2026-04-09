@@ -310,6 +310,7 @@
     <string name="shared_profile_guest_title">Guest</string>
     <string name="shared_profile_guest_description">Sign in to profile</string>
     <string name="menu_recipe_share">Share</string>
+    <string name="menu_recipe_chat">Ask AI</string>
     <string name="menu_recipe_more">More</string>
     <string name="menu_recipe_edit">Edit</string>
     <string name="menu_recipe_delete">Delete</string>
@@ -317,6 +318,10 @@
     <string name="settings_theme_title">Theme</string>
     <string name="settings_search_recommendations_title">Search and recommendations</string>
     <string name="settings_smart_search_title">Smart search</string>
+    <string name="settings_my_recipes_title">My recipes</string>
+    <string name="my_recipes_empty">You have no recipes yet</string>
+    <string name="chat_rate_limit_message">Too many requests. Try again in %1$d sec.</string>
+    <string name="chat_rate_limit_wait">Please wait until the cooldown ends before sending another message.</string>
 
     <string name="validation_invalid_ingredient_position">Invalid ingredient position: %1$d</string>
     <string name="validation_ingredient_null">Ingredient cannot be null</string>
@@ -401,4 +406,7 @@
     <string name="category_drink_desc">A beverage</string>
     <string name="category_jam_name">Jam/Preserves</string>
     <string name="category_jam_desc">Sweet fruit/berry preserve</string>
+    <string name="chat_recipe_flow_loading_title">Working on your recipe</string>
+    <string name="chat_recipe_flow_loading_subtitle">Clarifying the details, preparing the recipe, and getting everything ready.</string>
+    <string name="chat_created_recipe_subtitle">AI created this recipe for you. Tap to open it.</string>
 </resources>
