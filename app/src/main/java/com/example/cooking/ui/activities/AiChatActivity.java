@@ -27,7 +27,6 @@ public class AiChatActivity extends AppCompatActivity {
     private RecyclerView recyclerViewMessages;
     private MessageAdapter messageAdapter;
     private TextInputEditText editTextMessage;
-    private FloatingActionButton buttonPhoto;
     private FloatingActionButton buttonSend;
 
     @Override

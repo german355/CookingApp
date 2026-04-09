@@ -115,10 +115,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) textView.getLayoutParams();
             if (message.isUser()) {
                 params.gravity = Gravity.END;
-                textView.setBackgroundResource(R.drawable.bg_message_bubble_user);
+                textView.setBackgroundResource(R.drawable.bg_chat_user_message);
             } else {
                 params.gravity = Gravity.START;
-                textView.setBackgroundResource(R.drawable.bg_message_bubble);
+                textView.setBackgroundResource(R.drawable.bg_chat_ai_message);
             }
             textView.setLayoutParams(params);
         }
