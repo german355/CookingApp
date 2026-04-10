@@ -12,7 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.cooking.R;
@@ -25,11 +27,12 @@ import com.example.cooking.ui.utils.MarkdownUtils;
 
 import android.app.Activity;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MessageAdapter extends ListAdapter<Message, RecyclerView.ViewHolder> {
 
-    private List<Message> messages;
     private static final int TYPE_USER = 0;
     private static final int TYPE_AI = 1;
     private static final int TYPE_LOADING = 2;
@@ -37,14 +40,42 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int TYPE_RECIPE_FLOW_LOADING = 4;
     private static final int TYPE_CREATED_RECIPE = 5;
 
-    public MessageAdapter(List<Message> messages) {
-        this.messages = messages;
+    public MessageAdapter() {
+        super(DIFF_CALLBACK);
     }
 
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
-        notifyDataSetChanged();
-    }
+    private static final DiffUtil.ItemCallback<Message> DIFF_CALLBACK = new DiffUtil.ItemCallback<Message>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull Message oldItem, @NonNull Message newItem) {
+            return Objects.equals(oldItem.getId(), newItem.getId());
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull Message oldItem, @NonNull Message newItem) {
+            return oldItem.getType() == newItem.getType()
+                    && Objects.equals(oldItem.getText(), newItem.getText())
+                    && Objects.equals(oldItem.getSecondaryText(), newItem.getSecondaryText())
+                    && oldItem.isUser() == newItem.isUser()
+                    && recipesEqual(oldItem.getAttachedRecipes(), newItem.getAttachedRecipes())
+                    && recipeEqual(oldItem.getAttachedRecipe(), newItem.getAttachedRecipe());
+        }
+
+        private boolean recipeEqual(Recipe a, Recipe b) {
+            if (a == null && b == null) return true;
+            if (a == null || b == null) return false;
+            return Objects.equals(a.getId(), b.getId());
+        }
+
+        private boolean recipesEqual(List<Recipe> a, List<Recipe> b) {
+            if (a == null && b == null) return true;
+            if (a == null || b == null) return false;
+            if (a.size() != b.size()) return false;
+            for (int i = 0; i < a.size(); i++) {
+                if (!Objects.equals(a.get(i).getId(), b.get(i).getId())) return false;
+            }
+            return true;
+        }
+    };
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -70,29 +101,22 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Message message = messages.get(position);
+        Message message = getItem(position);
         if (holder instanceof LoadingViewHolder) {
-        } else if (holder instanceof RecipeFlowLoadingViewHolder) {
+              } else if (holder instanceof RecipeFlowLoadingViewHolder) {
             ((RecipeFlowLoadingViewHolder) holder).bind(message);
         } else if (holder instanceof CreatedRecipeViewHolder) {
             ((CreatedRecipeViewHolder) holder).bind(message.getAttachedRecipe(), message.getSecondaryText());
-        } else {
-            if (holder instanceof RecipesViewHolder) {
-                ((RecipesViewHolder) holder).bind(message.getAttachedRecipes());
-            } else {
-                ((MessageViewHolder) holder).bind(message);
-            }
+        } else if (holder instanceof RecipesViewHolder) {
+            ((RecipesViewHolder) holder).bind(message.getAttachedRecipes());
+        } else if (holder instanceof MessageViewHolder) {
+            ((MessageViewHolder) holder).bind(message);
         }
     }
 
     @Override
-    public int getItemCount() {
-        return messages != null ? messages.size() : 0;
-    }
-
-    @Override
     public int getItemViewType(int position) {
-        Message msg = messages.get(position);
+        Message msg = getItem(position);
         if (msg.getType() == MessageType.LOADING) return TYPE_LOADING;
         if (msg.getType() == MessageType.USER) return TYPE_USER;
         if (msg.getType() == MessageType.AI) return TYPE_AI;
@@ -137,7 +161,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         public void bind(List<Recipe> recipes) {
-            adapter.submitList(recipes);
+            adapter.submitList(recipes != null ? new ArrayList<>(recipes) : new ArrayList<>());
         }
     }
 
@@ -184,7 +208,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             titleView.setText(recipe.getTitle());
             subtitleView.setText(subtitle);
             if (recipe.getPhoto_url() != null && !recipe.getPhoto_url().isEmpty()) {
-                Glide.with(imageView.getContext())
+                Glide.with(itemView)
                         .load(recipe.getPhoto_url())
                         .placeholder(R.drawable.placeholder_food)
                         .error(R.drawable.placeholder_food)
@@ -197,21 +221,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             cardView.setOnClickListener(v -> {
                 Intent intent = new Intent(v.getContext(), RecipeDetailActivity.class);
                 intent.putExtra(RecipeDetailActivity.EXTRA_SELECTED_RECIPE, recipe);
-                Context context = v.getContext();
-                Activity activity = null;
-                Context baseContext = context;
-                while (baseContext instanceof ContextWrapper) {
-                    if (baseContext instanceof Activity) {
-                        activity = (Activity) baseContext;
-                        break;
-                    }
-                    baseContext = ((ContextWrapper) baseContext).getBaseContext();
-                }
-                if (activity != null) {
-                    activity.startActivityForResult(intent, 200);
-                } else {
-                    context.startActivity(intent);
-                }
+                Activity activity = (Activity) v.getContext();
+                activity.startActivityForResult(intent, 200);
             });
         }
     }

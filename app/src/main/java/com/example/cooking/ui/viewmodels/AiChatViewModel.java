@@ -29,14 +29,17 @@ public class AiChatViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Message>> messages = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> canSend = new MutableLiveData<>(true);
-    private final MutableLiveData<String> showMessage = new MutableLiveData<>();
+    private final SingleLiveEvent<String> showMessage = new SingleLiveEvent<>();
     private final ChatRepository chatRepository;
+    private final RecipeLocalRepository recipeLocalRepository;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private Integer contextualRecipeId;
     private Runnable cooldownRunnable;
     private boolean recipeFlowActive = false;
     private String inFlightRequestId;
+    private String activeHistoryLoadId;
+    private long lastHistoryLoadTime = 0;
     private int pendingHistoryRefreshAttempts = 0;
     private final List<Runnable> pendingHistoryRefreshRunnables = new ArrayList<>();
 
@@ -51,10 +54,20 @@ public class AiChatViewModel extends AndroidViewModel {
     public AiChatViewModel(@NonNull Application application) {
         super(application);
         chatRepository = new ChatRepository(application);
+        recipeLocalRepository = new RecipeLocalRepository(application);
         loadHistory(false);
     }
 
+    private List<Message> getCurrentMessages() {
+        List<Message> current = messages.getValue();
+        return current != null ? new ArrayList<>(current) : new ArrayList<>();
+    }
+
     public void refreshHistory() {
+        long now = System.currentTimeMillis();
+        if (now - lastHistoryLoadTime < 5000) {
+            return;
+        }
         loadHistory(true);
     }
 
@@ -63,7 +76,11 @@ public class AiChatViewModel extends AndroidViewModel {
         if (historyLiveData != null && historyObserver != null) {
             historyLiveData.removeObserver(historyObserver);
         }
+        final String loadId = UUID.randomUUID().toString();
+        activeHistoryLoadId = loadId;
         historyObserver = response -> {
+            if (!loadId.equals(activeHistoryLoadId)) return;
+            lastHistoryLoadTime = System.currentTimeMillis();
             isLoading.setValue(false);
             if (response != null && response.getMessageCount() == 0) {
                 if (shouldReplaceWithHistory(Collections.emptyList(), mergeWithCurrent)) {
@@ -98,7 +115,7 @@ public class AiChatViewModel extends AndroidViewModel {
         return canSend;
     }
 
-    public LiveData<String> getShowMessage() {
+    public SingleLiveEvent<String> getShowMessage() {
         return showMessage;
     }
 
@@ -118,7 +135,7 @@ public class AiChatViewModel extends AndroidViewModel {
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            List<Message> temp = new ArrayList<>(messages.getValue());
+            List<Message> temp = getCurrentMessages();
             temp.add(new Message(getApplication().getString(R.string.error_need_auth), false));
             messages.setValue(temp);
             return false;
@@ -126,9 +143,10 @@ public class AiChatViewModel extends AndroidViewModel {
 
         pendingHistoryRefreshAttempts = 0;
         clearPendingHistoryRefreshes();
+        activeHistoryLoadId = null;
         inFlightRequestId = UUID.randomUUID().toString();
         canSend.setValue(false);
-        List<Message> currentMessages = messages.getValue() != null ? new ArrayList<>(messages.getValue()) : new ArrayList<>();
+        List<Message> currentMessages = getCurrentMessages();
         currentMessages.add(new Message(text, true));
 
         if (shouldUseRecipeFlowLoading(text)) {
@@ -149,7 +167,7 @@ public class AiChatViewModel extends AndroidViewModel {
         }
         messageObserver = response -> {
             isLoading.setValue(false);
-            List<Message> updatedMessages = new ArrayList<>(messages.getValue());
+            List<Message> updatedMessages = getCurrentMessages();
             boolean removedLoading = false;
             for (int i = updatedMessages.size() - 1; i >= 0; i--) {
                 Message.MessageType type = updatedMessages.get(i).getType();
@@ -162,7 +180,7 @@ public class AiChatViewModel extends AndroidViewModel {
 
             if (response != null && response.isSuccess()) {
                 String aiText = response.getAiResponse();
-                List<Message> listWithoutRecipes = removedLoading ? updatedMessages : new ArrayList<>(messages.getValue());
+                List<Message> listWithoutRecipes = removedLoading ? updatedMessages : getCurrentMessages();
                 if (aiText != null && !aiText.isEmpty()) {
                     listWithoutRecipes.add(new Message(aiText, false));
                 }
@@ -222,13 +240,18 @@ public class AiChatViewModel extends AndroidViewModel {
             return false;
         }
         String normalized = messageText.toLowerCase();
-        return normalized.contains("рецепт")
+        return (normalized.contains("рецепт") || normalized.contains("recipe"))
                 && (normalized.contains("созд")
                 || normalized.contains("сгенер")
                 || normalized.contains("придум")
                 || normalized.contains("хочу")
                 || normalized.contains("сделай")
-                || normalized.contains("приготов"));
+                || normalized.contains("приготов")
+                || normalized.contains("creat")
+                || normalized.contains("generat")
+                || normalized.contains("want")
+                || normalized.contains("make")
+                || normalized.contains("cook"));
     }
 
     private List<Message> buildMessagesFromHistory(List<ChatMessage> historyMessages) {
@@ -335,16 +358,16 @@ public class AiChatViewModel extends AndroidViewModel {
             return false;
         }
         String normalized = messageText.toLowerCase();
-        return normalized.contains("создал рецепт") || normalized.contains("готово! я создал");
+        return normalized.contains("создал рецепт") || normalized.contains("готово! я создал")
+                || normalized.contains("created a recipe") || normalized.contains("here's your recipe");
     }
 
     private List<Recipe> resolveRecipes(List<Integer> recipeIds) {
-        RecipeLocalRepository localRepo = new RecipeLocalRepository(getApplication());
         List<Integer> missingIds = new ArrayList<>();
 
         for (Integer id : recipeIds) {
             if (id == null) continue;
-            Recipe recipe = localRepo.getRecipeByIdSync(id);
+            Recipe recipe = recipeLocalRepository.getRecipeByIdSync(id);
             if (recipe == null) {
                 missingIds.add(id);
             }
@@ -353,10 +376,10 @@ public class AiChatViewModel extends AndroidViewModel {
         if (!missingIds.isEmpty()) {
             List<Recipe> fetchedRecipes = chatRepository.fetchRecipesByIdsSync(missingIds);
             for (Recipe recipe : fetchedRecipes) {
-                if (localRepo.getRecipeByIdSync(recipe.getId()) != null) {
-                    localRepo.updateSync(recipe);
+                if (recipeLocalRepository.getRecipeByIdSync(recipe.getId()) != null) {
+                    recipeLocalRepository.updateSync(recipe);
                 } else {
-                    localRepo.insertSync(recipe);
+                    recipeLocalRepository.insertSync(recipe);
                 }
             }
         }
@@ -364,7 +387,7 @@ public class AiChatViewModel extends AndroidViewModel {
         List<Recipe> orderedRecipes = new ArrayList<>();
         for (Integer id : recipeIds) {
             if (id == null) continue;
-            Recipe recipe = localRepo.getRecipeByIdSync(id);
+            Recipe recipe = recipeLocalRepository.getRecipeByIdSync(id);
             if (recipe != null) {
                 orderedRecipes.add(recipe);
             }
@@ -373,17 +396,18 @@ public class AiChatViewModel extends AndroidViewModel {
     }
 
     private void applyCooldown(int retryAfterSeconds, String serverMessage) {
+        int clampedSeconds = Math.min(retryAfterSeconds, 60);
         canSend.setValue(false);
         String message = (serverMessage != null && !serverMessage.isEmpty())
                 ? serverMessage
-                : getApplication().getString(R.string.chat_rate_limit_message, retryAfterSeconds);
+                : getApplication().getString(R.string.chat_rate_limit_message, clampedSeconds);
         showMessage.setValue(message);
 
         if (cooldownRunnable != null) {
             mainHandler.removeCallbacks(cooldownRunnable);
         }
         cooldownRunnable = () -> canSend.postValue(true);
-        mainHandler.postDelayed(cooldownRunnable, retryAfterSeconds * 1000L);
+        mainHandler.postDelayed(cooldownRunnable, clampedSeconds * 1000L);
     }
 
     private void scheduleHistoryRefresh() {
@@ -432,11 +456,9 @@ public class AiChatViewModel extends AndroidViewModel {
     }
 
     public void clearChat() {
-        // Проверяем аутентификацию пользователя
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+          FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            // Добавляем сообщение от "собеседника"
-            List<Message> temp = new ArrayList<>(messages.getValue());
+            List<Message> temp = getCurrentMessages();
             temp.add(new Message(getApplication().getString(R.string.error_need_auth), false));
             messages.setValue(temp);
             return;

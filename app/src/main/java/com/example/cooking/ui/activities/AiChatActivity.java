@@ -48,7 +48,7 @@ public class AiChatActivity extends AppCompatActivity {
                 .show();
             return true;
         } else if (id == android.R.id.home) {
-            onBackPressed();
+            finish();
             return true;
         }
         
@@ -76,7 +76,7 @@ public class AiChatActivity extends AppCompatActivity {
         }
 
         recyclerViewMessages = findViewById(R.id.recyclerViewMessages);
-        messageAdapter = new MessageAdapter(new ArrayList<Message>());
+        messageAdapter = new MessageAdapter();
         recyclerViewMessages.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewMessages.setAdapter(messageAdapter);
 
@@ -94,10 +94,10 @@ public class AiChatActivity extends AppCompatActivity {
     }
 
     private void setupObservers() {
-        viewModel.getMessages().observe(this, messages -> {
-            messageAdapter.setMessages(messages);
-            if (!messages.isEmpty()) {
-                recyclerViewMessages.scrollToPosition(messages.size() - 1);
+        viewModel.getMessages().observe(this, messageList -> {
+            messageAdapter.submitList(messageList);
+            if (messageList != null && !messageList.isEmpty()) {
+                recyclerViewMessages.scrollToPosition(messageList.size() - 1);
             }
         });
         
@@ -109,8 +109,8 @@ public class AiChatActivity extends AppCompatActivity {
         );
         
         viewModel.getShowMessage().observe(this, message -> {
-            if (message != null && !message.isEmpty()) {
-                Snackbar.make(findViewById(android.R.id.content), 
+            if (message != null) {
+                Snackbar.make(findViewById(android.R.id.content),
                     message, Snackbar.LENGTH_SHORT).show();
             }
         });
