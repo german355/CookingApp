@@ -3,8 +3,6 @@ package com.example.cooking.ui.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.widget.FrameLayout;
 import android.view.Gravity;
@@ -24,8 +22,6 @@ import com.example.cooking.domain.entities.Message.MessageType;
 import com.example.cooking.ui.activities.RecipeDetailActivity;
 import com.example.cooking.ui.adapters.Recipe.RecipeListAdapter;
 import com.example.cooking.ui.utils.MarkdownUtils;
-
-import android.app.Activity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +48,7 @@ public class MessageAdapter extends ListAdapter<Message, RecyclerView.ViewHolder
 
         @Override
         public boolean areContentsTheSame(@NonNull Message oldItem, @NonNull Message newItem) {
-            return oldItem.getType() == newItem.getType()
+            return Objects.equals(oldItem.getType(), newItem.getType())
                     && Objects.equals(oldItem.getText(), newItem.getText())
                     && Objects.equals(oldItem.getSecondaryText(), newItem.getSecondaryText())
                     && oldItem.isUser() == newItem.isUser()
@@ -205,8 +201,15 @@ public class MessageAdapter extends ListAdapter<Message, RecyclerView.ViewHolder
             if (recipe == null) {
                 return;
             }
-            titleView.setText(recipe.getTitle());
+            String recipeTitle = recipe.getTitle();
+            titleView.setText(recipeTitle);
             subtitleView.setText(subtitle);
+            String contentDescription = itemView.getContext().getString(
+                    R.string.chat_created_recipe_card_description,
+                    recipeTitle
+            );
+            imageView.setContentDescription(contentDescription);
+            cardView.setContentDescription(contentDescription);
             if (recipe.getPhoto_url() != null && !recipe.getPhoto_url().isEmpty()) {
                 Glide.with(itemView)
                         .load(recipe.getPhoto_url())
@@ -221,8 +224,7 @@ public class MessageAdapter extends ListAdapter<Message, RecyclerView.ViewHolder
             cardView.setOnClickListener(v -> {
                 Intent intent = new Intent(v.getContext(), RecipeDetailActivity.class);
                 intent.putExtra(RecipeDetailActivity.EXTRA_SELECTED_RECIPE, recipe);
-                Activity activity = (Activity) v.getContext();
-                activity.startActivityForResult(intent, 200);
+                v.getContext().startActivity(intent);
             });
         }
     }

@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/md_theme_background">
+    android:layout_height="match_parent">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/topAppBar"
@@ -26,6 +25,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:baselineAligned="false"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingHorizontal="12dp"
@@ -36,6 +36,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:baselineAligned="false"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:background="@drawable/bg_chat_input_pill"
@@ -49,7 +50,8 @@
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:hint="@string/ai_chat_message_hint"
-                android:inputType="textMultiLine"
+                android:imeOptions="actionSend"
+                android:inputType="textCapSentences|textMultiLine"
                 android:minLines="1"
                 android:maxLines="5"
                 android:scrollHorizontally="false"
@@ -59,9 +61,10 @@
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/buttonSend"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
-                app:fabCustomSize="38dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:alpha="0.38"
+                app:fabCustomSize="44dp"
                 app:shapeAppearanceOverlay="@style/RoundedButton"
                 app:srcCompat="@drawable/send"
                 app:backgroundTint="@color/md_theme_primary"
@@ -69,6 +72,35 @@
                 android:contentDescription="@string/ai_chat_send_button_description" />
 
         </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/loadingStatusContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="12dp"
+        android:visibility="gone">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/loadingStatusIndicator"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:indeterminate="true"
+            app:indicatorColor="@color/md_theme_primary"
+            app:indicatorSize="18dp"
+            app:trackThickness="2dp" />
+
+        <TextView
+            android:id="@+id/loadingStatusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/md_theme_onSurfaceVariant"
+            android:textSize="13sp" />
     </LinearLayout>
 
 </LinearLayout>

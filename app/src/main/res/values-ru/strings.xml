@@ -128,6 +128,8 @@
     <string name="ai_chat_message_hint">Введите сообщение</string>
     <string name="ai_chat_title">Кулинарный ассистент</string>
     <string name="ai_chat_send_button_description">Отправка сообщения</string>
+    <string name="ai_chat_status_generating">Ассистент готовит ответ…</string>
+    <string name="ai_chat_status_syncing">Обновляю диалог…</string>
 
     <!-- Add Recipe Activity -->
     <string name="add_recipe_image_label">Изображение рецепта*</string>
@@ -300,6 +302,7 @@
     <string name="profile_delete_account_message">Вы действительно хотите удалить аккаунт? Это действие необратимо.\n\nВведите пароль для подтверждения:</string>
     <string name="action_open_chat">Открыть чат</string>
     <string name="action_close">Закрыть</string>
+    <string name="chat_clear_action">Очистить чат</string>
     <string name="chat_clear_title">Очистить чат?</string>
     <string name="chat_clear_message">Вы уверены, что хотите очистить чат?</string>
     <string name="shared_profile_default_name">Профиль</string>
@@ -408,4 +411,5 @@
     <string name="chat_recipe_flow_loading_title">Собираю ваш рецепт</string>
     <string name="chat_recipe_flow_loading_subtitle">Уточняю детали, подбираю рецепт и готовлю красивую карточку результата.</string>
     <string name="chat_created_recipe_subtitle">ИИ создал этот рецепт для вас. Нажмите, чтобы открыть.</string>
-</resources> 
+    <string name="chat_created_recipe_card_description">Открыть рецепт %1$s</string>
+</resources>

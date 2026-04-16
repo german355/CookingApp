@@ -1,8 +1,14 @@
 package com.example.cooking.ui.activities;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.EditorInfo;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,10 +21,11 @@ import com.example.cooking.domain.entities.Message;
 import com.example.cooking.ui.adapters.MessageAdapter;
 import com.example.cooking.ui.viewmodels.AiChatViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class AiChatActivity extends AppCompatActivity {
     public static final String EXTRA_CONTEXT_RECIPE_ID = "context_recipe_id";
@@ -28,6 +35,10 @@ public class AiChatActivity extends AppCompatActivity {
     private MessageAdapter messageAdapter;
     private TextInputEditText editTextMessage;
     private FloatingActionButton buttonSend;
+    private LinearLayout loadingStatusContainer;
+    private CircularProgressIndicator loadingStatusIndicator;
+    private TextView loadingStatusText;
+    private List<Message> currentMessages;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -77,11 +88,16 @@ public class AiChatActivity extends AppCompatActivity {
 
         recyclerViewMessages = findViewById(R.id.recyclerViewMessages);
         messageAdapter = new MessageAdapter();
-        recyclerViewMessages.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setStackFromEnd(true);
+        recyclerViewMessages.setLayoutManager(layoutManager);
         recyclerViewMessages.setAdapter(messageAdapter);
 
         editTextMessage = findViewById(R.id.editTextMessage);
         buttonSend = findViewById(R.id.buttonSend);
+        loadingStatusContainer = findViewById(R.id.loadingStatusContainer);
+        loadingStatusIndicator = findViewById(R.id.loadingStatusIndicator);
+        loadingStatusText = findViewById(R.id.loadingStatusText);
 
         setupObservers();
         setupEventListeners();
@@ -95,18 +111,19 @@ public class AiChatActivity extends AppCompatActivity {
 
     private void setupObservers() {
         viewModel.getMessages().observe(this, messageList -> {
+            currentMessages = messageList;
             messageAdapter.submitList(messageList);
             if (messageList != null && !messageList.isEmpty()) {
                 recyclerViewMessages.scrollToPosition(messageList.size() - 1);
             }
+            updateLoadingState();
         });
         
-        viewModel.getIsLoading().observe(this, loading ->
-            buttonSend.setEnabled(!loading && Boolean.TRUE.equals(viewModel.getCanSend().getValue()))
-        );
-        viewModel.getCanSend().observe(this, canSend ->
-            buttonSend.setEnabled(Boolean.TRUE.equals(canSend) && !Boolean.TRUE.equals(viewModel.getIsLoading().getValue()))
-        );
+        viewModel.getIsLoading().observe(this, loading -> {
+            updateSendAvailability();
+            updateLoadingState();
+        });
+        viewModel.getCanSend().observe(this, canSend -> updateSendAvailability());
         
         viewModel.getShowMessage().observe(this, message -> {
             if (message != null) {
@@ -117,17 +134,90 @@ public class AiChatActivity extends AppCompatActivity {
     }
 
     private void setupEventListeners() {
-        buttonSend.setOnClickListener(v -> {
-            String text = editTextMessage.getText().toString().trim();
-            if (!text.isEmpty()) {
-                buttonSend.setEnabled(false);
-                if (viewModel.sendMessage(text)) {
-                    editTextMessage.setText("");
-                } else {
-                    buttonSend.setEnabled(Boolean.TRUE.equals(viewModel.getCanSend().getValue())
-                            && !Boolean.TRUE.equals(viewModel.getIsLoading().getValue()));
-                }
+        editTextMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateSendAvailability();
             }
         });
+
+        editTextMessage.setOnEditorActionListener((v, actionId, event) -> {
+            boolean imeSend = actionId == EditorInfo.IME_ACTION_SEND
+                    || actionId == EditorInfo.IME_ACTION_DONE;
+            boolean hardwareEnter = actionId == EditorInfo.IME_NULL
+                    && event != null
+                    && event.getAction() == KeyEvent.ACTION_DOWN
+                    && event.getKeyCode() == KeyEvent.KEYCODE_ENTER
+                    && !event.isShiftPressed();
+            if (!imeSend && !hardwareEnter) {
+                return false;
+            }
+            return trySendMessage();
+        });
+
+        buttonSend.setOnClickListener(v -> trySendMessage());
+        updateSendAvailability();
+    }
+
+    private boolean trySendMessage() {
+        String text = getTrimmedMessage();
+        if (text.isEmpty()) {
+            updateSendAvailability();
+            return false;
+        }
+        if (!viewModel.sendMessage(text)) {
+            updateSendAvailability();
+            return false;
+        }
+        editTextMessage.setText("");
+        updateSendAvailability();
+        return true;
+    }
+
+    private String getTrimmedMessage() {
+        Editable editable = editTextMessage.getText();
+        return editable == null ? "" : editable.toString().trim();
+    }
+
+    private void updateSendAvailability() {
+        boolean enabled = !getTrimmedMessage().isEmpty()
+                && Boolean.TRUE.equals(viewModel.getCanSend().getValue());
+        buttonSend.setEnabled(enabled);
+        buttonSend.setAlpha(enabled ? 1f : 0.38f);
+    }
+
+    private void updateLoadingState() {
+        boolean isLoading = Boolean.TRUE.equals(viewModel.getIsLoading().getValue());
+        if (!isLoading) {
+            loadingStatusContainer.setVisibility(LinearLayout.GONE);
+            return;
+        }
+
+        boolean hasPendingAssistantReply = false;
+        if (currentMessages != null) {
+            for (Message message : currentMessages) {
+                Message.MessageType type = message.getType();
+                if (type == Message.MessageType.LOADING || type == Message.MessageType.RECIPE_FLOW_LOADING) {
+                    hasPendingAssistantReply = true;
+                    break;
+                }
+            }
+        }
+
+        loadingStatusContainer.setVisibility(LinearLayout.VISIBLE);
+        loadingStatusIndicator.show();
+        loadingStatusText.setText(
+                hasPendingAssistantReply
+                        ? R.string.ai_chat_status_generating
+                        : R.string.ai_chat_status_syncing
+        );
     }
 }
