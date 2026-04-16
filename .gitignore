@@ -2,12 +2,14 @@
 .idea/
 .vscode/
 .cursor/
+.claude/settings.local.json
 
 # API keys and secrets
 *.properties
 apikey.txt
 secrets.json
 .env
+*.hprof
 
 # Log files
 *.log
@@ -30,6 +32,8 @@ secrets.json
 local.properties
 
 /.windsurf
+.omc/
+.omx/
 # Mac OS
 .DS_Store
 .windsurf/rules/autonomus.md

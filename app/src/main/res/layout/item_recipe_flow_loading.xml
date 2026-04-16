@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="4dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:background="@drawable/bg_chat_loading_card">
+
+        <com.example.cooking.ui.widgets.LoadingDots
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:textColor="@color/md_theme_onSurfaceVariant"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textRecipeFlowTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/md_theme_onSurface"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textRecipeFlowSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/md_theme_onSurfaceVariant"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
