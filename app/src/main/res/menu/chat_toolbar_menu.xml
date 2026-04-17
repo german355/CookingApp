@@ -4,6 +4,6 @@
     <item
         android:id="@+id/action_clear_chat"
         android:icon="@drawable/ic_delete"
-        android:title="Очистить чат"
+        android:title="@string/chat_clear_action"
         app:showAsAction="ifRoom" />
 </menu>

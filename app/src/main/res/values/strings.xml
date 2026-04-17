@@ -130,6 +130,8 @@
     <string name="ai_chat_message_hint">Enter a message</string>
     <string name="ai_chat_title">Culinary Assistant</string>
     <string name="ai_chat_send_button_description">Send message</string>
+    <string name="ai_chat_status_generating">Assistant is preparing a reply…</string>
+    <string name="ai_chat_status_syncing">Updating conversation…</string>
 
     <!-- Add Recipe Activity -->
     <string name="add_recipe_image_label">Recipe image*</string>
@@ -301,6 +303,7 @@
     <string name="profile_delete_account_message">Are you sure you want to delete your account? This action is irreversible.\n\nEnter your password to confirm:</string>
     <string name="action_open_chat">Open chat</string>
     <string name="action_close">Close</string>
+    <string name="chat_clear_action">Clear chat</string>
     <string name="chat_clear_title">Clear chat?</string>
     <string name="chat_clear_message">Are you sure you want to clear the chat?</string>
     <string name="shared_profile_default_name">Profile</string>
@@ -409,4 +412,5 @@
     <string name="chat_recipe_flow_loading_title">Working on your recipe</string>
     <string name="chat_recipe_flow_loading_subtitle">Clarifying the details, preparing the recipe, and getting everything ready.</string>
     <string name="chat_created_recipe_subtitle">AI created this recipe for you. Tap to open it.</string>
+    <string name="chat_created_recipe_card_description">Open recipe %1$s</string>
 </resources>
