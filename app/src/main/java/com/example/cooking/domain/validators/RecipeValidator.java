@@ -6,6 +6,7 @@ import android.util.Log;
 import com.example.cooking.R;
 import com.example.cooking.domain.entities.Ingredient;
 import com.example.cooking.domain.entities.Step;
+import com.example.cooking.domain.units.UnitNormalizer;
 
 import java.util.List;
 
@@ -146,7 +147,7 @@ public class RecipeValidator {
         }
         
         // Проверяем тип/единицу измерения
-        if (ingredient.getType() == null || ingredient.getType().trim().isEmpty()) {
+        if (!UnitNormalizer.isAcceptableForValidation(ingredient.getType())) {
             String error = context.getString(R.string.validation_ingredient_unit_required, position);
             return ValidationResult.error(error);
         }

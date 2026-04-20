@@ -11,6 +11,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -42,7 +43,7 @@ public class DataConverters {
         }
         
         try {
-            return GSON_INSTANCE.toJson(ingredients);
+            return GSON_INSTANCE.toJson(Ingredient.copiesForPersistence(ingredients));
         } catch (Exception e) {
             Log.e(TAG, "Ошибка при сериализации списка ингредиентов", e);
             return null;
@@ -159,8 +160,8 @@ public class DataConverters {
      * Возвращает статистику использования кэша.
      */
     public static String getCacheStats() {
-        return String.format("Cache stats: Ingredients=%d, Steps=%d, Max=%d", 
-                           INGREDIENT_CACHE.size(), STEP_CACHE.size(), MAX_CACHE_SIZE);
+        return String.format(Locale.ROOT, "Cache stats: Ingredients=%d, Steps=%d, Max=%d",
+                INGREDIENT_CACHE.size(), STEP_CACHE.size(), MAX_CACHE_SIZE);
     }
 
     /**

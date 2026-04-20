@@ -2,6 +2,13 @@ package com.example.cooking.domain.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.example.cooking.domain.units.SupportedUnit;
+import com.example.cooking.domain.units.UnitNormalizer;
+import com.example.cooking.domain.units.UnitResolution;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -77,6 +84,42 @@ public class Ingredient implements Parcelable {
      */
     public String getUnit() {
         return type != null ? type : "";
+    }
+
+    public UnitResolution resolveUnit() {
+        return UnitNormalizer.resolve(type);
+    }
+
+    public SupportedUnit getSupportedUnit() {
+        return resolveUnit().getSupportedUnit();
+    }
+
+    public String getNormalizedType() {
+        return resolveUnit().getNormalizedValue();
+    }
+
+    public boolean hasValidUnitValue() {
+        return UnitNormalizer.isAcceptableForValidation(type);
+    }
+
+    public Ingredient copyForPersistence() {
+        Ingredient copy = new Ingredient();
+        copy.setName(name);
+        copy.setCount(count);
+        copy.setType(getNormalizedType());
+        return copy;
+    }
+
+    public static ArrayList<Ingredient> copiesForPersistence(List<Ingredient> ingredients) {
+        ArrayList<Ingredient> normalizedIngredients = new ArrayList<>();
+        if (ingredients == null) {
+            return normalizedIngredients;
+        }
+
+        for (Ingredient ingredient : ingredients) {
+            normalizedIngredients.add(ingredient != null ? ingredient.copyForPersistence() : null);
+        }
+        return normalizedIngredients;
     }
 
     @Override

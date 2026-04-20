@@ -297,7 +297,7 @@ public class RecipeRemoteRepository extends NetworkRepository {
         for (Ingredient ingredient : ingredients) {
             String name = ingredient != null ? ingredient.getName() : null;
             String count = ingredient != null ? String.valueOf(ingredient.getCount()) : null;
-            String type = ingredient != null ? ingredient.getType() : null;
+            String type = ingredient != null ? ingredient.getNormalizedType() : null;
             payloads.add(new IngredientPayload(name, count, type));
         }
         return gson.toJson(payloads);

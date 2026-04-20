@@ -7,6 +7,10 @@ public class MySharedPreferences {
 
     // Имя файла настроек
     private static final String PREF_NAME = "acs";
+    public static final String KEY_MEASUREMENT_SYSTEM = "measurement_system";
+    public static final String MEASUREMENT_SYSTEM_ORIGINAL = "original";
+    public static final String MEASUREMENT_SYSTEM_METRIC = "metric";
+    public static final String MEASUREMENT_SYSTEM_IMPERIAL = "imperial";
 
     // Объект SharedPreferences и его редактор
     private SharedPreferences sharedPreferences;
@@ -29,6 +33,27 @@ public class MySharedPreferences {
     // Получение строкового значения по ключу, если значение отсутствует — возвращается defaultValue
     public String getString(String key, String defaultValue) {
         return sharedPreferences.getString(key, defaultValue);
+    }
+
+    public void setMeasurementSystem(String measurementSystem) {
+        putString(KEY_MEASUREMENT_SYSTEM, normalizeMeasurementSystem(measurementSystem));
+    }
+
+    public String getMeasurementSystem() {
+        return normalizeMeasurementSystem(getString(KEY_MEASUREMENT_SYSTEM, MEASUREMENT_SYSTEM_ORIGINAL));
+    }
+
+    public static String normalizeMeasurementSystem(String measurementSystem) {
+        if (measurementSystem == null) {
+            return MEASUREMENT_SYSTEM_ORIGINAL;
+        }
+
+        measurementSystem = measurementSystem.trim();
+        if (MEASUREMENT_SYSTEM_METRIC.equals(measurementSystem)
+                || MEASUREMENT_SYSTEM_IMPERIAL.equals(measurementSystem)) {
+            return measurementSystem;
+        }
+        return MEASUREMENT_SYSTEM_ORIGINAL;
     }
 
     // Сохранение целочисленного значения по ключу

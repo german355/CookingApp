@@ -22,6 +22,18 @@
         <item>system</item>
     </string-array>
 
+    <string-array name="measurement_system_entries">
+        <item>@string/settings_measurement_system_original</item>
+        <item>@string/settings_measurement_system_metric</item>
+        <item>@string/settings_measurement_system_imperial</item>
+    </string-array>
+
+    <string-array name="measurement_system_values">
+        <item>original</item>
+        <item>metric</item>
+        <item>imperial</item>
+    </string-array>
+
     <string-array name="ingredient_types">
         <item>шт.</item>
         <item>г</item>
@@ -34,7 +46,17 @@
         <item>по вкусу</item>
     </string-array>
 
-
+    <string-array name="ingredient_type_values">
+        <item>pcs</item>
+        <item>g</item>
+        <item>kg</item>
+        <item>ml</item>
+        <item>l</item>
+        <item>tbsp</item>
+        <item>tsp</item>
+        <item>cup</item>
+        <item>to_taste</item>
+    </string-array>
 
     <string-array name="ingredients_list">
         <!-- Овощи и зелень -->

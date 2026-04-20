@@ -318,6 +318,11 @@
     <string name="menu_recipe_delete">Удалить</string>
     <string name="settings_appearance_title">Внешний вид</string>
     <string name="settings_theme_title">Тема</string>
+    <string name="settings_measurements_title">Измерения</string>
+    <string name="settings_measurement_system_title">Система измерения</string>
+    <string name="settings_measurement_system_original">Как в рецепте</string>
+    <string name="settings_measurement_system_metric">Метрическая</string>
+    <string name="settings_measurement_system_imperial">Имперская</string>
     <string name="settings_search_recommendations_title">Поиск и рекомендации</string>
     <string name="settings_smart_search_title">Умный поиск</string>
     <string name="settings_my_recipes_title">Мои рецепты</string>
@@ -344,6 +349,8 @@
     <string name="ingredient_error_amount_positive">Количество должно быть больше 0</string>
     <string name="ingredient_error_amount_invalid">Введите корректное число</string>
     <string name="ingredient_error_unit_required">Выберите единицу измерения</string>
+    <string name="ingredient_detail_missing_name">Ошибка: ингредиент отсутствует</string>
+    <string name="ingredient_detail_unnamed">Без названия</string>
     <string name="step_error_description_required">Опишите действие для этого шага</string>
     <string name="step_error_description_min_length">Описание должно содержать минимум 7 символов</string>
 

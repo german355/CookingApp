@@ -61,7 +61,7 @@ public class Recipe implements Parcelable {
                 out.nullValue();
                 return;
             }
-            GSON_INSTANCE.toJson(value, INGREDIENT_LIST_TYPE, out);
+            GSON_INSTANCE.toJson(Ingredient.copiesForPersistence(value), INGREDIENT_LIST_TYPE, out);
         }
 
         @Override

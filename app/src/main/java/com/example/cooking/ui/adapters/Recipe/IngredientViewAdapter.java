@@ -14,23 +14,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.cooking.R;
 import com.example.cooking.domain.entities.Ingredient;
+import com.example.cooking.domain.units.MeasurementSystem;
+import com.example.cooking.domain.units.UnitFormatter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 /**
- * Адаптер для отображения списка ингредиентов в RecyclerView
- * Использует ListAdapter с DiffUtil для эффективных обновлений
+ * Adapter for rendering recipe ingredients in the detail screen.
  */
 public class IngredientViewAdapter extends ListAdapter<IngredientViewAdapter.IngredientWithPortion, IngredientViewAdapter.IngredientViewHolder> {
 
     private final Context context;
     private int portionCount = 1;
+    private MeasurementSystem measurementSystem;
 
-    /**
-     * Wrapper класс для ингредиента с информацией о порциях
-     * Нужен для корректной работы DiffUtil при изменении только portiontCount
-     */
     public static class IngredientWithPortion {
         private final Ingredient ingredient;
         private final int portionCount;
@@ -40,8 +39,13 @@ public class IngredientViewAdapter extends ListAdapter<IngredientViewAdapter.Ing
             this.portionCount = portionCount;
         }
 
-        public Ingredient getIngredient() { return ingredient; }
-        public int getPortionCount() { return portionCount; }
+        public Ingredient getIngredient() {
+            return ingredient;
+        }
+
+        public int getPortionCount() {
+            return portionCount;
+        }
 
         @Override
         public boolean equals(Object o) {
@@ -57,9 +61,10 @@ public class IngredientViewAdapter extends ListAdapter<IngredientViewAdapter.Ing
         }
     }
 
-    public IngredientViewAdapter(Context context, List<Ingredient> ingredients) {
+    public IngredientViewAdapter(Context context, List<Ingredient> ingredients, MeasurementSystem measurementSystem) {
         super(DIFF_CALLBACK);
         this.context = context;
+        this.measurementSystem = measurementSystem;
         updateIngredientsInternal(ingredients, portionCount);
     }
 
@@ -73,53 +78,47 @@ public class IngredientViewAdapter extends ListAdapter<IngredientViewAdapter.Ing
     @Override
     public void onBindViewHolder(@NonNull IngredientViewHolder holder, int position) {
         IngredientWithPortion item = getItem(position);
-        holder.bind(item.getIngredient(), item.getPortionCount());
+        holder.bind(item.getIngredient(), item.getPortionCount(), measurementSystem);
     }
 
-    /**
-     * Эффективно обновляет список ингредиентов используя DiffUtil
-     * @param newIngredients новый список ингредиентов
-     */
     public void updateIngredients(List<Ingredient> newIngredients) {
         updateIngredientsInternal(newIngredients, this.portionCount);
     }
 
-    /**
-     * Эффективно обновляет количество порций используя DiffUtil
-     * @param portionCount новое количество порций
-     */
     public void updatePortionCount(int portionCount) {
         if (this.portionCount != portionCount) {
             this.portionCount = portionCount;
-            // Получаем текущие ингредиенты и обновляем их с новым portionCount
             List<IngredientWithPortion> currentItems = getCurrentList();
             if (!currentItems.isEmpty()) {
-                List<IngredientWithPortion> updatedItems = currentItems.stream()
-                    .map(item -> new IngredientWithPortion(item.getIngredient(), portionCount))
-                    .collect(java.util.stream.Collectors.toList());
+                List<IngredientWithPortion> updatedItems = new ArrayList<>(currentItems.size());
+                for (IngredientWithPortion item : currentItems) {
+                    updatedItems.add(new IngredientWithPortion(item.getIngredient(), portionCount));
+                }
                 submitList(updatedItems);
             }
         }
     }
 
-    /**
-     * Внутренний метод для обновления ингредиентов
-     */
+    public void updateMeasurementSystem(MeasurementSystem measurementSystem) {
+        if (measurementSystem != null && this.measurementSystem != measurementSystem) {
+            this.measurementSystem = measurementSystem;
+            notifyDataSetChanged();
+        }
+    }
+
     private void updateIngredientsInternal(List<Ingredient> ingredients, int portionCount) {
         if (ingredients == null || ingredients.isEmpty()) {
             submitList(java.util.Collections.emptyList());
             return;
         }
 
-        List<IngredientWithPortion> items = ingredients.stream()
-            .map(ingredient -> new IngredientWithPortion(ingredient, portionCount))
-            .collect(java.util.stream.Collectors.toList());
+        List<IngredientWithPortion> items = new ArrayList<>(ingredients.size());
+        for (Ingredient ingredient : ingredients) {
+            items.add(new IngredientWithPortion(ingredient, portionCount));
+        }
         submitList(items);
     }
 
-    /**
-     * ViewHolder для ингредиента
-     */
     static class IngredientViewHolder extends RecyclerView.ViewHolder {
         private final TextView nameTextView;
         private final TextView amountTextView;
@@ -130,71 +129,44 @@ public class IngredientViewAdapter extends ListAdapter<IngredientViewAdapter.Ing
             amountTextView = itemView.findViewById(R.id.ingredient_amount);
         }
 
-        /**
-         * Привязывает данные ингредиента к view
-         * @param ingredient объект ингредиента
-         * @param portionCount количество порций
-         */
-        public void bind(Ingredient ingredient, int portionCount) {
+        public void bind(Ingredient ingredient, int portionCount, MeasurementSystem measurementSystem) {
             if (ingredient == null) {
-                Log.e("IngredientViewHolder", "Получен null ингредиент");
-                nameTextView.setText("Ошибка: ингредиент отсутствует");
+                Log.e("IngredientViewHolder", "Ingredient is null");
+                nameTextView.setText(itemView.getContext().getString(R.string.ingredient_detail_missing_name));
                 amountTextView.setText("");
                 return;
             }
-            
-            // Устанавливаем название
+
             String name = ingredient.getName();
             if (name != null && !name.isEmpty()) {
                 nameTextView.setText(name);
             } else {
-                nameTextView.setText("Без названия");
+                nameTextView.setText(itemView.getContext().getString(R.string.ingredient_detail_unnamed));
             }
-            
-            // Рассчитываем количество с учетом порций
+
             float calculatedAmount = ingredient.getAmount() * portionCount;
-            String unit = ingredient.getUnit();
-            
-            if (unit == null) {
-                unit = "";
-            }
-            
-            // Форматируем вывод количества и единицы измерения
-            String formattedAmount;
-            if (calculatedAmount == (int) calculatedAmount) {
-                // Если число целое, убираем дробную часть
-                formattedAmount = String.format("%d %s", (int) calculatedAmount, unit);
-            } else {
-                // Иначе оставляем одну цифру после запятой
-                formattedAmount = String.format("%.1f %s", calculatedAmount, unit);
-            }
-            
-            amountTextView.setText(formattedAmount);
+            amountTextView.setText(UnitFormatter.format(calculatedAmount, ingredient.getType(), measurementSystem));
         }
     }
 
-    /**
-     * DiffUtil.ItemCallback для эффективного сравнения элементов
-     */
     private static final DiffUtil.ItemCallback<IngredientWithPortion> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<IngredientWithPortion>() {
                 @Override
                 public boolean areItemsTheSame(@NonNull IngredientWithPortion oldItem, @NonNull IngredientWithPortion newItem) {
-                    // Используем системный хеш-код для сравнения ингредиентов
-                    return System.identityHashCode(oldItem.getIngredient()) == 
-                           System.identityHashCode(newItem.getIngredient());
+                    return System.identityHashCode(oldItem.getIngredient()) ==
+                            System.identityHashCode(newItem.getIngredient());
                 }
 
                 @Override
                 public boolean areContentsTheSame(@NonNull IngredientWithPortion oldItem, @NonNull IngredientWithPortion newItem) {
                     Ingredient oldIngredient = oldItem.getIngredient();
                     Ingredient newIngredient = newItem.getIngredient();
-                    
-                    return oldItem.getPortionCount() == newItem.getPortionCount() &&
-                           Objects.equals(oldIngredient.getName(), newIngredient.getName()) &&
-                           oldIngredient.getAmount() == newIngredient.getAmount() &&
-                           Objects.equals(oldIngredient.getUnit(), newIngredient.getUnit()) &&
-                           Objects.equals(oldIngredient.getType(), newIngredient.getType());
+
+                    return oldItem.getPortionCount() == newItem.getPortionCount()
+                            && Objects.equals(oldIngredient.getName(), newIngredient.getName())
+                            && oldIngredient.getAmount() == newIngredient.getAmount()
+                            && Objects.equals(oldIngredient.getUnit(), newIngredient.getUnit())
+                            && Objects.equals(oldIngredient.getType(), newIngredient.getType());
                 }
             };
-} 
+}

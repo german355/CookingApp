@@ -319,6 +319,11 @@
     <string name="menu_recipe_delete">Delete</string>
     <string name="settings_appearance_title">Appearance</string>
     <string name="settings_theme_title">Theme</string>
+    <string name="settings_measurements_title">Measurements</string>
+    <string name="settings_measurement_system_title">Measurement system</string>
+    <string name="settings_measurement_system_original">Original recipe units</string>
+    <string name="settings_measurement_system_metric">Metric</string>
+    <string name="settings_measurement_system_imperial">Imperial</string>
     <string name="settings_search_recommendations_title">Search and recommendations</string>
     <string name="settings_smart_search_title">Smart search</string>
     <string name="settings_my_recipes_title">My recipes</string>
@@ -345,6 +350,8 @@
     <string name="ingredient_error_amount_positive">Quantity must be greater than 0</string>
     <string name="ingredient_error_amount_invalid">Enter a valid number</string>
     <string name="ingredient_error_unit_required">Select a unit</string>
+    <string name="ingredient_detail_missing_name">Error: ingredient is missing</string>
+    <string name="ingredient_detail_unnamed">Unnamed ingredient</string>
     <string name="step_error_description_required">Describe the action for this step</string>
     <string name="step_error_description_min_length">Description must be at least 7 characters</string>
 

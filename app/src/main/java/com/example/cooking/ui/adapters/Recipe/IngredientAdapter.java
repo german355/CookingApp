@@ -1,24 +1,29 @@
 package com.example.cooking.ui.adapters.Recipe;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageButton;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.cooking.R;
 import com.example.cooking.domain.entities.Ingredient;
+import com.example.cooking.domain.units.UnitNormalizer;
+import com.example.cooking.domain.units.UnitResolution;
 import com.google.android.material.textfield.TextInputEditText;
-import java.util.Objects;
-import android.widget.ArrayAdapter;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.Objects;
 
 public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter.ViewHolder> {
 
@@ -47,28 +52,27 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
         holder.bind(getItem(position), position);
     }
 
-    // ViewHolder с обработчиками изменений
     class ViewHolder extends RecyclerView.ViewHolder {
+        private static final int DEBOUNCE_DELAY_MS = 300;
+
         private final AutoCompleteTextView nameEditText;
         private final TextInputEditText countEditText;
         private final AutoCompleteTextView typeEditText;
         private final ImageButton removeButton;
         private final IngredientUpdateListener listener;
-        
         private final TextInputLayout nameLayout;
         private final TextInputLayout countLayout;
         private final TextInputLayout typeLayout;
-        
+        private final String[] unitLabels;
+        private final String[] unitValues;
+        private final Handler debounceHandler = new Handler(Looper.getMainLooper());
+
         private Ingredient currentIngredient;
         private int currentPosition;
-
         private TextWatcher nameWatcher;
         private TextWatcher countWatcher;
-        
-        private final Handler debounceHandler = new Handler(Looper.getMainLooper());
         private Runnable pendingNameUpdate;
         private Runnable pendingCountUpdate;
-        private static final int DEBOUNCE_DELAY_MS = 300;
 
         ViewHolder(@NonNull View itemView, IngredientUpdateListener listener) {
             super(itemView);
@@ -77,35 +81,34 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
             countEditText = itemView.findViewById(R.id.edit_ingredient_count);
             typeEditText = itemView.findViewById(R.id.edit_ingredient_type);
             removeButton = itemView.findViewById(R.id.button_remove_ingredient);
-            
+
             nameLayout = (TextInputLayout) nameEditText.getParent().getParent();
             countLayout = (TextInputLayout) countEditText.getParent().getParent();
             typeLayout = (TextInputLayout) typeEditText.getParent().getParent();
-            
+
             ArrayAdapter<String> nameAdapter = new ArrayAdapter<>(
-                itemView.getContext(),
-                android.R.layout.simple_dropdown_item_1line,
-                itemView.getContext().getResources().getStringArray(R.array.ingredients_list)
+                    itemView.getContext(),
+                    android.R.layout.simple_dropdown_item_1line,
+                    itemView.getContext().getResources().getStringArray(R.array.ingredients_list)
             );
             nameEditText.setAdapter(nameAdapter);
-            nameEditText.setThreshold(2); // Показывать подсказки после ввода 2 символов
-            
-            nameEditText.setDropDownWidth(android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-            
+            nameEditText.setThreshold(2);
+            nameEditText.setDropDownWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            unitLabels = itemView.getContext().getResources().getStringArray(R.array.ingredient_types);
+            unitValues = itemView.getContext().getResources().getStringArray(R.array.ingredient_type_values);
             ArrayAdapter<String> unitAdapter = new ArrayAdapter<>(
-                itemView.getContext(),
-                android.R.layout.simple_dropdown_item_1line,
-                itemView.getContext().getResources().getStringArray(R.array.ingredient_types)
+                    itemView.getContext(),
+                    android.R.layout.simple_dropdown_item_1line,
+                    unitLabels
             );
             typeEditText.setAdapter(unitAdapter);
-            
-            typeEditText.setDropDownWidth(android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-            
+            typeEditText.setDropDownWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+
             typeEditText.setOnClickListener(v -> typeEditText.showDropDown());
             typeEditText.setOnItemClickListener((parent, view, pos, id) -> {
-                String type = (String) parent.getItemAtPosition(pos);
                 if (currentIngredient != null) {
-                    currentIngredient.setType(type);
+                    currentIngredient.setType((String) parent.getItemAtPosition(pos));
                     typeLayout.setError(null);
                     listener.onIngredientUpdated(currentPosition, currentIngredient);
                 }
@@ -116,8 +119,7 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
                     listener.onIngredientRemoved(currentPosition);
                 }
             });
-            
-            // Добавляем локальную валидацию при потере фокуса
+
             setupFocusValidation();
         }
 
@@ -133,22 +135,19 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
 
             nameEditText.setText(ingredient.getName());
             countEditText.setText(ingredient.getCount() > 0 ? String.valueOf(ingredient.getCount()) : "");
-            typeEditText.setText(ingredient.getType(), false);
+            typeEditText.setText(resolveUnitLabel(ingredient.getType()), false);
+            removeButton.setVisibility(position == 0 ? View.GONE : View.VISIBLE);
 
-            if (position == 0) {
-                removeButton.setVisibility(View.GONE);
-            } else {
-                removeButton.setVisibility(View.VISIBLE);
-            }
-
-            // Добавляем новые Watcher'ы
             addWatchers();
         }
 
         private void removeWatchers() {
-            if (nameWatcher != null) nameEditText.removeTextChangedListener(nameWatcher);
-            if (countWatcher != null) countEditText.removeTextChangedListener(countWatcher);
-            
+            if (nameWatcher != null) {
+                nameEditText.removeTextChangedListener(nameWatcher);
+            }
+            if (countWatcher != null) {
+                countEditText.removeTextChangedListener(countWatcher);
+            }
             if (pendingNameUpdate != null) {
                 debounceHandler.removeCallbacks(pendingNameUpdate);
                 pendingNameUpdate = null;
@@ -163,64 +162,56 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
             nameWatcher = new SimpleTextWatcher() {
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if (currentIngredient != null) {
-                        // Отменяем предыдущее обновление если оно ещё не выполнилось
-                        if (pendingNameUpdate != null) {
-                            debounceHandler.removeCallbacks(pendingNameUpdate);
-                        }
-                        
-                        // Создаём новое отложенное обновление
-                        pendingNameUpdate = () -> {
-                            currentIngredient.setName(s.toString().trim());
-                            // Очищаем ошибку при успешном вводе
-                            if (!s.toString().trim().isEmpty()) {
-                                nameLayout.setError(null);
-                            }
-                            listener.onIngredientUpdated(currentPosition, currentIngredient);
-                        };
-                        
-                        // Запускаем с задержкой
-                        debounceHandler.postDelayed(pendingNameUpdate, DEBOUNCE_DELAY_MS);
+                    if (currentIngredient == null) {
+                        return;
                     }
+
+                    if (pendingNameUpdate != null) {
+                        debounceHandler.removeCallbacks(pendingNameUpdate);
+                    }
+
+                    pendingNameUpdate = () -> {
+                        currentIngredient.setName(s.toString().trim());
+                        if (!s.toString().trim().isEmpty()) {
+                            nameLayout.setError(null);
+                        }
+                        listener.onIngredientUpdated(currentPosition, currentIngredient);
+                    };
+                    debounceHandler.postDelayed(pendingNameUpdate, DEBOUNCE_DELAY_MS);
                 }
             };
 
             countWatcher = new SimpleTextWatcher() {
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if (currentIngredient != null) {
-                        // Отменяем предыдущее обновление если оно ещё не выполнилось
-                        if (pendingCountUpdate != null) {
-                            debounceHandler.removeCallbacks(pendingCountUpdate);
-                        }
-                        
-                        // Создаём новое отложенное обновление
-                        pendingCountUpdate = () -> {
-                            try {
-                                int count = s.toString().isEmpty() ? 0 : Integer.parseInt(s.toString());
-                                currentIngredient.setCount(count);
-                                // Очищаем ошибку при успешном вводе корректного числа
-                                if (count > 0) {
-                                    countLayout.setError(null);
-                                }
-                                listener.onIngredientUpdated(currentPosition, currentIngredient);
-                            } catch (NumberFormatException e) {
-                                // Игнорируем ошибки парсинга
-                            }
-                        };
-                        
-                        // Запускаем с задержкой
-                        debounceHandler.postDelayed(pendingCountUpdate, DEBOUNCE_DELAY_MS);
+                    if (currentIngredient == null) {
+                        return;
                     }
+
+                    if (pendingCountUpdate != null) {
+                        debounceHandler.removeCallbacks(pendingCountUpdate);
+                    }
+
+                    pendingCountUpdate = () -> {
+                        try {
+                            float count = s.toString().isEmpty() ? 0f : Float.parseFloat(s.toString());
+                            currentIngredient.setCount(count);
+                            if (count > 0f) {
+                                countLayout.setError(null);
+                            }
+                            listener.onIngredientUpdated(currentPosition, currentIngredient);
+                        } catch (NumberFormatException ignored) {
+                        }
+                    };
+                    debounceHandler.postDelayed(pendingCountUpdate, DEBOUNCE_DELAY_MS);
                 }
             };
-            
+
             nameEditText.addTextChangedListener(nameWatcher);
             countEditText.addTextChangedListener(countWatcher);
         }
 
         private void setupFocusValidation() {
-            // Валидация названия ингредиента при потере фокуса
             nameEditText.setOnFocusChangeListener((v, hasFocus) -> {
                 if (!hasFocus && currentIngredient != null) {
                     String name = nameEditText.getText().toString().trim();
@@ -231,8 +222,7 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
                     }
                 }
             });
-            
-            // Валидация количества при потере фокуса
+
             countEditText.setOnFocusChangeListener((v, hasFocus) -> {
                 if (!hasFocus && currentIngredient != null) {
                     String countText = countEditText.getText().toString().trim();
@@ -241,7 +231,7 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
                     } else {
                         try {
                             float count = Float.parseFloat(countText);
-                            if (count <= 0) {
+                            if (count <= 0f) {
                                 countLayout.setError(itemView.getContext().getString(R.string.ingredient_error_amount_positive));
                             } else {
                                 countLayout.setError(null);
@@ -252,8 +242,7 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
                     }
                 }
             });
-            
-            // Валидация типа ингредиента при потере фокуса
+
             typeEditText.setOnFocusChangeListener((v, hasFocus) -> {
                 if (!hasFocus && currentIngredient != null) {
                     String type = typeEditText.getText().toString().trim();
@@ -265,29 +254,41 @@ public class IngredientAdapter extends ListAdapter<Ingredient, IngredientAdapter
                 }
             });
         }
+
+        private String resolveUnitLabel(String storedValue) {
+            UnitResolution resolution = UnitNormalizer.resolve(storedValue);
+            String normalizedValue = resolution.getNormalizedValue();
+            for (int i = 0; i < unitValues.length; i++) {
+                if (unitValues[i].equals(normalizedValue)) {
+                    return unitLabels[i];
+                }
+            }
+            return resolution.getDisplayValue();
+        }
     }
 
     private static final DiffUtil.ItemCallback<Ingredient> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<Ingredient>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull Ingredient oldItem, @NonNull Ingredient newItem) {
-    
-            return oldItem == newItem;
-        }
+                @Override
+                public boolean areItemsTheSame(@NonNull Ingredient oldItem, @NonNull Ingredient newItem) {
+                    return oldItem == newItem;
+                }
 
-        @Override
-        public boolean areContentsTheSame(@NonNull Ingredient oldItem, @NonNull Ingredient newItem) {
-            return Objects.equals(oldItem.getName(), newItem.getName()) &&
-                   oldItem.getCount() == newItem.getCount() &&
-                   Objects.equals(oldItem.getType(), newItem.getType());
-        }
-    };
+                @Override
+                public boolean areContentsTheSame(@NonNull Ingredient oldItem, @NonNull Ingredient newItem) {
+                    return Objects.equals(oldItem.getName(), newItem.getName())
+                            && oldItem.getCount() == newItem.getCount()
+                            && Objects.equals(oldItem.getType(), newItem.getType());
+                }
+            };
 
-    // Вспомогательный класс для TextWatcher
     static abstract class SimpleTextWatcher implements TextWatcher {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
     }
-} 
+}

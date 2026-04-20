@@ -13,6 +13,19 @@
     />
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/settings_measurements_title" app:iconSpaceReserved="false">
+    <ListPreference
+    app:title="@string/settings_measurement_system_title"
+    app:iconSpaceReserved="false"
+    app:key="measurement_system"
+    app:defaultValue="original"
+    app:entries="@array/measurement_system_entries"
+    app:entryValues="@array/measurement_system_values"
+    app:summary="%s"
+    app:widgetLayout="@layout/preference_widget_chevron"
+    />
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/settings_search_recommendations_title" app:iconSpaceReserved="false">
 
 
